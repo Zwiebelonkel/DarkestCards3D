@@ -1,0 +1,7 @@
+{
+  "packs": [
+    { "id": "basic_pack", "name": "Basic Pack", "cost_coins": 100, "cards_per_pack": 5, "rarity_profile": "basic" },
+    { "id": "dark_pack", "name": "Dark Pack", "cost_coins": 250, "cards_per_pack": 5, "rarity_profile": "dark" },
+    { "id": "abyss_pack", "name": "Abyss Pack", "cost_coins": 500, "cards_per_pack": 5, "rarity_profile": "abyss" }
+  ]
+}
