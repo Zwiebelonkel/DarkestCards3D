@@ -1,5 +1,7 @@
-[gd_scene format=3 uid="uid://cp2g1k702pt2h"]
+[gd_scene load_steps=2 format=3 uid="uid://cp2g1k702pt2h"]
 
-[node name="PackOpeningCard" type="Control"]
-layout_mode = 3
-anchors_preset = 0
+[ext_resource type="PackedScene" path="res://scenes/table/Card3D.tscn" id="1_card3d"]
+
+[node name="PackOpeningCard" type="Node3D"]
+
+[node name="Card3D" parent="." instance=ExtResource("1_card3d")]

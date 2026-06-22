@@ -37,3 +37,7 @@ func add_card(card_id: String):
 
 func get_amount(card_id: String) -> int:
 	return collection.get(card_id, 0)
+
+
+func get_owned_cards() -> Dictionary:
+	return collection.duplicate(true)
