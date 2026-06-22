@@ -1,7 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://sbiyjx808dkn"]
+[gd_scene load_steps=15 format=3 uid="uid://sbiyjx808dkn"]
 
 [ext_resource type="Script" uid="uid://ci1i1hkrnkts3" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_upekx"]
+[ext_resource type="Script" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7vydd"]
 shader = ExtResource("2_upekx")
@@ -133,3 +134,15 @@ outline_size = 8
 
 [node name="WorldEnvironment2" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7vydd")
+
+[node name="MenuNavigation" type="CanvasLayer" parent="."]
+layer = 20
+script = ExtResource("99_menu_nav")
+
+[node name="MenuButton" type="Button" parent="MenuNavigation"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 126.0
+offset_bottom = 52.0
+text = "Menü"
