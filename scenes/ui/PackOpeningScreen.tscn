@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://sbiyjx808dkn"]
+[gd_scene load_steps=14 format=3 uid="uid://sbiyjx808dkn"]
 
 [ext_resource type="Script" uid="uid://ci1i1hkrnkts3" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_upekx"]
@@ -47,9 +47,24 @@ size = Vector3(1.28, 0.22, 0.28)
 [sub_resource type="BoxShape3D" id="Shape_top"]
 size = Vector3(1.35, 0.28, 0.35)
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_upekx"]
+sky_top_color = Color(1, 0.186781, 0.54403, 1)
+sky_horizon_color = Color(0.604486, 0.614403, 0.630061, 1)
+
+[sub_resource type="Sky" id="Sky_eujja"]
+sky_material = SubResource("ProceduralSkyMaterial_upekx")
+
+[sub_resource type="Environment" id="Environment_7vydd"]
+background_energy_multiplier = 0.0
+sky = SubResource("Sky_eujja")
+glow_enabled = true
+glow_intensity = 5.63
+glow_strength = 0.76
+glow_bloom = 0.12
+volumetric_fog_density = 0.009
+
 [node name="PackOpeningScreen" type="Node3D"]
 script = ExtResource("1_script")
-card_count = 40
 stack_card_scale = 1.545
 revealed_stack_position = Vector3(0.685, 1.12, 2.225)
 revealed_stack_offset = Vector3(0.005, 0.005, 0.03)
@@ -115,3 +130,6 @@ transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, 0, 2.35, -1.4)
 text = "PackTop anklicken/abziehen"
 font_size = 34
 outline_size = 8
+
+[node name="WorldEnvironment2" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7vydd")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cvxblkstddw2n"]
+[gd_scene load_steps=7 format=3 uid="uid://cvxblkstddw2n"]
 
 [ext_resource type="Script" uid="uid://bb62mpjyv4ak2" path="res://scripts/ui/CollectionScreen.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_mfll8"]
@@ -20,12 +20,21 @@ shader_parameter/tint_color = Vector3(0.95, 1.03, 0.9)
 shader_parameter/tint_strength = 0.15
 shader_parameter/viewport_size_override = Vector2(0, 0)
 
-[sub_resource type="StandardMaterial3D" id="Mat_floor"]
-albedo_color = Color(0.012, 0.012, 0.018, 1)
-roughness = 0.9
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mfll8"]
+sky_top_color = Color(1, 0.186781, 0.54403, 1)
+sky_horizon_color = Color(0.604486, 0.614403, 0.630061, 1)
 
-[sub_resource type="PlaneMesh" id="Plane_floor"]
-size = Vector2(7, 6)
+[sub_resource type="Sky" id="Sky_mfll8"]
+sky_material = SubResource("ProceduralSkyMaterial_mfll8")
+
+[sub_resource type="Environment" id="Environment_mfll8"]
+background_energy_multiplier = 0.0
+sky = SubResource("Sky_mfll8")
+glow_enabled = true
+glow_intensity = 5.63
+glow_strength = 0.76
+glow_bloom = 0.12
+volumetric_fog_density = 0.009
 
 [node name="CollectionScreen" type="Node3D"]
 script = ExtResource("1_script")
@@ -49,16 +58,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="KeyLight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 0, 4, 2)
-light_energy = 2.0
-
-[node name="Floor" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, -0.65, -1.8)
-visible = false
-material_override = SubResource("Mat_floor")
-mesh = SubResource("Plane_floor")
-
 [node name="Cards" type="Node3D" parent="."]
 
 [node name="EmptyLabel" type="Label3D" parent="."]
@@ -66,3 +65,12 @@ transform = Transform3D(0.014, 0, 0, 0, 0.014, 0, 0, 0, 0.014, 0, 0.45, -0.8)
 text = "Noch keine Karten in der Sammlung"
 font_size = 34
 outline_size = 8
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_mfll8")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.562255, 4.89512)
+light_color = Color(1, 1, 0.729412, 1)
+shadow_enabled = true
+omni_range = 10.2878

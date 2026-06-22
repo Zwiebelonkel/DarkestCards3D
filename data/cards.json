@@ -1,209 +1,200 @@
 [
-{
-"id": "harald",
-"name": "Harald",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Nobody knows why Harald is here. Not even Harald.",
-"image": "res://assets/cards/images/harald.png"
-},
-{
-"id": "jd",
-"name": "JD",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Always has a plan. None of them work.",
-"image": "res://assets/cards/images/jd.png"
-},
-{
-"id": "mrfork",
-"name": "MrFork",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Carries a rusty fork into every battle.",
-"image": "res://assets/cards/images/forky.png"
-},
-{
-"id": "plinky",
-"name": "Plinky",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Makes strange noises when nobody is watching.",
-"image": "res://assets/cards/images/plinky.png"
-},
-{
-"id": "snaker",
-"name": "Snaker",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Silent. Cold. Probably plotting something.",
-"image": "res://assets/cards/images/snaker.png"
-},
-{
-"id": "froggy",
-"name": "Froggy",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Jumps first. Thinks later.",
-"image": "res://assets/cards/images/froggy.png"
-},
-{
-"id": "empty",
-"name": "Empty",
-"attack": 0,
-"defense": 0,
-"rarity": "common",
-"description": "There is absolutely nothing here.",
-"image": "res://assets/cards/images/empty.png"
-},
-{
-"id": "alpaka",
-"name": "Alpaka",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Spits at danger with remarkable accuracy.",
-"image": "res://assets/cards/images/alpaka.png"
-},
-{
-"id": "jerk",
-"name": "Jerk",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Nobody likes him. He likes that.",
-"image": "res://assets/cards/images/jerk.png"
-},
-{
-"id": "wanderer",
-"name": "Wanderer",
-"attack": 2,
-"defense": 20,
-"rarity": "common",
-"description": "Crawling in the woods for worms. He likes them.",
-"image": "res://assets/cards/images/wanderer.png"
-},
-{
-"id": "mechanic",
-"name": "Mechanic",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Can fix anything except himself.",
-"image": "res://assets/cards/images/mechanic.png"
-},
-{
-"id": "ant",
-"name": "Ant",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Small enough to ignore. Big mistake.",
-"image": "res://assets/cards/images/ant.png"
-},
-{
-"id": "fisher",
-"name": "Fisher",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Patiently waiting for a bite that never comes.",
-"image": "res://assets/cards/images/fisher.png"
-},
-{
-"id": "slave",
-"name": "Slave",
-"attack": 1,
-"defense": 1,
-"rarity": "common",
-"description": "Works until the end. Then keeps going.",
-"image": "res://assets/cards/images/slave.png"
-},
-{
-"id": "dealer",
-"name": "Dealer",
-"attack": 1,
-"defense": 1,
-"rarity": "rare",
-"description": "A smile, a card, and a terrible bargain.",
-"image": "res://assets/cards/images/dealer.png"
-},
-{
-"id": "haendler",
-"name": "Händler",
-"attack": 1,
-"defense": 1,
-"rarity": "rare",
-"description": "Every trade leaves someone poorer.",
-"image": "res://assets/cards/images/händler.png"
-},
-{
-"id": "headshot",
-"name": "Headshot",
-"attack": 1,
-"defense": 1,
-"rarity": "rare",
-"description": "Legends begin and end with a single bullet.",
-"image": "res://assets/cards/images/headshot.png"
-},
-{
-"id": "walker",
-"name": "Walker",
-"attack": 1,
-"defense": 1,
-"rarity": "rare",
-"description": "He walked out of the fog and never stopped.",
-"image": "res://assets/cards/images/walker.png"
-},
-{
-"id": "mr_mr",
-"name": "Mr_Mr",
-"attack": 1,
-"defense": 1,
-"rarity": "mythic",
-"description": "Some say there are two of him. Others say more.",
-"image": "res://assets/cards/images/mrmr.png"
-},
-{
-"id": "falling",
-"name": "Falling",
-"attack": 1,
-"defense": 1,
-"rarity": "mythic",
-"description": "Nobody survives the fall. Yet it keeps returning.",
-"image": "res://assets/cards/images/falling.png"
-},
-{
-"id": "tree",
-"name": "Tree",
-"attack": 1,
-"defense": 1,
-"rarity": "mythic",
-"description": "Its roots reach places that should not exist.",
-"image": "res://assets/cards/images/tree.png"
-},
-{
-"id": "princess",
-"name": "Princess",
-"attack": 1,
-"defense": 1,
-"rarity": "exotic",
-"description": "Her kingdom vanished long ago, but she remains.",
-"image": "res://assets/cards/images/princess.png"
-},
-{
-"id": "ultracockhaze",
-"name": "UltraCockHaze",
-"attack": 1,
-"defense": 1,
-"rarity": "exotic",
-"description": "A being so rare that even reality rejects it.",
-"image": "res://assets/cards/images/haze.png"
-}
+  {
+	"id": "harald",
+	"name": "Harald",
+	"attack": 8,
+	"defense": 10,
+	"rarity": "epic",
+	"description": "Nobody knows why Harald is here. Not even Harald.",
+	"image": "res://assets/cards/images/harald.png"
+  },
+  {
+	"id": "jd",
+	"name": "JD",
+	"attack": 10,
+	"defense": 7,
+	"rarity": "epic",
+	"description": "Always has a plan. None of them work.",
+	"image": "res://assets/cards/images/jd.png"
+  },
+  {
+	"id": "mrfork",
+	"name": "MrFork",
+	"attack": 7,
+	"defense": 12,
+	"rarity": "epic",
+	"description": "Carries a rusty fork into every battle.",
+	"image": "res://assets/cards/images/forky.png"
+  },
+  {
+	"id": "plinky",
+	"name": "Plinky",
+	"attack": 13,
+	"defense": 11,
+	"rarity": "legendary",
+	"description": "Makes strange noises when nobody is watching.",
+	"image": "res://assets/cards/images/plinky.png"
+  },
+  {
+	"id": "snaker",
+	"name": "Snaker",
+	"attack": 16,
+	"defense": 8,
+	"rarity": "legendary",
+	"description": "Silent. Cold. Probably plotting something.",
+	"image": "res://assets/cards/images/snaker.png"
+  },
+  {
+	"id": "froggy",
+	"name": "Froggy",
+	"attack": 2,
+	"defense": 3,
+	"rarity": "common",
+	"description": "Jumps first. Thinks later.",
+	"image": "res://assets/cards/images/froggy.png"
+  },
+  {
+	"id": "alpaka",
+	"name": "Alpaka",
+	"attack": 3,
+	"defense": 5,
+	"rarity": "uncommon",
+	"description": "Spits at danger with remarkable accuracy.",
+	"image": "res://assets/cards/images/alpaka.png"
+  },
+  {
+	"id": "jerk",
+	"name": "Jerk",
+	"attack": 4,
+	"defense": 2,
+	"rarity": "common",
+	"description": "Nobody likes him. He likes that.",
+	"image": "res://assets/cards/images/jerk.png"
+  },
+  {
+	"id": "wanderer",
+	"name": "Wanderer",
+	"attack": 3,
+	"defense": 9,
+	"rarity": "uncommon",
+	"description": "Crawling in the woods for worms. He likes them.",
+	"image": "res://assets/cards/images/wanderer.png"
+  },
+  {
+	"id": "mechanic",
+	"name": "Mechanic",
+	"attack": 5,
+	"defense": 7,
+	"rarity": "rare",
+	"description": "Can fix anything except himself.",
+	"image": "res://assets/cards/images/mechanic.png"
+  },
+  {
+	"id": "ant",
+	"name": "Ant",
+	"attack": 2,
+	"defense": 6,
+	"rarity": "uncommon",
+	"description": "Small enough to ignore. Big mistake.",
+	"image": "res://assets/cards/images/ant.png"
+  },
+  {
+	"id": "fisher",
+	"name": "Fisher",
+	"attack": 6,
+	"defense": 6,
+	"rarity": "rare",
+	"description": "Patiently waiting for a bite that never comes.",
+	"image": "res://assets/cards/images/fisher.png"
+  },
+  {
+	"id": "slave",
+	"name": "Slave",
+	"attack": 4,
+	"defense": 8,
+	"rarity": "rare",
+	"description": "Works until the end. Then keeps going.",
+	"image": "res://assets/cards/images/slave.png"
+  },
+  {
+	"id": "dealer",
+	"name": "Dealer",
+	"attack": 7,
+	"defense": 5,
+	"rarity": "rare",
+	"description": "A smile, a card, and a terrible bargain.",
+	"image": "res://assets/cards/images/dealer.png"
+  },
+  {
+	"id": "haendler",
+	"name": "Händler",
+	"attack": 24,
+	"defense": 18,
+	"rarity": "exotic",
+	"description": "Every trade leaves someone poorer.",
+	"image": "res://assets/cards/images/händler.png"
+  },
+  {
+	"id": "headshot",
+	"name": "Headshot",
+	"attack": 30,
+	"defense": 10,
+	"rarity": "exotic",
+	"description": "Legends begin and end with a single bullet.",
+	"image": "res://assets/cards/images/headshot.png"
+  },
+  {
+	"id": "walker",
+	"name": "Walker",
+	"attack": 15,
+	"defense": 18,
+	"rarity": "mythic",
+	"description": "He walked out of the fog and never stopped.",
+	"image": "res://assets/cards/images/walker.png"
+  },
+  {
+	"id": "mr_mr",
+	"name": "Mr_Mr",
+	"attack": 18,
+	"defense": 18,
+	"rarity": "mythic",
+	"description": "Some say there are two of him. Others say more.",
+	"image": "res://assets/cards/images/mrmr.png"
+  },
+  {
+	"id": "falling",
+	"name": "Falling",
+	"attack": 14,
+	"defense": 24,
+	"rarity": "mythic",
+	"description": "Nobody survives the fall. Yet it keeps returning.",
+	"image": "res://assets/cards/images/falling.png"
+  },
+  {
+	"id": "tree",
+	"name": "Tree",
+	"attack": 12,
+	"defense": 28,
+	"rarity": "mythic",
+	"description": "Its roots reach places that should not exist.",
+	"image": "res://assets/cards/images/tree.png"
+  },
+  {
+	"id": "princess",
+	"name": "Princess",
+	"attack": 22,
+	"defense": 25,
+	"rarity": "exotic",
+	"description": "Her kingdom vanished long ago, but she remains.",
+	"image": "res://assets/cards/images/princess.png"
+  },
+  {
+	"id": "ultracockhaze",
+	"name": "UltraCockHaze",
+	"attack": 35,
+	"defense": 15,
+	"rarity": "exotic",
+	"description": "A being so rare that even reality rejects it.",
+	"image": "res://assets/cards/images/haze.png"
+  }
 ]
