@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://nuefdcp4itli"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_5u87l"]
+viewport_path = NodePath("ConsoleViewport")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_wl2pd"]
+viewport_path = NodePath("ConsoleViewport")
+
+[resource]
+resource_local_to_scene = true
+cull_mode = 2
+no_depth_test = true
+albedo_texture = SubResource("ViewportTexture_5u87l")
+roughness = 0.07
+emission_enabled = true
+emission_energy_multiplier = 1.67
+emission_texture = SubResource("ViewportTexture_wl2pd")

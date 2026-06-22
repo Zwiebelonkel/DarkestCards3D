@@ -1,3 +1,209 @@
-{
-  "cards": []
-}
+[
+  {
+	"id": "harald",
+	"name": "Harald",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/harald.png"
+  },
+  {
+	"id": "jd",
+	"name": "JD",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/jd.png"
+  },
+  {
+	"id": "mrfork",
+	"name": "MrFork",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/forky.png"
+  },
+  {
+	"id": "plinky",
+	"name": "Plinky",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/plinky.png"
+  },
+  {
+	"id": "snaker",
+	"name": "Snaker",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/snaker.png"
+  },
+  {
+	"id": "froggy",
+	"name": "Froggy",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/froggy.png"
+  },
+  {
+	"id": "empty",
+	"name": "Empty",
+	"attack": 0,
+	"defense": 0,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/empty.png"
+  },
+  {
+	"id": "alpaka",
+	"name": "Alpaka",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/alpaka.png"
+  },
+  {
+	"id": "jerk",
+	"name": "Jerk",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/jerk.png"
+  },
+  {
+	"id": "wanderer",
+	"name": "Wanderer",
+	"attack": 2,
+	"defense": 20,
+	"rarity": "common",
+	"description": "Crawling in the woods for worms. He likes them.",
+	"image": "res://assets/cards/images/wanderer.png"
+  },
+  {
+	"id": "mechanic",
+	"name": "Mechanic",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/mechanic.png"
+  },
+  {
+	"id": "ant",
+	"name": "Ant",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/ant.png"
+  },
+  {
+	"id": "fisher",
+	"name": "Fisher",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/fisher.png"
+  },
+  {
+	"id": "slave",
+	"name": "Slave",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "common",
+	"description": "",
+	"image": "res://assets/cards/images/slave.png"
+  },
+  {
+	"id": "dealer",
+	"name": "Dealer",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "rare",
+	"description": "",
+	"image": "res://assets/cards/images/dealer.png"
+  },
+  {
+	"id": "haendler",
+	"name": "Händler",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "rare",
+	"description": "",
+	"image": "res://assets/cards/images/händler.png"
+  },
+  {
+	"id": "headshot",
+	"name": "Headshot",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "rare",
+	"description": "",
+	"image": "res://assets/cards/images/headshot.png"
+  },
+  {
+	"id": "walker",
+	"name": "Walker",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "rare",
+	"description": "",
+	"image": "res://assets/cards/images/walker.png"
+  },
+  {
+	"id": "mr_mr",
+	"name": "Mr_Mr",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "mythic",
+	"description": "",
+	"image": "res://assets/cards/images/mrmr.png"
+  },
+  {
+	"id": "falling",
+	"name": "Falling",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "mythic",
+	"description": "",
+	"image": "res://assets/cards/images/falling.png"
+  },
+  {
+	"id": "tree",
+	"name": "Tree",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "mythic",
+	"description": "",
+	"image": "res://assets/cards/images/tree.png"
+  },
+  {
+	"id": "princess",
+	"name": "Princess",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "exotic",
+	"description": "",
+	"image": "res://assets/cards/images/princess.png"
+  },
+  {
+	"id": "ultracockhaze",
+	"name": "UltraCockHaze",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "exotic",
+	"description": "",
+	"image": "res://assets/cards/images/haze.png"
+  }
+]

@@ -1,9 +1,46 @@
 {
   "rarities": [
-    { "id": "common", "name": "Common", "drop_weight": 70, "frame": "res://assets/cards/frames/common.png" },
-    { "id": "rare", "name": "Rare", "drop_weight": 22, "frame": "res://assets/cards/frames/rare.png" },
-    { "id": "epic", "name": "Epic", "drop_weight": 6, "frame": "res://assets/cards/frames/epic.png" },
-    { "id": "legendary", "name": "Legendary", "drop_weight": 1.5, "frame": "res://assets/cards/frames/legendary.png" },
-    { "id": "mythic", "name": "Mythic", "drop_weight": 0.5, "frame": "res://assets/cards/frames/mythic.png" }
+	{
+	  "id": "common",
+	  "name": "Common",
+	  "drop_weight": 60,
+	  "color": "#8C8C8C"
+	},
+	{
+	  "id": "uncommon",
+	  "name": "Uncommon",
+	  "drop_weight": 25,
+	  "color": "#42D94A"
+	},
+	{
+	  "id": "rare",
+	  "name": "Rare",
+	  "drop_weight": 9,
+	  "color": "#3D7DFF"
+	},
+	{
+	  "id": "epic",
+	  "name": "Epic",
+	  "drop_weight": 4,
+	  "color": "#B04DFF"
+	},
+	{
+	  "id": "legendary",
+	  "name": "Legendary",
+	  "drop_weight": 1.5,
+	  "color": "#FFC233"
+	},
+	{
+	  "id": "mythic",
+	  "name": "Mythic",
+	  "drop_weight": 0.4,
+	  "color": "#37207A"
+	},
+	{
+	  "id": "exotic",
+	  "name": "Exotic",
+	  "drop_weight": 0.1,
+	  "color": "#FF2222"
+	}
   ]
 }

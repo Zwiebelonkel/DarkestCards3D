@@ -1,3 +1,5 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dvvkebkur47qe"]
 
 [node name="CardPreview" type="Control"]
+layout_mode = 3
+anchors_preset = 0
