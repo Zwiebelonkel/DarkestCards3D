@@ -14,15 +14,6 @@ class_name Card3D
 @onready var area: Area3D = $Area3D
 
 var card_data: Dictionary = {}
-var base_scale := Vector3.ONE
-
-
-func _ready() -> void:
-	base_scale = scale
-
-	if area:
-		area.mouse_entered.connect(_on_mouse_entered)
-		area.mouse_exited.connect(_on_mouse_exited)
 
 
 func setup(data: Dictionary) -> void:
@@ -66,7 +57,6 @@ func _apply_card_image(image_path: String) -> void:
 
 func _apply_rarity_style(rarity: String) -> void:
 	var color := _get_rarity_color(rarity)
-
 	rarity_label.modulate = color
 	_apply_material_to_all_meshes(card_outline, color)
 
@@ -92,19 +82,19 @@ func _apply_material_to_all_meshes(root: Node, color: Color) -> void:
 func _get_rarity_color(rarity: String) -> Color:
 	match rarity:
 		"common":
-			return Color(0.55, 0.55, 0.55, 1) # grau
+			return Color(0.55, 0.55, 0.55, 1)
 		"uncommon":
-			return Color(0.25, 0.85, 0.35, 1) # grün
+			return Color(0.25, 0.85, 0.35, 1)
 		"rare":
-			return Color(0.2, 0.45, 1.0, 1) # blau
+			return Color(0.2, 0.45, 1.0, 1)
 		"epic":
-			return Color(0.75, 0.25, 1.0, 1) # violett
+			return Color(0.75, 0.25, 1.0, 1)
 		"legendary":
-			return Color(1.0, 0.72, 0.12, 1) # gold
+			return Color(1.0, 0.72, 0.12, 1)
 		"mythic":
-			return Color(0.18, 0.08, 0.45, 1) # dunkel violett/bläulich
+			return Color(0.18, 0.08, 0.45, 1)
 		"exotic":
-			return Color(1.0, 0.05, 0.05, 1) # knallrot
+			return Color(1.0, 0.05, 0.05, 1)
 		_:
 			return Color(0.45, 0.45, 0.45, 1)
 
@@ -114,13 +104,3 @@ func _shorten_description(text: String, max_chars: int = 95) -> String:
 		return text
 
 	return text.substr(0, max_chars - 3) + "..."
-
-
-func _on_mouse_entered() -> void:
-	var tween := create_tween()
-	tween.tween_property(self, "scale", base_scale * 1.08, 0.12)
-
-
-func _on_mouse_exited() -> void:
-	var tween := create_tween()
-	tween.tween_property(self, "scale", base_scale, 0.12)

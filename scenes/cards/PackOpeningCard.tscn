@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cp2g1k702pt2h"]
 
-[ext_resource type="PackedScene" path="res://scenes/table/Card3D.tscn" id="1_card3d"]
+[ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="1_card3d"]
 
 [node name="PackOpeningCard" type="Node3D"]
 

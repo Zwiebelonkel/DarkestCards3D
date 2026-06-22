@@ -1,20 +1,45 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=11 format=3 uid="uid://sbiyjx808dkn"]
 
-[ext_resource type="Script" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://ci1i1hkrnkts3" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
+[ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_upekx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7vydd"]
+shader = ExtResource("2_upekx")
+shader_parameter/exposure = 1.0
+shader_parameter/contrast = 1.1
+shader_parameter/saturation = 1.12
+shader_parameter/enable_pixelate = true
+shader_parameter/pixel_factor = 1.579
+shader_parameter/enable_posterize = true
+shader_parameter/color_levels = 16.0
+shader_parameter/dither_strength = 0.35
+shader_parameter/chrom_aberration = 0.01
+shader_parameter/vignette_strength = 1.0
+shader_parameter/grain_strength = 0.2
+shader_parameter/tint_color = Vector3(0.95, 1.03, 0.9)
+shader_parameter/tint_strength = 0.15
+shader_parameter/viewport_size_override = Vector2(0, 0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_floor"]
+albedo_color = Color(0.015, 0.012, 0.018, 1)
+roughness = 0.9
+
+[sub_resource type="PlaneMesh" id="Plane_floor"]
+size = Vector2(8, 5)
 
 [sub_resource type="StandardMaterial3D" id="Mat_pack"]
 albedo_color = Color(0.12, 0.02, 0.025, 1)
-roughness = 0.55
 metallic = 0.15
-
-[sub_resource type="StandardMaterial3D" id="Mat_top"]
-albedo_color = Color(0.55, 0.08, 0.08, 1)
-emission_enabled = true
-emission = Color(0.18, 0.015, 0.015, 1)
-roughness = 0.4
+roughness = 0.55
 
 [sub_resource type="BoxMesh" id="Box_pack"]
 size = Vector3(1.2, 1.6, 0.22)
+
+[sub_resource type="StandardMaterial3D" id="Mat_top"]
+albedo_color = Color(0.55, 0.08, 0.08, 1)
+roughness = 0.4
+emission_enabled = true
+emission = Color(0.18, 0.015, 0.015, 1)
 
 [sub_resource type="BoxMesh" id="Box_top"]
 size = Vector3(1.28, 0.22, 0.28)
@@ -22,20 +47,32 @@ size = Vector3(1.28, 0.22, 0.28)
 [sub_resource type="BoxShape3D" id="Shape_top"]
 size = Vector3(1.35, 0.28, 0.35)
 
-[sub_resource type="PlaneMesh" id="Plane_floor"]
-size = Vector2(8, 5)
-
-[sub_resource type="StandardMaterial3D" id="Mat_floor"]
-albedo_color = Color(0.015, 0.012, 0.018, 1)
-roughness = 0.9
-
 [node name="PackOpeningScreen" type="Node3D"]
 script = ExtResource("1_script")
+card_count = 40
+stack_card_scale = 1.545
+revealed_stack_position = Vector3(0.685, 1.12, 2.225)
+revealed_stack_offset = Vector3(0.005, 0.005, 0.03)
+revealed_scale = 0.755
+revealed_rotation = Vector3(1, -3.525, 0)
+revealed_hover_offset = Vector3(-0.455, 0, 0)
+revealed_hover_rotation_offset = Vector3(0, 3.21, 8.055)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.766044, 0.642788, 0, -0.642788, 0.766044, 0, 2.15, 4.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28133, 4.91523)
 current = true
 fov = 42.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
+
+[node name="ColorRect" type="ColorRect" parent="Camera3D/CanvasLayer"]
+material = SubResource("ShaderMaterial_7vydd")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 
@@ -44,17 +81,18 @@ transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.7071
 light_energy = 2.4
 
 [node name="FillLight" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.5, 1.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0376544, 1.43469, 1.47553)
 light_energy = 1.2
 omni_range = 6.0
 
 [node name="Floor" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, -0.55, -0.9)
+visible = false
 material_override = SubResource("Mat_floor")
 mesh = SubResource("Plane_floor")
 
 [node name="Pack" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.939693, -0.34202, 0, 0.34202, 0.939693, 0, 0.15, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 
 [node name="PackMesh" type="MeshInstance3D" parent="Pack"]
 material_override = SubResource("Mat_pack")
