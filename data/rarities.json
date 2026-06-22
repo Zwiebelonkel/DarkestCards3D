@@ -1,0 +1,9 @@
+{
+  "rarities": [
+    { "id": "common", "name": "Common", "drop_weight": 70, "frame": "res://assets/cards/frames/common.png" },
+    { "id": "rare", "name": "Rare", "drop_weight": 22, "frame": "res://assets/cards/frames/rare.png" },
+    { "id": "epic", "name": "Epic", "drop_weight": 6, "frame": "res://assets/cards/frames/epic.png" },
+    { "id": "legendary", "name": "Legendary", "drop_weight": 1.5, "frame": "res://assets/cards/frames/legendary.png" },
+    { "id": "mythic", "name": "Mythic", "drop_weight": 0.5, "frame": "res://assets/cards/frames/mythic.png" }
+  ]
+}
