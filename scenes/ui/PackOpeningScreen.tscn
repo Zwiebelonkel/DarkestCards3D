@@ -1,5 +1,79 @@
-[gd_scene format=3 uid="uid://sbiyjx808dkn"]
+[gd_scene load_steps=9 format=3]
 
-[node name="PackOpeningScreen" type="Control"]
-layout_mode = 3
-anchors_preset = 0
+[ext_resource type="Script" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_pack"]
+albedo_color = Color(0.12, 0.02, 0.025, 1)
+roughness = 0.55
+metallic = 0.15
+
+[sub_resource type="StandardMaterial3D" id="Mat_top"]
+albedo_color = Color(0.55, 0.08, 0.08, 1)
+emission_enabled = true
+emission = Color(0.18, 0.015, 0.015, 1)
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="Box_pack"]
+size = Vector3(1.2, 1.6, 0.22)
+
+[sub_resource type="BoxMesh" id="Box_top"]
+size = Vector3(1.28, 0.22, 0.28)
+
+[sub_resource type="BoxShape3D" id="Shape_top"]
+size = Vector3(1.35, 0.28, 0.35)
+
+[sub_resource type="PlaneMesh" id="Plane_floor"]
+size = Vector2(8, 5)
+
+[sub_resource type="StandardMaterial3D" id="Mat_floor"]
+albedo_color = Color(0.015, 0.012, 0.018, 1)
+roughness = 0.9
+
+[node name="PackOpeningScreen" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.766044, 0.642788, 0, -0.642788, 0.766044, 0, 2.15, 4.2)
+current = true
+fov = 42.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 3, 2)
+light_energy = 2.4
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.5, 1.5)
+light_energy = 1.2
+omni_range = 6.0
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, -0.55, -0.9)
+material_override = SubResource("Mat_floor")
+mesh = SubResource("Plane_floor")
+
+[node name="Pack" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.939693, -0.34202, 0, 0.34202, 0.939693, 0, 0.15, 0)
+
+[node name="PackMesh" type="MeshInstance3D" parent="Pack"]
+material_override = SubResource("Mat_pack")
+mesh = SubResource("Box_pack")
+
+[node name="PackTop" type="MeshInstance3D" parent="Pack"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+material_override = SubResource("Mat_top")
+mesh = SubResource("Box_top")
+
+[node name="PackTopArea" type="Area3D" parent="Pack/PackTop"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pack/PackTop/PackTopArea"]
+shape = SubResource("Shape_top")
+
+[node name="Cards" type="Node3D" parent="."]
+
+[node name="InfoLabel" type="Label3D" parent="."]
+transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, 0, 2.35, -1.4)
+text = "PackTop anklicken/abziehen"
+font_size = 34
+outline_size = 8
