@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://41al4xxs2rs6"]
+[gd_scene load_steps=20 format=4 uid="uid://41al4xxs2rs6"]
 
 [ext_resource type="Script" uid="uid://bi1ys3fs0h2g0" path="res://scripts/card/Card3D.gd" id="1_card3d"]
 [ext_resource type="Texture2D" uid="uid://bel1bqmormce3" path="res://assets/cards/images/wanderer.png" id="2_og60t"]
@@ -8,6 +8,8 @@
 [ext_resource type="Shader" uid="uid://cbctw0rxr1prp" path="res://assets/shader/rarity_outline.gdshader" id="5_biaf5"]
 [ext_resource type="PackedScene" uid="uid://ml1ovtd001td" path="res://assets/cards/backs/cardOutline.glb" id="5_outline"]
 [ext_resource type="Shader" uid="uid://dgganigf5x7fg" path="res://assets/shader/card_shine.gdshader" id="6_x26xv"]
+[ext_resource type="Script" uid="uid://dy7v7eui8tfvg" path="res://scripts/labelMove.gd" id="9_nfpie"]
+[ext_resource type="Script" uid="uid://4wpksyu17f6k" path="res://scripts/typewriter.gd" id="10_skhxq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m3k2a"]
 render_priority = 0
@@ -25,6 +27,59 @@ shader_parameter/z_direction = 1.0
 next_pass = SubResource("ShaderMaterial_m3k2a")
 albedo_texture = ExtResource("3_x26xv")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w8vou"]
+resource_name = "back"
+cull_mode = 2
+albedo_texture = ExtResource("3_x26xv")
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_iwnm4"]
+_surfaces = [{
+"aabb": AABB(-1, -1, -1, 2, 2, 2),
+"format": 34896613377,
+"index_count": 132,
+"index_data": PackedByteArray("CgALAAwADAALAAUADAAFAAcACwASAAUAEgAHAAUACwAEABIACwATAAQAEgAEABMACgATAAsAEgATAA8ADgASAA8ADgAPABMADgAHABIAFAAMAAcAFAAKAAwAFAABAAoABwAAABQAFAAAAAEAFQAKAAEAAAAVAAEAEwAKAAMAAwAKABUAAAAQABUABwAWAAAAAAAWABAAFQAQABYAFgAHAA4AAwAVAAYAFQAWAAYAAwAGABYAAwAWAAIADgATAA0AEwADAAkAEwAJAA0AFwADAAIACQADABcAFgARAAIAFgAOABEAFwACABEACAAOAA0ACAANAAkAEQAOAAgACAAJABcACAAXABEA"),
+"lods": [0.022579, PackedByteArray("CgALAAwADAALAAUACwAEAAUACwANAAQABQAEAA0ACgANAAsADAAFAAcAAAAKAAwAAAAMAAcADgAHAAUABwACAAAAAgAHAA4ABQANAA8ADgAFAA8ADgAPAA0AAAABAAoAAAACABAAAAAQAAEAAQAQAAIAAQACAAYAAwAKAAEAAwABAAYAAwAGAAIADQAKAAMAAgAOABEAAwACABEAEQAOAAgACAADABEACAAOAA0ADQADAAkACAAJAAMACAANAAkA"), 0.487845, PackedByteArray("AwABAAYAAQACAAYAAwAGAAIAAAACAAEABAABAAMAAAABAAQABwACAAAAAAAEAAcAAgAHAAgACAADAAIABAAFAAcACAAHAAUABQAEAAgABAADAAkACAAJAAMACAAEAAkA"), 0.870001, PackedByteArray("BAABAAMAAAABAAQAAQACAAMAAQAAAAIAAgAEAAMAAAAEAAUABQAEAAIABQACAAAA"), 1.41393, PackedByteArray("AAABAAIAAQAAAAIAAQACAAMAAgABAAMA")],
+"name": "back",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("1gPWAwAAAADWA9YD//8AANYDKPwAAAAA1gMo/P//AAD//xsN//8AACj81gMAAAAAAADj8v//AADj8gAAAAAAAOPy//8AAAAA4/L/////AAAbDQAA//8AACj81gP//wAA4/IAAP//AAAo/Cj8//8AACj8KPwAAAAA///j8gAAAAAAABsNAAAAABsN//8AAAAA//8bDQAAAAD//+Py//8AABsNAAAAAAAAAAAbDf//AAAAAOPyAAAAABsN/////wAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_x5k6c"]
+resource_name = "card_Cube_001"
+_surfaces = [{
+"aabb": AABB(-1, -1, -1, 2, 2, 2),
+"attribute_data": PackedByteArray("Ajy6iQI8U4I2UrqJNlJTgmhDiJjPSiGRz0qImGhDIZHipTigo6RRfgbGUX5oQ7qJyUNTgpwE9fpi+4EEYvv1+sfEzH2KxnWeMEu6iQdDuokwS1OCbkqImNINxP7SDbIAHqSQf6OktJ8epHWeBsa0n89KU4JuSrqJz0q6iWhDU4LVUbqJB0NTgmM8U4LJQyGRM//C8ZwEgQTLALQNLPKyAMfEOKDipcx9isaQf8lDuoluSlOCbkq6iclDU4LVUVOC1VG6iclDiJhuSiGRLPLE/jP/tA3LAMLxYzy6iclDiJjJQyGR1VFTgm5KIZFuSoiYB0NTggdDuoloQ1OCyUO6iWhDuokwS7qJMEtTgs9KuoluSlOCz0pTgmM8uoljPFOC"),
+"format": 34896613399,
+"index_count": 132,
+"index_data": PackedByteArray("GAAZABoAGAAoABkAGQAoAAgAKQAYAAkACgAYACkAKAAYAAoACgApABAAKAAKABEAEQAKACoAKAARABsAKwAsAC0AKwAuACwAEgAvADAAEgAUAC8AMQAyABUAMQAjADIAFgAPADMAFgA0AA8ADwA0ACQANQAWAA0AJQAWADUANAAWACUAJQA1ACYANAAlACcAJwAlABcANAAnAA4ANgABACIANgAAAAEABwA3AAQABwA4ADcAOQACACAAOQADAAIABgA6AAUABgA7ADoAPAALAD0APAAfAAsAPgA/AEAAPgAMAD8AQQAcAEIAQQAeABwAQwBEAEUAQwAdAEQARgAhABMARgBHACEA"),
+"lods": [0.022579, PackedByteArray("GAAZABoAGAAbABkAGQAbAAgAGwAYAAoAGwAKABEACgAYAAkACgAJABAACwAcAB0AHgAdABwAEgAeABwACwAMABwAEgAcABQAHwAMAAsAEgAUAAMAEgADACAAAwACACAAIQAfAAsAIQALABMAAAAhABMAAAAiACEAAAABACIABAAFABUABgAVAAUABAAjAAUABwAjAAQADwAOACQAFgAOAA8ADgAWACUAJQAWAA0AJQANACYADgAlACcAJwAlABcA"), 0.487845, PackedByteArray("CgAJABAACAAJAAoACAAKABEACwAMABIADAALABMAAAAMABMAAAABAAwAEgAMABQAEgAUAAMAEgADAAIABAAFABUABgAVAAUABwAFAAQAFgAOAA8ADgAWABcAFwAWAA0A"), 0.870001, PackedByteArray("CAAJAAoACwAMAAIAAgAMAAMAAAAMAAsAAAABAAwABAAFAAYABAAHAAUADQAOAA8A"), 1.41393, PackedByteArray("AAABAAIAAgABAAMABAAFAAYABAAHAAUA")],
+"material": SubResource("StandardMaterial3D_w8vou"),
+"name": "back",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 72,
+"vertex_data": PackedByteArray("1gPWAwAAjMHWA9YD//+MwdYDKPwAALj01gMo/P//uPTWA9YD//8Z39YDKPwAAMjM1gMo/P//yMzWA9YDAAAZ3///Gw3///+/1gPWA////7/WAyj8////vyj81gMAAIzB//8bDf//yMwo/NYDAAD//9YDKPwAAP//1gPWAwAA//8AAOPy////v+Py//////+/4/L//wAA///j8gAAAAD/v+Py////////AADj8v//VNXj8gAAAAD//+Py//8AAP//Gw0AAP///78o/NYD////v+PyAAD///+/KPwo/P///78o/Cj8//+49P//4/IAABnfKPwo/AAAuPQo/NYD//+MwRsN//8AALj04/IAAP///78bDQAA//+MwQAAGw0AAFTVAAAbDQAA//8o/Cj8AAD/////4/IAAP//Gw3//wAA/////+Py////vwAAGw3///+/Gw3//////r///xsNAABU1f//4/L//1TV///j8gAAVNX//xsN//9U1RsN////////Gw3//wAA//8AABsN//9U1QAA4/IAAFTVGw0AAAAA//8AAOPyAAD/////Gw0AAP//Gw0AAAAAjMEAABsN//8Z3wAAGw0AABnfGw3/////uPQAAOPyAADIzAAA4/L//8jM4/IAAP//jMHj8gAAAACMwSj81gP//8jM//8bDQAAyMwo/NYDAADIzOPy//8AALj04/L/////uPQo/Cj8AAAZ3///4/L//xnfKPwo/P//Gd8bDQAAAAD/vxsNAAD///+/bSQ2km0kNpJrdDW6a3Q1ugbQ8d9j2zXJY9s1yQbQ8d////////////////82EpFbmyTJNv9//v//f/7//3/+/////////////3//vwAA/3//f/+/VNVU1f9//v//f////////////////////////zU6lAv4Lw0gNTqUCzYSkVtrdDW6AAD/f20kNpJU1VTV/3/+//9//v//f/7//3/+/////////////////6oqqiqqKqoqqiqqKqoqqir/f/+//3//v1TVVNVU1VTV/3/+//9//v//f/7/bSQ2kgbQ8d8G0PHfa3Q1umPbNclj2zXJNhKRWzYSkVubJMk2myTJNpskyTY1OpQLNTqUC/gvDSD4Lw0g+C8NIAAA/38AAP9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_iwnm4")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x26xv"]
+render_priority = 0
+shader = ExtResource("5_biaf5")
+shader_parameter/rarity_color = Color(0.2, 0.6, 1, 1)
+shader_parameter/thickness = 0.03
+shader_parameter/softness = 0.001
+shader_parameter/glow_strength = 0.478
+shader_parameter/outer_glow = 0.128
+shader_parameter/speed = 2.07
+shader_parameter/energy_density = 14.017
+shader_parameter/jaggedness = 0.311
+shader_parameter/pulse_strength = 0.598
+
 [sub_resource type="StandardMaterial3D" id="Mat_image"]
 shading_mode = 0
 albedo_texture = ExtResource("2_og60t")
@@ -32,23 +87,6 @@ texture_filter = 1
 
 [sub_resource type="QuadMesh" id="QuadMesh_image"]
 size = Vector2(0.56, 0.34)
-
-[sub_resource type="QuadMesh" id="QuadMesh_rarity"]
-size = Vector2(0.92, 1.22)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_nfpie"]
-resource_local_to_scene = true
-render_priority = 0
-shader = ExtResource("5_biaf5")
-shader_parameter/rarity_color = Color(0.55, 0.55, 0.55, 1)
-shader_parameter/intensity = 1.652
-shader_parameter/scroll_speed = 1.0
-shader_parameter/band_density = 4.0
-shader_parameter/jaggedness = 0.404
-shader_parameter/pulse_strength = 0.25
-shader_parameter/pulse_speed = 2.0
-shader_parameter/base_glow = 0.35
-shader_parameter/emission_boost = 6.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_card"]
 size = Vector3(0.78, 1.08, 0.08)
@@ -62,6 +100,12 @@ transform = Transform3D(0.24, 0, 0, 0, 0.24, 0, 0, 0, 0.24, 0, 0, -0.024626)
 [node name="Cube" parent="card" index="0"]
 surface_material_override/0 = SubResource("StandardMaterial3D_xwkok")
 
+[node name="rarity" type="MeshInstance3D" parent="card"]
+transform = Transform3D(1.65, 0, 0, 0, 2.5, 0, 0, 0, 0.0516094, 0, 0, 0.128426)
+mesh = SubResource("ArrayMesh_x5k6c")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("ShaderMaterial_x26xv")
+
 [node name="cardOutline" parent="." instance=ExtResource("5_outline")]
 transform = Transform3D(0.24, 0, 0, 0, 0.24, 0, 0, 0, 0.055, -0.00291418, 0, -0.00931445)
 
@@ -71,9 +115,7 @@ material_override = SubResource("Mat_image")
 mesh = SubResource("QuadMesh_image")
 
 [node name="RarityGlowPlane" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0155055, -0.0164012)
-mesh = SubResource("QuadMesh_rarity")
-surface_material_override/0 = SubResource("ShaderMaterial_nfpie")
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0155055, -0.0274916)
 
 [node name="NameLabel" type="Label3D" parent="."]
 transform = Transform3D(0.008, 0, 0, 0, 0.008, 0, 0, 0, 0.008, 0, 0.519458, -0.0120704)
@@ -91,6 +133,19 @@ text = "0"
 font = ExtResource("3_0y4x6")
 font_size = 38
 outline_size = 8
+script = ExtResource("9_nfpie")
+horizontal_distance = 0.005
+vertical_distance = 0.005
+speed = 3.47
+
+[node name="AttackTitle" type="Label3D" parent="."]
+transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, -0.27196, -0.368176, -0.0116284)
+pixel_size = 0.0735
+modulate = Color(1, 0.25, 0.2, 1)
+text = "Attack"
+font = ExtResource("3_0y4x6")
+font_size = 38
+outline_size = 8
 
 [node name="DefenseLabel" type="Label3D" parent="."]
 transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, 0.269855, -0.429498, -0.0116284)
@@ -100,19 +155,46 @@ text = "0"
 font = ExtResource("3_0y4x6")
 font_size = 38
 outline_size = 8
+script = ExtResource("9_nfpie")
+horizontal_distance = 0.005
+vertical_distance = 0.005
+speed = 3.47
+
+[node name="DefenseTitle" type="Label3D" parent="."]
+transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, 0.271, -0.368, -0.012)
+pixel_size = 0.0735
+modulate = Color(0.35, 0.65, 1, 1)
+text = "Defense"
+font = ExtResource("3_0y4x6")
+font_size = 38
+outline_size = 8
+
+[node name="DescriptionTitle" type="Label3D" parent="."]
+transform = Transform3D(0.0055, 0, 0, 0, 0.0055, 0, 0, 0, 0.0055, -0.342264, 0.00298143, -0.00301231)
+pixel_size = 0.2615
+modulate = Color(1, 1, 0, 1)
+text = "Description"
+font = ExtResource("3_0y4x6")
+font_size = 28
+outline_size = 4
+horizontal_alignment = 0
+vertical_alignment = 0
+width = 115.0
 
 [node name="DescriptionLabel" type="Label3D" parent="."]
-transform = Transform3D(0.0055, 0, 0, 0, 0.0055, 0, 0, 0, 0.0055, 0, 0.00298143, -0.00301231)
+transform = Transform3D(0.0055, 0, 0, 0, 0.0055, 0, 0, 0, 0.0055, -0.342264, -0.0630978, -0.00301231)
 pixel_size = 0.2615
 text = "Description..."
 font = ExtResource("3_0y4x6")
 font_size = 18
 outline_size = 4
+horizontal_alignment = 0
 vertical_alignment = 0
 width = 115.0
+script = ExtResource("10_skhxq")
 
 [node name="RarityLabel" type="Label3D" parent="."]
-transform = Transform3D(0.007, 0, 0, 0, 0.007, 0, 0, 0, 0.007, 0, -0.557297, -0.0109885)
+transform = Transform3D(0.007, 0, 0, 0, 0.007, 0, 0, 0, 0.007, 0, -0.549952, -0.0109885)
 pixel_size = 0.25
 text = "COMMON"
 font = ExtResource("3_0y4x6")

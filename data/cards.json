@@ -5,7 +5,7 @@
 	"attack": 8,
 	"defense": 10,
 	"rarity": "epic",
-	"description": "Nobody knows why Harald is here. Not even Harald.",
+	"description": "This wizard never had an artwork...Lazy ass...",
 	"image": "res://assets/cards/images/harald.png"
   },
   {
@@ -14,7 +14,7 @@
 	"attack": 10,
 	"defense": 7,
 	"rarity": "epic",
-	"description": "Always has a plan. None of them work.",
+	"description": "Dealer Jesus <3",
 	"image": "res://assets/cards/images/jd.png"
   },
   {
@@ -23,7 +23,7 @@
 	"attack": 7,
 	"defense": 12,
 	"rarity": "epic",
-	"description": "Carries a rusty fork into every battle.",
+	"description": "Mr Fork is a fork. He likes to stab you :)",
 	"image": "res://assets/cards/images/forky.png"
   },
   {
@@ -32,7 +32,7 @@
 	"attack": 13,
 	"defense": 11,
 	"rarity": "legendary",
-	"description": "Makes strange noises when nobody is watching.",
+	"description": "Plinky is an undiscovered species. No one nows, what he is. Or she or it.",
 	"image": "res://assets/cards/images/plinky.png"
   },
   {
@@ -41,7 +41,7 @@
 	"attack": 16,
 	"defense": 8,
 	"rarity": "legendary",
-	"description": "Silent. Cold. Probably plotting something.",
+	"description": "This is not a snake! it is indeed a human.",
 	"image": "res://assets/cards/images/snaker.png"
   },
   {
@@ -50,7 +50,7 @@
 	"attack": 2,
 	"defense": 3,
 	"rarity": "common",
-	"description": "Jumps first. Thinks later.",
+	"description": "Froggy größter Ehrenmann!",
 	"image": "res://assets/cards/images/froggy.png"
   },
   {
@@ -59,7 +59,7 @@
 	"attack": 3,
 	"defense": 5,
 	"rarity": "uncommon",
-	"description": "Spits at danger with remarkable accuracy.",
+	"description": "Everyone knows what an alpaka is. He hates  children! Just like i do.",
 	"image": "res://assets/cards/images/alpaka.png"
   },
   {
@@ -68,7 +68,7 @@
 	"attack": 4,
 	"defense": 2,
 	"rarity": "common",
-	"description": "Nobody likes him. He likes that.",
+	"description": "Jerk was a cat a long time ago! He has no penis",
 	"image": "res://assets/cards/images/jerk.png"
   },
   {
@@ -77,7 +77,7 @@
 	"attack": 3,
 	"defense": 9,
 	"rarity": "uncommon",
-	"description": "Crawling in the woods for worms. He likes them.",
+	"description": "Crawling in the woods for humans. He likes them.",
 	"image": "res://assets/cards/images/wanderer.png"
   },
   {
@@ -86,7 +86,7 @@
 	"attack": 5,
 	"defense": 7,
 	"rarity": "rare",
-	"description": "Can fix anything except himself.",
+	"description": "*bzz bzz* Your car is repaired!",
 	"image": "res://assets/cards/images/mechanic.png"
   },
   {
@@ -95,7 +95,7 @@
 	"attack": 2,
 	"defense": 6,
 	"rarity": "uncommon",
-	"description": "Small enough to ignore. Big mistake.",
+	"description": "Ants crawl in your holes. This Ant is known to be chill tho.",
 	"image": "res://assets/cards/images/ant.png"
   },
   {
@@ -104,7 +104,7 @@
 	"attack": 6,
 	"defense": 6,
 	"rarity": "rare",
-	"description": "Patiently waiting for a bite that never comes.",
+	"description": "You do never now what´s the next thing on his stick..",
 	"image": "res://assets/cards/images/fisher.png"
   },
   {
@@ -113,7 +113,7 @@
 	"attack": 4,
 	"defense": 8,
 	"rarity": "rare",
-	"description": "Works until the end. Then keeps going.",
+	"description": "Slave him or get slaved.",
 	"image": "res://assets/cards/images/slave.png"
   },
   {
@@ -122,7 +122,7 @@
 	"attack": 7,
 	"defense": 5,
 	"rarity": "rare",
-	"description": "A smile, a card, and a terrible bargain.",
+	"description": "Stay away from the OPP´s..",
 	"image": "res://assets/cards/images/dealer.png"
   },
   {
@@ -131,7 +131,7 @@
 	"attack": 24,
 	"defense": 18,
 	"rarity": "exotic",
-	"description": "Every trade leaves someone poorer.",
+	"description": "This HÄNDLER accepts cash only..",
 	"image": "res://assets/cards/images/händler.png"
   },
   {
@@ -149,7 +149,7 @@
 	"attack": 15,
 	"defense": 18,
 	"rarity": "mythic",
-	"description": "He walked out of the fog and never stopped.",
+	"description": "There is only one walker in the world. But there are about 1.000.000.000 worlds",
 	"image": "res://assets/cards/images/walker.png"
   },
   {
@@ -167,7 +167,7 @@
 	"attack": 14,
 	"defense": 24,
 	"rarity": "mythic",
-	"description": "Nobody survives the fall. Yet it keeps returning.",
+	"description": "Once in a million.STAY RARE STAY DEAD.",
 	"image": "res://assets/cards/images/falling.png"
   },
   {
@@ -194,7 +194,189 @@
 	"attack": 35,
 	"defense": 15,
 	"rarity": "exotic",
-	"description": "A being so rare that even reality rejects it.",
+	"description": "Ultra rare Cockball-Powder-PREMIUM-Haze! sincery, JD <3",
 	"image": "res://assets/cards/images/haze.png"
-  }
+  },
+{
+"id": "mailman",
+"name": "Mailman",
+"attack": 8,
+"defense": 14,
+"rarity": "rare",
+"description": "Nobody knows where he gets his letters from. Nobody wants to find out.",
+"image": "res://assets/cards/images/mailman.png"
+},
+{
+"id": "toaster",
+"name": "Toaster",
+"attack": 12,
+"defense": 6,
+"rarity": "rare",
+"description": "He was designed for bread. He chose violence instead.",
+"image": "res://assets/cards/images/toaster.png"
+},
+{
+"id": "voidcat",
+"name": "Void Cat",
+"attack": 18,
+"defense": 16,
+"rarity": "legendary",
+"description": "It stares into the void. The void usually looks away.",
+"image": "res://assets/cards/images/voidcat.png"
+},
+{
+"id": "taxman",
+"name": "Taxman",
+"attack": 25,
+"defense": 22,
+"rarity": "mythic",
+"description": "You can run. You can hide. You still owe him money.",
+"image": "res://assets/cards/images/taxman.png"
+},
+{
+"id": "busdriver",
+"name": "Bus Driver",
+"attack": 15,
+"defense": 28,
+"rarity": "mythic",
+"description": "He knows exactly where every road ends.",
+"image": "res://assets/cards/images/busdriver.png"
+},
+{
+"id": "lamp",
+"name": "Lamp",
+"attack": 4,
+"defense": 30,
+"rarity": "legendary",
+"description": "It has witnessed things. Terrible things.",
+"image": "res://assets/cards/images/lamp.png"
+},
+{
+"id": "microwave",
+"name": "Microwave",
+"attack": 20,
+"defense": 12,
+"rarity": "legendary",
+"description": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM.",
+"image": "res://assets/cards/images/microwave.png"
+},
+{
+"id": "observer",
+"name": "Observer",
+"attack": 28,
+"defense": 20,
+"rarity": "exotic",
+"description": "If you can see him, he has already seen you.",
+"image": "res://assets/cards/images/observer.png"
+},
+{
+"id": "missing_texture",
+"name": "Missing Texture",
+"attack": 35,
+"defense": 35,
+"rarity": "exotic",
+"description": "ERROR: Creature not found.",
+"image": "res://assets/cards/images/missing_texture.png"
+},
+{
+"id": "developer",
+"name": "Developer",
+"attack": 50,
+"defense": 5,
+"rarity": "exotic",
+"description": "Works perfectly on his machine.",
+"image": "res://assets/cards/images/developer.png"
+},
+{
+"id": "bus_driver",
+"name": "Bus Driver",
+"attack": 18,
+"defense": 24,
+"rarity": "mythic",
+"description": "He always arrives exactly when he is supposed to. Never earlier. Never later.",
+"image": "res://assets/cards/images/bus_driver.png"
+},
+{
+"id": "deer_watcher",
+"name": "Deer Watcher",
+"attack": 14,
+"defense": 22,
+"rarity": "legendary",
+"description": "The deer is watching. The question is why.",
+"image": "res://assets/cards/images/deer_watcher.png"
+},
+{
+"id": "red_light_figure",
+"name": "Red Light Figure",
+"attack": 32,
+"defense": 18,
+"rarity": "exotic",
+"description": "When the lights appear, it is already too late.",
+"image": "res://assets/cards/images/red_light_figure.png"
+},
+{
+"id": "roulette_man",
+"name": "Roulette Man",
+"attack": 22,
+"defense": 20,
+"rarity": "mythic",
+"description": "Everything is a gamble. Especially your survival.",
+"image": "res://assets/cards/images/roulette_man.png"
+},
+{
+"id": "wandering_soul",
+"name": "The Wandering Soul",
+"attack": 8,
+"defense": 12,
+"rarity": "rare",
+"description": "Lost between destinations. Forgotten by everyone.",
+"image": "res://assets/cards/images/wandering_soul.png"
+},
+{
+"id": "hospital_patient",
+"name": "Hospital Patient",
+"attack": 10,
+"defense": 28,
+"rarity": "legendary",
+"description": "Nobody remembers admitting him.",
+"image": "res://assets/cards/images/hospital_patient.png"
+},
+{
+"id": "bench_sleeper",
+"name": "Bench Sleeper",
+"attack": 2,
+"defense": 5,
+"rarity": "common",
+"description": "Just five more minutes...",
+"image": "res://assets/cards/images/bench_sleeper.png"
+},
+{
+"id": "adrenaline_junkie",
+"name": "Adrenaline Junkie",
+"attack": 16,
+"defense": 9,
+"rarity": "epic",
+"description": "One more shot. What could possibly go wrong?",
+"image": "res://assets/cards/images/adrenaline_junkie.png"
+},
+{
+"id": "cctv_watcher",
+"name": "CCTV Watcher",
+"attack": 20,
+"defense": 24,
+"rarity": "mythic",
+"description": "Every camera is connected. Every camera is watching.",
+"image": "res://assets/cards/images/cctv_watcher.png"
+},
+{
+"id": "last_passenger",
+"name": "The Last Passenger",
+"attack": 40,
+"defense": 30,
+"rarity": "exotic",
+"description": "The bus was empty. It should have been empty.",
+"image": "res://assets/cards/images/last_passenger.png"
+}
+
+
 ]

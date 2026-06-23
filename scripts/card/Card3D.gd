@@ -1,13 +1,6 @@
 extends Node3D
 class_name Card3D
 
-# --- Kleine typisierte Helferklasse fuer die Rarity-Presets ---------------
-#
-# Bewusst KEINE Dictionary[String, float] verwendet, da verschachtelte
-# Dictionary-Literale in GDScript zu Variant-Werten fuehren, sobald sie
-# wieder ausgelesen werden (Dictionary.get() liefert immer Variant).
-# Eine kleine RefCounted-Klasse mit typisierten Feldern vermeidet das
-# komplett und gibt zur Editierzeit Typ-Sicherheit.
 class RarityPreset:
 	var intensity: float
 	var scroll_speed: float
@@ -16,6 +9,7 @@ class RarityPreset:
 	var pulse_strength: float
 	var pulse_speed: float
 	var base_glow: float
+	var emission_boost: float
 
 	func _init(
 		p_intensity: float,
@@ -24,7 +18,8 @@ class RarityPreset:
 		p_jaggedness: float,
 		p_pulse_strength: float,
 		p_pulse_speed: float,
-		p_base_glow: float
+		p_base_glow: float,
+		p_emission_boost: float
 	) -> void:
 		intensity = p_intensity
 		scroll_speed = p_scroll_speed
@@ -33,12 +28,13 @@ class RarityPreset:
 		pulse_strength = p_pulse_strength
 		pulse_speed = p_pulse_speed
 		base_glow = p_base_glow
+		emission_boost = p_emission_boost
 
 
 @onready var card_model: Node3D = $card
 @onready var card_outline: Node3D = $cardOutline
 @onready var card_image: MeshInstance3D = $CardImage
-@onready var rarity_glow_plane: MeshInstance3D = $RarityGlowPlane
+@onready var rarity_mesh: MeshInstance3D = $card/rarity
 @onready var name_label: Label3D = $NameLabel
 @onready var attack_label: Label3D = $AttackLabel
 @onready var defense_label: Label3D = $DefenseLabel
@@ -47,21 +43,8 @@ class RarityPreset:
 @onready var area: Area3D = $Area3D
 
 var card_data: Dictionary = {}
-
-# Wenn true, ist diese Karteninstanz nur eine rein optische
-# Stapel-Dekoration (z.B. im sichtbaren Nachzieh-Stapel) ohne echte
-# Spieldaten. setup() wird dafuer nie aufgerufen, und teure/unnoetige
-# Laufzeit-Effekte (Shine-Sweep, Klick-Area) werden deaktiviert.
-# Muss VOR dem Hinzufuegen zum SceneTree (also vor _ready()) gesetzt
-# werden, z.B. direkt nach instantiate().
 var is_stack_decoration: bool = false
 
-# --- Kampf/HP-System -----------------------------------------------------
-#
-# defense aus card_data ist die MAXIMALE Lebenspunkte-Anzahl einer Karte.
-# current_hp sinkt mit jedem Duell, in dem die Karte angegriffen wird,
-# und bleibt dabei laufzeit-spezifisch fuer GENAU DIESE Karteninstanz
-# (zwei Karten mit derselben card_id auf dem Tisch haben unabhaengige
 # HP-Werte).
 var max_hp: int = 0
 var current_hp: int = 0
@@ -81,7 +64,6 @@ var _select_base_position: Vector3 = Vector3.ZERO
 # common bleibt bewusst praktisch unbewegt/ruhig, exotic ist maximal
 # chaotisch und hell.
 static var _rarity_presets: Dictionary[String, RarityPreset] = {}
-
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 var _rarity_glow_material: ShaderMaterial = null
@@ -89,25 +71,17 @@ var _rarity_glow_material: ShaderMaterial = null
 
 static func _static_init() -> void:
 	_rarity_presets = {
-		"common": RarityPreset.new(0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.18),
-		"uncommon": RarityPreset.new(0.5, 0.5, 3.0, 0.15, 0.15, 1.2, 0.22),
-		"rare": RarityPreset.new(0.9, 0.9, 4.0, 0.3, 0.2, 1.6, 0.28),
-		"epic": RarityPreset.new(1.3, 1.3, 5.0, 0.45, 0.3, 2.0, 0.32),
-		"legendary": RarityPreset.new(1.7, 1.7, 6.0, 0.55, 0.35, 2.4, 0.38),
-		"mythic": RarityPreset.new(2.1, 2.1, 7.0, 0.7, 0.4, 2.8, 0.42),
-		"exotic": RarityPreset.new(2.6, 2.8, 8.0, 0.9, 0.5, 3.4, 0.5),
+		"common":    RarityPreset.new(0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.18, 1.5),
+"uncommon":  RarityPreset.new(0.5, 0.5, 3.0, 0.15, 0.15, 1.2, 0.22, 3.0),
+"rare":      RarityPreset.new(0.9, 0.9, 4.0, 0.3, 0.2, 1.6, 0.28, 5.0),
+"epic":      RarityPreset.new(1.3, 1.3, 5.0, 0.45, 0.3, 2.0, 0.32, 8.0),
+"legendary": RarityPreset.new(1.7, 1.7, 6.0, 0.55, 0.35, 2.4, 0.38, 12.0),
+"mythic":    RarityPreset.new(2.1, 2.1, 7.0, 0.7, 0.4, 2.8, 0.42, 18.0),
+"exotic":    RarityPreset.new(2.6, 2.8, 8.0, 0.9, 0.5, 3.4, 0.5, 25.0),
 	}
 
 
 func _ready() -> void:
-	# FIX: _rng.randomize() allein basiert auf der Systemzeit. Wenn viele
-	# Karten im selben Frame instanziiert werden (z.B. 40 Karten beim
-	# Pack-Opening oder 10 Stapel-Karten beim Matchstart), kann die
-	# Zeitaufloesung nicht granular genug sein, um pro Karte einen
-	# unterschiedlichen Seed zu erzeugen — alle Karten shinen dann exakt
-	# synchron. get_instance_id() ist garantiert pro Node-Instanz
-	# unterschiedlich und wird zusaetzlich eingemischt, um das zu
-	# verhindern.
 	_rng.seed = hash(Time.get_ticks_usec() ^ int(get_instance_id()))
 
 	_ensure_materials_resolved()
@@ -119,24 +93,17 @@ func _ready() -> void:
 		if area != null:
 			area.monitoring = false
 			area.monitorable = false
-		rarity_glow_plane.visible = false
+		rarity_mesh.visible = false
 		return
 
 
-
-# FIX: setup() kann je nach Aufrufreihenfolge des Aufrufers (z.B. direkt
-# nach instantiate()+add_child()) VOR _ready() laufen. Da die
-# @onready-Referenzen rarity_glow_plane/shine_overlay erst zum
-# _ready()-Zeitpunkt sicher gueltig sind, wurde _rarity_glow_material in
-# diesem Fall nie gesetzt — _apply_rarity_style() brach dann stillschweigend
-# ab und die Plane behielt ihre Default-Werte aus der .tscn (das graue
-# "common"-Aussehen, unabhaengig von der tatsaechlichen Rarity).
-# _ensure_materials_resolved() ist idempotent und wird jetzt an JEDEM
-# Einstiegspunkt aufgerufen, der die Materialien braucht, unabhaengig
-# davon ob _ready() schon gelaufen ist.
 func _ensure_materials_resolved() -> void:
-	if _rarity_glow_material == null and rarity_glow_plane != null:
-		_rarity_glow_material = rarity_glow_plane.get_surface_override_material(0) as ShaderMaterial
+	if _rarity_glow_material == null and rarity_mesh != null:
+		var shared_rarity_mat: ShaderMaterial = rarity_mesh.get_surface_override_material(0) as ShaderMaterial
+		
+		if shared_rarity_mat != null:
+			_rarity_glow_material = shared_rarity_mat.duplicate(true) as ShaderMaterial
+			rarity_mesh.set_surface_override_material(0, _rarity_glow_material)
 
 
 func setup(data: Dictionary) -> void:
@@ -156,7 +123,7 @@ func setup(data: Dictionary) -> void:
 	name_label.text = card_name
 	attack_label.text = str(attack)
 	_update_hp_label()
-	description_label.text = _shorten_description(description)
+	description_label.play(_wrap_text(description, 45))
 	rarity_label.text = rarity.to_upper()
 
 	_ensure_materials_resolved()
@@ -228,8 +195,7 @@ func _apply_rarity_style(rarity: String) -> void:
 	_rarity_glow_material.set_shader_parameter("pulse_strength", preset.pulse_strength)
 	_rarity_glow_material.set_shader_parameter("pulse_speed", preset.pulse_speed)
 	_rarity_glow_material.set_shader_parameter("base_glow", preset.base_glow)
-	_rarity_glow_material.set_shader_parameter("emission_boost", 6.0)
-
+	_rarity_glow_material.set_shader_parameter("emission_boost", preset.emission_boost)
 
 # Wendet rekursiv ein einfaches, statisches StandardMaterial3D auf alle
 # MeshInstance3D-Kinder von root an. Bewusst KEIN Shader hier, da
@@ -315,13 +281,15 @@ func _set_glow_override_color(color: Color) -> void:
 func _restore_glow_rarity_color() -> void:
 	var rarity: String = str(card_data.get("rarity", "common")).to_lower()
 	var color: Color = _get_rarity_color(rarity)
+	var preset: RarityPreset = _rarity_presets.get(rarity, _rarity_presets["common"]) as RarityPreset
 
 	_apply_static_outline_color(card_outline, color)
 
 	if _rarity_glow_material == null:
 		return
+
 	_rarity_glow_material.set_shader_parameter("rarity_color", color)
-	_rarity_glow_material.set_shader_parameter("emission_boost", 6.0)
+	_rarity_glow_material.set_shader_parameter("emission_boost", preset.emission_boost)
 
 
 # --- Attack-Animation -----------------------------------------------------
@@ -374,3 +342,21 @@ func play_attack_animation(target_global_pos: Vector3) -> void:
 	return_tween.tween_property(self, "scale", start_scale, attack_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	await return_tween.finished
+
+func _wrap_text(text: String, max_chars_per_line: int = 45) -> String:
+	var words := text.split(" ")
+	var result := ""
+	var line := ""
+
+	for word in words:
+		if line.length() + word.length() + 1 > max_chars_per_line:
+			result += line + "\n"
+			line = word
+		else:
+			if line.is_empty():
+				line = word
+			else:
+				line += " " + word
+
+	result += line
+	return result

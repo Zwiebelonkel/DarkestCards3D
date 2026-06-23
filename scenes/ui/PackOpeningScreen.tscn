@@ -1,7 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://sbiyjx808dkn"]
+[gd_scene load_steps=12 format=3 uid="uid://sbiyjx808dkn"]
 
 [ext_resource type="Script" uid="uid://ci1i1hkrnkts3" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_upekx"]
+[ext_resource type="PackedScene" uid="uid://cegwcnpr0ppe1" path="res://assets/cards/pack/pack.glb" id="4_rrr6c"]
 [ext_resource type="Script" uid="uid://oyqpnugunh4o" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7vydd"]
@@ -28,26 +29,6 @@ roughness = 0.9
 [sub_resource type="PlaneMesh" id="Plane_floor"]
 size = Vector2(8, 5)
 
-[sub_resource type="StandardMaterial3D" id="Mat_pack"]
-albedo_color = Color(0.12, 0.02, 0.025, 1)
-metallic = 0.15
-roughness = 0.55
-
-[sub_resource type="BoxMesh" id="Box_pack"]
-size = Vector3(1.2, 1.6, 0.22)
-
-[sub_resource type="StandardMaterial3D" id="Mat_top"]
-albedo_color = Color(0.55, 0.08, 0.08, 1)
-roughness = 0.4
-emission_enabled = true
-emission = Color(0.18, 0.015, 0.015, 1)
-
-[sub_resource type="BoxMesh" id="Box_top"]
-size = Vector3(1.28, 0.22, 0.28)
-
-[sub_resource type="BoxShape3D" id="Shape_top"]
-size = Vector3(1.35, 0.28, 0.35)
-
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_upekx"]
 sky_top_color = Color(1, 0.186781, 0.54403, 1)
 sky_horizon_color = Color(0.604486, 0.614403, 0.630061, 1)
@@ -64,10 +45,15 @@ glow_strength = 0.76
 glow_bloom = 0.12
 volumetric_fog_density = 0.009
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_rrr6c"]
+size = Vector3(2.06586, 0.235229, 4.01843)
+
 [node name="PackOpeningScreen" type="Node3D"]
 script = ExtResource("1_script")
-card_count = 50
-stack_card_scale = 1.545
+card_count = 100
+stack_face_down_rotation = Vector3(0, 180, 0)
+stack_card_scale = 1.745
+shoot_height_offset = 2.395
 revealed_stack_position = Vector3(0.685, 1.12, 2.225)
 revealed_stack_offset = Vector3(0.005, 0.005, 0.03)
 revealed_scale = 0.755
@@ -91,39 +77,15 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-
 [node name="KeyLight" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 3, 2)
 light_energy = 2.4
-
-[node name="FillLight" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0376544, 1.43469, 1.47553)
-light_energy = 1.2
-omni_range = 6.0
 
 [node name="Floor" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, -0.55, -0.9)
 visible = false
 material_override = SubResource("Mat_floor")
 mesh = SubResource("Plane_floor")
-
-[node name="Pack" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
-
-[node name="PackMesh" type="MeshInstance3D" parent="Pack"]
-material_override = SubResource("Mat_pack")
-mesh = SubResource("Box_pack")
-
-[node name="PackTop" type="MeshInstance3D" parent="Pack"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-material_override = SubResource("Mat_top")
-mesh = SubResource("Box_top")
-
-[node name="PackTopArea" type="Area3D" parent="Pack/PackTop"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pack/PackTop/PackTopArea"]
-shape = SubResource("Shape_top")
 
 [node name="Cards" type="Node3D" parent="."]
 
@@ -147,3 +109,14 @@ offset_top = 16.0
 offset_right = 126.0
 offset_bottom = 52.0
 text = "Menü"
+
+[node name="pack" parent="." instance=ExtResource("4_rrr6c")]
+transform = Transform3D(0.395, 0, 0, 0, 0.395, 0, 0, 0, 0.395, -0.0021956, 0.160275, 0.00417519)
+
+[node name="PackTopArea" type="Area3D" parent="pack/top" index="0"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="pack/top/PackTopArea"]
+transform = Transform3D(1, 0, 0, 0, 0.999998, 0, 0, 0, 1, 0.0138244, 0.055725, 0.0370484)
+shape = SubResource("BoxShape3D_rrr6c")
+
+[editable path="pack"]

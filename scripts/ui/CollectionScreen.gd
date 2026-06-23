@@ -26,20 +26,51 @@ const COLUMNS := 5
 @onready var cards_root: Node3D = $Cards
 @onready var empty_label: Label3D = $EmptyLabel
 
+@export_group("Detail Mouse Tilt")
+@export var detail_mouse_tilt_strength := 50.0
+@export var detail_mouse_tilt_smooth := 10.0
+
+var _detail_target_rotation := Vector3.ZERO
+
 var _base_positions: Dictionary = {}
 var _base_rotations: Dictionary = {}
 var _base_scales: Dictionary = {}
 
-# Karte, die gerade in der Detailansicht vor der Kamera schwebt (null,
-# wenn keine offen ist). Solange eine Detailkarte offen ist, wird Hover
-# fuer ALLE Karten deaktiviert, damit sich nichts mit der Detailansicht
-# ueberschneidet.
 var _detail_card: Card3D = null
 var _detail_tween_running := false
 
 
 func _ready() -> void:
 	_build_collection()
+	
+func _process(delta: float) -> void:
+	if _detail_card == null:
+		return
+
+	if _detail_tween_running:
+		return
+
+	if not is_instance_valid(_detail_card):
+		return
+
+	var mouse_pos := get_viewport().get_mouse_position()
+	var viewport_size := get_viewport().get_visible_rect().size
+
+	var centered := Vector2(
+		(mouse_pos.x / viewport_size.x) * 2.0 - 1.0,
+		(mouse_pos.y / viewport_size.y) * 2.0 - 1.0
+	)
+
+	var target_rot := detail_rotation + Vector3(
+		centered.y * detail_mouse_tilt_strength,
+		centered.x * detail_mouse_tilt_strength,
+		0.0
+	)
+
+	_detail_card.rotation_degrees = _detail_card.rotation_degrees.lerp(
+		target_rot,
+		delta * detail_mouse_tilt_smooth
+	)
 
 
 func _build_collection() -> void:
@@ -89,6 +120,8 @@ func _grid_position(index: int) -> Vector3:
 
 func _add_amount_label(card: Card3D, amount: int) -> void:
 	var label := Label3D.new()
+	var font := load("res://fonts/VCR_OSD_MONO_1.001.ttf") as FontFile
+	label.font = font
 	label.name = "AmountLabel"
 	label.text = "x" + str(amount)
 	label.position = Vector3(0.28, -0.48, 0.1)
@@ -97,16 +130,6 @@ func _add_amount_label(card: Card3D, amount: int) -> void:
 	label.outline_size = 5
 	card.add_child(label)
 
-
-# Gestaffelte Eingangs-Animation: jede Karte startet klein und etwas
-# tiefer als ihre Grid-Position, dann hebt sie sich hoch und skaliert
-# auf ihre normale Groesse, mit leichtem Versatz pro Index fuer einen
-# "nacheinander auftauchenden" Effekt.
-#
-# Die Klick-Area (input_event) wird erst NACH Abschluss der Spawn-
-# Animation verbunden (tween.finished), damit kein Klick mitten in der
-# Bewegung etwas anstossen kann, was noch nicht an seiner finalen
-# Position ist — gleiches Prinzip wie beim PackOpeningScreen.
 func _spawn_card(card: Card3D, target_pos: Vector3, target_rot: Vector3, index: int) -> void:
 	var base_scale: Vector3 = _base_scales[card]
 
@@ -201,6 +224,7 @@ func _open_detail_card(card: Card3D) -> void:
 		return
 
 	_detail_card = card
+	_detail_target_rotation = detail_rotation
 	_detail_tween_running = true
 
 	var base_scale: Vector3 = _base_scales[card]
@@ -238,10 +262,6 @@ func _close_detail_card() -> void:
 	_detail_tween_running = false
 
 
-# Klick ins Leere (auf den Boden/Hintergrund) schliesst eine offene
-# Detailkarte. Greift nur, wenn der Klick NICHT von einer Karten-Area
-# bereits konsumiert wurde (Area3D-Input-Events haben Vorrang vor
-# unhandled_input, daher landet ein Klick auf eine Karte hier nie).
 func _unhandled_input(event: InputEvent) -> void:
 	if _detail_card == null:
 		return
