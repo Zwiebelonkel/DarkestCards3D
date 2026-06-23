@@ -172,7 +172,7 @@ func _spawn_stack_decoration_card(target_global_pos: Vector3) -> Card3D:
 	# Ausrichtung (-90, 0, 0) gedreht, damit die Vorderseite (Bild +
 	# Labels) nach unten zum Tisch zeigt und die Rueckseite nach oben
 	# zur Kamera.
-	card.rotation_degrees = Vector3(90, 0, 0)
+	card.rotation_degrees = Vector3(90, 180, 0)
 
 	return card
 
@@ -216,7 +216,7 @@ func _draw_to_slot(side: String, slot_index: int, animated: bool) -> void:
 	card.setup(data)
 
 	var target_pos: Vector3 = slot_marker.global_position
-	var target_rot: Vector3 = Vector3(-90, 0, 0) if side == "player" else Vector3(-90, 0, 180)
+	var target_rot: Vector3 = Vector3(-90, 0, 0) if side == "player" else Vector3(-90, 180, 180)
 
 	if animated:
 		card.global_position = deck_marker.global_position

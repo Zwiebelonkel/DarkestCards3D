@@ -5,6 +5,7 @@ uniform vec4 rarity_color : source_color = vec4(0.2, 0.6, 1.0, 1.0);
 
 uniform float thickness : hint_range(0.001, 0.3) = 0.055;
 uniform float softness : hint_range(0.001, 0.3) = 0.045;
+uniform float corner_radius : hint_range(0.0, 0.5) = 0.12;
 
 uniform float glow_strength : hint_range(0.0, 10.0) = 3.0;
 uniform float outer_glow : hint_range(0.0, 1.0) = 0.18;
@@ -29,6 +30,11 @@ float noise_1d(float x) {
 	return mix(a, b, t);
 }
 
+float rounded_box_sdf(vec2 p, vec2 b, float r) {
+	vec2 q = abs(p) - b + vec2(r);
+	return length(max(q, 0.0)) - r + min(max(q.x, q.y), 0.0);
+}
+
 void vertex() {
 	v_uv = UV;
 }
@@ -36,26 +42,27 @@ void vertex() {
 void fragment() {
 	vec2 uv = v_uv;
 
-	float left = uv.x;
-	float right = 1.0 - uv.x;
-	float bottom = uv.y;
-	float top = 1.0 - uv.y;
+	vec2 p = uv - vec2(0.5);
+	vec2 half_size = vec2(0.5);
 
-	float dist_to_edge = min(min(left, right), min(bottom, top));
+	float sdf = rounded_box_sdf(p, half_size, corner_radius);
+
+	float dist_to_edge = abs(sdf);
+
+	float inside = step(sdf, 0.0);
 
 	float outline = 1.0 - smoothstep(thickness, thickness + softness, dist_to_edge);
+	outline *= inside;
+
 	float glow = 1.0 - smoothstep(thickness, thickness + outer_glow, dist_to_edge);
+	glow *= inside;
 
 	float edge_coord = 0.0;
 
-	if (dist_to_edge == left) {
-		edge_coord = uv.y;
-	} else if (dist_to_edge == right) {
-		edge_coord = uv.y + 1.0;
-	} else if (dist_to_edge == bottom) {
-		edge_coord = uv.x + 2.0;
+	if (abs(p.x) > abs(p.y)) {
+		edge_coord = uv.y + step(0.0, p.x);
 	} else {
-		edge_coord = uv.x + 3.0;
+		edge_coord = uv.x + 2.0 + step(0.0, p.y);
 	}
 
 	float moving = edge_coord * energy_density - TIME * speed;

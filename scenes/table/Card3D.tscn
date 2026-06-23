@@ -73,11 +73,12 @@ shader = ExtResource("5_biaf5")
 shader_parameter/rarity_color = Color(0.2, 0.6, 1, 1)
 shader_parameter/thickness = 0.03
 shader_parameter/softness = 0.001
+shader_parameter/corner_radius = 0.059
 shader_parameter/glow_strength = 0.478
 shader_parameter/outer_glow = 0.128
 shader_parameter/speed = 2.07
 shader_parameter/energy_density = 14.017
-shader_parameter/jaggedness = 0.311
+shader_parameter/jaggedness = 1.0
 shader_parameter/pulse_strength = 0.598
 
 [sub_resource type="StandardMaterial3D" id="Mat_image"]
