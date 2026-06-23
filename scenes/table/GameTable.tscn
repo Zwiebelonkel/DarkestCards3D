@@ -1,9 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=10 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="2_3qfbk"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="3_efmqq"]
-[ext_resource type="Script" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8ay2t"]
 shader = ExtResource("3_efmqq")
@@ -27,7 +26,7 @@ albedo_color = Color(0.12, 0.08, 0.05, 1)
 roughness = 0.9
 
 [sub_resource type="BoxMesh" id="BoxMesh_table"]
-size = Vector3(9, 0.3, 6)
+size = Vector3(8, 0.3, 5)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_efmqq"]
 sky_top_color = Color(1, 0.186781, 0.54403, 1)
@@ -48,13 +47,12 @@ volumetric_fog_density = 0.009
 [node name="GameTable" type="Node3D"]
 script = ExtResource("1_onr2p")
 card_scene = ExtResource("2_3qfbk")
-player_deck_stack_size = 5
-enemy_deck_stack_size = 5
+enemy_turn_delay = null
+draw_animation_duration = null
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.0502618, 0.998736, 0, -0.998736, 0.0502618, 0, 2.01007, 0.207414)
+transform = Transform3D(1, 0, 0, 0, 0.433722, 0.901047, 0, -0.901047, 0.433722, 0, 2.93222, 1.6582)
 current = true
-fov = 104.9
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
 
@@ -71,83 +69,61 @@ mouse_filter = 2
 material_override = SubResource("TableMaterial")
 mesh = SubResource("BoxMesh_table")
 
-[node name="PlayerHand" type="Node3D" parent="."]
+[node name="PlayerSlots" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 1.2)
 
-[node name="PlayerSlot0" type="Marker3D" parent="PlayerHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.25, 1.45)
+[node name="Slot0" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 
-[node name="PlayerSlot1" type="Marker3D" parent="PlayerHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.25, 1.45)
+[node name="Slot1" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
 
-[node name="PlayerSlot2" type="Marker3D" parent="PlayerHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 1.45)
+[node name="Slot2" type="Marker3D" parent="PlayerSlots"]
 
-[node name="PlayerSlot3" type="Marker3D" parent="PlayerHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.25, 1.45)
+[node name="Slot3" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 
-[node name="PlayerSlot4" type="Marker3D" parent="PlayerHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.25, 1.45)
+[node name="Slot4" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 
-[node name="EnemyHand" type="Node3D" parent="."]
+[node name="PlayerDeck" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0.2, 1.2)
 
-[node name="EnemySlot0" type="Marker3D" parent="EnemyHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.25, -1.45)
+[node name="EnemySlots" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -1.2)
 
-[node name="EnemySlot1" type="Marker3D" parent="EnemyHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.25, -1.45)
+[node name="Slot0" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 
-[node name="EnemySlot2" type="Marker3D" parent="EnemyHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -1.45)
+[node name="Slot1" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
 
-[node name="EnemySlot3" type="Marker3D" parent="EnemyHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.25, -1.45)
+[node name="Slot2" type="Marker3D" parent="EnemySlots"]
 
-[node name="EnemySlot4" type="Marker3D" parent="EnemyHand"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.25, -1.45)
+[node name="Slot3" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 
-[node name="PlayerDeckPile" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0.25, 1.45)
+[node name="Slot4" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 
-[node name="EnemyDeckPile" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 0.25, -1.45)
+[node name="EnemyDeck" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0.2, -1.2)
 
-[node name="GraveyardPile" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.25, 0.25, 0)
-
-[node name="InfoLabel" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.136822, 0.990596, 0, -0.990596, 0.136822, 0, 0.327103, 0.0185134)
-pixel_size = 0.01
-text = "Player Turn"
-font_size = 42
-outline_size = 8
+[node name="CardSpawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.423899, 0.905709, 0, -0.905709, 0.423899, 0, 5.44697, 2.37122)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 4.27165, 0)
 light_color = Color(1, 1, 0.807843, 1)
-light_energy = 16.0
-shadow_enabled = true
-spot_range = 9.689
-spot_angle = 42.4873
-
-[node name="SpotLight3D2" type="SpotLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -0.679646, 0.73354, 0, -0.73354, -0.679646, 0, 5.44697, -3.87211)
-light_color = Color(1, 1, 0.807843, 1)
-light_energy = 16.0
-shadow_enabled = true
-spot_range = 9.689
-spot_angle = 42.4873
+light_energy = 1.162
+spot_range = 9.72936
+spot_angle = 57.6563
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_8ay2t")
 
-[node name="MenuNavigation" type="CanvasLayer" parent="."]
-layer = 20
-script = ExtResource("99_menu_nav")
-
-[node name="MenuButton" type="Button" parent="MenuNavigation"]
-unique_name_in_owner = true
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 126.0
-offset_bottom = 52.0
-text = "Menü"
+[node name="StatusLabel" type="Label3D" parent="."]
+transform = Transform3D(0.014, 0, 0, 0, 0.014, 0, 0, 0, 0.014, 0, 1.65, 0)
+text = "Du bist am Zug — wähle deine Karte"
+font_size = 34
+outline_size = 8

@@ -125,7 +125,7 @@ func _spawn_cards_inside_pack() -> void:
 	cards.shuffle()
 
 	for i in range(card_count):
-		var data: Dictionary = cards[i % cards.size()]
+		var data: Dictionary = CardDatabase.get_random_card_weighted()
 
 		var card := CARD_SCENE.instantiate() as Card3D
 		cards_root.add_child(card)

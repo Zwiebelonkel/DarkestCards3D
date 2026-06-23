@@ -1,37 +1,29 @@
 shader_type spatial;
-render_mode blend_add, cull_back, depth_draw_never, unshaded;
+render_mode unshaded, depth_draw_never;
 
-// Position des Streifens entlang der Diagonale, 0 = ganz links/unten
-// ausserhalb der Karte, 1 = ganz rechts/oben ausserhalb der Karte.
-// Wird von Card3D.gd per Tween animiert (0 -> 1 alle paar Sekunden).
-uniform float sweep_position : hint_range(-0.5, 1.5) = -0.5;
+group_uniforms Highlight;
+uniform vec4 shine_color : source_color = vec4(1.0);
+uniform float shine_speed : hint_range(0, 25) = 1.0;
+uniform float shine_width : hint_range(0, 2) = 1.0;
+uniform float cycle_interval : hint_range(0, 100) = 1.0;
+uniform float angle_fade : hint_range(0, 1) = 1.0;
 
-// Breite des Lichtstreifens in UV-Einheiten.
-uniform float sweep_width : hint_range(0.01, 1.0) = 0.18;
+group_uniforms HighlightDirection;
+uniform float x_direction : hint_range(-1, 1) = 0.0;
+uniform float y_direction : hint_range(-1, 1) = 0.0;
+uniform float z_direction : hint_range(-1, 1) = 1.0;
 
-// Wie schraeg der Streifen ueber die Karte laeuft (0 = senkrecht,
-// hoehere Werte = staerker diagonal wie bei klassischen Foil-Karten).
-uniform float sweep_skew : hint_range(0.0, 3.0) = 1.1;
-
-// Farbe/Intensitaet des Glanzes.
-uniform vec4 shine_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
-uniform float shine_strength : hint_range(0.0, 5.0) = 1.6;
+float sawtooth(float x) {
+	return 2.0 * ( (x + shine_speed * TIME) / (shine_width + cycle_interval) - floor( 0.5 + (x + shine_speed * TIME) / (shine_width + cycle_interval) ) );
+}
 
 void fragment() {
-	// Diagonale Koordinate: UV.x + UV.y * skew ergibt eine schraege
-	// Linie konstanter "Diagonalposition" ueber die Kartenflaeche.
-	float diag = UV.x + UV.y * sweep_skew;
-	float diag_max = 1.0 + sweep_skew;
-	float d = diag / diag_max;
-
-	float dist = abs(d - sweep_position);
-	float band = smoothstep(sweep_width, 0.0, dist);
-
-	// Weicher, leicht prismatischer Verlauf innerhalb des Streifens,
-	// statt eines stumpfen einfarbigen Balkens.
-	float core = pow(band, 2.0);
-
-	ALBEDO = shine_color.rgb;
-	EMISSION = shine_color.rgb * core * shine_strength;
-	ALPHA = core * shine_color.a;
+	vec3 w_vertex = ( INV_VIEW_MATRIX * vec4(VERTEX, 1.0) ).xyz;
+	
+	float projection = dot( w_vertex, normalize(vec3(x_direction, y_direction, z_direction)) );
+	
+	float frequency = ceil( sawtooth(projection) - sawtooth(projection + shine_width) );
+	
+	ALBEDO = shine_color.xyz;
+	ALPHA = clamp( ( 1.0 - dot(NORMAL, VIEW) * angle_fade) * frequency * shine_color.a, 0.0, 1.0 );	
 }

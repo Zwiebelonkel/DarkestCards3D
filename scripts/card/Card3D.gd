@@ -1,12 +1,44 @@
 extends Node3D
 class_name Card3D
 
-const RARITY_OUTLINE_SHADER := preload("res://assets/shader/rarity_outline.gdshader")
-const CARD_SHINE_SHADER := preload("res://assets/shader/card_shine.gdshader")
+# --- Kleine typisierte Helferklasse fuer die Rarity-Presets ---------------
+#
+# Bewusst KEINE Dictionary[String, float] verwendet, da verschachtelte
+# Dictionary-Literale in GDScript zu Variant-Werten fuehren, sobald sie
+# wieder ausgelesen werden (Dictionary.get() liefert immer Variant).
+# Eine kleine RefCounted-Klasse mit typisierten Feldern vermeidet das
+# komplett und gibt zur Editierzeit Typ-Sicherheit.
+class RarityPreset:
+	var intensity: float
+	var scroll_speed: float
+	var band_density: float
+	var jaggedness: float
+	var pulse_strength: float
+	var pulse_speed: float
+	var base_glow: float
+
+	func _init(
+		p_intensity: float,
+		p_scroll_speed: float,
+		p_band_density: float,
+		p_jaggedness: float,
+		p_pulse_strength: float,
+		p_pulse_speed: float,
+		p_base_glow: float
+	) -> void:
+		intensity = p_intensity
+		scroll_speed = p_scroll_speed
+		band_density = p_band_density
+		jaggedness = p_jaggedness
+		pulse_strength = p_pulse_strength
+		pulse_speed = p_pulse_speed
+		base_glow = p_base_glow
+
 
 @onready var card_model: Node3D = $card
 @onready var card_outline: Node3D = $cardOutline
 @onready var card_image: MeshInstance3D = $CardImage
+@onready var rarity_glow_plane: MeshInstance3D = $RarityGlowPlane
 @onready var name_label: Label3D = $NameLabel
 @onready var attack_label: Label3D = $AttackLabel
 @onready var defense_label: Label3D = $DefenseLabel
@@ -16,125 +48,152 @@ const CARD_SHINE_SHADER := preload("res://assets/shader/card_shine.gdshader")
 
 var card_data: Dictionary = {}
 
-# Wie "heftig" sich der Rarity-Shader pro Stufe verhaelt. Reihenfolge
-# der Felder: intensity, scroll_speed, band_density, jaggedness,
-# pulse_strength, pulse_speed, base_glow.
+# Wenn true, ist diese Karteninstanz nur eine rein optische
+# Stapel-Dekoration (z.B. im sichtbaren Nachzieh-Stapel) ohne echte
+# Spieldaten. setup() wird dafuer nie aufgerufen, und teure/unnoetige
+# Laufzeit-Effekte (Shine-Sweep, Klick-Area) werden deaktiviert.
+# Muss VOR dem Hinzufuegen zum SceneTree (also vor _ready()) gesetzt
+# werden, z.B. direkt nach instantiate().
+var is_stack_decoration: bool = false
+
+# --- Kampf/HP-System -----------------------------------------------------
+#
+# defense aus card_data ist die MAXIMALE Lebenspunkte-Anzahl einer Karte.
+# current_hp sinkt mit jedem Duell, in dem die Karte angegriffen wird,
+# und bleibt dabei laufzeit-spezifisch fuer GENAU DIESE Karteninstanz
+# (zwei Karten mit derselben card_id auf dem Tisch haben unabhaengige
+# HP-Werte).
+var max_hp: int = 0
+var current_hp: int = 0
+var attack_value: int = 0
+
+signal died(card: Card3D)
+
+@export_group("Auswahl-Highlight")
+@export var select_highlight_color: Color = Color(1.0, 0.92, 0.3, 1.0)
+@export var select_lift: float = 0.08
+@export var select_duration: float = 0.15
+
+var _is_selected: bool = false
+var _select_base_position: Vector3 = Vector3.ZERO
+
+# Wie "heftig" sich der Rarity-Shader pro Stufe verhaelt.
 # common bleibt bewusst praktisch unbewegt/ruhig, exotic ist maximal
 # chaotisch und hell.
-const RARITY_SHADER_PRESETS := {
-	"common": {
-		"intensity": 0.0,
-		"scroll_speed": 0.0,
-		"band_density": 2.0,
-		"jaggedness": 0.0,
-		"pulse_strength": 0.0,
-		"pulse_speed": 0.0,
-		"base_glow": 0.18,
-	},
-	"uncommon": {
-		"intensity": 0.5,
-		"scroll_speed": 0.5,
-		"band_density": 3.0,
-		"jaggedness": 0.15,
-		"pulse_strength": 0.15,
-		"pulse_speed": 1.2,
-		"base_glow": 0.22,
-	},
-	"rare": {
-		"intensity": 0.9,
-		"scroll_speed": 0.9,
-		"band_density": 4.0,
-		"jaggedness": 0.3,
-		"pulse_strength": 0.2,
-		"pulse_speed": 1.6,
-		"base_glow": 0.28,
-	},
-	"epic": {
-		"intensity": 1.3,
-		"scroll_speed": 1.3,
-		"band_density": 5.0,
-		"jaggedness": 0.45,
-		"pulse_strength": 0.3,
-		"pulse_speed": 2.0,
-		"base_glow": 0.32,
-	},
-	"legendary": {
-		"intensity": 1.7,
-		"scroll_speed": 1.7,
-		"band_density": 6.0,
-		"jaggedness": 0.55,
-		"pulse_strength": 0.35,
-		"pulse_speed": 2.4,
-		"base_glow": 0.38,
-	},
-	"mythic": {
-		"intensity": 2.1,
-		"scroll_speed": 2.1,
-		"band_density": 7.0,
-		"jaggedness": 0.7,
-		"pulse_strength": 0.4,
-		"pulse_speed": 2.8,
-		"base_glow": 0.42,
-	},
-	"exotic": {
-		"intensity": 2.6,
-		"scroll_speed": 2.8,
-		"band_density": 8.0,
-		"jaggedness": 0.9,
-		"pulse_strength": 0.5,
-		"pulse_speed": 3.4,
-		"base_glow": 0.5,
-	},
-}
+static var _rarity_presets: Dictionary[String, RarityPreset] = {}
 
-@export_group("Shine-Sweep")
-@export var shine_interval_min := 3.0
-@export var shine_interval_max := 4.0
-@export var shine_sweep_duration := 1.1
-@export var shine_z_offset := 0.004
+var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
-var _shine_mesh: MeshInstance3D = null
-var _shine_material: ShaderMaterial = null
-var _shine_timer: Timer = null
-var _rng := RandomNumberGenerator.new()
+var _rarity_glow_material: ShaderMaterial = null
+
+
+static func _static_init() -> void:
+	_rarity_presets = {
+		"common": RarityPreset.new(0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.18),
+		"uncommon": RarityPreset.new(0.5, 0.5, 3.0, 0.15, 0.15, 1.2, 0.22),
+		"rare": RarityPreset.new(0.9, 0.9, 4.0, 0.3, 0.2, 1.6, 0.28),
+		"epic": RarityPreset.new(1.3, 1.3, 5.0, 0.45, 0.3, 2.0, 0.32),
+		"legendary": RarityPreset.new(1.7, 1.7, 6.0, 0.55, 0.35, 2.4, 0.38),
+		"mythic": RarityPreset.new(2.1, 2.1, 7.0, 0.7, 0.4, 2.8, 0.42),
+		"exotic": RarityPreset.new(2.6, 2.8, 8.0, 0.9, 0.5, 3.4, 0.5),
+	}
 
 
 func _ready() -> void:
-	_rng.randomize()
-	_setup_shine_overlay()
-	_start_shine_loop()
+	# FIX: _rng.randomize() allein basiert auf der Systemzeit. Wenn viele
+	# Karten im selben Frame instanziiert werden (z.B. 40 Karten beim
+	# Pack-Opening oder 10 Stapel-Karten beim Matchstart), kann die
+	# Zeitaufloesung nicht granular genug sein, um pro Karte einen
+	# unterschiedlichen Seed zu erzeugen — alle Karten shinen dann exakt
+	# synchron. get_instance_id() ist garantiert pro Node-Instanz
+	# unterschiedlich und wird zusaetzlich eingemischt, um das zu
+	# verhindern.
+	_rng.seed = hash(Time.get_ticks_usec() ^ int(get_instance_id()))
+
+	_ensure_materials_resolved()
+
+	if is_stack_decoration:
+		# Reine Deko-Ruecken: kein Shine-Sweep, kein Rarity-Glow, keine
+		# Klick-Area noetig — und sie soll auch nicht versehentlich
+		# klickbar/hoverbar sein.
+		if area != null:
+			area.monitoring = false
+			area.monitorable = false
+		rarity_glow_plane.visible = false
+		return
+
+
+
+# FIX: setup() kann je nach Aufrufreihenfolge des Aufrufers (z.B. direkt
+# nach instantiate()+add_child()) VOR _ready() laufen. Da die
+# @onready-Referenzen rarity_glow_plane/shine_overlay erst zum
+# _ready()-Zeitpunkt sicher gueltig sind, wurde _rarity_glow_material in
+# diesem Fall nie gesetzt — _apply_rarity_style() brach dann stillschweigend
+# ab und die Plane behielt ihre Default-Werte aus der .tscn (das graue
+# "common"-Aussehen, unabhaengig von der tatsaechlichen Rarity).
+# _ensure_materials_resolved() ist idempotent und wird jetzt an JEDEM
+# Einstiegspunkt aufgerufen, der die Materialien braucht, unabhaengig
+# davon ob _ready() schon gelaufen ist.
+func _ensure_materials_resolved() -> void:
+	if _rarity_glow_material == null and rarity_glow_plane != null:
+		_rarity_glow_material = rarity_glow_plane.get_surface_override_material(0) as ShaderMaterial
 
 
 func setup(data: Dictionary) -> void:
 	card_data = data
 
-	var card_name := str(data.get("name", "Unknown"))
-	var attack := int(data.get("attack", 0))
-	var defense := int(data.get("defense", 0))
-	var rarity := str(data.get("rarity", "common")).to_lower()
-	var description := str(data.get("description", ""))
-	var image_path := str(data.get("image", ""))
+	var card_name: String = str(data.get("name", "Unknown"))
+	var attack: int = int(data.get("attack", 0))
+	var defense: int = int(data.get("defense", 0))
+	var rarity: String = str(data.get("rarity", "common")).to_lower()
+	var description: String = str(data.get("description", ""))
+	var image_path: String = str(data.get("image", ""))
+
+	attack_value = attack
+	max_hp = defense
+	current_hp = defense
 
 	name_label.text = card_name
 	attack_label.text = str(attack)
-	defense_label.text = str(defense)
+	_update_hp_label()
 	description_label.text = _shorten_description(description)
 	rarity_label.text = rarity.to_upper()
 
+	_ensure_materials_resolved()
 	_apply_rarity_style(rarity)
 	_apply_card_image(image_path)
+
+
+func _update_hp_label() -> void:
+	defense_label.text = str(current_hp)
+
+
+# Fuegt dieser Karte Schaden zu und gibt true zurueck, wenn die Karte
+# dadurch stirbt (current_hp <= 0). HP wird nie unter 0 angezeigt.
+func take_damage(amount: int) -> bool:
+	current_hp = int(max(current_hp - amount, 0))
+	_update_hp_label()
+
+	if current_hp <= 0:
+		died.emit(self)
+		return true
+	return false
+
+
+func is_dead() -> bool:
+	return current_hp <= 0
 
 
 func _apply_card_image(image_path: String) -> void:
 	if image_path == "":
 		return
 
-	var texture := load(image_path)
+	var texture: Texture2D = load(image_path) as Texture2D
 	if texture == null:
 		push_warning("Kartenbild nicht gefunden: " + image_path)
 		return
 
-	var mat := StandardMaterial3D.new()
+	var mat: StandardMaterial3D = StandardMaterial3D.new()
 	mat.albedo_texture = texture
 	mat.roughness = 0.8
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -143,38 +202,57 @@ func _apply_card_image(image_path: String) -> void:
 	card_image.material_override = mat
 
 
-# FIX/Upgrade: Statt eines statischen StandardMaterial3D bekommt der
-# Rahmen (card_outline) jetzt einen animierten ShaderMaterial mit
-# wandernden Energie-/Riss-Baendern. Die "Heftigkeit" (Geschwindigkeit,
-# Dichte, Pulsieren, Eckigkeit) skaliert mit der Rarity-Stufe ueber
-# RARITY_SHADER_PRESETS.
+# Faerbt zwei unabhaengige Dinge in der Rarity-Farbe:
+# 1. cardOutline.glb bekommt ein einfaches, STATISCHES StandardMaterial3D
+#    in der Rarity-Farbe (kein Glow/keine Animation) — das ist die
+#    "klassische" eingefaerbte Kartenkante.
+# 2. Die im Editor platzierte RarityGlowPlane bekommt den vollen
+#    animierten Shader-Effekt (wandernde Risse/Energie, Pulsieren).
+# Beide laufen unabhaengig voneinander.
 func _apply_rarity_style(rarity: String) -> void:
-	var color := _get_rarity_color(rarity)
-	var preset: Dictionary = RARITY_SHADER_PRESETS.get(rarity, RARITY_SHADER_PRESETS["common"])
+	var color: Color = _get_rarity_color(rarity)
+	var preset: RarityPreset = _rarity_presets.get(rarity, _rarity_presets["common"]) as RarityPreset
 
 	rarity_label.modulate = color
-	_apply_rarity_shader_to_all_meshes(card_outline, color, preset)
+
+	_apply_static_outline_color(card_outline, color)
+
+	if _rarity_glow_material == null:
+		return
+
+	_rarity_glow_material.set_shader_parameter("rarity_color", color)
+	_rarity_glow_material.set_shader_parameter("intensity", preset.intensity)
+	_rarity_glow_material.set_shader_parameter("scroll_speed", preset.scroll_speed)
+	_rarity_glow_material.set_shader_parameter("band_density", preset.band_density)
+	_rarity_glow_material.set_shader_parameter("jaggedness", preset.jaggedness)
+	_rarity_glow_material.set_shader_parameter("pulse_strength", preset.pulse_strength)
+	_rarity_glow_material.set_shader_parameter("pulse_speed", preset.pulse_speed)
+	_rarity_glow_material.set_shader_parameter("base_glow", preset.base_glow)
+	_rarity_glow_material.set_shader_parameter("emission_boost", 6.0)
 
 
-func _apply_rarity_shader_to_all_meshes(root: Node, color: Color, preset: Dictionary) -> void:
+# Wendet rekursiv ein einfaches, statisches StandardMaterial3D auf alle
+# MeshInstance3D-Kinder von root an. Bewusst KEIN Shader hier, da
+# StandardMaterial3D unabhaengig vom UV-Layout des importierten GLB
+# funktioniert (anders als der Custom-Shader, der empfindlich auf
+# unbekannte Mesh-Strukturen reagieren kann).
+func _apply_static_outline_color(root: Node, color: Color) -> void:
 	if root == null:
 		return
 
 	if root is MeshInstance3D:
-		var mat := ShaderMaterial.new()
-		mat.shader = RARITY_OUTLINE_SHADER
-		mat.set_shader_parameter("rarity_color", color)
-		mat.set_shader_parameter("intensity", preset.get("intensity", 1.0))
-		mat.set_shader_parameter("scroll_speed", preset.get("scroll_speed", 1.0))
-		mat.set_shader_parameter("band_density", preset.get("band_density", 4.0))
-		mat.set_shader_parameter("jaggedness", preset.get("jaggedness", 0.3))
-		mat.set_shader_parameter("pulse_strength", preset.get("pulse_strength", 0.25))
-		mat.set_shader_parameter("pulse_speed", preset.get("pulse_speed", 2.0))
-		mat.set_shader_parameter("base_glow", preset.get("base_glow", 0.35))
-		root.material_override = mat
+		var mesh_instance: MeshInstance3D = root as MeshInstance3D
+		var mat: StandardMaterial3D = StandardMaterial3D.new()
+		mat.albedo_color = color
+		mat.emission_enabled = true
+		mat.emission = color
+		mat.emission_energy_multiplier = 0.45
+		mat.roughness = 0.35
+		mat.metallic = 0.2
+		mesh_instance.material_override = mat
 
-	for child in root.get_children():
-		_apply_rarity_shader_to_all_meshes(child, color, preset)
+	for child: Node in root.get_children():
+		_apply_static_outline_color(child, color)
 
 
 func _get_rarity_color(rarity: String) -> Color:
@@ -203,69 +281,96 @@ func _shorten_description(text: String, max_chars: int = 95) -> String:
 	return text.substr(0, max_chars - 3) + "..."
 
 
-# --- Shine-Sweep-Overlay -------------------------------------------------
+# --- Auswahl-Highlight (fuer GameTable-Kampfauswahl) ---------------------
 #
-# Erzeugt ein zusaetzliches MeshInstance3D direkt vor card_image (gleiche
-# Mesh-Geometrie, minimal nach vorne versetzt um Z-Fighting zu vermeiden),
-# das NUR den additiven Foil-Shine-Shader traegt. Das laeuft komplett
-# unabhaengig vom Rarity-Shader und betrifft ALLE Karten gleich, egal
-# welche Rarity.
-func _setup_shine_overlay() -> void:
-	if card_image == null or card_image.mesh == null:
+# Wird vom GameTable aufgerufen, wenn der Spieler diese Karte als
+# Angreifer/Ziel anklickt. Hebt die Karte leicht an und faerbt die
+# RarityGlowPlane kurzfristig in select_highlight_color um, damit klar
+# erkennbar ist, welche Karte gerade ausgewaehlt ist.
+func set_selected(selected: bool) -> void:
+	if selected == _is_selected:
+		return
+	_is_selected = selected
+
+	if selected:
+		_select_base_position = position
+		var tween: Tween = create_tween().set_parallel(true)
+		tween.tween_property(self, "position", _select_base_position + Vector3(0, select_lift, 0), select_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		_set_glow_override_color(select_highlight_color)
+	else:
+		var tween: Tween = create_tween().set_parallel(true)
+		tween.tween_property(self, "position", _select_base_position, select_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		_restore_glow_rarity_color()
+
+
+func _set_glow_override_color(color: Color) -> void:
+	_apply_static_outline_color(card_outline, color)
+
+	if _rarity_glow_material == null:
+		return
+	_rarity_glow_material.set_shader_parameter("rarity_color", color)
+	_rarity_glow_material.set_shader_parameter("emission_boost", 12.0)
+
+
+func _restore_glow_rarity_color() -> void:
+	var rarity: String = str(card_data.get("rarity", "common")).to_lower()
+	var color: Color = _get_rarity_color(rarity)
+
+	_apply_static_outline_color(card_outline, color)
+
+	if _rarity_glow_material == null:
+		return
+	_rarity_glow_material.set_shader_parameter("rarity_color", color)
+	_rarity_glow_material.set_shader_parameter("emission_boost", 6.0)
+
+
+# --- Attack-Animation -----------------------------------------------------
+
+@export_group("Attack-Animation")
+@export var attack_lunge_ratio: float = 0.7
+@export var attack_out_duration: float = 0.18
+@export var attack_hit_duration: float = 0.08
+@export var attack_return_duration: float = 0.22
+@export var attack_overshoot_scale: float = 1.12
+
+# Laesst die Karte in Richtung target_global_pos vorfliegen ("ramming"),
+# kurz dort verharren/leicht hineinstossen, und dann zurueck an ihre
+# urspruengliche Position fliegen. Wartet auf das komplette Ende der
+# Animation, bevor zurueckgekehrt wird — der Aufrufer kann also einfach
+# `await card.play_attack_animation(target.global_position)` nutzen, um
+# den Schaden erst NACH der Animation anzuwenden.
+func play_attack_animation(target_global_pos: Vector3) -> void:
+	var start_pos: Vector3 = global_position
+	var start_rot: Vector3 = rotation_degrees
+	var start_scale: Vector3 = scale
+
+	var direction: Vector3 = target_global_pos - start_pos
+	var lunge_pos: Vector3 = start_pos + direction * attack_lunge_ratio
+
+	var out_tween: Tween = create_tween().set_parallel(true)
+	out_tween.tween_property(self, "global_position", lunge_pos, attack_out_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	out_tween.tween_property(self, "scale", start_scale * attack_overshoot_scale, attack_out_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	await out_tween.finished
+
+	if not is_instance_valid(self):
 		return
 
-	_shine_mesh = MeshInstance3D.new()
-	_shine_mesh.name = "ShineOverlay"
-	_shine_mesh.mesh = card_image.mesh
-	_shine_mesh.position = card_image.position + Vector3(0, 0, shine_z_offset)
-	_shine_mesh.rotation = card_image.rotation
-	_shine_mesh.scale = card_image.scale
+	# Kurzer "Rammstoss": minimal weiter nach vorne und sofort wieder
+	# ein Stueck zurueck, fuer ein spuerbares Einschlag-Gefuehl statt
+	# nur eines glatten Hin- und Herfliegens.
+	var hit_pos: Vector3 = start_pos + direction * (attack_lunge_ratio + 0.08)
+	var hit_tween: Tween = create_tween()
+	hit_tween.tween_property(self, "global_position", hit_pos, attack_hit_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
-	_shine_material = ShaderMaterial.new()
-	_shine_material.shader = CARD_SHINE_SHADER
-	_shine_material.set_shader_parameter("sweep_position", -0.5)
-	_shine_mesh.material_override = _shine_material
+	await hit_tween.finished
 
-	# Die Sweep-Mesh soll keine Klicks/Hover der eigentlichen Karten-Area
-	# blockieren koennen - sie ist rein optisch und liegt nur knapp vor
-	# dem Kartenbild.
-	card_image.get_parent().add_child(_shine_mesh)
-
-
-func _start_shine_loop() -> void:
-	if _shine_material == null:
+	if not is_instance_valid(self):
 		return
 
-	_shine_timer = Timer.new()
-	_shine_timer.one_shot = true
-	add_child(_shine_timer)
-	_shine_timer.timeout.connect(_run_shine_sweep)
+	var return_tween: Tween = create_tween().set_parallel(true)
+	return_tween.tween_property(self, "global_position", start_pos, attack_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	return_tween.tween_property(self, "rotation_degrees", start_rot, attack_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	return_tween.tween_property(self, "scale", start_scale, attack_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
-	_schedule_next_shine()
-
-
-func _schedule_next_shine() -> void:
-	if _shine_timer == null:
-		return
-
-	var wait_time := _rng.randf_range(shine_interval_min, shine_interval_max)
-	_shine_timer.start(wait_time)
-
-
-func _run_shine_sweep() -> void:
-	if _shine_material == null:
-		_schedule_next_shine()
-		return
-
-	_shine_material.set_shader_parameter("sweep_position", -0.5)
-
-	var tween := create_tween()
-	tween.tween_method(_set_sweep_position, -0.5, 1.5, shine_sweep_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-	await tween.finished
-	_schedule_next_shine()
-
-
-func _set_sweep_position(value: float) -> void:
-	if _shine_material != null:
-		_shine_material.set_shader_parameter("sweep_position", value)
+	await return_tween.finished

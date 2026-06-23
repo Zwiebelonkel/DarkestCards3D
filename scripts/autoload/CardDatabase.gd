@@ -94,3 +94,45 @@ func get_random_card_by_rarity(rarity: String) -> Dictionary:
 		return {}
 	
 	return pool.pick_random()
+	
+const RARITIES := [
+	{"id": "common", "drop_weight": 60.0},
+	{"id": "uncommon", "drop_weight": 25.0},
+	{"id": "rare", "drop_weight": 9.0},
+	{"id": "epic", "drop_weight": 4.0},
+	{"id": "legendary", "drop_weight": 1.5},
+	{"id": "mythic", "drop_weight": 0.4},
+	{"id": "exotic", "drop_weight": 0.1},
+]
+
+
+func get_random_rarity_weighted() -> String:
+	var total_weight := 0.0
+	
+	for rarity in RARITIES:
+		total_weight += float(rarity.get("drop_weight", 0.0))
+	
+	var roll := randf() * total_weight
+	var current := 0.0
+	
+	for rarity in RARITIES:
+		current += float(rarity.get("drop_weight", 0.0))
+		
+		if roll <= current:
+			return str(rarity.get("id", "common"))
+	
+	return "common"
+
+
+func get_random_card_weighted() -> Dictionary:
+	if cards.is_empty():
+		return {}
+	
+	var rarity := get_random_rarity_weighted()
+	var pool := get_cards_by_rarity(rarity)
+	
+	if pool.is_empty():
+		# Fallback, falls z.B. keine Mythic-Karten existieren
+		return cards.pick_random()
+	
+	return pool.pick_random()
