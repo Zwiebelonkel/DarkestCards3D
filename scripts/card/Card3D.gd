@@ -39,6 +39,7 @@ class RarityPreset:
 @onready var attack_label: Label3D = $AttackLabel
 @onready var defense_label: Label3D = $DefenseLabel
 @onready var description_label: Label3D = $DescriptionLabel
+@onready var effects_label: Label3D = $EffectsLabel
 @onready var rarity_label: Label3D = $RarityLabel
 @onready var area: Area3D = $Area3D
 
@@ -49,6 +50,10 @@ var is_stack_decoration: bool = false
 var max_hp: int = 0
 var current_hp: int = 0
 var attack_value: int = 0
+var _first_hit_shield_available: bool = false
+var _last_stand_available: bool = false
+var _grave_return_available: bool = false
+var _skip_next_attack: bool = false
 
 signal died(card: Card3D)
 
@@ -116,14 +121,23 @@ func setup(data: Dictionary) -> void:
 	var description: String = str(data.get("description", ""))
 	var image_path: String = str(data.get("image", ""))
 
+	if CardData.has_effect(data, "swap_stats"):
+		var original_attack := attack
+		attack = defense
+		defense = original_attack
+
 	attack_value = attack
 	max_hp = defense
 	current_hp = defense
+	_first_hit_shield_available = CardData.has_effect(data, "shield_first_hit")
+	_last_stand_available = CardData.has_effect(data, "last_stand")
+	_grave_return_available = CardData.has_effect(data, "grave_return")
 
 	name_label.text = card_name
 	attack_label.text = str(attack)
 	_update_hp_label()
 	description_label.play(_wrap_text(description, 45))
+	effects_label.text = _build_effects_summary()
 	rarity_label.text = rarity.to_upper()
 
 	_ensure_materials_resolved()
@@ -133,6 +147,76 @@ func setup(data: Dictionary) -> void:
 
 func _update_hp_label() -> void:
 	defense_label.text = str(current_hp)
+
+
+func _build_effects_summary() -> String:
+	var effect_names: Array[String] = []
+	for perk in CardData.get_active_effects(card_data):
+		var label := _format_effect_label(perk)
+		if label != "":
+			effect_names.append(label)
+	if effect_names.is_empty():
+		return "Effects: -"
+	return "Effects: " + " • ".join(effect_names)
+
+
+func _format_effect_label(effect: Dictionary) -> String:
+	var label := str(effect.get("name", effect.get("type", ""))).replace("_", " ").capitalize()
+	if effect.has("percent"):
+		label += " %d%%" % int(round(float(effect.get("percent", 0.0)) * 100.0))
+	elif effect.has("value"):
+		var value := float(effect.get("value", 0.0))
+		if value > 0.0 and value <= 1.0:
+			label += " %d%%" % int(round(value * 100.0))
+		else:
+			label += " +%d" % int(round(value))
+	elif effect.has("damage") and effect.has("turns"):
+		label += " %d/%dT" % [int(effect.get("damage", 0)), int(effect.get("turns", 0))]
+	return label
+
+
+func heal(amount: int) -> void:
+	if amount <= 0:
+		return
+	current_hp = int(min(current_hp + amount, max_hp))
+	_update_hp_label()
+
+
+func consume_first_hit_shield() -> bool:
+	if not _first_hit_shield_available:
+		return false
+	_first_hit_shield_available = false
+	return true
+
+
+func try_survive_death() -> bool:
+	if _last_stand_available:
+		_last_stand_available = false
+		current_hp = 1
+		_update_hp_label()
+		return true
+	if _grave_return_available:
+		_grave_return_available = false
+		current_hp = int(max(round(float(max_hp) * 0.5), 1))
+		_update_hp_label()
+		return true
+	return false
+
+
+func apply_curse(value: int) -> void:
+	attack_value = int(max(attack_value - value, 0))
+	attack_label.text = str(attack_value)
+
+
+func stun_next_attack() -> void:
+	_skip_next_attack = true
+
+
+func consume_stun() -> bool:
+	if not _skip_next_attack:
+		return false
+	_skip_next_attack = false
+	return true
 
 
 # Fuegt dieser Karte Schaden zu und gibt true zurueck, wenn die Karte

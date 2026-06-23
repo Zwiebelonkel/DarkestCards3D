@@ -111,20 +111,27 @@ func _start_match() -> void:
 # einfach auf "einmal pro besessener Karte" zurueck.
 func _build_player_pool() -> Array[Dictionary]:
 	var pool: Array[Dictionary] = []
-	var owned: Dictionary = CollectionManager.get_owned_cards()
 
-	for card_id: Variant in owned.keys():
+	for instance in CollectionManager.get_card_instances():
+		if typeof(instance) != TYPE_DICTIONARY:
+			continue
+		var card_id := str((instance as Dictionary).get("card_id", ""))
 		var data: Dictionary = CardDatabase.get_card(card_id)
 		if data.is_empty():
 			continue
+		pool.append(CardData.merge_card_and_instance(data, instance as Dictionary))
 
-		var amount: int = 1
-		if CollectionManager.has_method("get_amount"):
-			amount = int(max(int(CollectionManager.get_amount(card_id)), 1))
+	if not pool.is_empty():
+		return pool
 
-		for i: int in range(amount):
-			pool.append(data)
-
+	# Backward-compatible fallback for old count-only saves.
+	var owned: Dictionary = CollectionManager.get_owned_cards()
+	for card_id: Variant in owned.keys():
+		var data: Dictionary = CardDatabase.get_card(str(card_id))
+		if data.is_empty():
+			continue
+		for i: int in range(int(max(CollectionManager.get_amount(str(card_id)), 1))):
+			pool.append(CardData.merge_card_and_instance(data))
 	return pool
 
 
@@ -133,7 +140,7 @@ func _build_enemy_pool() -> Array[Dictionary]:
 	var all_cards: Array = CardDatabase.get_all_cards()
 
 	for data: Dictionary in all_cards:
-		pool.append(data)
+		pool.append(CardData.merge_card_and_instance(data, CardData.create_instance(str(data.get("id", "")), 1, PerkDatabase.roll_perks())))
 
 	return pool
 
@@ -314,26 +321,50 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 	if _game_over:
 		return
 
+	if attacker.consume_stun():
+		status_label.text = "%s ist betäubt und setzt aus!" % str(attacker.card_data.get("name", "?"))
+		await get_tree().create_timer(0.5).timeout
+		_end_turn_to("enemy" if attacker_side == "player" else "player")
+		return
+
 	var attacker_name: String = str(attacker.card_data.get("name", "?"))
 	var defender_name: String = str(defender.card_data.get("name", "?"))
 	status_label.text = "%s kämpft gegen %s!" % [attacker_name, defender_name]
 
-	# Angriffsanimation: Karte fliegt zum Ziel, stupst es an, kehrt
-	# zurueck. Der eigentliche Schaden wird erst danach angewendet,
-	# damit der "Einschlag" optisch mit dem HP-Verlust zusammenfaellt.
-	await attacker.play_attack_animation(defender.global_position)
+	var total_damage_done := 0
+	var defender_died := false
+	var attacker_died := false
+	var hit_count := CombatResolver.get_hit_count(attacker)
 
-	if _game_over or not is_instance_valid(attacker) or not is_instance_valid(defender):
-		return
+	for hit_index in range(hit_count):
+		if not is_instance_valid(attacker) or not is_instance_valid(defender) or defender.is_dead():
+			break
+		await attacker.play_attack_animation(defender.global_position)
+		if _game_over or not is_instance_valid(attacker) or not is_instance_valid(defender):
+			return
+		var damage := CombatResolver.get_attack_damage(attacker, _count_identical_on_board(str(attacker.card_data.get("id", attacker.card_data.get("card_id", "")))))
+		var hit_result := CombatResolver.apply_incoming_damage(defender, damage)
+		total_damage_done += int(hit_result.get("damage", 0))
+		defender_died = bool(hit_result.get("died", false))
+		if CardData.has_effect(attacker.card_data, "execute") and float(defender.current_hp) <= float(defender.max_hp) * float(CardData.get_effect(attacker.card_data, "execute").get("threshold", 0.25)):
+			defender_died = defender.take_damage(defender.current_hp)
+		if defender_died:
+			break
 
-	var attacker_damage: int = attacker.attack_value
-	var defender_damage: int = defender.attack_value
+	CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
+	attacker_died = CombatResolver.apply_thorns(defender, attacker, total_damage_done)
 
-	var defender_died: bool = defender.take_damage(attacker_damage)
-	var attacker_died: bool = attacker.take_damage(defender_damage)
+	if not defender_died and is_instance_valid(defender):
+		var counter_result := CombatResolver.apply_incoming_damage(attacker, defender.attack_value)
+		attacker_died = attacker_died or bool(counter_result.get("died", false))
 
-	# Kurze Pause, damit der Spieler die HP-Aenderung sehen kann, bevor
-	# ggf. Karten verschwinden und neue nachgezogen werden.
+	if CardData.has_effect(attacker.card_data, "stun") and is_instance_valid(defender):
+		defender.stun_next_attack()
+	var curse := CardData.get_effect(attacker.card_data, "curse")
+	if not curse.is_empty() and is_instance_valid(defender):
+		defender.apply_curse(int(curse.get("value", 2)))
+
+	_apply_cleave(attacker, defender, attacker_side)
 	await get_tree().create_timer(0.5).timeout
 
 	if attacker_died:
@@ -348,6 +379,33 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		_end_turn_to("enemy")
 	else:
 		_end_turn_to("player")
+
+
+func _count_identical_on_board(card_id: String) -> int:
+	var count := 0
+	for card in _player_slots + _enemy_slots:
+		if card != null and is_instance_valid(card) and str(card.card_data.get("id", card.card_data.get("card_id", ""))) == card_id:
+			count += 1
+	return max(count, 1)
+
+
+func _apply_cleave(attacker: Card3D, defender: Card3D, attacker_side: String) -> void:
+	if not CardData.has_effect(attacker.card_data, "cleave"):
+		return
+	var slots: Array[Card3D] = _enemy_slots if attacker_side == "player" else _player_slots
+	var center := slots.find(defender)
+	if center == -1:
+		return
+	var side_damage := int(round(float(attacker.attack_value) * 0.5))
+	for idx in [center - 1, center + 1]:
+		if idx < 0 or idx >= slots.size():
+			continue
+		var target := slots[idx]
+		if target == null or not is_instance_valid(target):
+			continue
+		var result := CombatResolver.apply_incoming_damage(target, side_damage)
+		if bool(result.get("died", false)):
+			_remove_dead_card(target)
 
 
 # Entfernt eine gestorbene Karte aus ihrem Slot und zieht sofort eine
