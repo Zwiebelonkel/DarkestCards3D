@@ -24,6 +24,16 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @export var enemy_turn_delay: float = 0.9
 @export var draw_animation_duration: float = 0.35
 
+@onready var table_camera: Camera3D = $Camera3D
+
+@export_group("Card Inspect Camera")
+@export var inspect_camera_offset := Vector3(0, 1.65, 0.55)
+@export var inspect_camera_duration := 0.35
+
+var _camera_base_transform: Transform3D
+var _inspected_card: Card3D = null
+var _camera_tween: Tween = null
+
 # Pro Slot-Index die jeweilige Karteninstanz (oder null, wenn leer).
 var _player_slots: Array[Card3D] = [null, null, null, null, null]
 var _enemy_slots: Array[Card3D] = [null, null, null, null, null]
@@ -53,6 +63,7 @@ var _enemy_stack_visuals: Array[Card3D] = []
 
 func _ready() -> void:
 	_rng.randomize()
+	_camera_base_transform = table_camera.global_transform
 	_collect_slot_markers()
 	_start_match()
 
@@ -257,14 +268,34 @@ func _connect_card_input(card: Card3D, side: String, slot_index: int) -> void:
 
 # --- Klick-Handling ---------------------------------------------------------
 
-func _on_card_clicked(_camera: Node, event: InputEvent, _position: Vector3, _normal: Vector3, _shape_idx: int, side: String, slot_index: int) -> void:
+func _on_card_clicked(
+	_camera: Node,
+	event: InputEvent,
+	_position: Vector3,
+	_normal: Vector3,
+	_shape_idx: int,
+	side: String,
+	slot_index: int
+) -> void:
+	if not (event is InputEventMouseButton and event.is_pressed()):
+		return
+
+	var mouse_event := event as InputEventMouseButton
+
+	var card := _get_card_from_slot(side, slot_index)
+	if card == null:
+		return
+
+	if mouse_event.button_index == MOUSE_BUTTON_RIGHT:
+		_toggle_inspect_card(card)
+		return
+
 	if _game_over:
 		return
 
-	if not (event is InputEventMouseButton and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT and event.is_pressed()):
+	if mouse_event.button_index != MOUSE_BUTTON_LEFT:
 		return
 
-	# Waehrend der Gegner-Zug laeuft, nimmt das Spiel keine Klicks an.
 	if _current_turn != "player":
 		return
 
@@ -272,7 +303,6 @@ func _on_card_clicked(_camera: Node, event: InputEvent, _position: Vector3, _nor
 		_select_player_card(slot_index)
 	else:
 		_try_attack_enemy(slot_index)
-
 
 func _select_player_card(slot_index: int) -> void:
 	var card: Card3D = _player_slots[slot_index]
@@ -528,3 +558,59 @@ func _has_any_card(slots: Array[Card3D]) -> bool:
 		if card != null and is_instance_valid(card):
 			return true
 	return false
+
+func _get_card_from_slot(side: String, slot_index: int) -> Card3D:
+	var slots: Array[Card3D] = _player_slots if side == "player" else _enemy_slots
+
+	if slot_index < 0 or slot_index >= slots.size():
+		return null
+
+	var card: Card3D = slots[slot_index]
+	if card == null or not is_instance_valid(card):
+		return null
+
+	return card
+
+
+func _toggle_inspect_card(card: Card3D) -> void:
+	if _inspected_card == card:
+		_reset_camera()
+	else:
+		_focus_camera_on_card(card)
+		
+func _focus_camera_on_card(card: Card3D) -> void:
+	if not is_instance_valid(card):
+		return
+
+	_inspected_card = card
+
+	if _camera_tween != null:
+		_camera_tween.kill()
+
+	var target_pos := card.global_position + inspect_camera_offset
+	var look_pos := card.global_position
+
+	var target_transform := Transform3D(Basis(), target_pos)
+	target_transform = target_transform.looking_at(look_pos, Vector3.UP)
+
+	_camera_tween = create_tween()
+	_camera_tween.tween_property(
+		table_camera,
+		"global_transform",
+		target_transform,
+		inspect_camera_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	
+func _reset_camera() -> void:
+	_inspected_card = null
+
+	if _camera_tween != null:
+		_camera_tween.kill()
+
+	_camera_tween = create_tween()
+	_camera_tween.tween_property(
+		table_camera,
+		"global_transform",
+		_camera_base_transform,
+		inspect_camera_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)

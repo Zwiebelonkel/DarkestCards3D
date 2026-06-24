@@ -47,6 +47,7 @@ volumetric_fog_density = 0.009
 [node name="GameTable" type="Node3D"]
 script = ExtResource("1_onr2p")
 card_scene = ExtResource("2_3qfbk")
+inspect_camera_offset = Vector3(0, 1, 0.01)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.433722, 0.901047, 0, -0.901047, 0.433722, 0, 2.93222, 1.6582)

@@ -21,7 +21,7 @@ static func get_attack_damage(attacker: Card3D, identical_on_board: int = 1) -> 
 	return max(damage, 0)
 
 static func apply_incoming_damage(defender: Card3D, raw_damage: int) -> Dictionary:
-	var damage := max(raw_damage, 0)
+	var damage : float= max(raw_damage, 0)
 	if defender.consume_first_hit_shield():
 		damage = 0
 	else:
