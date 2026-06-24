@@ -1,3 +1,102 @@
-[gd_scene format=3 uid="uid://hsfn8ypja21m"]
+[gd_scene load_steps=9 format=3 uid="uid://hsfn8ypja21m"]
 
-[node name="Main" type="Node"]
+[ext_resource type="Script" path="res://scripts/main/Main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://dcp3rwdcgfp5j" path="res://scenes/table/GameTable.tscn" id="2_table"]
+[ext_resource type="PackedScene" uid="uid://sbiyjx808dkn" path="res://scenes/ui/PackOpeningScreen.tscn" id="3_pack"]
+[ext_resource type="PackedScene" uid="uid://cvxblkstddw2n" path="res://scenes/ui/CollectionScreen.tscn" id="4_collection"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
+sky_top_color = Color(0.015, 0.01, 0.024, 1)
+sky_horizon_color = Color(0.12, 0.04, 0.08, 1)
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_main")
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 2
+ambient_light_color = Color(0.22, 0.18, 0.24, 1)
+ambient_light_energy = 0.5
+glow_enabled = true
+glow_intensity = 1.2
+glow_strength = 0.55
+
+[sub_resource type="StandardMaterial3D" id="Mat_empty"]
+albedo_color = Color(0.08, 0.06, 0.09, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="Box_empty"]
+size = Vector3(5, 0.15, 3)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.978148, 0.207912, 0, -0.207912, 0.978148, 0, 2.05, 0)
+current = true
+fov = 58.0
+
+[node name="ScenePivot" type="Node3D" parent="."]
+
+[node name="GameTable" parent="ScenePivot" instance=ExtResource("2_table")]
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0, -6.2)
+
+[node name="PackOpeningScreen" parent="ScenePivot" instance=ExtResource("3_pack")]
+transform = Transform3D(-3.14722e-08, 0, 0.72, 0, 0.72, 0, -0.72, 0, -3.14722e-08, -6.2, 0, 0)
+
+[node name="CollectionScreen" parent="ScenePivot" instance=ExtResource("4_collection")]
+transform = Transform3D(-0.72, 0, -6.29444e-08, 0, 0.72, 0, 6.29444e-08, 0, -0.72, 0, 0, 6.2)
+
+[node name="EmptySide" type="Node3D" parent="ScenePivot"]
+transform = Transform3D(-3.14722e-08, 0, -0.72, 0, 0.72, 0, 0.72, 0, -3.14722e-08, 6.2, 0, 0)
+
+[node name="Placeholder" type="MeshInstance3D" parent="ScenePivot/EmptySide"]
+material_override = SubResource("Mat_empty")
+mesh = SubResource("Box_empty")
+
+[node name="EmptyLabel" type="Label3D" parent="ScenePivot/EmptySide"]
+transform = Transform3D(0.018, 0, 0, 0, 0.018, 0, 0, 0, 0.018, 0, 0.55, 0)
+text = "FREIE SEITE"
+font_size = 38
+outline_size = 8
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 4, 0)
+light_energy = 2.0
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 30
+
+[node name="Panel" type="PanelContainer" parent="HUD"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 430.0
+offset_bottom = 94.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/Panel/MarginContainer"]
+layout_mode = 2
+
+[node name="SideLabel" type="Label" parent="HUD/Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Game Table"
+theme_override_font_sizes/font_size = 24
+
+[node name="HintLabel" type="Label" parent="HUD/Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "A/D drehen"
+theme_override_font_sizes/font_size = 15

@@ -1,9 +1,10 @@
 extends Control
 class_name MainMenu
 
-const PACK_OPENING_SCENE := "res://scenes/ui/PackOpeningScreen.tscn"
-const COLLECTION_SCENE := "res://scenes/ui/CollectionScreen.tscn"
-const GAME_TABLE_SCENE := "res://scenes/table/GameTable.tscn"
+const MAIN_SCENE := "res://scenes/main/Main.tscn"
+const PACK_OPENING_SCENE := MAIN_SCENE
+const COLLECTION_SCENE := MAIN_SCENE
+const GAME_TABLE_SCENE := MAIN_SCENE
 
 @onready var pack_opening_button: Button = %PackOpeningButton
 @onready var collection_button: Button = %CollectionButton
