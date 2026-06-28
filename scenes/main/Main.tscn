@@ -70,7 +70,7 @@ transform = Transform3D(-3.0424e-08, -0.184273, 0.69602, -8.05484e-09, 0.69602, 
 collection_screen = NodePath("../Collection")
 
 [node name="Collection" parent="ScenePivot" node_paths=PackedStringArray("camera") instance=ExtResource("4_collection")]
-transform = Transform3D(-0.72, -4.39431e-10, -6.29429e-08, 0, 0.719982, -0.00502651, 6.29444e-08, -0.00502651, -0.719982, 0, 0.0367756, 3.73149)
+transform = Transform3D(-0.72, -4.39431e-10, -6.29429e-08, 0, 0.719982, -0.00502651, 6.29444e-08, -0.00502651, -0.719982, 0, 0.0367756, 3.28078)
 camera = NodePath("../../CameraPivot/Camera3D")
 
 [node name="UpgradeMachine" parent="ScenePivot" instance=ExtResource("6_ko0rf")]
@@ -154,7 +154,7 @@ text = "A/D drehen"
 environment = SubResource("Environment_dc040")
 
 [node name="hospitalRoom" parent="." instance=ExtResource("6_1rhdn")]
-transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.695, 0.179363, -2.21619, -0.0863562)
+transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.695, 0.179363, -2.21619, 0.438384)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.58534, 0)

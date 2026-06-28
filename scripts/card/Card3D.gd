@@ -56,6 +56,17 @@ var _grave_return_available: bool = false
 var _skip_next_attack: bool = false
 var _disabled := false
 
+var _card_material: StandardMaterial3D
+
+var _animated_image := false
+var _frame_count := 1
+var _frame_columns := 1
+var _frame_rows := 1
+var _frame_fps := 8.0
+
+var _current_frame := 0
+var _frame_timer := 0.0
+
 signal died(card: Card3D)
 
 @export_group("Auswahl-Highlight")
@@ -102,6 +113,22 @@ func _ready() -> void:
 		rarity_mesh.visible = false
 		return
 
+func _process(delta: float) -> void:
+	if not _animated_image:
+		return
+
+	if _card_material == null:
+		return
+
+	_frame_timer += delta
+
+	if _frame_timer < 1.0 / _frame_fps:
+		return
+
+	_frame_timer = 0.0
+
+	_current_frame = (_current_frame + 1) % _frame_count
+	_update_card_frame()
 
 func _ensure_materials_resolved() -> void:
 	if _rarity_glow_material == null and rarity_mesh != null:
@@ -121,6 +148,15 @@ func setup(data: Dictionary) -> void:
 	var rarity: String = str(data.get("rarity", "common")).to_lower()
 	var description: String = str(data.get("description", ""))
 	var image_path: String = str(data.get("image", ""))
+	
+	_animated_image = bool(data.get("animated", false))
+	_frame_count = int(data.get("frame_count", 1))
+	_frame_columns = int(data.get("frame_columns", _frame_count))
+	_frame_rows = int(data.get("frame_rows", 1))
+	_frame_fps = float(data.get("frame_fps", 8.0))
+
+	_current_frame = 0
+	_frame_timer = 0.0
 
 	if CardData.has_effect(data, "swap_stats"):
 		var original_attack := attack
@@ -245,22 +281,24 @@ func _apply_card_image(image_path: String) -> void:
 		push_warning("Kartenbild nicht gefunden: " + image_path)
 		return
 
-	var mat: StandardMaterial3D = StandardMaterial3D.new()
+	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = texture
+	mat.albedo_color = Color.WHITE
 	mat.roughness = 0.8
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	card_image.material_override = mat
+
+	_card_material = mat
+	card_image.material_override = _card_material
+
+	if _animated_image:
+		_update_card_frame()
+	else:
+		_card_material.uv1_scale = Vector3.ONE
+		_card_material.uv1_offset = Vector3.ZERO
 
 
-# Faerbt zwei unabhaengige Dinge in der Rarity-Farbe:
-# 1. cardOutline.glb bekommt ein einfaches, STATISCHES StandardMaterial3D
-#    in der Rarity-Farbe (kein Glow/keine Animation) — das ist die
-#    "klassische" eingefaerbte Kartenkante.
-# 2. Die im Editor platzierte RarityGlowPlane bekommt den vollen
-#    animierten Shader-Effekt (wandernde Risse/Energie, Pulsieren).
-# Beide laufen unabhaengig voneinander.
 func _apply_rarity_style(rarity: String) -> void:
 	var color: Color = _get_rarity_color(rarity)
 	var preset: RarityPreset = _rarity_presets.get(rarity, _rarity_presets["common"]) as RarityPreset
@@ -460,3 +498,25 @@ func set_disabled(value: bool) -> void:
 	rarity_label.modulate = text_color
 
 	# Karte bleibt anklickbar für Detailansicht.
+func _update_card_frame() -> void:
+	if _card_material == null:
+		return
+
+	_frame_columns = max(_frame_columns, 1)
+	_frame_rows = max(_frame_rows, 1)
+	_frame_count = max(_frame_count, 1)
+
+	var col := _current_frame % _frame_columns
+	var row := int(_current_frame / _frame_columns)
+
+	_card_material.uv1_scale = Vector3(
+		1.0 / float(_frame_columns),
+		1.0 / float(_frame_rows),
+		1.0
+	)
+
+	_card_material.uv1_offset = Vector3(
+		float(col) / float(_frame_columns),
+		float(row) / float(_frame_rows),
+		0.0
+	)

@@ -51,7 +51,12 @@ upgrade_viewport = NodePath("../UpgradeViewport")
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.48595, 1.28744, -0.844046)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="CardPreviewPoint"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.948154, 0)
+transform = Transform3D(1, -3.00896e-09, -2.27387e-08, 2.27387e-08, 0.2601, 0.965582, 3.00894e-09, -0.965582, 0.2601, -2.98023e-08, 0.948154, 0.248193)
+light_color = Color(0.938903, 0.683257, 0, 1)
+light_energy = 15.769
+light_indirect_energy = 2.436
+spot_range = 3.898
+spot_angle = 10.38
 
 [node name="UpgradeViewport" type="SubViewport" parent="."]
 disable_3d = true
@@ -63,7 +68,3 @@ render_target_update_mode = 4
 [node name="UpgradeSFX" type="AudioStreamPlayer3D" parent="."]
 
 [node name="ErrorSFX" type="AudioStreamPlayer3D" parent="."]
-
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, -1.9)
-light_energy = 1.6
