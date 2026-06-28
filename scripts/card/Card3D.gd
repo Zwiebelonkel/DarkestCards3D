@@ -54,6 +54,7 @@ var _first_hit_shield_available: bool = false
 var _last_stand_available: bool = false
 var _grave_return_available: bool = false
 var _skip_next_attack: bool = false
+var _disabled := false
 
 signal died(card: Card3D)
 
@@ -444,3 +445,18 @@ func _wrap_text(text: String, max_chars_per_line: int = 45) -> String:
 
 	result += line
 	return result
+	
+	
+func set_disabled(value: bool) -> void:
+	_disabled = value
+
+	var text_color := Color(0.45, 0.45, 0.45) if value else Color.WHITE
+
+	name_label.modulate = text_color
+	attack_label.modulate = text_color
+	defense_label.modulate = text_color
+	description_label.modulate = text_color
+	effects_label.modulate = text_color
+	rarity_label.modulate = text_color
+
+	# Karte bleibt anklickbar für Detailansicht.

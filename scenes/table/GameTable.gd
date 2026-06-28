@@ -19,16 +19,43 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @onready var player_deck_marker: Marker3D = $PlayerDeck
 @onready var enemy_deck_marker: Marker3D = $EnemyDeck
 @onready var status_label: Label3D = $StatusLabel
+@onready var player_death_marker: Marker3D = $PlayerSlots/death
+@onready var enemy_death_marker: Marker3D = $EnemySlots/death
 
 @export_group("Timing")
 @export var enemy_turn_delay: float = 0.9
 @export var draw_animation_duration: float = 0.35
 
-@onready var table_camera: Camera3D = $Camera3D
+@export_group("Match Camera")
+@export var match_camera_marker: Marker3D
+@export var match_camera_use_export_rotation := true
+@export var match_camera_rotation := Vector3(-68.0, 0.0, 0.0)
+@export var match_camera_duration: float = 0.65
+
+
 
 @export_group("Card Inspect Camera")
 @export var inspect_camera_offset := Vector3(0, 1.65, 0.55)
 @export var inspect_camera_duration := 0.35
+@export var table_camera: Camera3D
+
+@export_group("Match Settings")
+@export_range(5, 100, 1) var deck_size: int = 20
+
+enum TableState {
+	MENU,
+	DIFFICULTY_SELECT,
+	PLAYING,
+	GAME_OVER
+}
+
+var _table_state: TableState = TableState.MENU
+var _selected_difficulty := "normal"
+
+@onready var menu_root: Node3D = $MenuRoot
+@onready var mode_buttons: Node3D = $MenuRoot/ModeButtons
+@onready var difficulty_buttons: Node3D = $MenuRoot/DifficultyButtons
+@onready var end_buttons: Node3D = $MenuRoot/EndButtons
 
 var _camera_base_transform: Transform3D
 var _inspected_card: Card3D = null
@@ -63,9 +90,14 @@ var _enemy_stack_visuals: Array[Card3D] = []
 
 func _ready() -> void:
 	_rng.randomize()
+
+	if table_camera == null:
+		table_camera = $Camera3D
+
 	_camera_base_transform = table_camera.global_transform
 	_collect_slot_markers()
-	_start_match()
+	_connect_menu_buttons()
+	_show_main_menu()
 
 
 func _collect_slot_markers() -> void:
@@ -82,6 +114,9 @@ func _collect_slot_markers() -> void:
 # --- Match-Aufbau ---------------------------------------------------------
 
 func _start_match() -> void:
+	_table_state = TableState.PLAYING
+	_clear_match()
+	_move_camera_to_match_view()
 	_game_over = false
 	_current_turn = "player"
 	_selected_player_card = null
@@ -101,6 +136,8 @@ func _start_match() -> void:
 
 	player_pool.shuffle()
 	enemy_pool.shuffle()
+	player_pool = _limit_deck_size(player_pool, deck_size)
+	enemy_pool = _limit_deck_size(enemy_pool, deck_size)
 
 	_player_deck = player_pool
 	_enemy_deck = enemy_pool
@@ -123,26 +160,15 @@ func _start_match() -> void:
 func _build_player_pool() -> Array[Dictionary]:
 	var pool: Array[Dictionary] = []
 
-	for instance in CollectionManager.get_card_instances():
-		if typeof(instance) != TYPE_DICTIONARY:
-			continue
-		var card_id := str((instance as Dictionary).get("card_id", ""))
-		var data: Dictionary = CardDatabase.get_card(card_id)
-		if data.is_empty():
-			continue
-		pool.append(CardData.merge_card_and_instance(data, instance as Dictionary))
+	var deck_cards := DeckManager.get_deck_cards()
 
-	if not pool.is_empty():
-		return pool
-
-	# Backward-compatible fallback for old count-only saves.
-	var owned: Dictionary = CollectionManager.get_owned_cards()
-	for card_id: Variant in owned.keys():
+	for card_id in deck_cards:
 		var data: Dictionary = CardDatabase.get_card(str(card_id))
 		if data.is_empty():
 			continue
-		for i: int in range(int(max(CollectionManager.get_amount(str(card_id)), 1))):
-			pool.append(CardData.merge_card_and_instance(data))
+		var upgraded_data := CardUpgradeManager.apply_upgrades(str(card_id), data)
+		pool.append(CardData.merge_card_and_instance(upgraded_data))
+
 	return pool
 
 
@@ -150,11 +176,67 @@ func _build_enemy_pool() -> Array[Dictionary]:
 	var pool: Array[Dictionary] = []
 	var all_cards: Array = CardDatabase.get_all_cards()
 
+	var rarity_weights := _get_enemy_rarity_weights(_selected_difficulty)
+
 	for data: Dictionary in all_cards:
-		pool.append(CardData.merge_card_and_instance(data, CardData.create_instance(str(data.get("id", "")), 1, PerkDatabase.roll_perks())))
+		var rarity := str(data.get("rarity", "common"))
+		var weight := int(rarity_weights.get(rarity, 1))
+
+		for i in range(weight):
+			pool.append(
+				CardData.merge_card_and_instance(
+					data,
+					CardData.create_instance(
+						str(data.get("id", "")),
+						1,
+						PerkDatabase.roll_perks()
+					)
+				)
+			)
 
 	return pool
 
+func _get_enemy_rarity_weights(difficulty: String) -> Dictionary:
+	match difficulty:
+		"easy":
+			return {
+				"common": 8,
+				"rare": 3,
+				"epic": 1,
+				"legendary": 0
+			}
+
+		"normal":
+			return {
+				"common": 5,
+				"rare": 4,
+				"epic": 2,
+				"legendary": 1
+			}
+
+		"hard":
+			return {
+				"common": 2,
+				"rare": 4,
+				"epic": 4,
+				"legendary": 2
+			}
+
+		"insane":
+			return {
+				"common": 1,
+				"rare": 2,
+				"epic": 5,
+				"legendary": 4
+			}
+
+		_:
+			return {
+				"common": 5,
+				"rare": 4,
+				"epic": 2,
+				"legendary": 1
+			}
 
 # --- Sichtbarer Kartenstapel (nur Optik) -----------------------------------
 #
@@ -384,7 +466,8 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 	CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
 	attacker_died = CombatResolver.apply_thorns(defender, attacker, total_damage_done)
 
-	if not defender_died and is_instance_valid(defender):
+	if is_instance_valid(attacker) and is_instance_valid(defender):
+		var counter_damage := defender.attack_value
 		var counter_result := CombatResolver.apply_incoming_damage(attacker, defender.attack_value)
 		attacker_died = attacker_died or bool(counter_result.get("died", false))
 
@@ -395,7 +478,6 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		defender.apply_curse(int(curse.get("value", 2)))
 
 	_apply_cleave(attacker, defender, attacker_side)
-	await get_tree().create_timer(0.5).timeout
 
 	if attacker_died:
 		_remove_dead_card(attacker)
@@ -458,16 +540,17 @@ func _remove_dead_card(card: Card3D) -> void:
 	if slot_index == -1:
 		return
 
-	if is_instance_valid(card):
-		card.queue_free()
-
 	if side == "player":
 		_player_slots[slot_index] = null
 	else:
 		_enemy_slots[slot_index] = null
 
-	_draw_to_slot(side, slot_index, true)
+	_selected_player_card = null
 
+	if is_instance_valid(card):
+		_animate_card_death(card, side)
+
+	_draw_to_slot(side, slot_index, true)
 
 # Wird durch das "died"-Signal von Card3D ausgeloest. Die eigentliche
 # Aufraeum-/Nachzieh-Logik passiert bereits synchron in _resolve_duel
@@ -542,16 +625,27 @@ func _check_game_over() -> bool:
 		return false
 
 	_game_over = true
+	_table_state = TableState.GAME_OVER
+
+	var reward := 0
 
 	if not player_has_cards and not enemy_has_cards:
-		status_label.text = "Unentschieden — beide Seiten ohne Karten!"
+		status_label.text = "Unentschieden — du erhältst 5 Soul Coins."
+		reward = 5
 	elif not player_has_cards:
-		status_label.text = "Niederlage — du hast keine Karten mehr."
+		status_label.text = "Niederlage — du erhältst 2 Soul Coins."
+		reward = 2
 	else:
-		status_label.text = "Sieg! Der Gegner hat keine Karten mehr."
+		status_label.text = "Sieg! Du erhältst 10 Soul Coins."
+		reward = 10
+
+	GameCurrency.add_coins(reward)
+
+	end_buttons.visible = true
+	mode_buttons.visible = false
+	difficulty_buttons.visible = false
 
 	return true
-
 
 func _has_any_card(slots: Array[Card3D]) -> bool:
 	for card: Card3D in slots:
@@ -607,10 +701,195 @@ func _reset_camera() -> void:
 	if _camera_tween != null:
 		_camera_tween.kill()
 
+	var target: Transform3D = _camera_base_transform
+
+	if _table_state == TableState.PLAYING or _table_state == TableState.GAME_OVER:
+		target = _get_match_camera_transform()
+
+	_camera_tween = create_tween()
+	_camera_tween.tween_property(
+		table_camera,
+		"global_transform",
+		target,
+		inspect_camera_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+
+func _connect_menu_buttons() -> void:
+	var ki_button: Table3DButton = mode_buttons.get_node("KIButton")
+	var multiplayer_button: Table3DButton = mode_buttons.get_node("MultiplayerButton")
+
+	ki_button.pressed.connect(_show_difficulty_menu)
+	multiplayer_button.set_disabled(true)
+
+	difficulty_buttons.get_node("EasyButton").pressed.connect(_on_difficulty_selected.bind("easy"))
+	difficulty_buttons.get_node("NormalButton").pressed.connect(_on_difficulty_selected.bind("normal"))
+	difficulty_buttons.get_node("HardButton").pressed.connect(_on_difficulty_selected.bind("hard"))
+	difficulty_buttons.get_node("InsaneButton").pressed.connect(_on_difficulty_selected.bind("insane"))
+
+	end_buttons.get_node("ExitButton").pressed.connect(_show_main_menu)
+
+
+func _show_main_menu() -> void:
+	_table_state = TableState.MENU
+	_clear_match()
+	_move_camera_to_base_view()
+
+	mode_buttons.visible = true
+	difficulty_buttons.visible = false
+	end_buttons.visible = false
+
+	status_label.text = "Wähle einen Spielmodus"
+
+
+func _show_difficulty_menu() -> void:
+	_table_state = TableState.DIFFICULTY_SELECT
+
+	mode_buttons.visible = false
+	difficulty_buttons.visible = true
+	end_buttons.visible = false
+
+	status_label.text = "Wähle eine KI-Schwierigkeit"
+
+
+func _on_difficulty_selected(difficulty: String) -> void:
+	_selected_difficulty = difficulty
+
+	mode_buttons.visible = false
+	difficulty_buttons.visible = false
+	end_buttons.visible = false
+
+	_start_match()
+
+
+func _clear_match() -> void:
+	for card in _player_slots + _enemy_slots:
+		if card != null and is_instance_valid(card):
+			card.queue_free()
+
+	for card in _player_stack_visuals + _enemy_stack_visuals:
+		if card != null and is_instance_valid(card):
+			card.queue_free()
+
+	_player_slots = [null, null, null, null, null]
+	_enemy_slots = [null, null, null, null, null]
+
+	_player_deck.clear()
+	_enemy_deck.clear()
+	_player_stack_visuals.clear()
+	_enemy_stack_visuals.clear()
+
+	_selected_player_card = null
+	_game_over = false
+
+func _limit_deck_size(pool: Array[Dictionary], size: int) -> Array[Dictionary]:
+	var limited: Array[Dictionary] = []
+	var max_count: int = min(pool.size(), size)
+
+	for i: int in range(max_count):
+		limited.append(pool[i])
+
+	return limited
+
+
+func _move_camera_to_match_view() -> void:
+	if table_camera == null:
+		return
+
+	_inspected_card = null
+
+	if _camera_tween != null:
+		_camera_tween.kill()
+
+	var target: Transform3D = _get_match_camera_transform()
+
+	_camera_tween = create_tween()
+	_camera_tween.tween_property(
+		table_camera,
+		"global_transform",
+		target,
+		match_camera_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	
+func _move_camera_to_base_view() -> void:
+	if table_camera == null:
+		return
+
+	_inspected_card = null
+
+	if _camera_tween != null:
+		_camera_tween.kill()
+
 	_camera_tween = create_tween()
 	_camera_tween.tween_property(
 		table_camera,
 		"global_transform",
 		_camera_base_transform,
-		inspect_camera_duration
-	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		match_camera_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+
+
+func leave_table_view() -> void:
+	_move_camera_to_base_view()
+
+	if _table_state == TableState.PLAYING or _table_state == TableState.GAME_OVER:
+		_show_main_menu()
+
+func _get_match_camera_transform() -> Transform3D:
+	if match_camera_marker == null:
+		return _camera_base_transform
+
+	var target: Transform3D = match_camera_marker.global_transform
+
+	if match_camera_use_export_rotation:
+		target.basis = Basis.from_euler(Vector3(
+			deg_to_rad(match_camera_rotation.x),
+			deg_to_rad(match_camera_rotation.y),
+			deg_to_rad(match_camera_rotation.z)
+		))
+
+	return target
+
+func is_match_active() -> bool:
+	return _table_state == TableState.PLAYING or _table_state == TableState.GAME_OVER
+
+func _animate_card_death(card: Card3D, side: String) -> void:
+	if not is_instance_valid(card):
+		return
+
+	var death_marker: Marker3D = player_death_marker if side == "player" else enemy_death_marker
+	var start_pos := card.global_position
+	var end_pos := death_marker.global_position
+
+	var smash_dir := (end_pos - start_pos).normalized()
+	var side_dir := Vector3(-smash_dir.z, 0, smash_dir.x).normalized()
+
+	var random_side := side_dir * _rng.randf_range(-0.45, 0.45)
+	var launch_pos := end_pos + random_side
+	launch_pos.y += _rng.randf_range(0.25, 0.55)
+
+	card.set_selected(false)
+
+	var tween := create_tween().set_parallel(true)
+
+	tween.tween_property(card, "global_position", launch_pos, 0.22)\
+		.set_trans(Tween.TRANS_EXPO)\
+		.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(card, "rotation_degrees", card.rotation_degrees + Vector3(
+		_rng.randf_range(360, 720),
+		_rng.randf_range(-240, 240),
+		_rng.randf_range(540, 1080)
+	), 0.22)\
+		.set_trans(Tween.TRANS_EXPO)\
+		.set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(card, "scale", Vector3.ZERO, 0.28)\
+		.set_delay(0.06)\
+		.set_trans(Tween.TRANS_CUBIC)\
+		.set_ease(Tween.EASE_IN)
+
+	tween.finished.connect(func():
+		if is_instance_valid(card):
+			card.queue_free()
+	)

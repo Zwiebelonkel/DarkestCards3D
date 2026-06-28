@@ -218,7 +218,7 @@
 	"defense": 28,
 	"rarity": "mythic",
 	"description": "Its roots reach places that should not exist.",
-	"image": "res://assets/cards/images/tree.png",
+	"image": "res://assets/cards/images/Tree.png",
 	"effects": [{ "type": "armor", "value": 0.5 }],
 	"perks": []
   },
@@ -317,7 +317,7 @@
 	"defense": 12,
 	"rarity": "legendary",
 	"description": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM.",
-	"image": "res://assets/cards/images/microwave.png",
+	"image": "res://assets/cards/images/Microwave.png",
 	"effects": [{ "type": "random_damage", "min": 0.75, "max": 1.5 }],
 	"perks": []
   },
@@ -427,7 +427,7 @@
 	"defense": 5,
 	"rarity": "common",
 	"description": "Just five more minutes...",
-	"image": "res://assets/cards/images/bench_sleeper.png",
+	"image": "res://assets/cards/images/sleeper.png",
 	"effects": [],
 	"perks": []
   },
@@ -438,7 +438,7 @@
 	"defense": 9,
 	"rarity": "epic",
 	"description": "One more shot. What could possibly go wrong?",
-	"image": "res://assets/cards/images/adrenaline_junkie.png",
+	"image": "res://assets/cards/images/adrenaline.png",
 	"effects": [{ "type": "triple_strike" }],
 	"perks": []
   },
@@ -449,7 +449,7 @@
 	"defense": 24,
 	"rarity": "mythic",
 	"description": "Every camera is connected. Every camera is watching.",
-	"image": "res://assets/cards/images/cctv_watcher.png",
+	"image": "res://assets/cards/images/CCTV.png",
 	"effects": [{ "type": "bodyguard", "percent": 0.5 }],
 	"perks": []
   },
@@ -466,5 +466,223 @@
 	  { "type": "execute", "threshold": 0.25 }
 	],
 	"perks": []
-  }
+  },
+{
+  "id": "alley_lurker",
+  "name": "Alley Lurker",
+  "attack": 4,
+  "defense": 1,
+  "rarity": "common",
+  "description": "\"Sir, i think you dropped your wallet\"",
+  "image": "res://assets/cards/images/lurker.png",
+  "effects": [
+	{
+	  "type": "armor",
+	  "value": 0.25
+	}
+  ]
+},
+  {
+	"id": "credit_card",
+	"name": "Credit Card",
+	"attack": 1,
+	"defense": 1,
+	"rarity": "mythic",
+	"description": "Lets you buy anything you want, someone else will cover the credit... probably.",
+	"image": "res://assets/cards/images/creditcard.png",
+	"effects": [
+	  {
+		"type": "shield_first_hit"
+	  },
+	  {
+		"type": "grave_return"
+	  },
+	  {
+		"type": "swap_stats"
+	  }
+	]
+  },
+  {
+	"id": "bat",
+	"name": "Bat",
+	"attack": 1,
+	"defense": 2,
+	"rarity": "common",
+	"description": "Will suck all your blood",
+	"image": "res://assets/cards/images/bat.png",
+	"effects": [
+	  {
+		"type": "lifesteal",
+		"percent": 1
+	  }
+	]
+  },
+  {
+  "id": "pepe",
+  "name": "Pepe",
+  "attack": 22,
+  "defense": 22,
+  "rarity": "rare",
+  "description": "The one and only.",
+  "image": "res://assets/cards/images/frog.png",
+  "effects": [
+	{
+	  "type": "neighbor_heal",
+	  "value": 2
+	},
+	{
+	  "type": "shield_first_hit"
+	}
+  ]
+},
+{
+  "id": "crimescene",
+  "name": "Crimescene",
+  "attack": 3,
+  "defense": 2,
+  "rarity": "common",
+  "description": "A truely gruesome thing has happened here.",
+  "image": "res://assets/cards/images/crimescene.png"
+},
+{
+  "id": "living_yarn",
+  "name": "Living Yarn",
+  "attack": 7,
+  "defense": 9,
+  "rarity": "uncommon",
+  "description": "Grandma lost this centuries ago.",
+  "image": "res://assets/cards/images/yarnmonster.png"
+},
+{
+  "id": "big_yarn",
+  "name": "Big Yarn",
+  "attack": 5,
+  "defense": 7,
+  "rarity": "uncommon",
+  "description": "Grandma lost this ages ago.",
+  "image": "res://assets/cards/images/biggeryarn.png"
+},
+{
+  "id": "yarn",
+  "name": "Yarn",
+  "attack": 1,
+  "defense": 2,
+  "rarity": "common",
+  "description": "Grandma lost this years ago.",
+  "image": "res://assets/cards/images/paperball.png"
+},
+{
+  "id": "fliege",
+  "name": "Fliege",
+  "attack": 2,
+  "defense": 1,
+  "rarity": "common",
+  "description": "Fliegt herum und fuckt einfach nur alle ab.\nNiemand mag diese karte. Nichtmal die Besitzer",
+  "image": "res://assets/cards/images/fly.png"
+},
+{
+  "id": "eg",
+  "name": "Egg",
+  "attack": 0,
+  "defense": 5,
+  "rarity": "common",
+  "description": "Just an egg. Nothing more.",
+  "image": "res://assets/cards/images/ei.png"
+},
+{
+  "id": "chick",
+  "name": "Chick",
+  "attack": 1,
+  "defense": 6,
+  "rarity": "common",
+  "description": "Little chick cant even barely walk.\nBut tastes good when fried.",
+  "image": "res://assets/cards/images/chick.png",
+  "effects": [
+	{
+	  "type": "swarm_power"
+	}
+  ]
+},
+{
+  "id": "chicken",
+  "name": "Chicken",
+  "attack": 3,
+  "defense": 10,
+  "rarity": "uncommon",
+  "description": "This chicken seems to live without a brain.\nStupid idiot!",
+  "image": "res://assets/cards/images/chicken.png",
+  "effects": [
+	{
+	  "type": "last_stand"
+	}
+  ]
+},
+{
+  "id": "burned_cigarette",
+  "name": "Burned Cigarette",
+  "attack": 5,
+  "defense": 2,
+  "rarity": "common",
+  "description": "Some one left this on te ground.\nBut there is always someone, eho finds use for it right?",
+  "image": "res://assets/cards/images/cig.png"
+},
+{
+  "id": "sea_urchin",
+  "name": "Sea-Urchin",
+  "attack": 2,
+  "defense": 7,
+  "rarity": "uncommon",
+  "description": "Better not step on him. He was once used by Slave to escape cctv!",
+  "image": "res://assets/cards/images/urchin.png",
+  "effects": [
+	{
+	  "type": "poison",
+	  "damage": 3,
+	  "turns": 3
+	},
+	{
+	  "type": "thorns",
+	  "percent": 0.25
+	}
+  ]
+},
+{
+  "id": "corpse",
+  "name": "Corpse",
+  "attack": 4,
+  "defense": 3,
+  "rarity": "common",
+  "description": "Died a long time ago.. or was ist yesterday?",
+  "image": "res://assets/cards/images/corpse.png"
+},
+{
+  "id": "joe",
+  "name": "Joe",
+  "attack": 3,
+  "defense": 6,
+  "rarity": "common",
+  "description": "Joe used to steal golden trophies back in the day!",
+  "image": "res://assets/cards/images/cactus.png",
+  "effects": [
+	{
+	  "type": "thorns",
+	  "percent": 0.25
+	}
+  ]
+},
+{
+  "id": "mariachi",
+  "name": "Mariachi",
+  "attack": 10,
+  "defense": 5,
+  "rarity": "rare",
+  "description": "Ariba esse! Its Taco-Tuesday!",
+  "image": "res://assets/cards/images/Mariachi.png",
+  "effects": [
+	{
+	  "type": "neighbor_heal",
+	  "value": 2
+	}
+  ]
+}
 ]

@@ -1,26 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://sbiyjx808dkn"]
+[gd_scene load_steps=7 format=3 uid="uid://sbiyjx808dkn"]
 
 [ext_resource type="Script" uid="uid://ci1i1hkrnkts3" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
-[ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_upekx"]
 [ext_resource type="PackedScene" uid="uid://cegwcnpr0ppe1" path="res://assets/cards/pack/pack.glb" id="4_rrr6c"]
 [ext_resource type="Script" uid="uid://oyqpnugunh4o" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_7vydd"]
-shader = ExtResource("2_upekx")
-shader_parameter/exposure = 1.0
-shader_parameter/contrast = 1.1
-shader_parameter/saturation = 1.12
-shader_parameter/enable_pixelate = true
-shader_parameter/pixel_factor = 1.579
-shader_parameter/enable_posterize = true
-shader_parameter/color_levels = 16.0
-shader_parameter/dither_strength = 0.35
-shader_parameter/chrom_aberration = 0.01
-shader_parameter/vignette_strength = 1.0
-shader_parameter/grain_strength = 0.2
-shader_parameter/tint_color = Vector3(0.95, 1.03, 0.9)
-shader_parameter/tint_strength = 0.15
-shader_parameter/viewport_size_override = Vector2(0, 0)
 
 [sub_resource type="StandardMaterial3D" id="Mat_floor"]
 albedo_color = Color(0.015, 0.012, 0.018, 1)
@@ -29,26 +11,10 @@ roughness = 0.9
 [sub_resource type="PlaneMesh" id="Plane_floor"]
 size = Vector2(8, 5)
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_upekx"]
-sky_top_color = Color(1, 0.186781, 0.54403, 1)
-sky_horizon_color = Color(0.604486, 0.614403, 0.630061, 1)
-
-[sub_resource type="Sky" id="Sky_eujja"]
-sky_material = SubResource("ProceduralSkyMaterial_upekx")
-
-[sub_resource type="Environment" id="Environment_7vydd"]
-background_energy_multiplier = 0.0
-sky = SubResource("Sky_eujja")
-glow_enabled = true
-glow_intensity = 5.63
-glow_strength = 0.76
-glow_bloom = 0.12
-volumetric_fog_density = 0.009
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_rrr6c"]
 size = Vector3(2.06586, 0.235229, 4.01843)
 
-[node name="PackOpeningScreen" type="Node3D"]
+[node name="PackOpeningScreen" type="Node3D" node_paths=PackedStringArray("cards_fly_target")]
 script = ExtResource("1_script")
 card_count = 100
 stack_face_down_rotation = Vector3(0, 180, 0)
@@ -60,26 +26,13 @@ revealed_scale = 0.755
 revealed_rotation = Vector3(1, -3.525, 0)
 revealed_hover_offset = Vector3(-0.455, 0, 0)
 revealed_hover_rotation_offset = Vector3(0, 3.21, 8.055)
+rarity_particle_spawn_offset = Vector3(0, 2.005, -0.45)
+cards_fly_target = NodePath("CardsFlyTarget")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28133, 4.91523)
 current = true
 fov = 42.0
-
-[node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
-
-[node name="ColorRect" type="ColorRect" parent="Camera3D/CanvasLayer"]
-material = SubResource("ShaderMaterial_7vydd")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="KeyLight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 3, 2)
-light_energy = 2.4
 
 [node name="Floor" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, -0.55, -0.9)
@@ -94,9 +47,6 @@ transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, 0, 2.35, -1.4)
 text = "PackTop anklicken/abziehen"
 font_size = 34
 outline_size = 8
-
-[node name="WorldEnvironment2" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_7vydd")
 
 [node name="MenuNavigation" type="CanvasLayer" parent="."]
 layer = 20
@@ -118,5 +68,8 @@ transform = Transform3D(0.395, 0, 0, 0, 0.395, 0, 0, 0, 0.395, -0.0021956, 0.160
 [node name="CollisionShape3D" type="CollisionShape3D" parent="pack/top/PackTopArea"]
 transform = Transform3D(1, 0, 0, 0, 0.999998, 0, 0, 0, 1, 0.0138244, 0.055725, 0.0370484)
 shape = SubResource("BoxShape3D_rrr6c")
+
+[node name="CardsFlyTarget" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.187, -2.15, 3.396)
 
 [editable path="pack"]

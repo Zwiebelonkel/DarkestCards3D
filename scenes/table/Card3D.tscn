@@ -1,10 +1,11 @@
-[gd_scene load_steps=20 format=4 uid="uid://41al4xxs2rs6"]
+[gd_scene load_steps=23 format=4 uid="uid://41al4xxs2rs6"]
 
 [ext_resource type="Script" uid="uid://bi1ys3fs0h2g0" path="res://scripts/card/Card3D.gd" id="1_card3d"]
 [ext_resource type="Texture2D" uid="uid://bel1bqmormce3" path="res://assets/cards/images/wanderer.png" id="2_og60t"]
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="3_0y4x6"]
 [ext_resource type="Texture2D" uid="uid://b3jlktytgdrf2" path="res://assets/cards/backs/card_back(HQ).png" id="3_x26xv"]
 [ext_resource type="PackedScene" uid="uid://11myufm1ca04" path="res://assets/cards/backs/card.glb" id="4_card"]
+[ext_resource type="Texture2D" uid="uid://crs0t3cn5lqsn" path="res://assets/cards/backs/card_image(41).png" id="4_m3k2a"]
 [ext_resource type="Shader" uid="uid://cbctw0rxr1prp" path="res://assets/shader/rarity_outline.gdshader" id="5_biaf5"]
 [ext_resource type="PackedScene" uid="uid://ml1ovtd001td" path="res://assets/cards/backs/cardOutline.glb" id="5_outline"]
 [ext_resource type="Shader" uid="uid://dgganigf5x7fg" path="res://assets/shader/card_shine.gdshader" id="6_x26xv"]
@@ -12,20 +13,27 @@
 [ext_resource type="Script" uid="uid://4wpksyu17f6k" path="res://scripts/typewriter.gd" id="10_skhxq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m3k2a"]
-render_priority = 0
-shader = ExtResource("6_x26xv")
-shader_parameter/shine_color = Color(1, 1, 1, 1)
-shader_parameter/shine_speed = 3.703
-shader_parameter/shine_width = 0.041
-shader_parameter/cycle_interval = 16.316
-shader_parameter/angle_fade = 0.523
-shader_parameter/x_direction = 1.0
-shader_parameter/y_direction = 1.0
-shader_parameter/z_direction = 1.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xwkok"]
 next_pass = SubResource("ShaderMaterial_m3k2a")
 albedo_texture = ExtResource("3_x26xv")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xwkok"]
+render_priority = 0
+shader = ExtResource("6_x26xv")
+shader_parameter/shine_color = Color(1, 1, 1, 1)
+shader_parameter/shine_speed = 2.577
+shader_parameter/shine_width = 0.027
+shader_parameter/cycle_interval = 8.207
+shader_parameter/angle_fade = 1.0
+shader_parameter/x_direction = 1.0
+shader_parameter/y_direction = 1.0
+shader_parameter/z_direction = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_47iom"]
+next_pass = SubResource("ShaderMaterial_xwkok")
+albedo_texture = ExtResource("4_m3k2a")
+roughness = 0.68
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w8vou"]
 resource_name = "back"
@@ -100,6 +108,7 @@ transform = Transform3D(0.24, 0, 0, 0, 0.24, 0, 0, 0, 0.24, 0, 0, -0.024626)
 
 [node name="Cube" parent="card" index="0"]
 surface_material_override/0 = SubResource("StandardMaterial3D_xwkok")
+surface_material_override/1 = SubResource("StandardMaterial3D_47iom")
 
 [node name="rarity" type="MeshInstance3D" parent="card"]
 transform = Transform3D(1.65, 0, 0, 0, 2.5, 0, 0, 0, 0.0516094, 0, 0, 0.128426)

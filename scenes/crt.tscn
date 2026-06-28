@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://dvbrhqaah3n5i"]
+
+[ext_resource type="Shader" uid="uid://c3aj5yboj0m2d" path="res://fx/crt_postfx.gdshader" id="1_n4iqi"]
+[ext_resource type="Script" uid="uid://dad76fn5hgd76" path="res://fx/CrtPostFX.gd" id="1_wnyem"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wnyem"]
+shader = ExtResource("1_n4iqi")
+shader_parameter/viewport_size = Vector2(1000, 600)
+shader_parameter/effect_enabled = 1.0
+shader_parameter/crt_curvature = 0.02
+shader_parameter/scanline_intensity = 0.635
+shader_parameter/scanline_count = 289.23
+shader_parameter/scanline_scroll_speed = 0.12
+shader_parameter/chroma_aberration = 0.001
+shader_parameter/glitch_intensity = 0.095
+shader_parameter/glitch_speed = 26.695
+shader_parameter/glitch_block_size = 1.61
+shader_parameter/noise_intensity = 0.125
+shader_parameter/flicker_intensity = 0.04
+shader_parameter/phosphor_glow = 0.35
+shader_parameter/vignette_strength = -3.485
+shader_parameter/tint_color = Color(0.949, 1, 0.855, 1)
+
+[node name="CRTPostFXLayer" type="CanvasLayer"]
+layer = 128
+script = ExtResource("1_wnyem")
+crt_curvature = 1.1
+chroma_aberration = 0.001
+glitch_intensity = 0.02
+glitch_speed = 30.0
+glitch_block_size = 8.0
+
+[node name="Screen" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_wnyem")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2

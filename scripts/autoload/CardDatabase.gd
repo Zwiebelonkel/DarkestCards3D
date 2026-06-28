@@ -95,25 +95,35 @@ func get_random_card_by_rarity(rarity: String) -> Dictionary:
 	
 	return pool.pick_random()
 	
+const RARITIES := [
+	{"id": "common", "drop_weight": 60.0},
+	{"id": "uncommon", "drop_weight": 25.0},
+	{"id": "rare", "drop_weight": 9.0},
+	{"id": "epic", "drop_weight": 4.0},
+	{"id": "legendary", "drop_weight": 1.5},
+	{"id": "mythic", "drop_weight": 0.4},
+	{"id": "exotic", "drop_weight": 0.1},
+]
+
 #const RARITIES := [
-	#{"id": "common", "drop_weight": 60.0},
-	#{"id": "uncommon", "drop_weight": 25.0},
-	#{"id": "rare", "drop_weight": 9.0},
-	#{"id": "epic", "drop_weight": 4.0},
-	#{"id": "legendary", "drop_weight": 1.5},
-	#{"id": "mythic", "drop_weight": 0.4},
-	#{"id": "exotic", "drop_weight": 0.1},
+	#{"id": "common", "drop_weight": 1.0},
+	#{"id": "uncommon", "drop_weight": 1.0},
+	#{"id": "rare", "drop_weight": 1.0},
+	#{"id": "epic", "drop_weight": 1.0},
+	#{"id": "legendary", "drop_weight": 1.0},
+	#{"id": "mythic", "drop_weight": 1.0},
+	#{"id": "exotic", "drop_weight": 1.0},
 #]
 
-const RARITIES := [
-	{"id": "common", "drop_weight": 1.0},
-	{"id": "uncommon", "drop_weight": 1.0},
-	{"id": "rare", "drop_weight": 1.0},
-	{"id": "epic", "drop_weight": 1.0},
-	{"id": "legendary", "drop_weight": 1.0},
-	{"id": "mythic", "drop_weight": 1.0},
-	{"id": "exotic", "drop_weight": 1.0},
-]
+#const RARITIES := [
+	#{"id": "common", "drop_weight": 0},
+	#{"id": "uncommon", "drop_weight": 0},
+	#{"id": "rare", "drop_weight": 0},
+	#{"id": "epic", "drop_weight": 0},
+	#{"id": "legendary", "drop_weight": 0},
+	#{"id": "mythic", "drop_weight":.0},
+	#{"id": "exotic", "drop_weight": 1.0},
+#]
 
 
 func get_random_rarity_weighted() -> String:

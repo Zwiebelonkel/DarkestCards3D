@@ -1,0 +1,11 @@
+Model Information:
+* title:	The Thin man LowPoly
+* source:	https://sketchfab.com/3d-models/the-thin-man-lowpoly-51b57f23ccf44e85884a682221603224
+* author:	Moustache_Cat (https://sketchfab.com/moustachecat)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "The Thin man LowPoly" (https://sketchfab.com/3d-models/the-thin-man-lowpoly-51b57f23ccf44e85884a682221603224) by Moustache_Cat (https://sketchfab.com/moustachecat) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

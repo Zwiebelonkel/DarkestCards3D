@@ -1,39 +1,45 @@
-[gd_scene load_steps=9 format=3 uid="uid://hsfn8ypja21m"]
+[gd_scene load_steps=12 format=3 uid="uid://hsfn8ypja21m"]
 
-[ext_resource type="Script" path="res://scripts/main/Main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://bn3rv4pewgvkj" path="res://scripts/main/Main.gd" id="1_main"]
+[ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_dc040"]
 [ext_resource type="PackedScene" uid="uid://dcp3rwdcgfp5j" path="res://scenes/table/GameTable.tscn" id="2_table"]
 [ext_resource type="PackedScene" uid="uid://sbiyjx808dkn" path="res://scenes/ui/PackOpeningScreen.tscn" id="3_pack"]
 [ext_resource type="PackedScene" uid="uid://cvxblkstddw2n" path="res://scenes/ui/CollectionScreen.tscn" id="4_collection"]
+[ext_resource type="PackedScene" uid="uid://u8x4h4ejwtkq" path="res://assets/environments/props/hospital/hospitalRoom.glb" id="6_1rhdn"]
+[ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
+[ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
+[ext_resource type="AudioStream" uid="uid://dlgfiwpvx07wl" path="res://assets/sounds/theme.mp3" id="7_sjxhf"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
-sky_top_color = Color(0.015, 0.01, 0.024, 1)
-sky_horizon_color = Color(0.12, 0.04, 0.08, 1)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1rhdn"]
+shader = ExtResource("2_dc040")
+shader_parameter/exposure = 1.074
+shader_parameter/contrast = 1.107
+shader_parameter/saturation = 1.12
+shader_parameter/enable_pixelate = true
+shader_parameter/pixel_factor = 1.579
+shader_parameter/enable_posterize = true
+shader_parameter/color_levels = 16.0
+shader_parameter/dither_strength = 0.35
+shader_parameter/chrom_aberration = 0.0
+shader_parameter/vignette_strength = 2.0
+shader_parameter/grain_strength = 0.2
+shader_parameter/tint_color = Vector3(0.95, 1.03, 0.9)
+shader_parameter/tint_strength = 0.15
+shader_parameter/viewport_size_override = Vector2(0, 0)
 
-[sub_resource type="Sky" id="Sky_main"]
-sky_material = SubResource("ProceduralSkyMaterial_main")
-
-[sub_resource type="Environment" id="Environment_main"]
-background_mode = 2
-sky = SubResource("Sky_main")
-ambient_light_source = 2
-ambient_light_color = Color(0.22, 0.18, 0.24, 1)
-ambient_light_energy = 0.5
+[sub_resource type="Environment" id="Environment_dc040"]
+background_energy_multiplier = 0.0
 glow_enabled = true
-glow_intensity = 1.2
-glow_strength = 0.55
-
-[sub_resource type="StandardMaterial3D" id="Mat_empty"]
-albedo_color = Color(0.08, 0.06, 0.09, 1)
-roughness = 0.85
-
-[sub_resource type="BoxMesh" id="Box_empty"]
-size = Vector3(5, 0.15, 3)
+glow_normalized = true
+glow_intensity = 3.34
+glow_strength = 1.03
+glow_bloom = 0.17
+volumetric_fog_density = 0.0413
+volumetric_fog_albedo = Color(1, 1, 0.647059, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_main")
+sway_angle_degrees = 7.015
 
 [node name="CameraPivot" type="Node3D" parent="."]
 
@@ -42,23 +48,36 @@ transform = Transform3D(1, 0, 0, 0, 0.978148, 0.207912, 0, -0.207912, 0.978148, 
 current = true
 fov = 58.0
 
+[node name="CanvasLayer" type="CanvasLayer" parent="CameraPivot/Camera3D"]
+
+[node name="ColorRect" type="ColorRect" parent="CameraPivot/Camera3D/CanvasLayer"]
+material = SubResource("ShaderMaterial_1rhdn")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="ScenePivot" type="Node3D" parent="."]
 
-[node name="GameTable" parent="ScenePivot" instance=ExtResource("2_table")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0, -6.2)
+[node name="GameTable" parent="ScenePivot" node_paths=PackedStringArray("table_camera") instance=ExtResource("2_table")]
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.15325)
+table_camera = NodePath("../../CameraPivot/Camera3D")
 
-[node name="PackOpeningScreen" parent="ScenePivot" instance=ExtResource("3_pack")]
-transform = Transform3D(-3.14722e-08, 0, 0.72, 0, 0.72, 0, -0.72, 0, -3.14722e-08, -6.2, 0, 0)
+[node name="PackOpening" parent="ScenePivot" node_paths=PackedStringArray("collection_screen") instance=ExtResource("3_pack")]
+transform = Transform3D(-3.0424e-08, -0.184273, 0.69602, -8.05484e-09, 0.69602, 0.184273, -0.72, 9.72804e-17, -3.14722e-08, -2.5473, 0.594067, 0)
+collection_screen = NodePath("../Collection")
 
-[node name="CollectionScreen" parent="ScenePivot" instance=ExtResource("4_collection")]
-transform = Transform3D(-0.72, 0, -6.29444e-08, 0, 0.72, 0, 6.29444e-08, 0, -0.72, 0, 0, 6.2)
+[node name="Collection" parent="ScenePivot" node_paths=PackedStringArray("camera") instance=ExtResource("4_collection")]
+transform = Transform3D(-0.72, -4.39431e-10, -6.29429e-08, 0, 0.719982, -0.00502651, 6.29444e-08, -0.00502651, -0.719982, 0, 0.0367756, 3.73149)
+camera = NodePath("../../CameraPivot/Camera3D")
+
+[node name="UpgradeMachine" parent="ScenePivot" instance=ExtResource("6_ko0rf")]
+transform = Transform3D(-1.18895e-07, 0, 2.72, 0, 2.72, 0, -2.72, 0, -1.18895e-07, 4.84266, -1.97875, 0)
 
 [node name="EmptySide" type="Node3D" parent="ScenePivot"]
 transform = Transform3D(-3.14722e-08, 0, -0.72, 0, 0.72, 0, 0.72, 0, -3.14722e-08, 6.2, 0, 0)
-
-[node name="Placeholder" type="MeshInstance3D" parent="ScenePivot/EmptySide"]
-material_override = SubResource("Mat_empty")
-mesh = SubResource("Box_empty")
 
 [node name="EmptyLabel" type="Label3D" parent="ScenePivot/EmptySide"]
 transform = Transform3D(0.018, 0, 0, 0, 0.018, 0, 0, 0, 0.018, 0, 0.55, 0)
@@ -66,12 +85,42 @@ text = "FREIE SEITE"
 font_size = 38
 outline_size = 8
 
-[node name="KeyLight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 4, 0)
-light_energy = 2.0
+[node name="SpotLight3D" type="SpotLight3D" parent="ScenePivot"]
+transform = Transform3D(1, 0, 0, 0, -0.249552, 0.968361, 0, -0.968361, -0.249552, 0, 3.07559, -3.46703)
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 1.503
+light_volumetric_fog_energy = 2.026
+spot_range = 26.91
+spot_angle = 57.66
+script = ExtResource("7_ostsq")
+
+[node name="SpotLight3D4" type="SpotLight3D" parent="ScenePivot"]
+transform = Transform3D(1, 0, 0, 0, -0.07054, 0.997509, 0, -0.997509, -0.07054, 0, 4.28754, 4.70532)
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 0.887
+spot_range = 9.388
+spot_angle = 48.43
+script = ExtResource("7_ostsq")
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="ScenePivot"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 3.07559, 0.00291157)
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 7.178
+spot_range = 4096.0
+spot_angle = 57.6563
+script = ExtResource("7_ostsq")
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="ScenePivot"]
+transform = Transform3D(0.760338, -2.83918e-08, 0.649528, -0.649528, -3.32354e-08, 0.760338, -1.54921e-15, -1, -4.37114e-08, -2.40881, 3.07559, 0.00291157)
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 7.178
+spot_range = 3.336
+spot_angle = 54.91
+script = ExtResource("7_ostsq")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 30
+visible = false
 
 [node name="Panel" type="PanelContainer" parent="HUD"]
 offset_left = 16.0
@@ -92,11 +141,33 @@ layout_mode = 2
 [node name="SideLabel" type="Label" parent="HUD/Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Game Table"
 theme_override_font_sizes/font_size = 24
+text = "Game Table"
 
 [node name="HintLabel" type="Label" parent="HUD/Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "A/D drehen"
 theme_override_font_sizes/font_size = 15
+text = "A/D drehen"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_dc040")
+
+[node name="hospitalRoom" parent="." instance=ExtResource("6_1rhdn")]
+transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.695, 0.179363, -2.21619, -0.0863562)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.58534, 0)
+light_color = Color(1, 1, 0.639216, 1)
+light_energy = 0.067
+light_indirect_energy = 1.35
+light_size = 0.155
+shadow_enabled = true
+omni_range = 1826.41
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_sjxhf")
+volume_db = -18.602
+pitch_scale = 0.82
+autoplay = true
+bus = &"Music"

@@ -1,64 +1,33 @@
-[gd_scene load_steps=8 format=3 uid="uid://cvxblkstddw2n"]
+[gd_scene load_steps=5 format=3 uid="uid://cvxblkstddw2n"]
 
 [ext_resource type="Script" uid="uid://bb62mpjyv4ak2" path="res://scripts/ui/CollectionScreen.gd" id="1_script"]
-[ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_mfll8"]
+[ext_resource type="PackedScene" uid="uid://bpcv0s5e6orfb" path="res://scenes/Table3DButton.tscn" id="2_eujja"]
+[ext_resource type="PackedScene" uid="uid://48l5iy1dnyb" path="res://assets/environments/props/table/table.glb" id="4_1pna7"]
 [ext_resource type="Script" uid="uid://oyqpnugunh4o" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_eujja"]
-shader = ExtResource("2_mfll8")
-shader_parameter/exposure = 1.0
-shader_parameter/contrast = 1.1
-shader_parameter/saturation = 1.12
-shader_parameter/enable_pixelate = true
-shader_parameter/pixel_factor = 1.579
-shader_parameter/enable_posterize = true
-shader_parameter/color_levels = 16.0
-shader_parameter/dither_strength = 0.35
-shader_parameter/chrom_aberration = 0.01
-shader_parameter/vignette_strength = 1.0
-shader_parameter/grain_strength = 0.2
-shader_parameter/tint_color = Vector3(0.95, 1.03, 0.9)
-shader_parameter/tint_strength = 0.15
-shader_parameter/viewport_size_override = Vector2(0, 0)
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mfll8"]
-sky_top_color = Color(1, 0.186781, 0.54403, 1)
-sky_horizon_color = Color(0.604486, 0.614403, 0.630061, 1)
-
-[sub_resource type="Sky" id="Sky_mfll8"]
-sky_material = SubResource("ProceduralSkyMaterial_mfll8")
-
-[sub_resource type="Environment" id="Environment_mfll8"]
-background_energy_multiplier = 0.0
-sky = SubResource("Sky_mfll8")
-glow_enabled = true
-glow_intensity = 5.63
-glow_strength = 0.76
-glow_bloom = 0.12
-volumetric_fog_density = 0.009
 
 [node name="CollectionScreen" type="Node3D"]
 script = ExtResource("1_script")
-detail_offset_from_camera = Vector3(0, 0, -2.76)
+detail_offset_from_camera = Vector3(0, 0, -1.51)
 detail_rotation = Vector3(-27.78, 0, 0)
 detail_scale = 1.68
 detail_mouse_tilt_strength = 60.0
+deck_button_scene = ExtResource("2_eujja")
+deck_button_rotation = Vector3(90, 0, 0)
+deck_overview_button_scene = ExtResource("2_eujja")
+deck_fan_offset_from_camera = Vector3(0, -0.545, -2.4)
+deck_fan_card_scale = 0.835
+deck_fan_max_angle_degrees = 47.655
+deck_fan_base_tilt = Vector3(-20, 0, 0)
+deck_fan_card_angle_spacing = 10.74
+deck_fan_min_x_spacing = 0.055
+deck_fan_depth_spacing = 0.025
+fan_drag_remove_distance = 0.575
+fan_drag_pull_strength = 0.445
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 0, 3.2, 2.78894)
 current = true
 fov = 45.0
-
-[node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
-
-[node name="ColorRect" type="ColorRect" parent="Camera3D/CanvasLayer"]
-material = SubResource("ShaderMaterial_eujja")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
 
 [node name="Cards" type="Node3D" parent="."]
 
@@ -67,15 +36,6 @@ transform = Transform3D(0.014, 0, 0, 0, 0.014, 0, 0, 0, 0.014, 0, 0.45, -0.8)
 text = "Noch keine Karten in der Sammlung"
 font_size = 34
 outline_size = 8
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_mfll8")
-
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.562255, 4.89512)
-light_color = Color(1, 1, 0.729412, 1)
-shadow_enabled = true
-omni_range = 10.2878
 
 [node name="MenuNavigation" type="CanvasLayer" parent="."]
 layer = 20
@@ -88,3 +48,22 @@ offset_top = 16.0
 offset_right = 126.0
 offset_bottom = 52.0
 text = "Menü"
+
+[node name="AddToDeckButton" parent="." instance=ExtResource("2_eujja")]
+transform = Transform3D(0.633552, -0.748687, -0.19514, 0.188375, 0.393892, -0.899647, 0.750418, 0.533213, 0.390585, 4.30148, 1.58642, 0)
+label_text = "Add to deck"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="AddToDeckButton"]
+transform = Transform3D(1, -1.19209e-07, -1.86265e-09, 1.19209e-07, 1, -3.72529e-09, -1.86265e-09, 3.72529e-09, 1, -0.0202997, 0.991328, -0.104076)
+omni_range = 1.436
+
+[node name="ShowDeckButton" parent="." instance=ExtResource("2_eujja")]
+transform = Transform3D(1, 0, 0, 0, 0.988816, -0.149138, 0, 0.149138, 0.988816, -5.9716, -1.02089, -1.37929)
+label_text = "Deck"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="ShowDeckButton"]
+transform = Transform3D(1, -1.19209e-07, -1.86265e-09, 1.19209e-07, 1, -3.72529e-09, -1.86265e-09, 3.72529e-09, 1, -0.0202997, 0.991328, -0.104076)
+omni_range = 1.436
+
+[node name="table" parent="." instance=ExtResource("4_1pna7")]
+transform = Transform3D(2.53, 0, 0, 0, 2.12479, -0.267615, 0, 0.208525, 2.7269, 0.274246, -0.749054, -5.15259)

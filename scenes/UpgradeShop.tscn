@@ -1,0 +1,69 @@
+[gd_scene load_steps=8 format=3 uid="uid://6sqfhud6j5e6"]
+
+[ext_resource type="Script" uid="uid://cokvk1t2jsod" path="res://scripts/UpgradeMachine.gd" id="1_machine"]
+[ext_resource type="Script" uid="uid://cbrkpvkes4our" path="res://scripts/UpgradeScreenInput.gd" id="2_input"]
+[ext_resource type="PackedScene" uid="uid://d4ipokwud3ah0" path="res://assets/environments/props/kiosk/kiosk.glb" id="3_kiosk"]
+[ext_resource type="PackedScene" uid="uid://bxf056eyllkvv" path="res://scenes/UpgradeUI.tscn" id="4_ui"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_screen"]
+size = Vector2(1, 0.65)
+
+[sub_resource type="StandardMaterial3D" id="Mat_dark_screen"]
+albedo_color = Color(0.02, 0.02, 0.02, 1)
+emission_enabled = true
+emission = Color(0.2, 0.05, 0.05, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="BoxShape3D" id="BoxShape_screen"]
+size = Vector3(1, 0.65, 0.06)
+
+[node name="UpgradeMachine" type="Node3D" node_paths=PackedStringArray("upgrade_viewport", "screen_mesh", "card_preview_point")]
+script = ExtResource("1_machine")
+upgrade_viewport = NodePath("UpgradeViewport")
+screen_mesh = NodePath("MachineModel/ScreenMesh")
+card_preview_point = NodePath("CardPreviewPoint")
+preview_card_rotation = Vector3(0, 180, 0)
+preview_card_scale = 0.285
+
+[node name="MachineModel" type="Node3D" parent="."]
+
+[node name="kiosk" parent="MachineModel" instance=ExtResource("3_kiosk")]
+transform = Transform3D(0.945, 0, 0, 0, 0.72, 0, 0, 0, 0.72, -0.26, 0.93, -0.37)
+
+[node name="ScreenMesh" type="MeshInstance3D" parent="MachineModel"]
+transform = Transform3D(-1, 0, -8e-08, 0, 1, 0, 8e-08, 0, -1, 0, 1.35, -0.39)
+mesh = SubResource("QuadMesh_screen")
+surface_material_override/0 = SubResource("Mat_dark_screen")
+
+[node name="ScreenArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.36)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ScreenArea"]
+shape = SubResource("BoxShape_screen")
+
+[node name="UpgradeScreenInput" type="Node" parent="."]
+script = ExtResource("2_input")
+machine = NodePath("..")
+screen_area = NodePath("../ScreenArea")
+upgrade_viewport = NodePath("../UpgradeViewport")
+
+[node name="CardPreviewPoint" type="Marker3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.48595, 1.28744, -0.844046)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="CardPreviewPoint"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.948154, 0)
+
+[node name="UpgradeViewport" type="SubViewport" parent="."]
+disable_3d = true
+size = Vector2i(1000, 650)
+render_target_update_mode = 4
+
+[node name="UpgradeUI" parent="UpgradeViewport" instance=ExtResource("4_ui")]
+
+[node name="UpgradeSFX" type="AudioStreamPlayer3D" parent="."]
+
+[node name="ErrorSFX" type="AudioStreamPlayer3D" parent="."]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, -1.9)
+light_energy = 1.6
