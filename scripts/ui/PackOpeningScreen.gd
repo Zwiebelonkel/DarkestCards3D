@@ -162,7 +162,7 @@ func _ready() -> void:
 		screen_flash_camera = get_viewport().get_camera_3d()
 	_camera_shake_target = screen_flash_camera
 	if _camera_shake_target:
-		_camera_base_position = _camera_shake_target.position
+		_camera_base_position = _camera_shake_target.global_position
 
 	_setup_screen_flash_overlay()
 
@@ -683,8 +683,11 @@ func _update_camera_shake(delta: float) -> void:
 		return
 
 	if _camera_shake_time_left <= 0.0:
-		if _camera_shake_target.position != _camera_base_position and _camera_shake_strength <= 0.0:
-			_camera_shake_target.position = _camera_base_position
+		# Kein Shake aktiv -> Basis kontinuierlich mit der tatsaechlichen
+		# Kameraposition synchron halten. Andere Systeme (z.B. GameTable-
+		# Kamera-Tweens) duerfen die Kamera frei bewegen, ohne dass der
+		# Shake-Code sie anschliessend auf eine veraltete Position zurueckzieht.
+		_camera_base_position = _camera_shake_target.global_position
 		return
 
 	_camera_shake_time_left -= delta
@@ -697,10 +700,10 @@ func _update_camera_shake(delta: float) -> void:
 		0.0
 	) * 0.05
 
-	_camera_shake_target.position = _camera_base_position + offset
+	_camera_shake_target.global_position = _camera_base_position + offset
 
 	if _camera_shake_time_left <= 0.0:
-		_camera_shake_target.position = _camera_base_position
+		_camera_shake_target.global_position = _camera_base_position
 
 
 ## Verlangsamt die globale Engine-Zeit kurz fuer ein "Bullet-Time"-Gefuehl

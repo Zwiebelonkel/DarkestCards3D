@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://sbiyjx808dkn"]
+[gd_scene load_steps=8 format=3 uid="uid://sbiyjx808dkn"]
 
 [ext_resource type="Script" uid="uid://ci1i1hkrnkts3" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://cegwcnpr0ppe1" path="res://assets/cards/pack/pack.glb" id="4_rrr6c"]
@@ -13,6 +13,11 @@ size = Vector2(8, 5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rrr6c"]
 size = Vector3(2.06586, 0.235229, 4.01843)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7vydd"]
+size = Vector2(3.315, 0.64)
+subdivide_width = 12
+subdivide_depth = 4
 
 [node name="PackOpeningScreen" type="Node3D" node_paths=PackedStringArray("cards_fly_target")]
 script = ExtResource("1_script")
@@ -71,6 +76,10 @@ transform = Transform3D(0.395, 0, 0, 0, 0.395, 0, 0, 0, 0.395, -0.0021956, 0.160
 [node name="CollisionShape3D" type="CollisionShape3D" parent="pack/top/PackTopArea"]
 transform = Transform3D(1, 0, 0, 0, 0.999998, 0, 0, 0, 1, 0.0138244, 0.055725, 0.0370484)
 shape = SubResource("BoxShape3D_rrr6c")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="pack"]
+transform = Transform3D(1, 0, 0, 0, -0.00296704, -0.999995, 0, 0.999995, -0.00296704, 0, 2.85044, 0)
+mesh = SubResource("PlaneMesh_7vydd")
 
 [node name="CardsFlyTarget" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.187, -2.15, 3.396)

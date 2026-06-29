@@ -804,12 +804,29 @@ func _move_camera_to_match_view() -> void:
 	var target: Transform3D = _get_match_camera_transform()
 
 	_camera_tween = create_tween()
+	_camera_tween.set_parallel(true)
+
 	_camera_tween.tween_property(
 		table_camera,
-		"global_transform",
-		target,
+		"global_position",
+		target.origin,
 		match_camera_duration
 	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+
+	_camera_tween.tween_method(
+		_set_camera_quaternion,
+		table_camera.global_transform.basis.get_rotation_quaternion(),
+		target.basis.get_rotation_quaternion(),
+		match_camera_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+
+
+func _set_camera_quaternion(q: Quaternion) -> void:
+	if not is_instance_valid(table_camera):
+		return
+	var t := table_camera.global_transform
+	t.basis = Basis(q.normalized())
+	table_camera.global_transform = t
 	
 func _move_camera_to_base_view() -> void:
 	if table_camera == null:

@@ -116,7 +116,7 @@ var _hovered_rarity: String = ""
 
 var _detail_card: Card3D = null
 var _detail_tween_running := false
-var _queued_detail_scroll := 0
+var _detail_switch_tween: Tween = null
 var _detail_card_id := ""
 @onready var _deck_button: Table3DButton = $AddToDeckButton
 @onready var _deck_overview_button: Table3DButton = $ShowDeckButton
@@ -1018,9 +1018,17 @@ func _hide_deck_button() -> void:
 func _show_next_detail_card(direction: int) -> void:
 	if _detail_card == null:
 		return
-	if _detail_tween_running:
-		_queued_detail_scroll = direction
-		return
+
+	# Falls gerade eine Karte vom letzten Wechsel noch "im Flug" zurück nach
+	# Hause ist (ihr Rückflug-Tween läuft noch), lassen wir den einfach
+	# weiterlaufen – er gehört nicht zum _detail_switch_tween und wird hier
+	# nicht gekillt. Nur den Wechsel-Tween (alte->Detail raus, neue->Detail
+	# rein) killen wir, falls er noch läuft.
+	if _detail_switch_tween:
+		_detail_switch_tween.kill()
+		_detail_switch_tween = null
+
+	_detail_tween_running = false
 
 	var all_cards: Array[Card3D] = []
 
@@ -1074,15 +1082,28 @@ func _show_next_detail_card(direction: int) -> void:
 	new_card.rotation_degrees = detail_rotation
 	new_card.scale = new_detail_scale * 0.85
 
-	var tween := create_tween().set_parallel(true)
-
-	tween.tween_property(old_card, "global_position", detail_pos + side_offset, detail_duration)\
+	# ------------------------------------------------------------------
+	# Alte Karte: eigener, unabhängiger Tween direkt zurück zur Basis-
+	# Position. Läuft komplett losgelöst vom restlichen Wechsel-Tween,
+	# damit ein erneutes Scrollen ihn nicht killt und die Karte mitten
+	# in der Luft hängen bleibt.
+	# ------------------------------------------------------------------
+	var return_tween := create_tween().set_parallel(true)
+	return_tween.tween_property(old_card, "global_position", old_card.get_parent().to_global(old_base_pos), detail_duration)\
 		.set_trans(Tween.TRANS_CUBIC)\
-		.set_ease(Tween.EASE_IN)
-
-	tween.tween_property(old_card, "scale", old_base_scale * 0.85, detail_duration)\
+		.set_ease(Tween.EASE_OUT)
+	return_tween.tween_property(old_card, "rotation_degrees", old_base_rot, detail_duration)\
 		.set_trans(Tween.TRANS_CUBIC)\
-		.set_ease(Tween.EASE_IN)
+		.set_ease(Tween.EASE_OUT)
+	return_tween.tween_property(old_card, "scale", old_base_scale, detail_duration)\
+		.set_trans(Tween.TRANS_CUBIC)\
+		.set_ease(Tween.EASE_OUT)
+
+	# ------------------------------------------------------------------
+	# Neue Karte: fliegt von der Seite in die Detailposition.
+	# ------------------------------------------------------------------
+	_detail_switch_tween = create_tween().set_parallel(true)
+	var tween := _detail_switch_tween
 
 	tween.tween_property(new_card, "global_position", detail_pos, detail_duration)\
 		.set_trans(Tween.TRANS_BACK)\
@@ -1096,16 +1117,8 @@ func _show_next_detail_card(direction: int) -> void:
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
 
-	await tween.finished
-
-	if is_instance_valid(old_card):
-		old_card.global_position = old_card.get_parent().to_global(old_base_pos)
-		old_card.rotation_degrees = old_base_rot
-		old_card.scale = old_base_scale
-
-	_detail_tween_running = false
-	_show_deck_button(new_card)
-	if _queued_detail_scroll != 0:
-		var dir := _queued_detail_scroll
-		_queued_detail_scroll = 0
-		call_deferred("_show_next_detail_card", dir)
+	tween.finished.connect(func():
+		_detail_tween_running = false
+		_detail_switch_tween = null
+		_show_deck_button(new_card)
+		)
