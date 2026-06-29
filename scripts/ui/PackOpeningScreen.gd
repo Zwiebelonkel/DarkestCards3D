@@ -5,6 +5,8 @@ const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 
 @export var card_count := 5
 
+@export var upgrade_ui: UpgradeUI
+
 @export_group("Pack Opening")
 @export var pack_body_open_position := Vector3(0, -0.18, 0)
 @export var pack_top_fly_position := Vector3(0, 3.5, -2.6)
@@ -857,6 +859,8 @@ func _collect_revealed_cards() -> void:
 
 	if collection_screen and collection_screen.has_method("refresh_collection"):
 		collection_screen.refresh_collection()
+		
+	_refresh_upgrade_ui()
 
 	var tween := create_tween().set_parallel(true)
 
@@ -942,3 +946,19 @@ func _reset_pack_for_next_opening() -> void:
 	pack.position = _pack_home_position
 	pack.rotation_degrees = _pack_home_rotation
 	pack.scale = _pack_home_scale
+
+func _refresh_upgrade_ui() -> void:
+	if upgrade_ui == null:
+		return
+
+	var owned_cards := CollectionManager.get_owned_cards()
+	var card_ids: Array = []
+
+	for card_id in owned_cards.keys():
+		if int(owned_cards[card_id]) <= 0:
+			continue
+
+		card_ids.append(str(card_id))
+
+	upgrade_ui.set_cards(card_ids)
+	upgrade_ui.refresh_balance()

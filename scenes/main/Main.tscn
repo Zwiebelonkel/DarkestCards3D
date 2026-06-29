@@ -65,8 +65,9 @@ mouse_filter = 2
 transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.15325)
 table_camera = NodePath("../../CameraPivot/Camera3D")
 
-[node name="PackOpening" parent="ScenePivot" node_paths=PackedStringArray("collection_screen") instance=ExtResource("3_pack")]
+[node name="PackOpening" parent="ScenePivot" node_paths=PackedStringArray("upgrade_ui", "collection_screen") instance=ExtResource("3_pack")]
 transform = Transform3D(-3.0424e-08, -0.184273, 0.69602, -8.05484e-09, 0.69602, 0.184273, -0.72, 9.72804e-17, -3.14722e-08, -2.5473, 0.594067, 0)
+upgrade_ui = NodePath("../UpgradeMachine/UpgradeViewport/UpgradeUI")
 collection_screen = NodePath("../Collection")
 
 [node name="Collection" parent="ScenePivot" node_paths=PackedStringArray("camera") instance=ExtResource("4_collection")]
@@ -171,3 +172,5 @@ volume_db = -18.602
 pitch_scale = 0.82
 autoplay = true
 bus = &"Music"
+
+[editable path="ScenePivot/UpgradeMachine"]
