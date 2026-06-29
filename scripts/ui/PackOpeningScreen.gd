@@ -53,9 +53,13 @@ const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 @export var revealed_hover_duration := 0.18
 
 @export_group("Rarity Effekte")
-
 @export var rarity_particle_spawn_offset := Vector3(0.0, 0.15, -0.45)
+@export var rarity_pack_shake_multiplier: float = 1.0
+@export var rarity_pack_shake_frequency: float = 55.0
 
+@export var rarity_particle_spawn_box := Vector3(0.75, 0.05, 0.18)
+@export var rarity_particle_up_spread: float = 6.0
+@export var rarity_camera_shake_multiplier: float = 1.0
 ## Wie lange (Echtzeit-Sekunden, unbeeinflusst von Engine.time_scale) der
 ## Slow-Motion-Effekt bei hohen Rarities aktiv bleibt, bevor er ausklingt.
 @export var rarity_slow_motion_fade_time: float = 0.25
@@ -98,6 +102,11 @@ var _pack_start_position := Vector3.ZERO
 var _pack_start_rotation := Vector3.ZERO
 var _rip_has_snapped := false
 
+var _pack_effect_shake_strength := 0.0
+var _pack_effect_shake_time_left := 0.0
+var _pack_effect_base_position := Vector3.ZERO
+var _cards_effect_base_position := Vector3.ZERO
+
 var _card_stack: Array[Card3D] = []
 var _revealed_cards: Array[Card3D] = []
 var _revealed_rest_positions: Dictionary = {}
@@ -129,6 +138,8 @@ func _ready() -> void:
 	_pack_home_position = pack.position
 	_pack_home_rotation = pack.rotation_degrees
 	_pack_home_scale = pack.scale
+	_pack_effect_base_position = pack.position
+	_cards_effect_base_position = cards_root.position
 
 	_pack_top_home_position = pack_top.position
 	_pack_top_home_rotation = pack_top.rotation_degrees
@@ -160,6 +171,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_update_camera_shake(delta)
+	_update_pack_effect_shake(delta)
 
 	if _opened:
 		return
@@ -454,6 +466,10 @@ func _trigger_rarity_effects(rarity_id: String, rarity_data: Dictionary) -> void
 		rarity_data.get("camera_shake_strength", 0.0),
 		0.35 + RarityEffectsData.rarity_rank(rarity_id) * 0.05
 	)
+	_trigger_pack_effect_shake(
+		rarity_data.get("camera_shake_strength", 0.0) * rarity_pack_shake_multiplier,
+		0.35 + RarityEffectsData.rarity_rank(rarity_id) * 0.08
+	)
 	_play_rarity_sound(rarity_data.get("sound_key", "reveal_common"))
 
 	if RarityEffectsData.should_slow_motion(rarity_id):
@@ -481,7 +497,9 @@ func _spawn_reveal_particles(rarity_data: Dictionary) -> void:
 	var material := ParticleProcessMaterial.new()
 	material.direction = Vector3(0, 1, 0)
 	# Enger Spread = klar erkennbarer Schuss nach oben statt diffuser Wolke.
-	material.spread = 14.0
+	material.spread = rarity_particle_up_spread
+	material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	material.emission_box_extents = rarity_particle_spawn_box
 	# Kaum Schwerkraft am Anfang, damit der Schuss sichtbar nach oben durchkommt,
 	# bevor die Partikel gegen Ende ihrer Lebenszeit leicht zurueckfallen.
 	material.gravity = Vector3(0, -0.6, 0)
@@ -493,8 +511,6 @@ func _spawn_reveal_particles(rarity_data: Dictionary) -> void:
 	material.scale_min = 0.02 * glow_scale
 	material.scale_max = 0.05 * glow_scale
 	material.color = color
-	material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	material.emission_sphere_radius = 0.08
 
 	# Kern-Mesh: kleine, helle Sphere mit starker Emission - der eigentliche
 	# "leuchtende Kern" jedes Partikels.
@@ -962,3 +978,43 @@ func _refresh_upgrade_ui() -> void:
 
 	upgrade_ui.set_cards(card_ids)
 	upgrade_ui.refresh_balance()
+
+func _trigger_pack_effect_shake(strength: float, duration: float) -> void:
+	if strength <= 0.0:
+		return
+
+	_pack_effect_shake_strength = max(_pack_effect_shake_strength, strength)
+	_pack_effect_shake_time_left = max(_pack_effect_shake_time_left, duration)
+
+	_pack_effect_base_position = pack.position
+	_cards_effect_base_position = cards_root.position
+
+
+func _update_pack_effect_shake(delta: float) -> void:
+	if _pack_effect_shake_time_left <= 0.0:
+		pack.position = _pack_effect_base_position
+		cards_root.position = _cards_effect_base_position
+		return
+
+	_pack_effect_shake_time_left -= delta
+
+	var t := Time.get_ticks_msec() * 0.001 * rarity_pack_shake_frequency
+	var power := _pack_effect_shake_strength
+
+	var offset := Vector3(
+		sin(t * 1.3) * power,
+		cos(t * 1.7) * power * 0.45,
+		sin(t * 2.1) * power * 0.35
+	) * 0.04
+
+	pack.position = _pack_effect_base_position + offset
+	cards_root.position = _cards_effect_base_position + offset * 1.25
+
+	_pack_effect_shake_strength = max(
+		_pack_effect_shake_strength - rarity_camera_shake_decay * delta,
+		0.0
+	)
+
+	if _pack_effect_shake_time_left <= 0.0:
+		pack.position = _pack_effect_base_position
+		cards_root.position = _cards_effect_base_position

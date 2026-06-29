@@ -93,8 +93,8 @@ static func _static_init() -> void:
 "rare":      RarityPreset.new(0.9, 0.9, 4.0, 0.3, 0.2, 1.6, 0.28, 5.0),
 "epic":      RarityPreset.new(1.3, 1.3, 5.0, 0.45, 0.3, 2.0, 0.32, 8.0),
 "legendary": RarityPreset.new(1.7, 1.7, 6.0, 0.55, 0.35, 2.4, 0.38, 12.0),
-"mythic":    RarityPreset.new(2.1, 2.1, 7.0, 0.7, 0.4, 2.8, 0.42, 18.0),
-"exotic":    RarityPreset.new(2.6, 2.8, 8.0, 0.9, 0.5, 3.4, 0.5, 25.0),
+"mythic": RarityPreset.new(3.2, 3.0, 9.0, 0.95, 0.65, 4.0, 0.85, 34.0),
+"exotic": RarityPreset.new(3.8, 3.8, 10.0, 1.0, 0.75, 4.8, 1.0, 45.0),
 	}
 
 

@@ -116,6 +116,7 @@ var _hovered_rarity: String = ""
 
 var _detail_card: Card3D = null
 var _detail_tween_running := false
+var _queued_detail_scroll := 0
 var _detail_card_id := ""
 @onready var _deck_button: Table3DButton = $AddToDeckButton
 @onready var _deck_overview_button: Table3DButton = $ShowDeckButton
@@ -1018,6 +1019,7 @@ func _show_next_detail_card(direction: int) -> void:
 	if _detail_card == null:
 		return
 	if _detail_tween_running:
+		_queued_detail_scroll = direction
 		return
 
 	var all_cards: Array[Card3D] = []
@@ -1103,3 +1105,7 @@ func _show_next_detail_card(direction: int) -> void:
 
 	_detail_tween_running = false
 	_show_deck_button(new_card)
+	if _queued_detail_scroll != 0:
+		var dir := _queued_detail_scroll
+		_queued_detail_scroll = 0
+		call_deferred("_show_next_detail_card", dir)
