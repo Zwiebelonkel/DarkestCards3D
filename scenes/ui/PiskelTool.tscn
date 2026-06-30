@@ -1,0 +1,130 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvpiskeltool001"]
+
+[ext_resource type="Script" path="res://scripts/ui/PiskelTool.gd" id="1_piskel"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.035, 0.025, 0.04, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.08, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="PiskelTool" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_piskel")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.012, 0.009, 0.016, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(760, 620)
+layout_mode = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 28
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Piskel Asset Tool"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 38
+
+[node name="Description" type="RichTextLabel" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Erstelle Pixel-Art direkt mit Piskel. Im Web-Export öffnet sich Piskel als eingebettetes Overlay über dem Spiel. Exportiere dein Ergebnis in Piskel als PNG und importiere es anschließend hier, damit es im Projekt-/Spielkontext gespeichert und als Preview angezeigt wird.[/center]"
+fit_content = true
+scroll_active = false
+
+[node name="ButtonRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="OpenEmbeddedButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 46)
+layout_mode = 2
+text = "Piskel einbetten"
+
+[node name="OpenExternalButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 46)
+layout_mode = 2
+text = "Extern öffnen"
+
+[node name="ImportButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 46)
+layout_mode = 2
+text = "PNG importieren"
+
+[node name="CloseEmbedButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 46)
+layout_mode = 2
+text = "Overlay schließen"
+
+[node name="PreviewPanel" type="PanelContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 260)
+layout_mode = 2
+
+[node name="Preview" type="TextureRect" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/PreviewPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+autowrap_mode = 3
+horizontal_alignment = 1
+text = "Bereit."
+
+[node name="BackButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Zurück zum Hauptmenü"
+
+[node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+access = 2
+file_mode = 0
+filters = PackedStringArray("*.png ; PNG Sprite")
