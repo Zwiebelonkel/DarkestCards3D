@@ -105,12 +105,16 @@ func _upgrade_attack() -> void:
 
 	if not GameCurrency.spend_coins(attack_cost):
 		ui.show_message("Nicht genug Soul Coins")
+		ui.refresh_balance()
 		return
 
 	CardUpgradeManager.add_attack(selected_card_id, 1)
-	ui.show_message("+1 Angriff")
-	_spawn_preview_card()
 
+	ui.refresh_balance()
+	ui.set_selected_card(selected_card_id)
+	ui.show_message("+1 Angriff")
+
+	_spawn_preview_card()
 
 func _upgrade_health() -> void:
 	if selected_card_id == "":
@@ -118,10 +122,15 @@ func _upgrade_health() -> void:
 
 	if not GameCurrency.spend_coins(health_cost):
 		ui.show_message("Nicht genug Soul Coins")
+		ui.refresh_balance()
 		return
 
 	CardUpgradeManager.add_health(selected_card_id, 1)
+
+	ui.refresh_balance()
+	ui.set_selected_card(selected_card_id)
 	ui.show_message("+1 Leben")
+
 	_spawn_preview_card()
 
 
@@ -131,17 +140,22 @@ func _roll_perk() -> void:
 
 	if not GameCurrency.spend_coins(perk_cost):
 		ui.show_message("Nicht genug Soul Coins")
+		ui.refresh_balance()
 		return
 
 	var perks: Array[Dictionary] = PerkDatabase.roll_perks()
 
 	if perks.is_empty():
 		ui.show_message("Kein Perk gerollt")
+		ui.refresh_balance()
 		return
 
 	var perk: Dictionary = perks[0]
 
 	CardUpgradeManager.add_perk(selected_card_id, perk)
 
+	ui.refresh_balance()
+	ui.set_selected_card(selected_card_id)
 	ui.show_message("Perk: " + str(perk.get("name")))
+
 	_spawn_preview_card()

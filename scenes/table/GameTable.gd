@@ -640,6 +640,9 @@ func _check_game_over() -> bool:
 		reward = 10
 
 	GameCurrency.add_coins(reward)
+	var upgrade_ui := get_tree().get_first_node_in_group("upgrade_ui") as UpgradeUI
+	if upgrade_ui != null:
+		upgrade_ui.refresh_balance()
 
 	end_buttons.visible = true
 	mode_buttons.visible = false

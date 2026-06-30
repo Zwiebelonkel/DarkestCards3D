@@ -22,6 +22,8 @@ var message_tween: Tween = null
 
 
 func _ready() -> void:
+	add_to_group("upgrade_ui")
+
 	attack_button.pressed.connect(func(): attack_pressed.emit())
 	health_button.pressed.connect(func(): health_pressed.emit())
 	perk_button.pressed.connect(func(): perk_pressed.emit())

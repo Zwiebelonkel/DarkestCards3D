@@ -366,28 +366,41 @@
 	"effects": [{ "type": "cleave", "side_damage": 0.5 }],
 	"perks": []
   },
-  {
-	"id": "voidcat",
-	"name": "Void Cat",
-	"attack": 18,
-	"defense": 16,
-	"rarity": "legendary",
-	"description": "It stares into the void. The void usually looks away.",
-	"image": "res://assets/cards/images/voidcat.png",
-	"effects": [{ "type": "lifesteal", "percent": 0.2 }],
-	"perks": []
-  },
-  {
-	"id": "taxman",
-	"name": "Taxman",
-	"attack": 25,
-	"defense": 22,
-	"rarity": "mythic",
-	"description": "You can run. You can hide. You still owe him money.",
-	"image": "res://assets/cards/images/taxman.png",
-	"effects": [{ "type": "curse", "value": 2 }],
-	"perks": []
-  },
+{
+  "id": "voidcat",
+  "name": "Voidcat",
+  "attack": 18,
+  "defense": 16,
+  "rarity": "legendary",
+  "description": "It stares into the void. It is the void.",
+  "image": "res://assets/cards/images/voidcat.png",
+  "animated": true,
+  "frame_count": 2,
+  "frame_columns": 2,
+  "frame_rows": 1,
+  "frame_fps": 1,
+  "effects": [
+	{
+	  "type": "lifesteal",
+	  "percent": 0.2
+	}
+  ]
+},
+{
+  "id": "taxman",
+  "name": "Taxman",
+  "attack": 25,
+  "defense": 22,
+  "rarity": "mythic",
+  "description": "You Can run. You can hide. You still owe money.",
+  "image": "res://assets/cards/images/taxman.png",
+  "effects": [
+	{
+	  "type": "curse",
+	  "value": 2
+	}
+  ]
+},
   {
 	"id": "lamp",
 	"name": "Lamp",
@@ -407,6 +420,11 @@
 	"rarity": "legendary",
 	"description": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM.",
 	"image": "res://assets/cards/images/Microwave.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
 	"effects": [{ "type": "random_damage", "min": 0.75, "max": 1.5 }],
 	"perks": []
   },
@@ -503,7 +521,12 @@
 	"defense": 20,
 	"rarity": "mythic",
 	"description": "Everything is a gamble. Especially your survival.",
-	"image": "res://assets/cards/images/roulette_man.png",
+	"image": "res://assets/cards/images/roulette.png",
+	"animated":true,
+	"frame_count":4,
+	"frame_columns":4,
+	"frame_rows":1,
+	"frame_fps":8,
 	"effects": [{ "type": "random_damage", "min": 0.25, "max": 2.0 }],
 	"perks": []
   },
@@ -594,6 +617,11 @@
   "rarity": "common",
   "description": "\"Sir, i think you dropped your wallet\"",
   "image": "res://assets/cards/images/lurker.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
   "effects": [
 	{
 	  "type": "armor",
@@ -649,6 +677,11 @@
   "rarity": "rare",
   "description": "The one and only.",
   "image": "res://assets/cards/images/frog.png",
+	"animated":true,
+	"frame_count":5,
+	"frame_columns":5,
+	"frame_rows":1,
+	"frame_fps":3,
   "effects": [
 	{
 	  "type": "neighbor_heal",
@@ -666,7 +699,12 @@
   "defense": 2,
   "rarity": "common",
   "description": "A truely gruesome thing has happened here.",
-  "image": "res://assets/cards/images/crimescene.png"
+  "image": "res://assets/cards/images/crimescene.png",
+	"animated":true,
+	"frame_count":5,
+	"frame_columns":5,
+	"frame_rows":1,
+	"frame_fps":3,
 },
 {
   "id": "living_yarn",
@@ -702,7 +740,12 @@
   "defense": 1,
   "rarity": "common",
   "description": "Fliegt herum und fuckt einfach nur alle ab.\nNiemand mag diese karte. Nichtmal die Besitzer",
-  "image": "res://assets/cards/images/fly.png"
+  "image": "res://assets/cards/images/fly.png",
+	"animated":true,
+	"frame_count":4,
+	"frame_columns":4,
+	"frame_rows":1,
+	"frame_fps":13,
 },
 {
   "id": "eg",
@@ -719,8 +762,13 @@
   "attack": 1,
   "defense": 6,
   "rarity": "common",
-  "description": "Little chick cant even barely walk.\nBut tastes good when fried.",
+  "description": "Little chick cant even barely walk. But tastes good when fried.",
   "image": "res://assets/cards/images/chick.png",
+	"animated":true,
+	"frame_count":6,
+	"frame_columns":6,
+	"frame_rows":1,
+	"frame_fps":12,
   "effects": [
 	{
 	  "type": "swarm_power"
@@ -758,6 +806,11 @@
   "rarity": "uncommon",
   "description": "Better not step on him. He was once used by Slave to escape cctv!",
   "image": "res://assets/cards/images/urchin.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":6,
   "effects": [
 	{
 	  "type": "poison",

@@ -101,6 +101,7 @@ var _pack_top_start_rotation := Vector3.ZERO
 var _pack_start_position := Vector3.ZERO
 var _pack_start_rotation := Vector3.ZERO
 var _rip_has_snapped := false
+var _bend_material: ShaderMaterial = null
 
 var _pack_effect_shake_strength := 0.0
 var _pack_effect_shake_time_left := 0.0
@@ -145,6 +146,8 @@ func _ready() -> void:
 	_pack_top_home_rotation = pack_top.rotation_degrees
 	_pack_top_home_scale = pack_top.scale
 
+	_setup_bend_mesh()
+
 	print("PackTopArea gefunden: ", pack_top_area)
 	print("PackTopArea pickable: ", pack_top_area.input_ray_pickable)
 	print("PackTopArea shapes: ", pack_top_area.get_child_count())
@@ -169,6 +172,28 @@ func _ready() -> void:
 	info_label.text = "PackTop ziehen"
 
 
+## Erzeugt/holt das ShaderMaterial fuer den Bend-Mesh und initialisiert
+## den bend_amount-Parameter auf 0 (komplett flach, am Body anliegend).
+## bend_mesh bleibt standardmaessig unsichtbar - du schaltest selbst
+## zwischen dem alten starren pack_top und diesem neuen Bend-Mesh um.
+func _setup_bend_mesh() -> void:
+	if pack_top == null:
+		return
+
+	var shader := load("res://assets/shader/bendVertex.gdshader") as Shader
+
+	_bend_material = ShaderMaterial.new()
+	_bend_material.shader = shader
+
+	_bend_material.set_shader_parameter("bend_amount", 0.0)
+	_bend_material.set_shader_parameter("pivot_x", -0.5)
+	_bend_material.set_shader_parameter("bend_length", 1.0)
+
+	var tex := load("res://assets/cards/pack/pack_cover1 - Kopie.png") as Texture2D
+	_bend_material.set_shader_parameter("albedo_texture", tex)
+
+	pack_top.material_override = _bend_material
+	
 func _process(delta: float) -> void:
 	_update_camera_shake(delta)
 	_update_pack_effect_shake(delta)
@@ -265,6 +290,12 @@ func _apply_rip_physics(amount: float) -> void:
 		+ drag_top_rotation * amount \
 		+ Vector3(0.0, 0.0, fold_z)
 
+	# Bend-Mesh (falls aktiv genutzt) bekommt denselben eased-Fortschritt
+	# als Shader-Parameter, damit es sich synchron zur pack_top-Bewegung
+	# verformt, statt nur starr rotiert zu werden.
+	if _bend_material:
+		_bend_material.set_shader_parameter("bend_amount", eased)
+
 	_apply_base_shake(eased)
 
 	# Schnapp-Moment: einmaliger kurzer Ueberschwinger, sobald der
@@ -273,12 +304,28 @@ func _apply_rip_physics(amount: float) -> void:
 		_rip_has_snapped = true
 		_play_rip_snap_overshoot()
 
-
 func _play_rip_snap_overshoot() -> void:
 	var snap_tween := create_tween()
 	var target_rot := _pack_top_start_rotation + drag_top_rotation + rip_snap_overshoot_rotation
 	snap_tween.tween_property(pack_top, "rotation_degrees", target_rot, rip_snap_overshoot_time) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	# Bend-Mesh: kurzer Ueberschwinger ueber bend_amount = 1.0 hinaus,
+	# simuliert das ploetzliche Nachgeben der Folie am Schnapp-Punkt.
+	if _bend_material:
+		var bend_snap_tween := create_tween()
+		bend_snap_tween.tween_method(
+			func(v: float): _bend_material.set_shader_parameter("bend_amount", v),
+			_bend_material.get_shader_parameter("bend_amount"),
+			1.15,
+			rip_snap_overshoot_time
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		bend_snap_tween.tween_method(
+			func(v: float): _bend_material.set_shader_parameter("bend_amount", v),
+			1.15,
+			1.0,
+			rip_snap_overshoot_time
+		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	# leichter Zusatz-Ruck am Pack-Body, als ob die Folie ploetzlich nachgibt
 	var jolt_tween := create_tween()
@@ -289,7 +336,6 @@ func _play_rip_snap_overshoot() -> void:
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	_trigger_camera_shake(0.08, 0.12)
-
 
 func _reset_pack_top_drag() -> void:
 	_rip_has_snapped = false
@@ -302,9 +348,16 @@ func _reset_pack_top_drag() -> void:
 	tween.tween_property(pack, "position", _pack_start_position, drag_release_snap_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween.tween_property(pack, "rotation_degrees", _pack_start_rotation, drag_release_snap_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
+	if _bend_material:
+		tween.tween_method(
+			func(v: float): _bend_material.set_shader_parameter("bend_amount", v),
+			_bend_material.get_shader_parameter("bend_amount"),
+			0.0,
+			drag_release_snap_time
+		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
 	_drag_progress = 0.0
 	info_label.text = "Pack nach links aufreissen"
-
 
 func _open_pack_from_drag() -> void:
 	_opened = true
