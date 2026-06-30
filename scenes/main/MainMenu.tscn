@@ -41,7 +41,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(430, 430)
+custom_minimum_size = Vector2(430, 500)
 layout_mode = 2
 theme_override_styles/panel = SubResource("PanelStyle")
 
@@ -89,6 +89,12 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 text = "Game Table"
+
+[node name="PiskelToolButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+text = "Piskel Asset Tool"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
