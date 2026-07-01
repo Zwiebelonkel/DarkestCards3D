@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
 [ext_resource type="AudioStream" uid="uid://dlgfiwpvx07wl" path="res://assets/sounds/theme.mp3" id="7_sjxhf"]
-[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="10_pause"]
+[ext_resource type="PackedScene" uid="uid://cbj0qaueir1wc" path="res://scenes/ui/PauseMenu.tscn" id="10_pause"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1rhdn"]
 shader = ExtResource("2_dc040")
@@ -32,9 +32,10 @@ shader_parameter/viewport_size_override = Vector2(0, 0)
 background_energy_multiplier = 0.0
 glow_enabled = true
 glow_normalized = true
-glow_intensity = 3.34
-glow_strength = 1.03
-glow_bloom = 0.17
+glow_intensity = 8.0
+glow_strength = 1.07
+glow_bloom = 0.32
+volumetric_fog_enabled = true
 volumetric_fog_density = 0.0413
 volumetric_fog_albedo = Color(1, 1, 0.647059, 1)
 
@@ -44,14 +45,16 @@ sway_angle_degrees = 7.015
 
 [node name="CameraPivot" type="Node3D" parent="."]
 
-[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+[node name="CameraTilt" type="Node3D" parent="CameraPivot"]
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/CameraTilt"]
 transform = Transform3D(1, 0, 0, 0, 0.978148, 0.207912, 0, -0.207912, 0.978148, 0, 2.05, -0.0595816)
 current = true
 fov = 58.0
 
-[node name="CanvasLayer" type="CanvasLayer" parent="CameraPivot/Camera3D"]
+[node name="CanvasLayer" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D"]
 
-[node name="ColorRect" type="ColorRect" parent="CameraPivot/Camera3D/CanvasLayer"]
+[node name="ColorRect" type="ColorRect" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer"]
 material = SubResource("ShaderMaterial_1rhdn")
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,7 +68,7 @@ mouse_filter = 2
 [node name="GameTable" parent="ScenePivot" node_paths=PackedStringArray("table_camera") instance=ExtResource("2_table")]
 transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.15325)
 blood_decal_offset = null
-table_camera = NodePath("../../CameraPivot/Camera3D")
+table_camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
 
 [node name="PackOpening" parent="ScenePivot" node_paths=PackedStringArray("upgrade_ui", "collection_screen", "screen_flash_camera") instance=ExtResource("3_pack")]
 transform = Transform3D(-3.0424e-08, -0.184273, 0.69602, -8.05484e-09, 0.69602, 0.184273, -0.72, 9.72804e-17, -3.14722e-08, -2.5473, 0.594067, 0)
@@ -75,11 +78,11 @@ rarity_particle_up_spread = 22.36
 rarity_camera_shake_multiplier = 8.28
 rarity_particle_lifetime = 2.045
 collection_screen = NodePath("../Collection")
-screen_flash_camera = NodePath("../../CameraPivot/Camera3D")
+screen_flash_camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
 
 [node name="Collection" parent="ScenePivot" node_paths=PackedStringArray("camera") instance=ExtResource("4_collection")]
 transform = Transform3D(-0.72, -4.39431e-10, -6.29429e-08, 0, 0.719982, -0.00502651, 6.29444e-08, -0.00502651, -0.719982, 0, 0.0367756, 3.28078)
-camera = NodePath("../../CameraPivot/Camera3D")
+camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
 
 [node name="UpgradeMachine" parent="ScenePivot" instance=ExtResource("6_ko0rf")]
 transform = Transform3D(-1.18895e-07, 0, 2.72, 0, 2.72, 0, -2.72, 0, -1.18895e-07, 4.84266, -1.97875, 0)
@@ -101,6 +104,7 @@ light_volumetric_fog_energy = 2.026
 spot_range = 26.91
 spot_angle = 57.66
 script = ExtResource("7_ostsq")
+max_energy = 2.09
 
 [node name="SpotLight3D4" type="SpotLight3D" parent="ScenePivot"]
 transform = Transform3D(1, 0, 0, 0, -0.07054, 0.997509, 0, -0.997509, -0.07054, 0, 4.28754, 4.70532)

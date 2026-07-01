@@ -26,6 +26,10 @@ CardUpgradeManager="*res://scripts/CardUpgradeManager.gd"
 EffectDatabase="*res://scripts/autoload/EffectDatabase.gd"
 SettingsManager="*res://scripts/autoload/SettingsManager.gd"
 
+[display]
+
+window/size/mode=3
+
 [input]
 
 left={

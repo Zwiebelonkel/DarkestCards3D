@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=14 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="2_3qfbk"]
@@ -9,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://dj6sfixv3s6eo" path="res://assets/sounds/SFX/cardSelect.mp3" id="6_ch7uw"]
 [ext_resource type="AudioStream" uid="uid://dijntmyht7rcb" path="res://assets/sounds/SFX/cardDamage.mp3" id="7_ye1gf"]
 [ext_resource type="AudioStream" uid="uid://cf8ufynfrf6qq" path="res://assets/sounds/SFX/cardKill.mp3" id="8_g603g"]
+[ext_resource type="Script" uid="uid://4pb8b05gokbq" path="res://scripts/Wobble.gd" id="8_vtfa6"]
 [ext_resource type="PackedScene" uid="uid://b73xv648efpap" path="res://scenes/BloodBurst3D.tscn" id="9_ye1gf"]
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
@@ -149,6 +150,8 @@ size = Vector3(5.87708, 1.0708, 3.67908)
 
 [node name="dealer" parent="." instance=ExtResource("5_l1fpw")]
 transform = Transform3D(2.39, 0, 0, 0, 2.34364, 0.468475, 0, -0.468475, 2.34364, -0.0137849, -2.67248, -3.12406)
+script = ExtResource("8_vtfa6")
+amplitude = 0.05
 
 [node name="Audio" type="Node" parent="."]
 

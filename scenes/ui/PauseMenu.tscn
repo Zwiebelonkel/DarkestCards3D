@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3 uid="uid://cbj0qaueir1wc"]
 
-[ext_resource type="Script" path="res://scripts/ui/PauseMenu.gd" id="1_pause"]
-[ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
+[ext_resource type="Script" uid="uid://c77wgbnyrxchf" path="res://scripts/ui/PauseMenu.gd" id="1_pause"]
+[ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_n5dsq"]
+[ext_resource type="PackedScene" uid="uid://b40dvqf0l54j4" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
 
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
 bg_color = Color(0.035, 0.025, 0.04, 0.96)
@@ -63,27 +64,32 @@ theme_override_constants/separation = 16
 
 [node name="Title" type="Label" parent="PausePanel/CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_n5dsq")
+theme_override_font_sizes/font_size = 38
 text = "Paused"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 38
 
 [node name="ContinueButton" type="Button" parent="PausePanel/CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_n5dsq")
 text = "Continue"
 
 [node name="SettingsButton" type="Button" parent="PausePanel/CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_n5dsq")
 text = "Settings"
 
 [node name="MainMenuButton" type="Button" parent="PausePanel/CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_n5dsq")
 text = "MainMenu"
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]
 unique_name_in_owner = true
+visible = true

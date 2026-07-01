@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://dcp3rwdcgfp5m"]
+[gd_scene load_steps=5 format=3 uid="uid://dcp3rwdcgfp5m"]
 
-[ext_resource type="Script" path="res://scripts/ui/MainMenu.gd" id="1_menu"]
-[ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
+[ext_resource type="Script" uid="uid://dwf5xjyhc61gh" path="res://scripts/ui/MainMenu.gd" id="1_menu"]
+[ext_resource type="PackedScene" uid="uid://b40dvqf0l54j4" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
+[ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_v3gjy"]
 
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
 bg_color = Color(0.035, 0.025, 0.04, 0.94)
@@ -42,7 +43,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(430, 500)
 layout_mode = 2
 theme_override_styles/panel = SubResource("PanelStyle")
 
@@ -59,15 +59,17 @@ theme_override_constants/separation = 16
 
 [node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
+theme_override_font_sizes/font_size = 42
 text = "Darkest Cards"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 42
 
 [node name="Subtitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
+theme_override_font_sizes/font_size = 22
 text = "Hauptmenü"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 22
 
 [node name="Spacer" type="Control" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 12)
@@ -77,38 +79,47 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
-text = "Pack Opening"
+theme_override_fonts/font = ExtResource("2_v3gjy")
+text = "Play"
 
 [node name="CollectionButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Collection"
 
 [node name="GameTableButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Game Table"
 
 [node name="PiskelToolButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Piskel Asset Tool"
 
 [node name="SettingsButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Settings"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Beenden"
-
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]
 unique_name_in_owner = true
+layout_mode = 1

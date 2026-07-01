@@ -25,6 +25,10 @@ const SIDE_HINTS := [
 @export var roll_angle_degrees := 6.0      ## Z-Roll (seitliches Kippen)
 @export var pitch_dip_degrees := 1.6       ## X-Nicken nach unten während der Drehung
 
+@export_group("Mouse Tilt")
+@export var mouse_tilt_strength := 2.5 # Grad
+@export var mouse_tilt_speed := 8.0
+
 @export_group("Input")
 @export var input_action_left := "left"
 @export var input_action_right := "right"
@@ -33,6 +37,7 @@ const SIDE_HINTS := [
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var side_label: Label = %SideLabel
 @onready var hint_label: Label = %HintLabel
+@onready var camera_tilt: Node3D = $CameraPivot/CameraTilt
 
 var _active_side := 0
 var _base_x_rotation := 0.0
@@ -91,6 +96,7 @@ func _process(delta: float) -> void:
 		_begin_turn(dir)
 
 	_advance_phase(delta)
+	_update_mouse_tilt(delta)
 
 
 func _read_input() -> void:
@@ -239,3 +245,27 @@ func _connect_pack_collection_refresh() -> void:
 				if collection_screen.has_method("refresh_collection"):
 					collection_screen.refresh_collection()
 		)
+		
+func _update_mouse_tilt(delta: float) -> void:
+	var viewport_size := get_viewport().get_visible_rect().size
+	var mouse := get_viewport().get_mouse_position()
+
+	var offset := (mouse - viewport_size * 0.5) / (viewport_size * 0.5)
+
+	offset.x = clamp(offset.x, -1.0, 1.0)
+	offset.y = clamp(offset.y, -1.0, 1.0)
+
+	var target_x := deg_to_rad(-offset.y * mouse_tilt_strength)
+	var target_z := deg_to_rad(-offset.x * mouse_tilt_strength)
+
+	camera_tilt.rotation.x = lerp_angle(
+		camera_tilt.rotation.x,
+		target_x,
+		delta * mouse_tilt_speed
+	)
+
+	camera_tilt.rotation.z = lerp_angle(
+		camera_tilt.rotation.z,
+		target_z,
+		delta * mouse_tilt_speed
+	)

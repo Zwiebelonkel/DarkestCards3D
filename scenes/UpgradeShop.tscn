@@ -31,7 +31,7 @@ preview_card_scale = 0.285
 transform = Transform3D(0.945, 0, 0, 0, 0.72, 0, 0, 0, 0.72, -0.26, 0.93, -0.37)
 
 [node name="ScreenMesh" type="MeshInstance3D" parent="MachineModel"]
-transform = Transform3D(-1, 0, -8e-08, 0, 1, 0, 8e-08, 0, -1, 0, 1.35, -0.39)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.35, -0.39)
 mesh = SubResource("QuadMesh_screen")
 surface_material_override/0 = SubResource("Mat_dark_screen")
 
@@ -43,9 +43,6 @@ shape = SubResource("BoxShape_screen")
 
 [node name="UpgradeScreenInput" type="Node" parent="."]
 script = ExtResource("2_input")
-machine = NodePath("..")
-screen_area = NodePath("../ScreenArea")
-upgrade_viewport = NodePath("../UpgradeViewport")
 
 [node name="CardPreviewPoint" type="Marker3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.48595, 1.28744, -0.844046)
