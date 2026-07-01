@@ -6,6 +6,8 @@ signal pressed
 @export var label_text := "Button"
 @export var disabled := false
 @export var hover_outline_material: Material
+@export var press_sfx: AudioStreamPlayer3D
+
 
 @export_group("Model Parts")
 @export var glow_root: Node3D
@@ -67,6 +69,7 @@ func _on_input_event(_camera, event, _pos, _normal, _shape_idx) -> void:
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			get_viewport().set_input_as_handled()
+			_play_press_sfx()
 			pressed.emit()
 
 
@@ -104,3 +107,12 @@ func _move_button(down: bool) -> void:
 	_tween.set_trans(Tween.TRANS_SINE)
 	_tween.set_ease(Tween.EASE_OUT)
 	_tween.tween_property(button_mesh, "position", target_pos, hover_anim_time)
+	
+func _play_press_sfx() -> void:
+	if press_sfx == null:
+		return
+	
+	if press_sfx.playing:
+		press_sfx.stop()
+	
+	press_sfx.play()

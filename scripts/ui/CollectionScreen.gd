@@ -23,6 +23,9 @@ const RARITY_NAMES := {
 	"mythic": "MYTHIC",
 	"exotic": "EXOTIC",
 }
+@onready var card_hover_sfx: AudioStreamPlayer = $CardHoverSFX
+@onready var fly_sfx: AudioStreamPlayer = $CardRemoveSFX
+
 
 @export_group("Layout")
 @export var card_spacing_x := 0.95
@@ -321,6 +324,8 @@ func _on_card_hovered(card: Card3D) -> void:
 
 	var base_pos: Vector3 = _base_positions[card]
 	var base_scale: Vector3 = _base_scales[card]
+	
+	_play_card_hover_sfx()
 
 	var tween := create_tween().set_parallel(true)
 	tween.tween_property(card, "position", base_pos + hover_lift, hover_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
@@ -732,6 +737,7 @@ func _remove_card_from_fan(card: Card3D, card_id: String) -> void:
 
 	_deck_fan_cards.erase(card)
 	_deck_fan_base_transforms.erase(card)
+	_play_fly_sfx()
 
 	if is_instance_valid(card):
 		var tween := create_tween().set_parallel(true)
@@ -1018,7 +1024,7 @@ func _hide_deck_button() -> void:
 func _show_next_detail_card(direction: int) -> void:
 	if _detail_card == null:
 		return
-
+	_play_card_hover_sfx()
 	# Falls gerade eine Karte vom letzten Wechsel noch "im Flug" zurück nach
 	# Hause ist (ihr Rückflug-Tween läuft noch), lassen wir den einfach
 	# weiterlaufen – er gehört nicht zum _detail_switch_tween und wird hier
@@ -1122,3 +1128,21 @@ func _show_next_detail_card(direction: int) -> void:
 		_detail_switch_tween = null
 		_show_deck_button(new_card)
 		)
+		
+func _play_card_hover_sfx() -> void:
+	if card_hover_sfx == null:
+		return
+	
+	if card_hover_sfx.playing:
+		card_hover_sfx.stop()
+	
+	card_hover_sfx.play()
+	
+func _play_fly_sfx() -> void:
+	if fly_sfx == null:
+		return
+	
+	if fly_sfx.playing:
+		fly_sfx.stop()
+	
+	fly_sfx.play()

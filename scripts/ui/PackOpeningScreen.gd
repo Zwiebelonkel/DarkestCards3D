@@ -2,6 +2,7 @@ extends Node3D
 class_name PackOpeningScreen
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
+const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
 
 @export var card_count := 5
 
@@ -21,18 +22,10 @@ const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 @export var base_shake_rotation_strength: float = 4.0
 
 @export_group("Rip Physik")
-## Knick-Rotation um die Biege-Achse (Z), die beim Aufreissen zusaetzlich
-## zur normalen drag_top_rotation entsteht. Waechst nichtlinear mit dem
-## Fortschritt, damit die Folie erst "Widerstand" leistet.
 @export var rip_fold_rotation_max: float = 55.0
-## Wie stark der Widerstand am Anfang des Zugs ist (hoeher = zaeher Start,
-## dann ploetzliches Nachgeben). 1.0 = linear, >1.0 = mehr Widerstand am Anfang.
 @export var rip_resistance_curve: float = 2.4
-## Seitliches Durchbiegen (Bow) der Pack-Oberseite waehrend des Risses.
 @export var rip_bow_offset_max := Vector3(0.0, 0.05, -0.04)
-## Ab welchem Fortschritt der "Knick" ploetzlich nachgibt (Schnapp-Punkt).
 @export var rip_snap_threshold: float = 0.82
-## Ueberschwinger-Staerke beim finalen Losreissen, bevor es zur Flugbahn geht.
 @export var rip_snap_overshoot_rotation := Vector3(-12.0, 10.0, -55.0)
 @export var rip_snap_overshoot_time: float = 0.09
 
@@ -51,6 +44,15 @@ const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 @export var revealed_hover_offset := Vector3(-0.25, 0, 0)
 @export var revealed_hover_rotation_offset := Vector3(0, -25, 0)
 @export var revealed_hover_duration := 0.18
+@onready var card_hover_sfx: AudioStreamPlayer = $CardHoverSFX
+
+@export var card_drag_reveal_height: float = 0.55
+@export var card_drag_pixels_per_unit: float = 280.0
+@export var card_drag_snap_back_time: float = 0.16
+
+var _dragging_top_card := false
+var _top_card_drag_start_mouse_pos := Vector2.ZERO
+var _top_card_drag_start_position := Vector3.ZERO
 
 @export_group("Rarity Effekte")
 @export var rarity_particle_spawn_offset := Vector3(0.0, 0.15, -0.45)
@@ -102,6 +104,7 @@ var _pack_start_position := Vector3.ZERO
 var _pack_start_rotation := Vector3.ZERO
 var _rip_has_snapped := false
 var _bend_material: ShaderMaterial = null
+var _rarity_audio_player: AudioStreamPlayer
 
 var _pack_effect_shake_strength := 0.0
 var _pack_effect_shake_time_left := 0.0
@@ -141,6 +144,9 @@ func _ready() -> void:
 	_pack_home_scale = pack.scale
 	_pack_effect_base_position = pack.position
 	_cards_effect_base_position = cards_root.position
+	_rarity_audio_player = AudioStreamPlayer.new()
+	_rarity_audio_player.bus = "SFX"
+	add_child(_rarity_audio_player)
 
 	_pack_top_home_position = pack_top.position
 	_pack_top_home_rotation = pack_top.rotation_degrees
@@ -210,6 +216,32 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if _dragging_top_card:
+		if event is InputEventMouseMotion:
+			var drag_delta: Vector2 = event.position - _top_card_drag_start_mouse_pos
+			var lift_amount: float = clamp(-drag_delta.y / card_drag_pixels_per_unit, 0.0, card_drag_reveal_height)
+
+			var top_card := _get_top_card()
+			if top_card:
+				top_card.position = _top_card_drag_start_position + Vector3(0, lift_amount, 0)
+
+				if lift_amount >= card_drag_reveal_height:
+					_dragging_top_card = false
+					_reveal_top_card(top_card)
+
+			return
+
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			_dragging_top_card = false
+
+			var top_card := _get_top_card()
+			if top_card:
+				var tween := create_tween()
+				tween.tween_property(top_card, "position", _top_card_drag_start_position, card_drag_snap_back_time) \
+					.set_trans(Tween.TRANS_CUBIC) \
+					.set_ease(Tween.EASE_OUT)
+
+			return
 	if _waiting_for_collect_click and not _collecting_cards:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			_collect_revealed_cards()
@@ -404,18 +436,20 @@ func _spawn_cards_inside_pack() -> void:
 		cards_root.add_child(card)
 		card.setup(data)
 
-		card.position = Vector3(0, 0.15, -1.1)
+		var final_pos := _get_stack_position(i)
+		card.position = final_pos + Vector3(0, -0.75, 0)
 		card.rotation_degrees = stack_face_down_rotation
-		card.scale = Vector3.ONE * 0.01
+		card.scale = Vector3.ONE * stack_card_scale
 
 		_card_stack.append(card)
 
-		var final_pos := _get_stack_position(i)
 
 		var tween := create_tween().set_parallel(true)
-		tween.tween_property(card, "position", final_pos, 0.35 + i * 0.05).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		tween.tween_property(card, "rotation_degrees", stack_face_down_rotation, 0.35 + i * 0.05)
-		tween.tween_property(card, "scale", Vector3.ONE * stack_card_scale, 0.25 + i * 0.04).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tween.tween_property(card, "position", final_pos, 0.32 + i * 0.045) \
+			.set_trans(Tween.TRANS_CUBIC) \
+			.set_ease(Tween.EASE_OUT)
+
+		tween.tween_property(card, "rotation_degrees", stack_face_down_rotation, 0.32 + i * 0.045)
 
 	await get_tree().create_timer(0.7).timeout
 
@@ -470,7 +504,11 @@ func _on_top_card_input(
 	if top_card == null:
 		return
 
-	_reveal_top_card(top_card)
+	_dragging_top_card = true
+	_top_card_drag_start_mouse_pos = event.position
+	_top_card_drag_start_position = top_card.position
+
+	info_label.text = "Karte nach oben ziehen"
 
 
 func _reveal_top_card(card: Card3D) -> void:
@@ -523,7 +561,7 @@ func _trigger_rarity_effects(rarity_id: String, rarity_data: Dictionary) -> void
 		rarity_data.get("camera_shake_strength", 0.0) * rarity_pack_shake_multiplier,
 		0.35 + RarityEffectsData.rarity_rank(rarity_id) * 0.08
 	)
-	_play_rarity_sound(rarity_data.get("sound_key", "reveal_common"))
+	_play_rarity_sound(rarity_id)
 
 	if RarityEffectsData.should_slow_motion(rarity_id):
 		_apply_slow_motion(
@@ -780,18 +818,20 @@ func _apply_slow_motion(scale: float, duration: float) -> void:
 	)
 
 
-## Stub fuer Sound-Integration. Wenn ein AudioStreamPlayer-Setup existiert,
-## hier die jeweilige Stream-Ressource anhand des sound_key abspielen.
-func _play_rarity_sound(sound_key: String) -> void:
-	# Beispiel-Anbindung (auskommentiert, bis Audiodateien vorhanden sind):
-	# var stream := load("res://audio/pack/%s.ogg" % sound_key)
-	# if stream:
-	#     var player := AudioStreamPlayer.new()
-	#     add_child(player)
-	#     player.stream = stream
-	#     player.play()
-	#     player.finished.connect(player.queue_free)
-	pass
+func _play_rarity_sound(rarity_id: String) -> void:
+	var path := RARITY_SOUND_PATH % rarity_id
+
+	if not ResourceLoader.exists(path):
+		push_warning("Kein Reveal-Sound gefunden: %s" % path)
+		return
+
+	var stream := load(path) as AudioStream
+	if stream == null:
+		return
+
+	_rarity_audio_player.stop()
+	_rarity_audio_player.stream = stream
+	_rarity_audio_player.play()
 
 
 func _animate_revealed_card(card: Card3D, final_pos: Vector3, rarity_data: Dictionary) -> void:
@@ -851,6 +891,8 @@ func _on_revealed_card_hover_start(card: Card3D) -> void:
 
 	if card == _top_revealed_card:
 		return
+		
+	_play_card_hover_sfx()
 
 	var rest_pos: Vector3 = _revealed_rest_positions[card]
 	var hover_pos := rest_pos + revealed_hover_offset
@@ -1074,3 +1116,12 @@ func _update_pack_effect_shake(delta: float) -> void:
 	if _pack_effect_shake_time_left <= 0.0:
 		pack.position = _pack_effect_base_position
 		cards_root.position = _cards_effect_base_position
+		
+func _play_card_hover_sfx() -> void:
+	if card_hover_sfx == null:
+		return
+	
+	if card_hover_sfx.playing:
+		card_hover_sfx.stop()
+	
+	card_hover_sfx.play()

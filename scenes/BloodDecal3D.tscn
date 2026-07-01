@@ -1,0 +1,63 @@
+[gd_scene load_steps=5 format=3 uid="uid://ct16nbwx12jao"]
+
+[ext_resource type="Script" uid="uid://dtj2o60u0s31v" path="res://scripts/BloodDecal3D.gd" id="1_blood_decal_script"]
+
+[sub_resource type="Shader" id="Shader_blood_decal"]
+code = "shader_type spatial;
+render_mode unshaded, blend_mix, depth_draw_always, cull_disabled;
+
+uniform vec4 blood_color : source_color = vec4(0.45, 0.0, 0.0, 1.0);
+uniform float alpha = 0.78;
+uniform float seed = 0.0;
+
+float blob_noise(vec2 p) {
+	return sin(p.x * 13.0 + seed) * 0.045 + sin(p.y * 17.0 + seed * 1.37) * 0.04 + sin((p.x + p.y) * 9.0 + seed * 0.71) * 0.035;
+}
+
+void fragment() {
+	vec2 uv = UV * 2.0 - 1.0;
+	float d = length(uv);
+	float a = atan(uv.y, uv.x);
+
+	float radial_noise = sin(a * 5.0 + seed) * 0.10 + sin(a * 11.0 + seed * 0.6) * 0.06 + sin(a * 19.0 + seed * 1.8) * 0.035;
+	float radius = 0.62 + radial_noise + blob_noise(uv);
+
+	float main_blob = 1.0 - smoothstep(radius - 0.10, radius + 0.05, d);
+
+	float drop_1 = 1.0 - smoothstep(0.06, 0.12, length(uv - vec2(0.42, 0.18)));
+	drop_1 *= 0.75;
+
+	float drop_2 = 1.0 - smoothstep(0.04, 0.09, length(uv - vec2(-0.37, -0.26)));
+	drop_2 *= 0.65;
+
+	float drop_3 = 1.0 - smoothstep(0.035, 0.075, length(uv - vec2(0.14, -0.49)));
+	drop_3 *= 0.55;
+
+	float mask = clamp(max(main_blob, max(drop_1, max(drop_2, drop_3))), 0.0, 1.0);
+	float center_darkening = 1.0 - smoothstep(0.0, 0.85, d) * 0.38;
+
+	ALBEDO = blood_color.rgb * center_darkening;
+	ALPHA = mask * alpha;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blood_decal"]
+render_priority = 0
+shader = SubResource("Shader_blood_decal")
+shader_parameter/blood_color = Color(0.45, 0, 0, 1)
+shader_parameter/alpha = 0.78
+shader_parameter/seed = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_blood_decal"]
+
+[node name="BloodDecal3D" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0115053, 0)
+script = ExtResource("1_blood_decal_script")
+normal_scale = Vector3(2, 2, 2)
+kill_scale = Vector3(3, 3, 3)
+fade_delay = 2.0
+start_alpha = 0.925
+
+[node name="DecalMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_blood_decal")
+mesh = SubResource("QuadMesh_blood_decal")

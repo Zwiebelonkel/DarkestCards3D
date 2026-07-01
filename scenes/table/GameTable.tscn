@@ -1,10 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=13 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="2_3qfbk"]
 [ext_resource type="PackedScene" uid="uid://bpcv0s5e6orfb" path="res://scenes/Table3DButton.tscn" id="3_efmqq"]
 [ext_resource type="PackedScene" uid="uid://48l5iy1dnyb" path="res://assets/environments/props/table/table.glb" id="4_8ay2t"]
+[ext_resource type="PackedScene" uid="uid://ct16nbwx12jao" path="res://scenes/BloodDecal3D.tscn" id="4_g603g"]
 [ext_resource type="PackedScene" uid="uid://dl4avw6u14dbx" path="res://assets/environments/props/dealer/scene.gltf" id="5_l1fpw"]
+[ext_resource type="AudioStream" uid="uid://dj6sfixv3s6eo" path="res://assets/sounds/SFX/cardSelect.mp3" id="6_ch7uw"]
+[ext_resource type="AudioStream" uid="uid://dijntmyht7rcb" path="res://assets/sounds/SFX/cardDamage.mp3" id="7_ye1gf"]
+[ext_resource type="AudioStream" uid="uid://cf8ufynfrf6qq" path="res://assets/sounds/SFX/cardKill.mp3" id="8_g603g"]
+[ext_resource type="PackedScene" uid="uid://b73xv648efpap" path="res://scenes/BloodBurst3D.tscn" id="9_ye1gf"]
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
 albedo_color = Color(0.12, 0.08, 0.05, 1)
@@ -16,6 +21,9 @@ size = Vector3(8, 0.3, 5)
 [node name="GameTable" type="Node3D" node_paths=PackedStringArray("match_camera_marker")]
 script = ExtResource("1_onr2p")
 card_scene = ExtResource("2_3qfbk")
+blood_burst_scene = ExtResource("9_ye1gf")
+blood_decal_scene = ExtResource("4_g603g")
+blood_decal_offset = Vector3(0, -0.1, 0)
 match_camera_marker = NodePath("MatchCameraMarker")
 match_camera_rotation = Vector3(-90, 0, 0)
 inspect_camera_offset = Vector3(0, 1, 0.01)
@@ -126,9 +134,27 @@ outline_size = 8
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.74963, 0)
 
 [node name="table" parent="." instance=ExtResource("4_8ay2t")]
-transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, -0.0445504, 0.0519236, 0.0219615)
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, -0.0445504, -0.092979, 0.0219615)
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="table"]
+transform = Transform3D(0.99996, 0, 0, 0, 0.99996, 0, 0, 0, 0.99996, 0.0264247, -0.4646, -0.00323573)
+size = Vector3(5.87708, 1.0708, 3.67908)
 
 [node name="dealer" parent="." instance=ExtResource("5_l1fpw")]
 transform = Transform3D(2.39, 0, 0, 0, 2.34364, 0.468475, 0, -0.468475, 2.34364, -0.0137849, -2.67248, -3.12406)
+
+[node name="Audio" type="Node" parent="."]
+
+[node name="SelectSFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("6_ch7uw")
+bus = &"SFX"
+
+[node name="DamageSFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("7_ye1gf")
+bus = &"SFX"
+
+[node name="KillSFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("8_g603g")
+bus = &"SFX"
 
 [editable path="dealer"]

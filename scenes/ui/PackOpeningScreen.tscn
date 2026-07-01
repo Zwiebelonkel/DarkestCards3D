@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://sbiyjx808dkn"]
+[gd_scene load_steps=8 format=3 uid="uid://sbiyjx808dkn"]
 
 [ext_resource type="Script" uid="uid://ci1i1hkrnkts3" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
+[ext_resource type="AudioStream" uid="uid://dd2vad4psje60" path="res://assets/sounds/SFX/cardHover.mp3" id="4_o7vg3"]
 [ext_resource type="PackedScene" uid="uid://cegwcnpr0ppe1" path="res://assets/cards/pack/pack.glb" id="4_rrr6c"]
 [ext_resource type="Script" uid="uid://oyqpnugunh4o" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
 
@@ -16,13 +17,13 @@ size = Vector3(2.06586, 0.235229, 4.01843)
 
 [node name="PackOpeningScreen" type="Node3D" node_paths=PackedStringArray("cards_fly_target")]
 script = ExtResource("1_script")
-card_count = 100
+card_count = 10
+stack_position_offset = Vector3(0, 0.01, -0.01)
 stack_face_down_rotation = Vector3(0, 180, 0)
 stack_card_scale = 1.745
 shoot_height_offset = 2.395
 revealed_stack_position = Vector3(0.685, 1.12, 2.225)
 revealed_stack_offset = Vector3(0.005, 0.005, 0.03)
-revealed_scale = 0.755
 revealed_rotation = Vector3(1, -3.525, 0)
 revealed_hover_offset = Vector3(-0.455, 0, 0)
 revealed_hover_rotation_offset = Vector3(0, 3.21, 8.055)
@@ -74,5 +75,11 @@ shape = SubResource("BoxShape3D_rrr6c")
 
 [node name="CardsFlyTarget" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.187, -2.15, 3.396)
+
+[node name="CardHoverSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_o7vg3")
+volume_db = -2.114
+pitch_scale = 1.31
+bus = &"SFX"
 
 [editable path="pack"]

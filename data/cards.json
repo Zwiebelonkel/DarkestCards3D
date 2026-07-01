@@ -409,6 +409,11 @@
 	"rarity": "legendary",
 	"description": "It has witnessed things. Terrible things.",
 	"image": "res://assets/cards/images/lamp.png",
+	"animated":true,
+	"frame_count":7,
+	"frame_columns":7,
+	"frame_rows":1,
+	"frame_fps":6,
 	"effects": [{ "type": "shield_first_hit" }],
 	"perks": []
   },
@@ -436,6 +441,11 @@
 	"rarity": "exotic",
 	"description": "If you can see him, he has already seen you.",
 	"image": "res://assets/cards/images/observer.png",
+	"animated":true,
+	"frame_count":5,
+	"frame_columns":5,
+	"frame_rows":1,
+	"frame_fps":4,
 	"effects": [{ "type": "thorns", "percent": 0.25 }],
 	"perks": []
   },
@@ -510,7 +520,12 @@
 	"defense": 18,
 	"rarity": "exotic",
 	"description": "When the lights appear, it is already too late.",
-	"image": "res://assets/cards/images/red_light_figure.png",
+	"image": "res://assets/cards/images/redlight.png",
+	"animated":true,
+	"frame_count":4,
+	"frame_columns":4,
+	"frame_rows":1,
+	"frame_fps":9,
 	"effects": [{ "type": "cleave", "side_damage": 0.5 }],
 	"perks": []
   },
@@ -546,17 +561,20 @@
 	"effects": [{ "type": "grave_return" }],
 	"perks": []
   },
-  {
-	"id": "hospital_patient",
-	"name": "Hospital Patient",
-	"attack": 10,
-	"defense": 28,
-	"rarity": "legendary",
-	"description": "Nobody remembers admitting him.",
-	"image": "res://assets/cards/images/hospital_patient.png",
-	"effects": [{ "type": "regeneration", "value": 4 }],
-	"perks": []
-  },
+{
+  "id": "heart_monitor",
+  "name": "Heart-Monitor",
+  "attack": 10,
+  "defense": 28,
+  "rarity": "legendary",
+  "description": "Nobody remembers admitting him.",
+  "image": "res://assets/cards/images/heart_monitor.png",
+	"animated":true,
+	"frame_count":4,
+	"frame_columns":4,
+	"frame_rows":1,
+	"frame_fps":5,
+},
   {
 	"id": "bench_sleeper",
 	"name": "Bench Sleeper",
@@ -593,20 +611,6 @@
 	"description": "Every camera is connected. Every camera is watching.",
 	"image": "res://assets/cards/images/CCTV.png",
 	"effects": [{ "type": "bodyguard", "percent": 0.5 }],
-	"perks": []
-  },
-  {
-	"id": "last_passenger",
-	"name": "The Last Passenger",
-	"attack": 40,
-	"defense": 30,
-	"rarity": "exotic",
-	"description": "The bus was empty. It should have been empty.",
-	"image": "res://assets/cards/images/last_passenger.png",
-	"effects": [
-	  { "type": "grave_return" },
-	  { "type": "execute", "threshold": 0.25 }
-	],
 	"perks": []
   },
 {

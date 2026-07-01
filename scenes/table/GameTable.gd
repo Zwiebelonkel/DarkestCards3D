@@ -21,10 +21,20 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @onready var status_label: Label3D = $StatusLabel
 @onready var player_death_marker: Marker3D = $PlayerSlots/death
 @onready var enemy_death_marker: Marker3D = $EnemySlots/death
+@onready var select_sfx: AudioStreamPlayer = $Audio/SelectSFX
+@onready var damage_sfx: AudioStreamPlayer = $Audio/DamageSFX
+@onready var kill_sfx: AudioStreamPlayer = $Audio/KillSFX
 
 @export_group("Timing")
 @export var enemy_turn_delay: float = 0.9
 @export var draw_animation_duration: float = 0.35
+
+@export_group("Effects")
+@export var blood_burst_scene: PackedScene
+@export var blood_decal_scene: PackedScene
+
+@export var blood_spawn_offset := Vector3(0, 0.16, 0)
+@export var blood_decal_offset := Vector3(0, 0.012, 0)
 
 @export_group("Match Camera")
 @export var match_camera_marker: Marker3D
@@ -403,6 +413,7 @@ func _select_player_card(slot_index: int) -> void:
 
 	_selected_player_card = card
 	card.set_selected(true)
+	_play_sfx(select_sfx)
 	status_label.text = "Wähle nun die gegnerische Karte zum Angriff"
 
 
@@ -417,7 +428,7 @@ func _try_attack_enemy(slot_index: int) -> void:
 
 	var attacker: Card3D = _selected_player_card
 	_selected_player_card = null
-	attacker.set_selected(false)
+	attacker.clear_selected_immediate()
 
 	await _resolve_duel(attacker, enemy_card, "player")
 
@@ -451,28 +462,60 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 	for hit_index in range(hit_count):
 		if not is_instance_valid(attacker) or not is_instance_valid(defender) or defender.is_dead():
 			break
+
 		await attacker.play_attack_animation(defender.global_position)
+
 		if _game_over or not is_instance_valid(attacker) or not is_instance_valid(defender):
 			return
-		var damage := CombatResolver.get_attack_damage(attacker, _count_identical_on_board(str(attacker.card_data.get("id", attacker.card_data.get("card_id", "")))))
+
+		var damage := CombatResolver.get_attack_damage(
+			attacker,
+			_count_identical_on_board(str(attacker.card_data.get("id", attacker.card_data.get("card_id", ""))))
+		)
+
 		var hit_result := CombatResolver.apply_incoming_damage(defender, damage)
+
 		total_damage_done += int(hit_result.get("damage", 0))
 		defender_died = bool(hit_result.get("died", false))
+
 		if CardData.has_effect(attacker.card_data, "execute") and float(defender.current_hp) <= float(defender.max_hp) * float(CardData.get_effect(attacker.card_data, "execute").get("threshold", 0.25)):
 			defender_died = defender.take_damage(defender.current_hp)
+
+		var damage_intensity: float = clamp(
+			float(damage) / max(1.0, float(defender.max_hp)),
+			0.45,
+			1.6
+		)
+
+		# Nur die angegriffene Karte bekommt Blut.
+		_spawn_blood_from_card(defender, damage_intensity)
+
+		# Wenn der Defender stirbt, wird der Decal automatisch groß.
+		_spawn_blood_decal_under_card(defender, defender_died)
+
+		_play_sfx(damage_sfx)
+
 		if defender_died:
 			break
 
 	CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
+
+	# Thorns kann den Attacker töten, aber ohne Blood/Decal.
 	attacker_died = CombatResolver.apply_thorns(defender, attacker, total_damage_done)
 
 	if is_instance_valid(attacker) and is_instance_valid(defender):
 		var counter_damage := defender.attack_value
-		var counter_result := CombatResolver.apply_incoming_damage(attacker, defender.attack_value)
+		var counter_result := CombatResolver.apply_incoming_damage(attacker, counter_damage)
+
+		# Counter-Schaden bleibt spielerisch aktiv,
+		# aber der Attacker bekommt KEIN Blut und KEIN Decal.
+		_play_sfx(damage_sfx)
+
 		attacker_died = attacker_died or bool(counter_result.get("died", false))
 
 	if CardData.has_effect(attacker.card_data, "stun") and is_instance_valid(defender):
 		defender.stun_next_attack()
+
 	var curse := CardData.get_effect(attacker.card_data, "curse")
 	if not curse.is_empty() and is_instance_valid(defender):
 		defender.apply_curse(int(curse.get("value", 2)))
@@ -481,6 +524,7 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 
 	if attacker_died:
 		_remove_dead_card(attacker)
+
 	if defender_died:
 		_remove_dead_card(defender)
 
@@ -491,7 +535,6 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		_end_turn_to("enemy")
 	else:
 		_end_turn_to("player")
-
 
 func _count_identical_on_board(card_id: String) -> int:
 	var count := 0
@@ -504,18 +547,36 @@ func _count_identical_on_board(card_id: String) -> int:
 func _apply_cleave(attacker: Card3D, defender: Card3D, attacker_side: String) -> void:
 	if not CardData.has_effect(attacker.card_data, "cleave"):
 		return
+
 	var slots: Array[Card3D] = _enemy_slots if attacker_side == "player" else _player_slots
 	var center := slots.find(defender)
+
 	if center == -1:
 		return
+
 	var side_damage := int(round(float(attacker.attack_value) * 0.5))
+
 	for idx in [center - 1, center + 1]:
 		if idx < 0 or idx >= slots.size():
 			continue
+
 		var target := slots[idx]
+
 		if target == null or not is_instance_valid(target):
 			continue
+
 		var result := CombatResolver.apply_incoming_damage(target, side_damage)
+
+		var cleave_intensity: float = clamp(
+			float(side_damage) / max(1.0, float(target.max_hp)),
+			0.25,
+			0.9
+		)
+
+		_spawn_blood_from_card(target, cleave_intensity)
+		_spawn_blood_decal_under_card(target, false)
+		_play_sfx(damage_sfx)
+
 		if bool(result.get("died", false)):
 			_remove_dead_card(target)
 
@@ -548,6 +609,8 @@ func _remove_dead_card(card: Card3D) -> void:
 	_selected_player_card = null
 
 	if is_instance_valid(card):
+		_play_sfx(kill_sfx)
+		_spawn_blood_decal_under_card(card, true)
 		_animate_card_death(card, side)
 
 	_draw_to_slot(side, slot_index, true)
@@ -913,3 +976,49 @@ func _animate_card_death(card: Card3D, side: String) -> void:
 		if is_instance_valid(card):
 			card.queue_free()
 	)
+
+func _play_sfx(sfx: AudioStreamPlayer) -> void:
+	if sfx == null:
+		return
+
+	if sfx.playing:
+		sfx.stop()
+
+	sfx.play()
+
+func _spawn_blood_from_card(card: Card3D, intensity: float = 1.0) -> void:
+	if blood_burst_scene == null:
+		return
+
+	if card == null or not is_instance_valid(card):
+		return
+
+	var blood := blood_burst_scene.instantiate() as Node3D
+	add_child(blood)
+
+	blood.global_transform = Transform3D(
+		Basis(),
+		card.global_position + blood_spawn_offset
+	)
+
+	if blood.has_method("set_intensity"):
+		blood.set_intensity(intensity)
+
+func _spawn_blood_decal_under_card(card: Card3D, is_kill: bool = false) -> void:
+	if blood_decal_scene == null:
+		return
+
+	if card == null or not is_instance_valid(card):
+		return
+
+	var decal := blood_decal_scene.instantiate() as Node3D
+	add_child(decal)
+
+	decal.global_position = card.global_position + blood_decal_offset
+	decal.rotation_degrees = Vector3.ZERO
+
+	# Zufällige Drehung, damit es nicht immer gleich aussieht.
+	decal.rotate_y(_rng.randf_range(0.0, TAU))
+
+	if decal.has_method("setup"):
+		decal.setup(is_kill)

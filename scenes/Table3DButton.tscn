@@ -1,16 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://bpcv0s5e6orfb"]
+[gd_scene load_steps=7 format=3 uid="uid://bpcv0s5e6orfb"]
 
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="1_4mppo"]
 [ext_resource type="Script" uid="uid://6ow1gqyduqah" path="res://scripts/Table3DButton.gd" id="1_h2h3c"]
 [ext_resource type="Material" uid="uid://bs14uxbq34a72" path="res://assets/shader/inventory_yellow_outline.tres" id="2_1t64y"]
 [ext_resource type="PackedScene" uid="uid://c1aolwhdo17da" path="res://assets/environments/props/button/button.glb" id="4_bippn"]
+[ext_resource type="AudioStream" uid="uid://dsugd2fapfweu" path="res://assets/sounds/SFX/button.mp3" id="5_sjhui"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1t64y"]
 size = Vector3(1.68933, 0.39209, 1.04651)
 
-[node name="Table3DButton" type="Node3D" node_paths=PackedStringArray("glow_root", "button_mesh")]
+[node name="Table3DButton" type="Node3D" node_paths=PackedStringArray("press_sfx", "glow_root", "button_mesh")]
 script = ExtResource("1_h2h3c")
 hover_outline_material = ExtResource("2_1t64y")
+press_sfx = NodePath("PressSFX")
 glow_root = NodePath("model")
 button_mesh = NodePath("model/button")
 
@@ -26,5 +28,10 @@ text = "Start"
 font = ExtResource("1_4mppo")
 
 [node name="model" parent="." instance=ExtResource("4_bippn")]
+
+[node name="PressSFX" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.807909, 0)
+stream = ExtResource("5_sjhui")
+bus = &"SFX"
 
 [editable path="model"]

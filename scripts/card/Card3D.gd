@@ -76,6 +76,8 @@ signal died(card: Card3D)
 
 var _is_selected: bool = false
 var _select_base_position: Vector3 = Vector3.ZERO
+var _select_tween: Tween = null
+var _has_select_base_position := false
 
 # Wie "heftig" sich der Rarity-Shader pro Stufe verhaelt.
 # common bleibt bewusst praktisch unbewegt/ruhig, exotic ist maximal
@@ -379,18 +381,38 @@ func _shorten_description(text: String, max_chars: int = 95) -> String:
 func set_selected(selected: bool) -> void:
 	if selected == _is_selected:
 		return
+
+	if _select_tween != null:
+		_select_tween.kill()
+		_select_tween = null
+
 	_is_selected = selected
 
 	if selected:
 		_select_base_position = position
-		var tween: Tween = create_tween().set_parallel(true)
-		tween.tween_property(self, "position", _select_base_position + Vector3(0, select_lift, 0), select_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		_has_select_base_position = true
+
+		_select_tween = create_tween().set_parallel(true)
+		_select_tween.tween_property(
+			self,
+			"position",
+			_select_base_position + Vector3(0, select_lift, 0),
+			select_duration
+		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
 		_set_glow_override_color(select_highlight_color)
 	else:
-		var tween: Tween = create_tween().set_parallel(true)
-		tween.tween_property(self, "position", _select_base_position, select_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		_restore_glow_rarity_color()
+		var target_pos := _select_base_position if _has_select_base_position else position
 
+		_select_tween = create_tween().set_parallel(true)
+		_select_tween.tween_property(
+			self,
+			"position",
+			target_pos,
+			select_duration
+		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+		_restore_glow_rarity_color()
 
 func _set_glow_override_color(color: Color) -> void:
 	_apply_static_outline_color(card_outline, color)
@@ -466,6 +488,7 @@ func play_attack_animation(target_global_pos: Vector3) -> void:
 
 	await return_tween.finished
 
+
 func _wrap_text(text: String, max_chars_per_line: int = 45) -> String:
 	var words := text.split(" ")
 	var result := ""
@@ -520,3 +543,15 @@ func _update_card_frame() -> void:
 		float(row) / float(_frame_rows),
 		0.0
 	)
+
+func clear_selected_immediate() -> void:
+	if _select_tween != null:
+		_select_tween.kill()
+		_select_tween = null
+
+	_is_selected = false
+
+	if _has_select_base_position:
+		position = _select_base_position
+
+	_restore_glow_rarity_color()

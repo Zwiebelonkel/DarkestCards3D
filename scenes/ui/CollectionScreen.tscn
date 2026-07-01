@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cvxblkstddw2n"]
+[gd_scene load_steps=7 format=3 uid="uid://cvxblkstddw2n"]
 
 [ext_resource type="Script" uid="uid://bb62mpjyv4ak2" path="res://scripts/ui/CollectionScreen.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://bpcv0s5e6orfb" path="res://scenes/Table3DButton.tscn" id="2_eujja"]
 [ext_resource type="PackedScene" uid="uid://48l5iy1dnyb" path="res://assets/environments/props/table/table.glb" id="4_1pna7"]
+[ext_resource type="AudioStream" uid="uid://dd2vad4psje60" path="res://assets/sounds/SFX/cardHover.mp3" id="5_ke5g5"]
+[ext_resource type="AudioStream" uid="uid://bb6frcxr0ib18" path="res://assets/sounds/SFX/cardFly.mp3" id="6_wu3m3"]
 [ext_resource type="Script" uid="uid://oyqpnugunh4o" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
 
 [node name="CollectionScreen" type="Node3D"]
@@ -67,3 +69,14 @@ omni_range = 1.436
 
 [node name="table" parent="." instance=ExtResource("4_1pna7")]
 transform = Transform3D(2.53, 0, 0, 0, 2.12479, -0.267615, 0, 0.208525, 2.7269, 0.274246, -0.749054, -5.15259)
+
+[node name="CardHoverSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_ke5g5")
+volume_db = -2.114
+pitch_scale = 1.31
+bus = &"SFX"
+
+[node name="CardRemoveSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_wu3m3")
+pitch_scale = 0.91
+bus = &"SFX"
