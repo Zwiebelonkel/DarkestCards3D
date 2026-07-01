@@ -63,7 +63,15 @@ mouse_filter = 2
 
 [node name="GameTable" parent="ScenePivot" node_paths=PackedStringArray("table_camera") instance=ExtResource("2_table")]
 transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.15325)
+enemy_turn_delay = null
+draw_animation_duration = null
+blood_spawn_offset = null
+blood_decal_offset = null
+match_camera_use_export_rotation = null
+match_camera_duration = null
+inspect_camera_duration = null
 table_camera = NodePath("../../CameraPivot/Camera3D")
+deck_size = null
 
 [node name="PackOpening" parent="ScenePivot" node_paths=PackedStringArray("upgrade_ui", "collection_screen", "screen_flash_camera") instance=ExtResource("3_pack")]
 transform = Transform3D(-3.0424e-08, -0.184273, 0.69602, -8.05484e-09, 0.69602, 0.184273, -0.72, 9.72804e-17, -3.14722e-08, -2.5473, 0.594067, 0)

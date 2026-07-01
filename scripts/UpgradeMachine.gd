@@ -20,7 +20,7 @@ const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 var selected_card_id := ""
 var preview_card: Card3D = null
 
-@onready var ui: Control = $UpgradeViewport/UpgradeUI
+@onready var ui: UpgradeUI = $UpgradeViewport/UpgradeUI as UpgradeUI
 
 
 func _ready() -> void:
@@ -58,7 +58,21 @@ func _connect_ui() -> void:
 	ui.attack_pressed.connect(_upgrade_attack)
 	ui.health_pressed.connect(_upgrade_health)
 	ui.effect_pressed.connect(_roll_effect)
+	ui.remove_effect_pressed.connect(_remove_effect)
+	
+func _remove_effect(effect_source: String, effect_index: int) -> void:
+	if selected_card_id == "":
+		return
 
+	if not CardUpgradeManager.remove_effect_at(selected_card_id, effect_source, effect_index):
+		ui.show_message("Effekt konnte nicht entfernt werden")
+		return
+
+	ui.refresh_balance()
+	ui.set_selected_card(selected_card_id)
+	ui.show_message("Effekt entfernt")
+
+	_spawn_preview_card()
 
 func _refresh_card_list() -> void:
 	var owned := CollectionManager.get_owned_cards()
@@ -138,7 +152,7 @@ func _roll_effect() -> void:
 	if selected_card_id == "":
 		return
 
-	if CardUpgradeManager.get_active_effect_count(selected_card_id) >= CardData.MAX_EFFECTS_PER_CARD:
+	if CardUpgradeManager.get_free_effect_slots(selected_card_id) <= 0:
 		ui.show_message("Maximal 2 Effects")
 		return
 

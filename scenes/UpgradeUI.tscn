@@ -114,6 +114,17 @@ theme_override_font_sizes/font_size = 55
 text = "SELECT CARD"
 autowrap_mode = 3
 
+[node name="EffectOption" type="OptionButton" parent="Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 38
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+
 [node name="ButtonRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 6
@@ -153,6 +164,18 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
 text = "ROLL"
+
+[node name="RemoveButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonRow"]
+custom_minimum_size = Vector2(0, 101.36)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "REMOVE EFFECT"
 
 [node name="MessageLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 visible = false

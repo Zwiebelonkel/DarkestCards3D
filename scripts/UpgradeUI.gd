@@ -5,6 +5,7 @@ signal card_selected(card_id: String)
 signal attack_pressed
 signal health_pressed
 signal effect_pressed
+signal remove_effect_pressed(effect_source: String, effect_index: int)
 
 const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 
@@ -16,9 +17,13 @@ const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 @onready var effect_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/EffectButton
 @onready var message_label: Label = $Panel/MarginContainer/VBoxContainer/MessageLabel
 
+@onready var effect_option: OptionButton = $Panel/MarginContainer/VBoxContainer/EffectOption
+@onready var remove_effect_button: Button =$Panel/MarginContainer/VBoxContainer/ButtonRow/RemoveButton
+
 var selected_card_id := ""
 var card_buttons: Array[Button] = []
 var message_tween: Tween = null
+var effect_entries: Array[Dictionary] = []
 
 
 func _ready() -> void:
@@ -27,6 +32,7 @@ func _ready() -> void:
 	attack_button.pressed.connect(func(): attack_pressed.emit())
 	health_button.pressed.connect(func(): health_pressed.emit())
 	effect_button.pressed.connect(func(): effect_pressed.emit())
+	remove_effect_button.pressed.connect(_on_remove_effect_button_pressed)
 
 	if CardUpgradeManager.has_signal("upgrades_changed"):
 		var callback := Callable(self, "_on_upgrades_changed")
@@ -36,7 +42,7 @@ func _ready() -> void:
 	_set_upgrade_buttons_disabled(true)
 	refresh_balance()
 	show_message("")
-
+	_refresh_effect_option("")
 
 func set_cards(card_ids: Array) -> void:
 	for child in card_list.get_children():
@@ -103,6 +109,7 @@ func set_selected_card(card_id: String) -> void:
 
 	if data.is_empty():
 		info_label.text = "UNKNOWN CARD"
+		_refresh_effect_option("")
 		return
 
 	var upgraded := CardUpgradeManager.apply_upgrades(card_id, data)
@@ -111,14 +118,22 @@ func set_selected_card(card_id: String) -> void:
 	var attack := int(upgraded.get("attack", 0))
 	var hp := int(upgraded.get("defense", 0))
 
-	var effects_text := "None"
-	var effects: Array = CardData.get_active_effects(upgraded)
+	_refresh_effect_option(card_id)
 
-	if not effects.is_empty():
+	var effects_text := "None"
+
+	if not effect_entries.is_empty():
 		var names: Array[String] = []
-		for effect in effects:
-			if effect is Dictionary:
-				names.append(str(effect.get("name", effect.get("type", "Effect"))))
+
+		for entry in effect_entries:
+			var source := str(entry.get("source", ""))
+			var effect: Dictionary = entry.get("effect", {})
+
+			var prefix := "BASE" if source == "base" else "UPG"
+			var effect_name := _format_effect_name(effect)
+
+			names.append("%s:%s" % [prefix, effect_name])
+
 		effects_text = ", ".join(names)
 
 	info_label.text = "%s\nATK: %d   HP: %d\nEFFECTS: %s" % [
@@ -163,6 +178,10 @@ func _set_upgrade_buttons_disabled(disabled: bool) -> void:
 	attack_button.disabled = disabled
 	health_button.disabled = disabled
 	effect_button.disabled = disabled
+	remove_effect_button.disabled = disabled
+
+	if effect_option != null:
+		effect_option.disabled = disabled
 
 
 func _style_card_button(button: Button, rarity: String) -> void:
@@ -240,5 +259,83 @@ func _update_upgrade_button_state() -> void:
 	attack_button.disabled = false
 	health_button.disabled = false
 
-	var effect_count := CardUpgradeManager.get_active_effect_count(selected_card_id)
-	effect_button.disabled = effect_count >= CardData.MAX_EFFECTS_PER_CARD
+	effect_button.disabled = CardUpgradeManager.get_free_effect_slots(selected_card_id) <= 0
+	remove_effect_button.disabled = CardUpgradeManager.get_effect_entries(selected_card_id).is_empty()
+
+	if effect_option != null:
+		effect_option.disabled = CardUpgradeManager.get_effect_entries(selected_card_id).is_empty()
+
+func _refresh_effect_option(card_id: String) -> void:
+	effect_entries.clear()
+
+	if effect_option == null:
+		return
+
+	effect_option.clear()
+
+	if card_id == "":
+		effect_option.add_item("NO CARD SELECTED")
+		effect_option.disabled = true
+		return
+
+	effect_entries = CardUpgradeManager.get_effect_entries(card_id)
+
+	if effect_entries.is_empty():
+		effect_option.add_item("NO EFFECTS")
+		effect_option.disabled = true
+		return
+
+	for entry in effect_entries:
+		var source := str(entry.get("source", ""))
+		var effect: Dictionary = entry.get("effect", {})
+
+		var prefix := "BASE" if source == "base" else "UPGRADE"
+		var effect_name := _format_effect_name(effect)
+
+		effect_option.add_item("%s: %s" % [prefix, effect_name])
+
+	effect_option.selected = 0
+	effect_option.disabled = false
+	
+func _on_remove_effect_button_pressed() -> void:
+	if selected_card_id == "":
+		return
+
+	if effect_entries.is_empty():
+		return
+
+	var selected_index := effect_option.selected
+
+	if selected_index < 0 or selected_index >= effect_entries.size():
+		return
+
+	var entry := effect_entries[selected_index]
+
+	var source := str(entry.get("source", ""))
+	var effect_index := int(entry.get("index", -1))
+
+	if source == "" or effect_index < 0:
+		return
+
+	remove_effect_pressed.emit(source, effect_index)
+	
+func _format_effect_name(effect: Dictionary) -> String:
+	var label := str(effect.get("name", effect.get("type", "Effect")))
+
+	label = label.replace("_", " ").capitalize()
+
+	if effect.has("percent"):
+		label += " %d%%" % int(round(float(effect.get("percent", 0.0)) * 100.0))
+	elif effect.has("value"):
+		var value := float(effect.get("value", 0.0))
+		if value > 0.0 and value <= 1.0:
+			label += " %d%%" % int(round(value * 100.0))
+		else:
+			label += " +%d" % int(round(value))
+	elif effect.has("damage") and effect.has("turns"):
+		label += " %d/%dT" % [
+			int(effect.get("damage", 0)),
+			int(effect.get("turns", 0))
+		]
+
+	return label
