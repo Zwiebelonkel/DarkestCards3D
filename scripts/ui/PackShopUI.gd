@@ -159,6 +159,7 @@ func _add_pack_choice(index: int) -> void:
 	var viewport := SubViewport.new()
 	viewport.size = Vector2i(220, 150)
 	viewport.transparent_bg = true
+	viewport.disable_3d = false
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	viewport_container.add_child(viewport)
 
