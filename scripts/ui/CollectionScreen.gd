@@ -130,6 +130,8 @@ var _deck_fan_base_transforms: Dictionary = {}
 
 
 func _ready() -> void:
+	if not CardUpgradeManager.upgrades_changed.is_connected(_on_card_upgrades_changed):
+		CardUpgradeManager.upgrades_changed.connect(_on_card_upgrades_changed)
 	_build_collection()
 	_setup_deck_overview_button()
 	_deck_button_base_pos = _deck_button.position
@@ -1146,3 +1148,46 @@ func _play_fly_sfx() -> void:
 		fly_sfx.stop()
 	
 	fly_sfx.play()
+	
+func _on_card_upgrades_changed(card_id: String) -> void:
+	call_deferred("_refresh_upgraded_card_everywhere", card_id)
+
+func _refresh_upgraded_card_everywhere(card_id: String) -> void:
+	var base_data := CardDatabase.get_card(card_id)
+	if base_data.is_empty():
+		return
+
+	var upgraded_data := CardUpgradeManager.apply_upgrades(card_id, base_data)
+
+	# Normale Collection-Karten aktualisieren
+	for card in _base_positions.keys():
+		if card == null or not is_instance_valid(card):
+			continue
+
+		var id := str(card.card_data.get("id", card.card_data.get("card_id", "")))
+		if id != card_id:
+			continue
+
+		card.setup(upgraded_data)
+
+	# Detailkarte aktualisieren, falls genau diese offen ist
+	if _detail_card != null and is_instance_valid(_detail_card):
+		var detail_id := str(_detail_card.card_data.get("id", _detail_card.card_data.get("card_id", "")))
+		if detail_id == card_id:
+			_detail_card.setup(upgraded_data)
+
+	# Deck-Fan-Karten aktualisieren, falls der Fan offen ist
+	for fan_card in _deck_fan_cards:
+		if fan_card == null or not is_instance_valid(fan_card):
+			continue
+
+		var fan_id := str(fan_card.card_data.get("id", fan_card.card_data.get("card_id", "")))
+		if fan_id != card_id:
+			continue
+
+		fan_card.setup(upgraded_data)
+
+	_refresh_collection_amount_labels()
+
+	if _deck_button != null and is_instance_valid(_deck_button):
+		_update_deck_button_state()

@@ -28,6 +28,11 @@ func _ready() -> void:
 	health_button.pressed.connect(func(): health_pressed.emit())
 	effect_button.pressed.connect(func(): effect_pressed.emit())
 
+	if CardUpgradeManager.has_signal("upgrades_changed"):
+		var callback := Callable(self, "_on_upgrades_changed")
+		if not CardUpgradeManager.is_connected("upgrades_changed", callback):
+			CardUpgradeManager.connect("upgrades_changed", callback)
+
 	_set_upgrade_buttons_disabled(true)
 	refresh_balance()
 	show_message("")
@@ -88,7 +93,7 @@ func _on_card_button_pressed(card_id: String, button: Button) -> void:
 		b.button_pressed = b == button
 
 	card_selected.emit(card_id)
-	_set_upgrade_buttons_disabled(false)
+	_update_upgrade_button_state()
 
 
 func set_selected_card(card_id: String) -> void:
@@ -100,10 +105,7 @@ func set_selected_card(card_id: String) -> void:
 		info_label.text = "UNKNOWN CARD"
 		return
 
-	var upgraded := data
-
-	if Engine.has_singleton("CardUpgradeManager"):
-		upgraded = CardUpgradeManager.apply_upgrades(card_id, data)
+	var upgraded := CardUpgradeManager.apply_upgrades(card_id, data)
 
 	var name := str(upgraded.get("name", card_id))
 	var attack := int(upgraded.get("attack", 0))
@@ -126,6 +128,7 @@ func set_selected_card(card_id: String) -> void:
 		effects_text
 	]
 
+	_update_upgrade_button_state()
 
 func refresh_balance() -> void:
 	balance_label.text = "SOUL COINS: " + str(GameCurrency.coins)
@@ -222,3 +225,20 @@ func _style_card_button(button: Button, rarity: String) -> void:
 
 func _get_rarity_color(rarity: String) -> Color:
 	return RarityEffectsData.get_color(rarity)
+	
+func _on_upgrades_changed(card_id: String) -> void:
+	refresh_balance()
+
+	if selected_card_id == card_id:
+		call_deferred("set_selected_card", card_id)
+		
+func _update_upgrade_button_state() -> void:
+	if selected_card_id == "":
+		_set_upgrade_buttons_disabled(true)
+		return
+
+	attack_button.disabled = false
+	health_button.disabled = false
+
+	var effect_count := CardUpgradeManager.get_active_effect_count(selected_card_id)
+	effect_button.disabled = effect_count >= CardData.MAX_EFFECTS_PER_CARD

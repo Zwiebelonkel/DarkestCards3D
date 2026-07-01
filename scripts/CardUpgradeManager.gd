@@ -2,6 +2,7 @@ extends Node
 
 var upgrades: Dictionary = {}
 
+signal upgrades_changed(card_id: String)
 
 func _ready() -> void:
 	load_upgrades()
@@ -23,6 +24,7 @@ func add_attack(card_id: String, amount: int = 1) -> void:
 	entry["attack_bonus"] = int(entry.get("attack_bonus", 0)) + amount
 	upgrades[card_id] = entry
 	save_upgrades()
+	upgrades_changed.emit(card_id)
 
 
 func add_health(card_id: String, amount: int = 1) -> void:
@@ -30,6 +32,7 @@ func add_health(card_id: String, amount: int = 1) -> void:
 	entry["health_bonus"] = int(entry.get("health_bonus", 0)) + amount
 	upgrades[card_id] = entry
 	save_upgrades()
+	upgrades_changed.emit(card_id)
 
 
 func add_effect(card_id: String, effect: Dictionary) -> bool:
@@ -42,6 +45,7 @@ func add_effect(card_id: String, effect: Dictionary) -> bool:
 	entry["effects"] = _limit_effects(effects)
 	upgrades[card_id] = entry
 	save_upgrades()
+	upgrades_changed.emit(card_id)
 	return true
 
 

@@ -700,7 +700,7 @@ func _check_game_over() -> bool:
 		reward = 2
 	else:
 		status_label.text = "Sieg! Du erhältst 10 Soul Coins."
-		reward = 10
+		reward = 10000
 
 	GameCurrency.add_coins(reward)
 	var upgrade_ui := get_tree().get_first_node_in_group("upgrade_ui") as UpgradeUI

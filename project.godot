@@ -19,11 +19,11 @@ config/icon="res://icon.svg"
 
 CardDatabase="*res://scripts/autoload/CardDatabase.gd"
 CollectionManager="*res://scripts/autoload/CollectionManager.gd"
-EffectDatabase="*res://scripts/autoload/EffectDatabase.gd"
 GameCurrency="*res://scripts/GameCurrency.gd"
 DeckManager="*res://scripts/autoload/DeckManager.gd"
 RarityEffects="*res://scripts/Rarityeffects.gd"
 CardUpgradeManager="*res://scripts/CardUpgradeManager.gd"
+EffectDatabase="*res://scripts/autoload/EffectDatabase.gd"
 
 [input]
 
