@@ -1,0 +1,60 @@
+[gd_scene load_steps=9 format=3 uid="uid://b3bkwwo77our5"]
+
+[ext_resource type="Script" uid="uid://bqc6d7eprrb3l" path="res://scripts/ui/PackShopMachine.gd" id="1_machine"]
+[ext_resource type="Script" uid="uid://232jpcjc8pdb" path="res://scripts/ui/PackShopScreenInput.gd" id="2_input"]
+[ext_resource type="PackedScene" uid="uid://d4ipokwud3ah0" path="res://assets/environments/props/kiosk/kiosk.glb" id="3_kiosk"]
+[ext_resource type="PackedScene" uid="uid://cky5vinmmg21m" path="res://scenes/PackShopUI.tscn" id="4_ui"]
+[ext_resource type="PackedScene" uid="uid://sbiyjx808dkn" path="res://scenes/ui/PackOpeningScreen.tscn" id="5_c0rq5"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_screen"]
+size = Vector2(1, 0.65)
+
+[sub_resource type="StandardMaterial3D" id="Mat_dark_screen"]
+albedo_color = Color(0.02, 0.02, 0.02, 1)
+emission_enabled = true
+emission = Color(0.2, 0.05, 0.05, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="BoxShape3D" id="BoxShape_screen"]
+size = Vector3(1, 0.65, 0.06)
+
+[node name="PackShopMachine" type="Node3D" node_paths=PackedStringArray("pack_shop_viewport", "screen_mesh")]
+script = ExtResource("1_machine")
+pack_shop_viewport = NodePath("PackShopViewport")
+screen_mesh = NodePath("MachineModel/ScreenMesh")
+
+[node name="MachineModel" type="Node3D" parent="."]
+
+[node name="kiosk" parent="MachineModel" instance=ExtResource("3_kiosk")]
+transform = Transform3D(0.945, 0, 0, 0, 0.72, 0, 0, 0, 0.72, -0.26, 0.93, -0.37)
+
+[node name="ScreenMesh" type="MeshInstance3D" parent="MachineModel"]
+transform = Transform3D(-1, 0, -8e-08, 0, 1, 0, 8e-08, 0, -1, 0, 1.35, -0.39)
+mesh = SubResource("QuadMesh_screen")
+surface_material_override/0 = SubResource("Mat_dark_screen")
+
+[node name="ScreenArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.36)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ScreenArea"]
+shape = SubResource("BoxShape_screen")
+
+[node name="PackShopScreenInput" type="Node" parent="."]
+script = ExtResource("2_input")
+
+[node name="PackShopViewport" type="SubViewport" parent="."]
+disable_3d = true
+size = Vector2i(1000, 650)
+render_target_update_mode = 4
+
+[node name="PackShopUI" parent="PackShopViewport" instance=ExtResource("4_ui")]
+
+[node name="BuySFX" type="AudioStreamPlayer3D" parent="."]
+bus = &"SFX"
+
+[node name="ErrorSFX" type="AudioStreamPlayer3D" parent="."]
+bus = &"SFX"
+
+[node name="PackOpeningScreen" parent="." instance=ExtResource("5_c0rq5")]
+transform = Transform3D(-0.27, -6.26823e-09, 2.27567e-08, 0, 0.260306, 0.0717002, -2.36041e-08, 0.0717002, -0.260306, -0.152267, 0.887, -1.29659)
+rarity_particle_spawn_box = Vector3(0.63, 0.075, 0.095)

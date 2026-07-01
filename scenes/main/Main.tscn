@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://hsfn8ypja21m"]
+[gd_scene load_steps=14 format=3 uid="uid://hsfn8ypja21m"]
 
 [ext_resource type="Script" uid="uid://bn3rv4pewgvkj" path="res://scripts/main/Main.gd" id="1_main"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_dc040"]
 [ext_resource type="PackedScene" uid="uid://dcp3rwdcgfp5j" path="res://scenes/table/GameTable.tscn" id="2_table"]
 [ext_resource type="PackedScene" uid="uid://sbiyjx808dkn" path="res://scenes/ui/PackOpeningScreen.tscn" id="3_pack"]
 [ext_resource type="PackedScene" uid="uid://cvxblkstddw2n" path="res://scenes/ui/CollectionScreen.tscn" id="4_collection"]
+[ext_resource type="PackedScene" uid="uid://b3bkwwo77our5" path="res://scenes/PackShopMachine.tscn" id="4_qkm1d"]
 [ext_resource type="PackedScene" uid="uid://u8x4h4ejwtkq" path="res://assets/environments/props/hospital/hospitalRoom.glb" id="6_1rhdn"]
 [ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
@@ -70,8 +71,12 @@ transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.1532
 blood_decal_offset = null
 table_camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
 
+[node name="PackShopMachine" parent="ScenePivot" instance=ExtResource("4_qkm1d")]
+transform = Transform3D(-1.18895e-07, 0, -2.72, 0, 2.72, 0, 2.72, 0, -1.18895e-07, -6.07893, -1.83417, 0.391837)
+
 [node name="PackOpening" parent="ScenePivot" node_paths=PackedStringArray("upgrade_ui", "collection_screen", "screen_flash_camera") instance=ExtResource("3_pack")]
 transform = Transform3D(-3.0424e-08, -0.184273, 0.69602, -8.05484e-09, 0.69602, 0.184273, -0.72, 9.72804e-17, -3.14722e-08, -2.5473, 0.594067, 0)
+visible = false
 upgrade_ui = NodePath("../UpgradeMachine/UpgradeViewport/UpgradeUI")
 rarity_particle_spawn_box = Vector3(0.55, 0.055, 0.62)
 rarity_particle_up_spread = 22.36

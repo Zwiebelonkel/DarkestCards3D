@@ -1,5 +1,6 @@
 extends Node3D
 class_name PackOpeningScreen
+signal pack_ready_for_next_purchase
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
@@ -92,6 +93,7 @@ var _pending_collection_card_ids: Array[String] = []
 @onready var pack_top_area: Area3D = $pack/top/PackTopArea
 @onready var cards_root: Node3D = $Cards
 @onready var info_label: Label3D = $InfoLabel
+@onready var rarity_particle_spawn: Marker3D = $pack/RarityParticleSpawn
 
 var _hovering_pack := false
 var _opened := false
@@ -130,6 +132,10 @@ var _camera_shake_time_left := 0.0
 var _camera_base_position := Vector3.ZERO
 var _camera_shake_target: Camera3D = null
 var _active_camera_tween: Tween = null
+
+var selected_pack_id := "basic"
+var selected_pack_data: Dictionary = {}
+var _pack_bought := false
 
 
 func _ready() -> void:
@@ -176,6 +182,7 @@ func _ready() -> void:
 	_setup_screen_flash_overlay()
 
 	info_label.text = "PackTop ziehen"
+	_hide_pack_until_bought()
 
 
 ## Erzeugt/holt das ShaderMaterial fuer den Bend-Mesh und initialisiert
@@ -286,6 +293,10 @@ func _on_pack_top_input(
 	_shape_idx: int
 ) -> void:
 	if _opened:
+		return
+		
+	if not _pack_bought:
+		info_label.text = "Erst ein Pack kaufen"
 		return
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -577,7 +588,10 @@ func _spawn_reveal_particles(rarity_data: Dictionary) -> void:
 	var particles := GPUParticles3D.new()
 	cards_root.add_child(particles)
 	# Spawnt aus dem Pack-Inneren heraus, nicht an der (bereits hochfliegenden) Karte.
-	particles.global_position = pack.to_global(rarity_particle_spawn_offset)
+	if rarity_particle_spawn:
+		particles.global_position = rarity_particle_spawn.global_position
+	else:
+		particles.global_position = pack.to_global(rarity_particle_spawn_offset)
 
 	var amount: int = rarity_data.get("particle_amount", 10)
 	var speed_scale: float = rarity_data.get("particle_speed", 1.0)
@@ -1012,27 +1026,42 @@ func _collect_revealed_cards() -> void:
 	_top_revealed_card = null
 
 	await _reset_pack_for_next_opening()
-	info_label.text = "Neues Pack ziehen"
 	_collecting_cards = false
 
 
 func _reset_pack_for_next_opening() -> void:
 	var hidden_pos := _pack_home_position + pack_hidden_offset
 
-	var disappear_tween := create_tween().set_parallel(true)
-	disappear_tween.tween_property(pack, "position", hidden_pos, pack_disappear_duration) \
-		.set_trans(Tween.TRANS_CUBIC) \
-		.set_ease(Tween.EASE_IN)
+	if pack_top_area:
+		pack_top_area.monitoring = false
+		pack_top_area.monitorable = false
+		pack_top_area.input_ray_pickable = false
 
-	disappear_tween.tween_property(pack, "scale", _pack_home_scale * 0.75, pack_disappear_duration)
+	var disappear_tween := create_tween().set_parallel(true)
+
+	disappear_tween.tween_property(
+		pack,
+		"position",
+		hidden_pos,
+		pack_disappear_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	disappear_tween.tween_property(
+		pack,
+		"scale",
+		_pack_home_scale * 0.15,
+		pack_disappear_duration
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 
 	await disappear_tween.finished
 
-	pack.position = hidden_pos
-	pack.rotation_degrees = _pack_home_rotation
-	pack.scale = _pack_home_scale * 0.75
+	pack.visible = false
+	pack_top.visible = false
 
-	pack_top.visible = true
+	pack.position = _pack_home_position
+	pack.rotation_degrees = _pack_home_rotation
+	pack.scale = _pack_home_scale
+
 	pack_top.position = _pack_top_home_position
 	pack_top.rotation_degrees = _pack_top_home_rotation
 	pack_top.scale = _pack_top_home_scale
@@ -1042,25 +1071,11 @@ func _reset_pack_for_next_opening() -> void:
 	_drag_progress = 0.0
 	_waiting_for_collect_click = false
 	_rip_has_snapped = false
+	_pack_bought = false
 
-	if pack_top_area:
-		pack_top_area.monitoring = true
-		pack_top_area.monitorable = true
-		pack_top_area.input_ray_pickable = true
-
-	var appear_tween := create_tween().set_parallel(true)
-	appear_tween.tween_property(pack, "position", _pack_home_position, pack_appear_duration) \
-		.set_trans(Tween.TRANS_BACK) \
-		.set_ease(Tween.EASE_OUT)
-
-	appear_tween.tween_property(pack, "scale", _pack_home_scale, pack_appear_duration)
-
-	await appear_tween.finished
-
-	pack.position = _pack_home_position
-	pack.rotation_degrees = _pack_home_rotation
-	pack.scale = _pack_home_scale
-
+	info_label.text = "Neues Pack kaufen"
+	pack_ready_for_next_purchase.emit()
+	
 func _refresh_upgrade_ui() -> void:
 	if upgrade_ui == null:
 		return
@@ -1125,3 +1140,63 @@ func _play_card_hover_sfx() -> void:
 		card_hover_sfx.stop()
 	
 	card_hover_sfx.play()
+
+func buy_pack(pack_id: String, pack_data: Dictionary) -> bool:
+	if _opened or _dragging_pack_top or _collecting_cards:
+		return false
+
+	var cost := int(pack_data.get("cost", 0))
+
+	if not GameCurrency.spend_coins(cost):
+		info_label.text = "Nicht genug Soul Coins"
+		return false
+
+	selected_pack_id = pack_id
+	selected_pack_data = pack_data
+	card_count = int(pack_data.get("card_count", card_count))
+	_pack_bought = true
+
+	info_label.text = str(pack_data.get("name", "Pack")) + " gekauft - PackTop ziehen"
+
+	_show_bought_pack()
+
+	return true
+	
+func _hide_pack_until_bought() -> void:
+	pack.visible = false
+	pack_top.visible = false
+
+func _show_bought_pack() -> void:
+	pack.visible = true
+	pack_top.visible = true
+
+	var start_pos := _pack_home_position + pack_hidden_offset
+
+	pack.position = start_pos
+	pack.rotation_degrees = _pack_home_rotation
+	pack.scale = Vector3.ZERO
+
+	pack_top.position = _pack_top_home_position
+	pack_top.rotation_degrees = _pack_top_home_rotation
+	pack_top.scale = _pack_top_home_scale
+
+	if pack_top_area:
+		pack_top_area.monitoring = true
+		pack_top_area.monitorable = true
+		pack_top_area.input_ray_pickable = true
+
+	var tween := create_tween().set_parallel(true)
+
+	tween.tween_property(
+		pack,
+		"position",
+		_pack_home_position,
+		0.45
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	tween.tween_property(
+		pack,
+		"scale",
+		_pack_home_scale,
+		0.45
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
