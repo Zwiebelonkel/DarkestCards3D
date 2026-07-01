@@ -19,11 +19,11 @@ float sawtooth(float x) {
 
 void fragment() {
 	vec3 w_vertex = ( INV_VIEW_MATRIX * vec4(VERTEX, 1.0) ).xyz;
-	
+
 	float projection = dot( w_vertex, normalize(vec3(x_direction, y_direction, z_direction)) );
-	
+
 	float frequency = ceil( sawtooth(projection) - sawtooth(projection + shine_width) );
-	
+
 	ALBEDO = shine_color.xyz;
-	ALPHA = clamp( ( 1.0 - dot(NORMAL, VIEW) * angle_fade) * frequency * shine_color.a, 0.0, 1.0 );	
+	ALPHA = clamp( ( 1.0 - dot(NORMAL, VIEW) * angle_fade) * frequency * shine_color.a, 0.0, 1.0 );
 }
