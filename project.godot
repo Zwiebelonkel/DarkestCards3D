@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 CardDatabase="*res://scripts/autoload/CardDatabase.gd"
 CollectionManager="*res://scripts/autoload/CollectionManager.gd"
-PerkDatabase="*res://scripts/autoload/PerkDatabase.gd"
+EffectDatabase="*res://scripts/autoload/EffectDatabase.gd"
 GameCurrency="*res://scripts/GameCurrency.gd"
 DeckManager="*res://scripts/autoload/DeckManager.gd"
 RarityEffects="*res://scripts/Rarityeffects.gd"

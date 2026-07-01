@@ -190,8 +190,8 @@ func _update_hp_label() -> void:
 
 func _build_effects_summary() -> String:
 	var effect_names: Array[String] = []
-	for perk in CardData.get_active_effects(card_data):
-		var label := _format_effect_label(perk)
+	for effect in CardData.get_active_effects(card_data):
+		var label := _format_effect_label(effect)
 		if label != "":
 			effect_names.append(label)
 	if effect_names.is_empty():
