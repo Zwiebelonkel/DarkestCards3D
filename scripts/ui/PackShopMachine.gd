@@ -49,7 +49,7 @@ func _setup_screen_material() -> void:
 	if screen_mesh == null:
 		screen_mesh = $MachineModel/ScreenMesh
 
-	pack_shop_viewport.disable_3d = true
+	pack_shop_viewport.disable_3d = false
 	pack_shop_viewport.gui_disable_input = false
 	pack_shop_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 

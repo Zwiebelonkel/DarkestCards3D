@@ -93,34 +93,28 @@ theme_override_font_sizes/font_size = 34
 text = "SOUL COINS: 0"
 horizontal_alignment = 1
 
-[node name="PackOption" type="OptionButton" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 70)
+[node name="PackChoices" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 235)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 45
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
-
+theme_override_constants/separation = 10
 [node name="InfoLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 230)
+custom_minimum_size = Vector2(0, 185)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.8, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 46
+theme_override_font_sizes/font_size = 38
 text = "SELECT PACK"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="BuyButton" type="Button" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 76
+theme_override_font_sizes/font_size = 60
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
@@ -131,5 +125,5 @@ visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.68, 0.68, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 72
+theme_override_font_sizes/font_size = 48
 horizontal_alignment = 1
