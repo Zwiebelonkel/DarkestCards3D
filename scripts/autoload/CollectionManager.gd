@@ -38,12 +38,12 @@ func add_card(card_id: String) -> Dictionary:
 	return instance
 
 
-func create_card_instance(card_id: String, level: int = 1, perks: Array = []) -> Dictionary:
+func create_card_instance(card_id: String, level: int = 1, effects: Array = []) -> Dictionary:
 	_migrate_legacy_collection()
-	var rolled_perks: Array = perks
-	if rolled_perks.is_empty():
-		rolled_perks = PerkDatabase.roll_perks()
-	var instance := CardData.create_instance(card_id, level, rolled_perks)
+	var rolled_effects: Array = effects
+	if rolled_effects.is_empty():
+		rolled_effects = EffectDatabase.roll_effects()
+	var instance := CardData.create_instance(card_id, level, rolled_effects)
 	collection["instances"].append(instance)
 	var cards: Dictionary = collection["cards"]
 	cards[card_id] = int(cards.get(card_id, 0)) + 1

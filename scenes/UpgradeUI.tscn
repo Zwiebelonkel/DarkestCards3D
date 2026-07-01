@@ -142,7 +142,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
 text = "+HP"
 
-[node name="PerkButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonRow"]
+[node name="EffectButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonRow"]
 custom_minimum_size = Vector2(0, 101.36)
 layout_mode = 2
 size_flags_horizontal = 3

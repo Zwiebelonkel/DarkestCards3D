@@ -9,7 +9,7 @@ const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 
 @export var attack_cost := 5
 @export var health_cost := 5
-@export var perk_cost := 12
+@export var effect_cost := 12
 
 @export_group("Preview Card")
 @export var preview_card_position_offset := Vector3.ZERO
@@ -57,7 +57,7 @@ func _connect_ui() -> void:
 	ui.card_selected.connect(_on_card_selected)
 	ui.attack_pressed.connect(_upgrade_attack)
 	ui.health_pressed.connect(_upgrade_health)
-	ui.perk_pressed.connect(_roll_perk)
+	ui.effect_pressed.connect(_roll_effect)
 
 
 func _refresh_card_list() -> void:
@@ -134,28 +134,35 @@ func _upgrade_health() -> void:
 	_spawn_preview_card()
 
 
-func _roll_perk() -> void:
+func _roll_effect() -> void:
 	if selected_card_id == "":
 		return
 
-	if not GameCurrency.spend_coins(perk_cost):
+	if CardUpgradeManager.get_active_effect_count(selected_card_id) >= CardData.MAX_EFFECTS_PER_CARD:
+		ui.show_message("Maximal 2 Effects")
+		return
+
+	if not GameCurrency.spend_coins(effect_cost):
 		ui.show_message("Nicht genug Soul Coins")
 		ui.refresh_balance()
 		return
 
-	var perks: Array[Dictionary] = PerkDatabase.roll_perks()
+	var effects: Array[Dictionary] = EffectDatabase.roll_effects()
 
-	if perks.is_empty():
-		ui.show_message("Kein Perk gerollt")
+	if effects.is_empty():
+		ui.show_message("Kein Effekt gerollt")
 		ui.refresh_balance()
 		return
 
-	var perk: Dictionary = perks[0]
+	var effect: Dictionary = effects[0]
 
-	CardUpgradeManager.add_perk(selected_card_id, perk)
+	if not CardUpgradeManager.add_effect(selected_card_id, effect):
+		ui.show_message("Maximal 2 Effects")
+		ui.refresh_balance()
+		return
 
 	ui.refresh_balance()
 	ui.set_selected_card(selected_card_id)
-	ui.show_message("Perk: " + str(perk.get("name")))
+	ui.show_message("Effekt: " + str(effect.get("name")))
 
 	_spawn_preview_card()

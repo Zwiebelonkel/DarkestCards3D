@@ -12,7 +12,7 @@ func _get_entry(card_id: String) -> Dictionary:
 		upgrades[card_id] = {
 			"attack_bonus": 0,
 			"health_bonus": 0,
-			"perks": []
+			"effects": []
 		}
 
 	return upgrades[card_id]
@@ -32,13 +32,17 @@ func add_health(card_id: String, amount: int = 1) -> void:
 	save_upgrades()
 
 
-func add_perk(card_id: String, perk: Dictionary) -> void:
+func add_effect(card_id: String, effect: Dictionary) -> bool:
+	if get_active_effect_count(card_id) >= CardData.MAX_EFFECTS_PER_CARD:
+		return false
+
 	var entry := _get_entry(card_id)
-	var perks: Array = entry.get("perks", [])
-	perks.append(perk)
-	entry["perks"] = perks
+	var effects: Array = entry.get("effects", [])
+	effects.append(effect.duplicate(true))
+	entry["effects"] = _limit_effects(effects)
 	upgrades[card_id] = entry
 	save_upgrades()
+	return true
 
 
 func apply_upgrades(card_id: String, data: Dictionary) -> Dictionary:
@@ -52,14 +56,14 @@ func apply_upgrades(card_id: String, data: Dictionary) -> Dictionary:
 	result["attack"] = int(result.get("attack", 0)) + int(entry.get("attack_bonus", 0))
 	result["defense"] = int(result.get("defense", 0)) + int(entry.get("health_bonus", 0))
 
-	if not result.has("perks"):
-		result["perks"] = []
+	if not result.has("effects"):
+		result["effects"] = []
 
-	var result_perks: Array = result.get("perks", [])
-	for perk in entry.get("perks", []):
-		result_perks.append(perk)
+	var result_effects: Array = result.get("effects", [])
+	for effect in entry.get("effects", []):
+		result_effects.append(effect)
 
-	result["perks"] = result_perks
+	result["effects"] = _limit_effects(result_effects)
 
 	return result
 
@@ -72,8 +76,16 @@ func get_health_bonus(card_id: String) -> int:
 	return int(_get_entry(card_id).get("health_bonus", 0))
 
 
-func get_perks(card_id: String) -> Array:
-	return _get_entry(card_id).get("perks", [])
+func get_effects(card_id: String) -> Array:
+	var entry := _get_entry(card_id)
+	return _limit_effects(entry.get("effects", []))
+
+
+func get_active_effect_count(card_id: String) -> int:
+	var base_card := CardDatabase.get_card(card_id)
+	if base_card.is_empty():
+		return get_effects(card_id).size()
+	return CardData.get_active_effects(apply_upgrades(card_id, base_card)).size()
 
 
 func save_upgrades() -> void:
@@ -83,7 +95,7 @@ func save_upgrades() -> void:
 		var entry: Dictionary = upgrades[card_id]
 		cfg.set_value(card_id, "attack_bonus", int(entry.get("attack_bonus", 0)))
 		cfg.set_value(card_id, "health_bonus", int(entry.get("health_bonus", 0)))
-		cfg.set_value(card_id, "perks", entry.get("perks", []))
+		cfg.set_value(card_id, "effects", _limit_effects(entry.get("effects", [])))
 
 	cfg.save("user://card_upgrades.cfg")
 
@@ -99,5 +111,9 @@ func load_upgrades() -> void:
 		upgrades[section] = {
 			"attack_bonus": int(cfg.get_value(section, "attack_bonus", 0)),
 			"health_bonus": int(cfg.get_value(section, "health_bonus", 0)),
-			"perks": cfg.get_value(section, "perks", [])
+			"effects": _limit_effects(cfg.get_value(section, "effects", []))
 		}
+
+
+func _limit_effects(effects: Variant) -> Array[Dictionary]:
+	return CardData._limit_effects(effects)

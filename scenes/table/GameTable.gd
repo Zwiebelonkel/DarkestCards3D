@@ -199,7 +199,7 @@ func _build_enemy_pool() -> Array[Dictionary]:
 					CardData.create_instance(
 						str(data.get("id", "")),
 						1,
-						PerkDatabase.roll_perks()
+						EffectDatabase.roll_effects()
 					)
 				)
 			)

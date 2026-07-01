@@ -4,7 +4,7 @@ class_name UpgradeUI
 signal card_selected(card_id: String)
 signal attack_pressed
 signal health_pressed
-signal perk_pressed
+signal effect_pressed
 
 const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 
@@ -13,7 +13,7 @@ const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 @onready var info_label: Label = $Panel/MarginContainer/VBoxContainer/InfoLabel
 @onready var attack_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/AttackButton
 @onready var health_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/HealthButton
-@onready var perk_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/PerkButton
+@onready var effect_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/EffectButton
 @onready var message_label: Label = $Panel/MarginContainer/VBoxContainer/MessageLabel
 
 var selected_card_id := ""
@@ -26,7 +26,7 @@ func _ready() -> void:
 
 	attack_button.pressed.connect(func(): attack_pressed.emit())
 	health_button.pressed.connect(func(): health_pressed.emit())
-	perk_button.pressed.connect(func(): perk_pressed.emit())
+	effect_button.pressed.connect(func(): effect_pressed.emit())
 
 	_set_upgrade_buttons_disabled(true)
 	refresh_balance()
@@ -109,21 +109,21 @@ func set_selected_card(card_id: String) -> void:
 	var attack := int(upgraded.get("attack", 0))
 	var hp := int(upgraded.get("defense", 0))
 
-	var perks_text := "None"
-	var perks: Array = upgraded.get("perks", [])
+	var effects_text := "None"
+	var effects: Array = CardData.get_active_effects(upgraded)
 
-	if not perks.is_empty():
+	if not effects.is_empty():
 		var names: Array[String] = []
-		for perk in perks:
-			if perk is Dictionary:
-				names.append(str(perk.get("name", perk.get("type", "Perk"))))
-		perks_text = ", ".join(names)
+		for effect in effects:
+			if effect is Dictionary:
+				names.append(str(effect.get("name", effect.get("type", "Effect"))))
+		effects_text = ", ".join(names)
 
-	info_label.text = "%s\nATK: %d   HP: %d\nPERKS: %s" % [
+	info_label.text = "%s\nATK: %d   HP: %d\nEFFECTS: %s" % [
 		name,
 		attack,
 		hp,
-		perks_text
+		effects_text
 	]
 
 
@@ -159,7 +159,7 @@ func show_message(text: String) -> void:
 func _set_upgrade_buttons_disabled(disabled: bool) -> void:
 	attack_button.disabled = disabled
 	health_button.disabled = disabled
-	perk_button.disabled = disabled
+	effect_button.disabled = disabled
 
 
 func _style_card_button(button: Button, rarity: String) -> void:

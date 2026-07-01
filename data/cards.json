@@ -15,8 +15,7 @@
 	"effects": [
 	  { "type": "lifesteal", "percent": 0.2 },
 	  { "type": "double_strike" }
-	],
-	"perks": []
+	]
   },
   {
 	"id": "jd",
@@ -31,8 +30,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":1,
-	"effects": [],
-	"perks": []
+	"effects": []
   },
   {
 	"id": "mrfork",
@@ -47,8 +45,7 @@
 	"frame_columns":16,
 	"frame_rows":1,
 	"frame_fps":5,
-	"effects": [{ "type": "thorns", "percent": 0.25 }],
-	"perks": []
+	"effects": [{ "type": "thorns", "percent": 0.25 }]
   },
   {
 	"id": "plinky",
@@ -63,8 +60,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":1,
-	"effects": [{ "type": "random_damage", "min": 0.5, "max": 1.8 }],
-	"perks": []
+	"effects": [{ "type": "random_damage", "min": 0.5, "max": 1.8 }]
   },
   {
 	"id": "snaker",
@@ -79,8 +75,7 @@
 	"frame_columns":4,
 	"frame_rows":1,
 	"frame_fps":5,
-	"effects": [{ "type": "poison", "damage": 3, "turns": 3 }],
-	"perks": []
+	"effects": [{ "type": "poison", "damage": 3, "turns": 3 }]
   },
   {
 	"id": "froggy",
@@ -95,8 +90,7 @@
 	"frame_columns":6,
 	"frame_rows":1,
 	"frame_fps":5,
-	"effects": [],
-	"perks": []
+	"effects": []
   },
   {
 	"id": "alpaka",
@@ -111,8 +105,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":1,
-	"effects": [],
-	"perks": []
+	"effects": []
   },
   {
 	"id": "jerk",
@@ -127,8 +120,7 @@
 	"frame_columns":8,
 	"frame_rows":1,
 	"frame_fps":10,
-	"effects": [],
-	"perks": []
+	"effects": []
   },
   {
 	"id": "wanderer",
@@ -138,8 +130,7 @@
 	"rarity": "uncommon",
 	"description": "Crawling in the woods for humans. He likes them.",
 	"image": "res://assets/cards/images/wanderer.png",
-	"effects": [],
-	"perks": []
+	"effects": []
   },
   {
 	"id": "mechanic",
@@ -154,8 +145,7 @@
 	"frame_columns":5,
 	"frame_rows":1,
 	"frame_fps":5,
-	"effects": [],
-	"perks": []
+	"effects": []
   },
   {
 	"id": "ant",
@@ -165,8 +155,7 @@
 	"rarity": "uncommon",
 	"description": "Ants crawl in your holes. This Ant is known to be chill tho.",
 	"image": "res://assets/cards/images/ant.png",
-	"effects": [{ "type": "swarm_power" }],
-	"perks": []
+	"effects": [{ "type": "swarm_power" }]
   },
   {
 	"id": "fisher",
@@ -181,8 +170,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":1,
-	"effects": [{ "type": "random_damage", "min": 0.75, "max": 1.25 }],
-	"perks": []
+	"effects": [{ "type": "random_damage", "min": 0.75, "max": 1.25 }]
   },
   {
 	"id": "slave",
@@ -197,8 +185,7 @@
 	"frame_columns":7,
 	"frame_rows":1,
 	"frame_fps":5,
-	"effects": [{ "type": "bodyguard", "percent": 0.5 }],
-	"perks": []
+	"effects": [{ "type": "bodyguard", "percent": 0.5 }]
   },
   {
 	"id": "dealer",
@@ -213,8 +200,7 @@
 	"frame_columns":3,
 	"frame_rows":1,
 	"frame_fps":10,
-	"effects": [{ "type": "curse", "value": 2 }],
-	"perks": []
+	"effects": [{ "type": "curse", "value": 2 }]
   },
   {
 	"id": "haendler",
@@ -224,8 +210,7 @@
 	"rarity": "exotic",
 	"description": "This HÄNDLER accepts cash only..",
 	"image": "res://assets/cards/images/händler.png",
-	"effects": [{ "type": "deck_burn", "amount": 1 }],
-	"perks": []
+	"effects": [{ "type": "deck_burn", "amount": 1 }]
   },
   {
 	"id": "headshot",
@@ -240,8 +225,7 @@
 	"frame_columns":10,
 	"frame_rows":1,
 	"frame_fps":10,
-	"effects": [{ "type": "execute", "threshold": 0.25 }],
-	"perks": []
+	"effects": [{ "type": "execute", "threshold": 0.25 }]
   },
   {
 	"id": "walker",
@@ -256,8 +240,7 @@
 	"frame_columns":11,
 	"frame_rows":1,
 	"frame_fps":25,
-	"effects": [{ "type": "grave_return" }],
-	"perks": []
+	"effects": [{ "type": "grave_return" }]
   },
   {
 	"id": "mr_mr",
@@ -272,8 +255,7 @@
 	"frame_columns":4,
 	"frame_rows":1,
 	"frame_fps":15,
-	"effects": [{ "type": "double_strike" }],
-	"perks": []
+	"effects": [{ "type": "double_strike" }]
   },
   {
 	"id": "falling",
@@ -288,8 +270,7 @@
 	"frame_columns":17,
 	"frame_rows":1,
 	"frame_fps":7,
-	"effects": [{ "type": "last_stand" }],
-	"perks": []
+	"effects": [{ "type": "last_stand" }]
   },
   {
 	"id": "tree",
@@ -299,8 +280,7 @@
 	"rarity": "mythic",
 	"description": "Its roots reach places that should not exist.",
 	"image": "res://assets/cards/images/Tree.png",
-	"effects": [{ "type": "armor", "value": 0.5 }],
-	"perks": []
+	"effects": [{ "type": "armor", "value": 0.5 }]
   },
   {
 	"id": "princess",
@@ -315,8 +295,7 @@
 	"frame_columns":5,
 	"frame_rows":1,
 	"frame_fps":5,
-	"effects": [{ "type": "regeneration", "value": 3 }],
-	"perks": []
+	"effects": [{ "type": "regeneration", "value": 3 }]
   },
   {
 	"id": "ultracockhaze",
@@ -331,8 +310,7 @@
 	"frame_columns":5,
 	"frame_rows":1,
 	"frame_fps":7,
-	"effects": [{ "type": "triple_strike" }],
-	"perks": []
+	"effects": [{ "type": "triple_strike" }]
   },
   {
 	"id": "mailman",
@@ -347,8 +325,7 @@
 	"frame_columns":6,
 	"frame_rows":1,
 	"frame_fps":7,
-	"effects": [{ "type": "draw_on_kill" }],
-	"perks": []
+	"effects": [{ "type": "draw_on_kill" }]
   },
   {
 	"id": "toaster",
@@ -363,8 +340,7 @@
 	"frame_columns":5,
 	"frame_rows":1,
 	"frame_fps":7,
-	"effects": [{ "type": "cleave", "side_damage": 0.5 }],
-	"perks": []
+	"effects": [{ "type": "cleave", "side_damage": 0.5 }]
   },
 {
   "id": "voidcat",
@@ -414,8 +390,7 @@
 	"frame_columns":7,
 	"frame_rows":1,
 	"frame_fps":6,
-	"effects": [{ "type": "shield_first_hit" }],
-	"perks": []
+	"effects": [{ "type": "shield_first_hit" }]
   },
   {
 	"id": "microwave",
@@ -430,8 +405,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":2,
-	"effects": [{ "type": "random_damage", "min": 0.75, "max": 1.5 }],
-	"perks": []
+	"effects": [{ "type": "random_damage", "min": 0.75, "max": 1.5 }]
   },
   {
 	"id": "observer",
@@ -446,8 +420,7 @@
 	"frame_columns":5,
 	"frame_rows":1,
 	"frame_fps":4,
-	"effects": [{ "type": "thorns", "percent": 0.25 }],
-	"perks": []
+	"effects": [{ "type": "thorns", "percent": 0.25 }]
   },
   {
 	"id": "missing_texture",
@@ -462,8 +435,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":10,
-	"effects": [{ "type": "swap_stats" }],
-	"perks": []
+	"effects": [{ "type": "swap_stats" }]
   },
   {
 	"id": "developer",
@@ -478,8 +450,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":4,
-	"effects": [{ "type": "double_strike" }],
-	"perks": []
+	"effects": [{ "type": "double_strike" }]
   },
   {
 	"id": "bus_driver",
@@ -494,8 +465,7 @@
 	"frame_columns":4,
 	"frame_rows":1,
 	"frame_fps":9,
-	"effects": [{ "type": "last_stand" }],
-	"perks": []
+	"effects": [{ "type": "last_stand" }]
   },
   {
 	"id": "deer_watcher",
@@ -510,8 +480,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":2,
-	"effects": [{ "type": "stun", "chance": 1.0 }],
-	"perks": []
+	"effects": [{ "type": "stun", "chance": 1.0 }]
   },
   {
 	"id": "red_light_figure",
@@ -526,8 +495,7 @@
 	"frame_columns":4,
 	"frame_rows":1,
 	"frame_fps":9,
-	"effects": [{ "type": "cleave", "side_damage": 0.5 }],
-	"perks": []
+	"effects": [{ "type": "cleave", "side_damage": 0.5 }]
   },
   {
 	"id": "roulette_man",
@@ -542,8 +510,7 @@
 	"frame_columns":4,
 	"frame_rows":1,
 	"frame_fps":8,
-	"effects": [{ "type": "random_damage", "min": 0.25, "max": 2.0 }],
-	"perks": []
+	"effects": [{ "type": "random_damage", "min": 0.25, "max": 2.0 }]
   },
   {
 	"id": "wandering_soul",
@@ -558,8 +525,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":2,
-	"effects": [{ "type": "grave_return" }],
-	"perks": []
+	"effects": [{ "type": "grave_return" }]
   },
 {
   "id": "heart_monitor",
@@ -583,8 +549,7 @@
 	"rarity": "common",
 	"description": "Just five more minutes...",
 	"image": "res://assets/cards/images/sleeper.png",
-	"effects": [],
-	"perks": []
+	"effects": []
   },
   {
 	"id": "adrenaline_junkie",
@@ -599,8 +564,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":10,
-	"effects": [{ "type": "triple_strike" }],
-	"perks": []
+	"effects": [{ "type": "triple_strike" }]
   },
   {
 	"id": "cctv_watcher",
@@ -610,8 +574,7 @@
 	"rarity": "mythic",
 	"description": "Every camera is connected. Every camera is watching.",
 	"image": "res://assets/cards/images/CCTV.png",
-	"effects": [{ "type": "bodyguard", "percent": 0.5 }],
-	"perks": []
+	"effects": [{ "type": "bodyguard", "percent": 0.5 }]
   },
 {
   "id": "alley_lurker",
