@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://hsfn8ypja21m"]
+[gd_scene load_steps=13 format=3 uid="uid://hsfn8ypja21m"]
 
 [ext_resource type="Script" uid="uid://bn3rv4pewgvkj" path="res://scripts/main/Main.gd" id="1_main"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_dc040"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
 [ext_resource type="AudioStream" uid="uid://dlgfiwpvx07wl" path="res://assets/sounds/theme.mp3" id="7_sjxhf"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="10_pause"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1rhdn"]
 shader = ExtResource("2_dc040")
@@ -156,6 +157,8 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "A/D drehen"
+
+[node name="PauseMenu" parent="." instance=ExtResource("10_pause")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_dc040")

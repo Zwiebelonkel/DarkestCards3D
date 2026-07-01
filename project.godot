@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="DarkestCards"
-run/main_scene="res://scenes/main/Main.tscn"
+run/main_scene="res://scenes/main/MainMenu.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -24,6 +24,7 @@ DeckManager="*res://scripts/autoload/DeckManager.gd"
 RarityEffects="*res://scripts/Rarityeffects.gd"
 CardUpgradeManager="*res://scripts/CardUpgradeManager.gd"
 EffectDatabase="*res://scripts/autoload/EffectDatabase.gd"
+SettingsManager="*res://scripts/autoload/SettingsManager.gd"
 
 [input]
 
