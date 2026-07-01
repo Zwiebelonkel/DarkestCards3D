@@ -4,6 +4,11 @@ signal pack_ready_for_next_purchase
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
+const PACK_VARIANT_COLORS := {
+	"basic": Color(0.95, 0.24, 0.2, 1.0),
+	"rare": Color(0.25, 0.42, 1.0, 1.0),
+	"god": Color(1.0, 0.76, 0.18, 1.0)
+}
 
 @export var card_count := 5
 
@@ -1154,6 +1159,7 @@ func buy_pack(pack_id: String, pack_data: Dictionary) -> bool:
 	selected_pack_id = pack_id
 	selected_pack_data = pack_data
 	card_count = int(pack_data.get("card_count", card_count))
+	_apply_pack_variant(pack, pack_id)
 	_pack_bought = true
 
 	info_label.text = str(pack_data.get("name", "Pack")) + " gekauft - PackTop ziehen"
@@ -1200,3 +1206,23 @@ func _show_bought_pack() -> void:
 		_pack_home_scale,
 		0.45
 	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+func _apply_pack_variant(root: Node, pack_id: String) -> void:
+	var color: Color = PACK_VARIANT_COLORS.get(pack_id, Color.WHITE)
+	for child in root.get_children():
+		_apply_pack_variant(child, pack_id)
+	if root == pack_top:
+		return
+	if root is MeshInstance3D:
+		var mesh_instance := root as MeshInstance3D
+		var surface_count := 1
+		if mesh_instance.mesh:
+			surface_count = mesh_instance.mesh.get_surface_count()
+		for surface in surface_count:
+			var material := StandardMaterial3D.new()
+			material.albedo_color = color
+			material.emission_enabled = true
+			material.emission = color * 0.12
+			material.roughness = 0.45
+			mesh_instance.set_surface_override_material(surface, material)
