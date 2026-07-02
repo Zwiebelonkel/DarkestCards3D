@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmj5vajcwyuvx"
-path.s3tc="res://.godot/imported/pack_cover1 - Kopie.png-f1aeb0451ac6de47167fa65dedcfde7d.s3tc.ctex"
+uid="uid://c7rfaenm856tv"
+path.s3tc="res://.godot/imported/pack_cover1 - Kopie.png-a7b59502ad16262307913dbf32b269b9.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://assets/cards/pack/pack_cover1 - Kopie.png"
-dest_files=["res://.godot/imported/pack_cover1 - Kopie.png-f1aeb0451ac6de47167fa65dedcfde7d.s3tc.ctex"]
+source_file="res://assets/cards/pack/ultra/pack_cover1 - Kopie.png"
+dest_files=["res://.godot/imported/pack_cover1 - Kopie.png-a7b59502ad16262307913dbf32b269b9.s3tc.ctex"]
 
 [params]
 

@@ -43,7 +43,7 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_blood_decal"]
 render_priority = 0
 shader = SubResource("Shader_blood_decal")
-shader_parameter/blood_color = Color(0.45, 0, 0, 1)
+shader_parameter/blood_color = Color(0.268634, 1.8049e-07, 7.21961e-08, 1)
 shader_parameter/alpha = 0.78
 shader_parameter/seed = 0.0
 
@@ -58,6 +58,6 @@ fade_delay = 2.0
 start_alpha = 0.925
 
 [node name="DecalMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.0234272, 0)
 material_override = SubResource("ShaderMaterial_blood_decal")
 mesh = SubResource("QuadMesh_blood_decal")

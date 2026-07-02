@@ -140,7 +140,7 @@ func _start_match() -> void:
 		return
 
 	if enemy_pool.is_empty():
-		push_error("Keine Karten in der CardDatabase gefunden.")
+		push_error("Keine Karten deiner in der CardDatabase gefunden.")
 		status_label.text = "Keine Kartendaten gefunden!"
 		return
 
@@ -454,6 +454,11 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 	var defender_name: String = str(defender.card_data.get("name", "?"))
 	status_label.text = "%s kämpft gegen %s!" % [attacker_name, defender_name]
 
+	# Slot-Index des Verteidigers VOR dem ersten Treffer merken, da die
+	# Karte spaeter (sobald sie stirbt) sofort aus dem Slot-Array entfernt
+	# wird und Cleave danach sonst nicht mehr wüsste, wo sie stand.
+	var defender_slot_index: int = _find_slot_of(defender).get("index", -1)
+
 	var total_damage_done := 0
 	var defender_died := false
 	var attacker_died := false
@@ -463,7 +468,18 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		if not is_instance_valid(attacker) or not is_instance_valid(defender) or defender.is_dead():
 			break
 
-		await attacker.play_attack_animation(defender.global_position)
+		# Animation als "fire and forget" im Hintergrund starten (bewusst
+		# OHNE await) — so laeuft der Rueckflug parallel weiter, waehrend
+		# wir unten schon auf den Treffermoment reagieren. Den Rueckgabe-
+		# wert (Signal) einer Coroutine kann man in GDScript nur mit
+		# await einfangen, daher warten wir stattdessen auf die eigenen
+		# Signale attack_impact / attack_finished der Karte.
+		attacker.play_attack_animation(defender.global_position)
+
+		# Treffer/Schaden/Blut/SFX sollen am Scheitelpunkt der Animation
+		# passieren (kurz nach dem "Rammstoss"), nicht erst wenn die
+		# Karte komplett zurueckgeflogen ist.
+		await attacker.attack_impact
 
 		if _game_over or not is_instance_valid(attacker) or not is_instance_valid(defender):
 			return
@@ -487,31 +503,48 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 			1.6
 		)
 
-		# Nur die angegriffene Karte bekommt Blut.
-		_spawn_blood_from_card(defender, damage_intensity)
+		if defender_died:
+			_spawn_blood_from_card(defender, damage_intensity)
+			_spawn_blood_decal_under_card(defender, true)
 
-		# Wenn der Defender stirbt, wird der Decal automatisch groß.
-		_spawn_blood_decal_under_card(defender, defender_died)
+		# Thorns- und Konter-Schaden passieren jetzt im SELBEN Frame wie
+		# der Angreifer-Treffer (Impact-Punkt), statt erst nach der
+		# kompletten Duell-Aufloesung — deshalb hier nur EIN gemeinsamer
+		# SFX-Aufruf fuer Angreifer-Treffer + Thorns + Konter zusammen,
+		# statt mehrerer zeitlich getrennter Sounds.
+		if is_instance_valid(attacker) and is_instance_valid(defender):
+			# Thorns kann den Attacker töten, aber ohne eigenes Blood/Decal.
+			var thorns_killed_attacker: bool = CombatResolver.apply_thorns(defender, attacker, int(hit_result.get("damage", 0)))
+			attacker_died = attacker_died or thorns_killed_attacker
+
+		if is_instance_valid(attacker) and is_instance_valid(defender):
+			var counter_damage := defender.attack_value
+			var counter_result := CombatResolver.apply_incoming_damage(attacker, counter_damage)
+
+			# Counter-Schaden bleibt spielerisch aktiv,
+			# aber der Attacker bekommt KEIN Blut und KEIN Decal.
+			attacker_died = attacker_died or bool(counter_result.get("died", false))
 
 		_play_sfx(damage_sfx)
 
+		# Beide Karten "sterben" (Slot leeren, wegschleudern, Nachziehen)
+		# SOFORT beim Treffer — nicht erst, wenn der Angreifer seine
+		# komplette Rueckflug-Animation beendet hat.
 		if defender_died:
+			_remove_dead_card(defender)
+
+		if attacker_died:
+			_remove_dead_card(attacker)
+
+		# Danach noch auf das vollstaendige Ende der Rueckflug-Animation
+		# warten, damit sich Hits/Zuege weiterhin nicht ueberlappen.
+		if is_instance_valid(attacker):
+			await attacker.attack_finished
+
+		if defender_died or attacker_died:
 			break
 
 	CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
-
-	# Thorns kann den Attacker töten, aber ohne Blood/Decal.
-	attacker_died = CombatResolver.apply_thorns(defender, attacker, total_damage_done)
-
-	if is_instance_valid(attacker) and is_instance_valid(defender):
-		var counter_damage := defender.attack_value
-		var counter_result := CombatResolver.apply_incoming_damage(attacker, counter_damage)
-
-		# Counter-Schaden bleibt spielerisch aktiv,
-		# aber der Attacker bekommt KEIN Blut und KEIN Decal.
-		_play_sfx(damage_sfx)
-
-		attacker_died = attacker_died or bool(counter_result.get("died", false))
 
 	if CardData.has_effect(attacker.card_data, "stun") and is_instance_valid(defender):
 		defender.stun_next_attack()
@@ -520,13 +553,13 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 	if not curse.is_empty() and is_instance_valid(defender):
 		defender.apply_curse(int(curse.get("value", 2)))
 
-	_apply_cleave(attacker, defender, attacker_side)
+	_apply_cleave(attacker, defender_slot_index, attacker_side)
 
+	# Sicherheitsnetz: falls attacker_died aus irgendeinem Grund noch
+	# nicht verarbeitet wurde. _remove_dead_card ist gefahrlos mehrfach
+	# aufrufbar (No-Op, wenn die Karte schon aus dem Slot entfernt ist).
 	if attacker_died:
 		_remove_dead_card(attacker)
-
-	if defender_died:
-		_remove_dead_card(defender)
 
 	if _check_game_over():
 		return
@@ -544,12 +577,15 @@ func _count_identical_on_board(card_id: String) -> int:
 	return max(count, 1)
 
 
-func _apply_cleave(attacker: Card3D, defender: Card3D, attacker_side: String) -> void:
+func _apply_cleave(attacker: Card3D, center_slot_index: int, attacker_side: String) -> void:
 	if not CardData.has_effect(attacker.card_data, "cleave"):
 		return
 
+	if center_slot_index == -1:
+		return
+
 	var slots: Array[Card3D] = _enemy_slots if attacker_side == "player" else _player_slots
-	var center := slots.find(defender)
+	var center := center_slot_index
 
 	if center == -1:
 		return
@@ -573,30 +609,35 @@ func _apply_cleave(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 			0.9
 		)
 
-		_spawn_blood_from_card(target, cleave_intensity)
-		_spawn_blood_decal_under_card(target, false)
+		if bool(result.get("died", false)):
+			_spawn_blood_from_card(target, cleave_intensity)
+			_spawn_blood_decal_under_card(target, true)
 		_play_sfx(damage_sfx)
 
 		if bool(result.get("died", false)):
 			_remove_dead_card(target)
 
 
-# Entfernt eine gestorbene Karte aus ihrem Slot und zieht sofort eine
-# neue Karte vom zugehoerigen Deck an genau diese Slot-Position nach
-# (falls das Deck noch Karten hat).
-func _remove_dead_card(card: Card3D) -> void:
-	var side: String = ""
-	var slot_index: int = -1
-
+# Sucht Seite ("player"/"enemy") und Slot-Index der uebergebenen Karte.
+# Gibt {"side": "", "index": -1} zurueck, wenn die Karte in keinem Slot
+# (mehr) steckt.
+func _find_slot_of(card: Card3D) -> Dictionary:
 	for i: int in range(HAND_SIZE):
 		if _player_slots[i] == card:
-			side = "player"
-			slot_index = i
-			break
+			return {"side": "player", "index": i}
 		if _enemy_slots[i] == card:
-			side = "enemy"
-			slot_index = i
-			break
+			return {"side": "enemy", "index": i}
+	return {"side": "", "index": -1}
+
+
+# Entfernt eine gestorbene Karte aus ihrem Slot und zieht sofort eine
+# neue Karte vom zugehoerigen Deck an genau diese Slot-Position nach
+# (falls das Deck noch Karten hat). Sicher mehrfach aufrufbar — steht
+# die Karte bereits in keinem Slot mehr, passiert einfach nichts.
+func _remove_dead_card(card: Card3D) -> void:
+	var slot_info := _find_slot_of(card)
+	var side: String = str(slot_info.get("side", ""))
+	var slot_index: int = int(slot_info.get("index", -1))
 
 	if slot_index == -1:
 		return

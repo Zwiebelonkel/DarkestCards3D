@@ -22,19 +22,13 @@ size = Vector3(8, 0.3, 5)
 [node name="GameTable" type="Node3D" node_paths=PackedStringArray("match_camera_marker")]
 script = ExtResource("1_onr2p")
 card_scene = ExtResource("2_3qfbk")
-enemy_turn_delay = null
-draw_animation_duration = null
 blood_burst_scene = ExtResource("9_ye1gf")
 blood_decal_scene = ExtResource("4_g603g")
-blood_spawn_offset = null
-blood_decal_offset = Vector3(0, -0.1, 0)
+blood_spawn_offset = Vector3(0, 0.065, 0)
+blood_decal_offset = Vector3(0, -0.095, 0)
 match_camera_marker = NodePath("MatchCameraMarker")
-match_camera_use_export_rotation = null
 match_camera_rotation = Vector3(-90, 0, 0)
-match_camera_duration = null
 inspect_camera_offset = Vector3(0, 1, 0.01)
-inspect_camera_duration = null
-deck_size = null
 
 [node name="MenuRoot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)

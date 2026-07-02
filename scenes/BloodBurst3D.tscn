@@ -5,22 +5,21 @@
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_blood"]
 lifetime_randomness = 0.91
 direction = Vector3(0, 1, 0)
-spread = 63.578
-initial_velocity_min = 0.7
-initial_velocity_max = 2.75
+spread = 35.505
+initial_velocity_min = 0.5
+initial_velocity_max = 3.0
 gravity = Vector3(0, -5.2, 0)
 scale_min = 0.45
 scale_max = 1.35
 color = Color(0.0445781, 2.09632e-08, 6.01634e-09, 1)
-turbulence_enabled = true
 turbulence_noise_strength = 0.1
 turbulence_noise_scale = 0.153
 collision_mode = 1
-collision_friction = 0.0
-collision_bounce = 0.0
+collision_friction = 1.0
+collision_bounce = 0.03
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_blood"]
-albedo_color = Color(0.663989, 0.0101641, 2.88785e-07, 1)
+albedo_color = Color(0.37086, 0.00289196, 9.62615e-08, 1)
 metallic_specular = 0.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_drop"]
@@ -32,12 +31,12 @@ rings = 1
 
 [node name="BloodBurst3D" type="Node3D"]
 script = ExtResource("1_blood_script")
-velocity_min = 0.68
-velocity_max = 1.16
+auto_free_time = 5.0
 
 [node name="Particles" type="GPUParticles3D" parent="."]
 emitting = false
-amount = 175
+amount = 1000
+lifetime = 3.91
 one_shot = true
 explosiveness = 1.0
 randomness = 0.75

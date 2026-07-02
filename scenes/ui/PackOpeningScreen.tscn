@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ci1i1hkrnkts3" path="res://scripts/ui/PackOpeningScreen.gd" id="1_script"]
 [ext_resource type="AudioStream" uid="uid://dd2vad4psje60" path="res://assets/sounds/SFX/cardHover.mp3" id="4_o7vg3"]
-[ext_resource type="PackedScene" uid="uid://cegwcnpr0ppe1" path="res://assets/cards/pack/pack.glb" id="4_rrr6c"]
+[ext_resource type="PackedScene" uid="uid://cegwcnpr0ppe1" path="res://assets/cards/pack/basic/pack.glb" id="4_rrr6c"]
 [ext_resource type="Script" uid="uid://oyqpnugunh4o" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_floor"]

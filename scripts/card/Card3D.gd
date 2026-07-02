@@ -69,6 +69,20 @@ var _frame_timer := 0.0
 
 signal died(card: Card3D)
 
+# Wird genau am Scheitelpunkt der Angriffsanimation ausgeloest (nach
+# dem Hinflug + "Rammstoss", bevor die Karte wieder zurueckfliegt).
+# Aufrufer (z.B. GameTable._resolve_duel) sollen HIER Schaden/Blut/SFX
+# anwenden statt erst auf das komplette Ende von
+# play_attack_animation() zu warten — sonst wirken Treffer viel zu spaet.
+signal attack_impact
+
+# Wird ausgeloest, wenn play_attack_animation() komplett fertig ist
+# (Karte wieder an ihrer Ausgangsposition). Da play_attack_animation()
+# als "fire and forget" (ohne await) gestartet wird, kann der Aufrufer
+# ueber dieses Signal trotzdem auf das echte Ende warten, statt auf den
+# (nicht einfangbaren) Rueckgabewert der Coroutine.
+signal attack_finished
+
 @export_group("Auswahl-Highlight")
 @export var select_highlight_color: Color = Color(1.0, 0.92, 0.3, 1.0)
 @export var select_lift: float = 0.08
@@ -452,6 +466,12 @@ func _restore_glow_rarity_color() -> void:
 # Animation, bevor zurueckgekehrt wird — der Aufrufer kann also einfach
 # `await card.play_attack_animation(target.global_position)` nutzen, um
 # den Schaden erst NACH der Animation anzuwenden.
+#
+# WICHTIG: Fuer Treffer-Timing (Schaden/Blut/SFX) soll der Aufrufer NICHT
+# auf das Ende dieser Funktion warten, sondern auf das Signal
+# `attack_impact`, das genau am Scheitelpunkt (nach dem Rammstoss, vor
+# dem Rueckflug) gefeuert wird. Das Ende dieser Funktion markiert nur,
+# wann die Karte wieder komplett an ihrer Ausgangsposition ist.
 func play_attack_animation(target_global_pos: Vector3) -> void:
 	var start_pos: Vector3 = global_position
 	var start_rot: Vector3 = rotation_degrees
@@ -481,12 +501,21 @@ func play_attack_animation(target_global_pos: Vector3) -> void:
 	if not is_instance_valid(self):
 		return
 
+	# --- Scheitelpunkt der Animation: HIER soll der Treffer "passieren" ---
+	# Aufrufer koennen auf dieses Signal warten, um Schaden, Blut-Effekte
+	# und Treffer-SFX exakt in diesem Moment auszuloesen, statt erst nach
+	# dem kompletten Rueckflug.
+	attack_impact.emit()
+
 	var return_tween: Tween = create_tween().set_parallel(true)
 	return_tween.tween_property(self, "global_position", start_pos, attack_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	return_tween.tween_property(self, "rotation_degrees", start_rot, attack_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	return_tween.tween_property(self, "scale", start_scale, attack_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	await return_tween.finished
+
+	if is_instance_valid(self):
+		attack_finished.emit()
 
 
 func _wrap_text(text: String, max_chars_per_line: int = 45) -> String:
