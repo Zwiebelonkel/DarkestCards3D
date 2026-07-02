@@ -6,19 +6,22 @@ const PACK_TYPES := {
 		"name": "BASIC PACK",
 		"cost": 5,
 		"card_count": 5,
-		"description": "Normal cards. Cheap and solid."
-	},
-	"rare": {
-		"name": "RARE PACK",
-		"cost": 15,
-		"card_count": 7,
-		"description": "More cards. Better rare chance."
+		"description": "Normal cards. Cheap and solid.",
+		"scene": preload("res://assets/cards/pack/basic/pack.glb")
 	},
 	"god": {
 		"name": "GOD PACK",
 		"cost": 35,
 		"card_count": 10,
-		"description": "Expensive. Big reveal energy."
+		"description": "Expensive. Big reveal energy.",
+		"scene": preload("res://assets/cards/pack/god/pack.glb")
+	},
+	"ultra": {
+		"name": "ULTRA PACK",
+		"cost": 20,
+		"card_count": 7,
+		"description": "Stronger pack with better pulls.",
+		"scene": preload("res://assets/cards/pack/ultra/pack.glb")
 	}
 }
 
