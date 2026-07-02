@@ -1157,7 +1157,8 @@ func buy_pack(pack_id: String, pack_data: Dictionary) -> bool:
 	_pack_bought = true
 
 	info_label.text = str(pack_data.get("name", "Pack")) + " gekauft - PackTop ziehen"
-
+	var pack_scene := pack_data.get("scene", null) as PackedScene
+	_set_pack_model(pack_scene)
 	_show_bought_pack()
 
 	return true
@@ -1200,3 +1201,82 @@ func _show_bought_pack() -> void:
 		_pack_home_scale,
 		0.45
 	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+func _set_pack_model(pack_scene: PackedScene) -> void:
+	if pack_scene == null:
+		return
+
+	var old_pack := pack
+	var old_transform := pack.transform
+	var old_index := pack.get_index()
+
+	remove_child(old_pack)
+	old_pack.queue_free()
+
+	pack = pack_scene.instantiate() as Node3D
+	pack.name = "pack"
+	add_child(pack)
+	move_child(pack, old_index)
+	pack.transform = old_transform
+
+	pack_mesh = pack.get_node_or_null("base") as MeshInstance3D
+	pack_top = pack.get_node_or_null("top") as MeshInstance3D
+	rarity_particle_spawn = pack.get_node_or_null("RarityParticleSpawn") as Marker3D
+
+	if rarity_particle_spawn == null:
+		rarity_particle_spawn = Marker3D.new()
+		rarity_particle_spawn.name = "RarityParticleSpawn"
+		pack.add_child(rarity_particle_spawn)
+		rarity_particle_spawn.position = rarity_particle_spawn_offset
+
+	_ensure_pack_top_area()
+	_setup_bend_mesh()
+
+	_pack_home_position = pack.position
+	_pack_home_rotation = pack.rotation_degrees
+	_pack_home_scale = pack.scale
+
+	_pack_top_home_position = pack_top.position
+	_pack_top_home_rotation = pack_top.rotation_degrees
+	_pack_top_home_scale = pack_top.scale
+	
+func _ensure_pack_top_area() -> void:
+	if pack_top == null:
+		push_error("Pack hat keinen Node namens 'top'")
+		return
+
+	pack_top_area = pack_top.get_node_or_null("PackTopArea") as Area3D
+
+	if pack_top_area == null:
+		pack_top_area = Area3D.new()
+		pack_top_area.name = "PackTopArea"
+		pack_top.add_child(pack_top_area)
+
+		var collision := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = Vector3(2.06586, 0.235229, 4.01843)
+
+		collision.shape = shape
+		collision.position = Vector3(-1.0485, 0.055725, 0.0370484)
+		pack_top_area.add_child(collision)
+
+	pack_top_area.input_ray_pickable = true
+	pack_top_area.monitoring = true
+	pack_top_area.monitorable = true
+
+	if not pack_top_area.input_event.is_connected(_on_pack_top_input):
+		pack_top_area.input_event.connect(_on_pack_top_input)
+
+	if not pack_top_area.mouse_entered.is_connected(_on_pack_mouse_entered):
+		pack_top_area.mouse_entered.connect(_on_pack_mouse_entered)
+
+	if not pack_top_area.mouse_exited.is_connected(_on_pack_mouse_exited):
+		pack_top_area.mouse_exited.connect(_on_pack_mouse_exited)
+		
+func _on_pack_mouse_entered() -> void:
+	_hovering_pack = true
+
+
+func _on_pack_mouse_exited() -> void:
+	_hovering_pack = false
