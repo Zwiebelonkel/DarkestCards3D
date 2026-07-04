@@ -7,21 +7,50 @@ const PACK_TYPES := {
 		"cost": 5,
 		"card_count": 5,
 		"description": "Normal cards. Cheap and solid.",
-		"scene": preload("res://assets/cards/pack/basic/pack.glb")
+		"scene": preload("res://assets/cards/pack/basic/pack.glb"),
+		"rarity_weights": {
+			"common": 65.0,
+			"uncommon": 25.0,
+			"rare": 8.0,
+			"epic": 1.7,
+			"legendary": 0.3,
+			"mythic": 0.0,
+			"exotic": 0.0
+		}
 	},
-	"god": {
-		"name": "GOD PACK",
-		"cost": 35,
-		"card_count": 10,
-		"description": "Expensive. Big reveal energy.",
-		"scene": preload("res://assets/cards/pack/god/pack.glb")
-	},
+
 	"ultra": {
 		"name": "ULTRA PACK",
 		"cost": 20,
 		"card_count": 7,
 		"description": "Stronger pack with better pulls.",
-		"scene": preload("res://assets/cards/pack/ultra/pack.glb")
+		"scene": preload("res://assets/cards/pack/ultra/pack.glb"),
+		"rarity_weights": {
+			"common": 35.0,
+			"uncommon": 32.0,
+			"rare": 20.0,
+			"epic": 9.0,
+			"legendary": 3.0,
+			"mythic": 0.8,
+			"exotic": 0.2
+		}
+	},
+
+	"god": {
+		"name": "GOD PACK",
+		"cost": 35,
+		"card_count": 10,
+		"description": "Expensive. Big reveal energy.",
+		"scene": preload("res://assets/cards/pack/god/pack.glb"),
+		"rarity_weights": {
+			"common": 10.0,
+			"uncommon": 20.0,
+			"rare": 28.0,
+			"epic": 24.0,
+			"legendary": 12.0,
+			"mythic": 5.0,
+			"exotic": 1.0
+		}
 	}
 }
 

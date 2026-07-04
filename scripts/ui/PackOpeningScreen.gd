@@ -29,6 +29,7 @@ const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
 @export var rip_snap_threshold: float = 0.82
 @export var rip_snap_overshoot_rotation := Vector3(-12.0, 10.0, -55.0)
 @export var rip_snap_overshoot_time: float = 0.09
+@export_range(0.0, 1.0) var rip_rigid_influence: float = 0.15
 
 @export_group("Cards In Pack")
 @export var stack_base_position := Vector3(0, 0.62, -0.55)
@@ -199,13 +200,43 @@ func _setup_bend_mesh() -> void:
 	_bend_material.shader = shader
 
 	_bend_material.set_shader_parameter("bend_amount", 0.0)
-	_bend_material.set_shader_parameter("pivot_x", -0.5)
-	_bend_material.set_shader_parameter("bend_length", 1.0)
 
-	var tex := load("res://assets/cards/pack/pack_cover1 - Kopie.png") as Texture2D
+	# Anker + Laenge aus der Mesh-AABB. Laut Blender-Screenshot sitzt der
+	# Origin an der Spitze des Keils -> aabb.position.x sollte nahe 0
+	# liegen und als Anker passen. Falls es seitenverkehrt biegt (Top
+	# rollt vom Body weg statt zur Spitze hin): auf aabb.end.x umstellen.
+	var anchor_x := 0.0
+	var mesh_length := 1.0
+	if pack_top.mesh:
+		var aabb := pack_top.mesh.get_aabb()
+		anchor_x = aabb.position.x + aabb.size.x
+		mesh_length = max(aabb.size.x, 0.001)
+	_bend_material.set_shader_parameter("anchor_x", anchor_x)
+	_bend_material.set_shader_parameter("mesh_length", mesh_length)
+
+	var tex := load("res://assets/cards/pack/basic/pack_cover1 - Kopie.png") as Texture2D
 	_bend_material.set_shader_parameter("albedo_texture", tex)
 
 	pack_top.material_override = _bend_material
+
+func _apply_rip_physics(amount: float) -> void:
+	var eased := _rip_resistance(amount)
+
+	pack_top.position = _pack_top_start_position \
+		+ drag_top_max_offset * amount * rip_rigid_influence \
+		+ rip_bow_offset_max * eased * rip_rigid_influence
+
+	pack_top.rotation_degrees = _pack_top_start_rotation \
+		+ drag_top_rotation * amount * rip_rigid_influence
+
+	if _bend_material:
+		_bend_material.set_shader_parameter("bend_amount", eased)
+
+	_apply_base_shake(eased)
+
+	if not _rip_has_snapped and amount >= rip_snap_threshold:
+		_rip_has_snapped = true
+		_play_rip_snap_overshoot()
 	
 func _process(delta: float) -> void:
 	_update_camera_shake(delta)
@@ -319,42 +350,12 @@ func _rip_resistance(amount: float) -> float:
 	return pow(amount, rip_resistance_curve)
 
 
-func _apply_rip_physics(amount: float) -> void:
-	var eased := _rip_resistance(amount)
-
-	# Knick um die Biegeachse: waechst nichtlinear, nicht linear wie vorher.
-	var fold_z := -rip_fold_rotation_max * eased
-
-	pack_top.position = _pack_top_start_position \
-		+ drag_top_max_offset * amount \
-		+ rip_bow_offset_max * eased
-
-	pack_top.rotation_degrees = _pack_top_start_rotation \
-		+ drag_top_rotation * amount \
-		+ Vector3(0.0, 0.0, fold_z)
-
-	# Bend-Mesh (falls aktiv genutzt) bekommt denselben eased-Fortschritt
-	# als Shader-Parameter, damit es sich synchron zur pack_top-Bewegung
-	# verformt, statt nur starr rotiert zu werden.
-	if _bend_material:
-		_bend_material.set_shader_parameter("bend_amount", eased)
-
-	_apply_base_shake(eased)
-
-	# Schnapp-Moment: einmaliger kurzer Ueberschwinger, sobald der
-	# Schwellenwert ueberschritten wird (nur einmal pro Drag-Versuch).
-	if not _rip_has_snapped and amount >= rip_snap_threshold:
-		_rip_has_snapped = true
-		_play_rip_snap_overshoot()
-
 func _play_rip_snap_overshoot() -> void:
 	var snap_tween := create_tween()
-	var target_rot := _pack_top_start_rotation + drag_top_rotation + rip_snap_overshoot_rotation
+	var target_rot := _pack_top_start_rotation + drag_top_rotation * rip_rigid_influence + rip_snap_overshoot_rotation * 0.3
 	snap_tween.tween_property(pack_top, "rotation_degrees", target_rot, rip_snap_overshoot_time) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
-	# Bend-Mesh: kurzer Ueberschwinger ueber bend_amount = 1.0 hinaus,
-	# simuliert das ploetzliche Nachgeben der Folie am Schnapp-Punkt.
 	if _bend_material:
 		var bend_snap_tween := create_tween()
 		bend_snap_tween.tween_method(
@@ -370,7 +371,6 @@ func _play_rip_snap_overshoot() -> void:
 			rip_snap_overshoot_time
 		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
-	# leichter Zusatz-Ruck am Pack-Body, als ob die Folie ploetzlich nachgibt
 	var jolt_tween := create_tween()
 	var jolt_offset := _pack_start_position + Vector3(-0.025, 0.015, 0.0)
 	jolt_tween.tween_property(pack, "position", jolt_offset, rip_snap_overshoot_time * 0.6) \
@@ -379,7 +379,7 @@ func _play_rip_snap_overshoot() -> void:
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	_trigger_camera_shake(0.08, 0.12)
-
+	
 func _reset_pack_top_drag() -> void:
 	_rip_has_snapped = false
 
@@ -441,7 +441,7 @@ func _spawn_cards_inside_pack() -> void:
 	cards.shuffle()
 
 	for i in range(card_count):
-		var data: Dictionary = CardDatabase.get_random_card_weighted()
+		var data: Dictionary = CardDatabase.get_random_card_for_current_pack()
 
 		var card := CARD_SCENE.instantiate() as Card3D
 		cards_root.add_child(card)
@@ -1153,6 +1153,9 @@ func buy_pack(pack_id: String, pack_data: Dictionary) -> bool:
 
 	selected_pack_id = pack_id
 	selected_pack_data = pack_data
+	CardDatabase.set_pack_rarity_weights(
+		pack_data.get("rarity_weights", {})
+	)
 	card_count = int(pack_data.get("card_count", card_count))
 	_pack_bought = true
 

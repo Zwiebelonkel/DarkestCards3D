@@ -4,6 +4,7 @@ const CARDS_PATH := "res://data/cards.json"
 
 var cards: Array[Dictionary] = []
 var cards_by_id: Dictionary = {}
+var _current_pack_weights := {}
 
 
 func _ready() -> void:
@@ -95,74 +96,43 @@ func get_random_card_by_rarity(rarity: String) -> Dictionary:
 	
 	return pool.pick_random()
 	
-const RARITIES := [
-	{"id": "common",     "drop_weight": 68.0},
-	{"id": "uncommon",   "drop_weight": 22.0},
-	{"id": "rare",       "drop_weight": 7.0},
-	{"id": "epic",       "drop_weight": 2.3},
-	{"id": "legendary",  "drop_weight": 0.55},
-	{"id": "mythic",     "drop_weight": 0.12},
-	{"id": "exotic",     "drop_weight": 0.03},
-]
 
-#const RARITIES := [
-	#{"id": "common",     "drop_weight": 58.0},
-	#{"id": "uncommon",   "drop_weight": 24.0},
-	#{"id": "rare",       "drop_weight": 10.0},
-	#{"id": "epic",       "drop_weight": 4.0},
-	#{"id": "legendary",  "drop_weight": 2.0},
-	#{"id": "mythic",     "drop_weight": 1.0},
-	#{"id": "exotic",     "drop_weight": 1.0},
-#]
-
-#const RARITIES := [
-	#{"id": "common", "drop_weight": 1.0},
-	#{"id": "uncommon", "drop_weight": 1.0},
-	#{"id": "rare", "drop_weight": 1.0},
-	#{"id": "epic", "drop_weight": 1.0},
-	#{"id": "legendary", "drop_weight": 1.0},
-	#{"id": "mythic", "drop_weight": 1.0},
-	#{"id": "exotic", "drop_weight": 1.0},
-#]
-
-#const RARITIES := [
-	#{"id": "common", "drop_weight": 0},
-	#{"id": "uncommon", "drop_weight": 0},
-	#{"id": "rare", "drop_weight": 0},
-	#{"id": "epic", "drop_weight": 0},
-	#{"id": "legendary", "drop_weight": 0},
-	#{"id": "mythic", "drop_weight":.0},
-	#{"id": "exotic", "drop_weight": 1.0},
-#]
+func set_pack_rarity_weights(weights: Dictionary) -> void:
+	_current_pack_weights = weights.duplicate()
 
 
-func get_random_rarity_weighted() -> String:
-	var total_weight := 0.0
-	
-	for rarity in RARITIES:
-		total_weight += float(rarity.get("drop_weight", 0.0))
-	
-	var roll := randf() * total_weight
-	var current := 0.0
-	
-	for rarity in RARITIES:
-		current += float(rarity.get("drop_weight", 0.0))
-		
-		if roll <= current:
-			return str(rarity.get("id", "common"))
-	
-	return "common"
-
-
-func get_random_card_weighted() -> Dictionary:
+func get_random_card_for_current_pack() -> Dictionary:
 	if cards.is_empty():
 		return {}
-	
-	var rarity := get_random_rarity_weighted()
+
+	if _current_pack_weights.is_empty():
+		return get_random_card()
+
+	var rarity := _roll_rarity(_current_pack_weights)
 	var pool := get_cards_by_rarity(rarity)
-	
+
 	if pool.is_empty():
-		# Fallback, falls z.B. keine Mythic-Karten existieren
-		return cards.pick_random()
-	
+		return get_random_card()
+
 	return pool.pick_random()
+
+
+func _roll_rarity(weights: Dictionary) -> String:
+	var total := 0.0
+
+	for value in weights.values():
+		total += float(value)
+
+	if total <= 0.0:
+		return "common"
+
+	var roll := randf() * total
+	var current := 0.0
+
+	for rarity in weights.keys():
+		current += float(weights[rarity])
+
+		if roll <= current:
+			return str(rarity)
+
+	return "common"

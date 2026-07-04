@@ -108,6 +108,21 @@
 	"effects": []
   },
   {
+	"id": "raupe",
+	"name": "Bugs on silk",
+	"attack": 6,
+	"defense": 2,
+	"rarity": "uncommon",
+	"description": "They wait for their victim to enter a forest. When the forest is deep enought into the forest, they reveal themselves.",
+	"image": "res://assets/cards/images/raupe.png",
+	"animated":true,
+	"frame_count":7,
+	"frame_columns":7,
+	"frame_rows":1,
+	"frame_fps":3,
+	"effects": []
+  },
+  {
 	"id": "jerk",
 	"name": "Jerk",
 	"attack": 4,
