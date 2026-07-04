@@ -16,6 +16,11 @@ var message_tween: Tween = null
 
 
 func _ready() -> void:
+	if GameCurrency.has_signal("coins_changed"):
+		var coins_callback := Callable(self, "_on_coins_changed")
+		if not GameCurrency.is_connected("coins_changed", coins_callback):
+			GameCurrency.connect("coins_changed", coins_callback)
+
 	refresh_balance()
 	show_message("")
 
@@ -69,6 +74,10 @@ func _show_pack_info(pack_id: String) -> void:
 
 func refresh_balance() -> void:
 	balance_label.text = "SOUL COINS: " + str(GameCurrency.coins)
+
+
+func _on_coins_changed(_coins: int) -> void:
+	refresh_balance()
 
 
 func show_message(text: String) -> void:

@@ -1,5 +1,7 @@
 extends Node
 
+signal collection_changed(card_ids: Array[String])
+
 const SAVE_PATH := "user://collection.json"
 
 var collection := {
@@ -35,6 +37,8 @@ func save_collection():
 func add_card(card_id: String) -> Dictionary:
 	var instance := create_card_instance(card_id)
 	save_collection()
+	var changed_card_ids: Array[String] = [card_id]
+	collection_changed.emit(changed_card_ids)
 	return instance
 
 

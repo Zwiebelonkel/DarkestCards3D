@@ -26,6 +26,7 @@ var preview_card: Card3D = null
 func _ready() -> void:
 	_setup_screen_material()
 	_connect_ui()
+	_connect_global_refresh_signals()
 	_refresh_card_list()
 
 
@@ -59,6 +60,16 @@ func _connect_ui() -> void:
 	ui.health_pressed.connect(_upgrade_health)
 	ui.effect_pressed.connect(_roll_effect)
 	ui.remove_effect_pressed.connect(_remove_effect)
+
+
+func _connect_global_refresh_signals() -> void:
+	var collection_callback := Callable(self, "_on_collection_changed")
+	if CollectionManager.has_signal("collection_changed") and not CollectionManager.is_connected("collection_changed", collection_callback):
+		CollectionManager.connect("collection_changed", collection_callback)
+
+	var coins_callback := Callable(self, "_on_coins_changed")
+	if GameCurrency.has_signal("coins_changed") and not GameCurrency.is_connected("coins_changed", coins_callback):
+		GameCurrency.connect("coins_changed", coins_callback)
 	
 func _remove_effect(effect_source: String, effect_index: int) -> void:
 	if selected_card_id == "":
@@ -77,6 +88,30 @@ func _remove_effect(effect_source: String, effect_index: int) -> void:
 func _refresh_card_list() -> void:
 	var owned := CollectionManager.get_owned_cards()
 	ui.set_cards(owned.keys())
+
+
+func _on_collection_changed(_card_ids: Array[String]) -> void:
+	var previous_selection := selected_card_id
+	_refresh_card_list()
+
+	if previous_selection == "":
+		return
+
+	var owned := CollectionManager.get_owned_cards()
+	if not owned.has(previous_selection) or int(owned[previous_selection]) <= 0:
+		selected_card_id = ""
+		if preview_card != null and is_instance_valid(preview_card):
+			preview_card.queue_free()
+			preview_card = null
+		return
+
+	selected_card_id = previous_selection
+	ui.set_selected_card(previous_selection)
+	_spawn_preview_card()
+
+
+func _on_coins_changed(_coins: int) -> void:
+	ui.refresh_balance()
 
 
 func _on_card_selected(card_id: String) -> void:
