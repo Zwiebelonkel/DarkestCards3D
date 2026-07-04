@@ -113,12 +113,28 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Settings"
 
+[node name="ResetButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
+text = "Spiel zurücksetzen"
+
 [node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Beenden"
+
+[node name="ResetConfirmation" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Spiel zurücksetzen"
+initial_position = 2
+size = Vector2i(500, 150)
+dialog_text = "Alle gespeicherten Daten werden gelöscht. Fortfahren?"
+ok_button_text = "Zurücksetzen"
+cancel_button_text = "Abbrechen"
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]
 unique_name_in_owner = true
