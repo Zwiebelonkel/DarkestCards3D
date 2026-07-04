@@ -39,6 +39,11 @@ func _ready() -> void:
 		if not CardUpgradeManager.is_connected("upgrades_changed", callback):
 			CardUpgradeManager.connect("upgrades_changed", callback)
 
+	if GameCurrency.has_signal("coins_changed"):
+		var coins_callback := Callable(self, "_on_coins_changed")
+		if not GameCurrency.is_connected("coins_changed", coins_callback):
+			GameCurrency.connect("coins_changed", coins_callback)
+
 	_set_upgrade_buttons_disabled(true)
 	refresh_balance()
 	show_message("")
@@ -250,6 +255,10 @@ func _on_upgrades_changed(card_id: String) -> void:
 
 	if selected_card_id == card_id:
 		call_deferred("set_selected_card", card_id)
+
+
+func _on_coins_changed(_coins: int) -> void:
+	refresh_balance()
 		
 func _update_upgrade_button_state() -> void:
 	if selected_card_id == "":
