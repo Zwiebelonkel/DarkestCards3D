@@ -43,6 +43,9 @@ func get_card_count(card_id: String) -> int:
 
 func is_full() -> bool:
 	return battle_deck.size() >= MAX_DECK_SIZE
+	
+func is_empty() -> bool:
+	return battle_deck.is_empty()
 
 func save_deck() -> void:
 	var cfg := ConfigFile.new()

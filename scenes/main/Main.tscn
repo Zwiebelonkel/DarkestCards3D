@@ -177,7 +177,7 @@ text = "A/D drehen"
 environment = SubResource("Environment_dc040")
 
 [node name="hospitalRoom" parent="." instance=ExtResource("6_1rhdn")]
-transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.695, 0.179363, -2.21619, 0.438384)
+transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.925, 0.179363, -2.21619, 0.438384)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.58534, 0)

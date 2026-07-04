@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dcp3rwdcgfp5m"]
+[gd_scene load_steps=6 format=3 uid="uid://dcp3rwdcgfp5m"]
 
 [ext_resource type="Script" uid="uid://dwf5xjyhc61gh" path="res://scripts/ui/MainMenu.gd" id="1_menu"]
 [ext_resource type="PackedScene" uid="uid://b40dvqf0l54j4" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
@@ -15,6 +15,9 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
+
+[sub_resource type="Theme" id="Theme_v3gjy"]
+default_font = ExtResource("2_v3gjy")
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -131,9 +134,10 @@ text = "Beenden"
 unique_name_in_owner = true
 title = "Spiel zurücksetzen"
 initial_position = 2
-size = Vector2i(500, 150)
-dialog_text = "Alle gespeicherten Daten werden gelöscht. Fortfahren?"
+size = Vector2i(513, 150)
+theme = SubResource("Theme_v3gjy")
 ok_button_text = "Zurücksetzen"
+dialog_text = "Alle gespeicherten Daten werden gelöscht. Fortfahren?"
 cancel_button_text = "Abbrechen"
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]

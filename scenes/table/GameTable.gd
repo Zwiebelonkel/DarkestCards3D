@@ -124,6 +124,9 @@ func _collect_slot_markers() -> void:
 # --- Match-Aufbau ---------------------------------------------------------
 
 func _start_match() -> void:
+	if DeckManager.is_empty():
+		_show_main_menu()
+		return
 	_table_state = TableState.PLAYING
 	_clear_match()
 	_move_camera_to_match_view()
@@ -190,7 +193,7 @@ func _build_enemy_pool() -> Array[Dictionary]:
 
 	for data: Dictionary in all_cards:
 		var rarity := str(data.get("rarity", "common"))
-		var weight := int(rarity_weights.get(rarity, 1))
+		var weight := int(rarity_weights.get(rarity, 0))
 
 		for i in range(weight):
 			pool.append(
@@ -210,44 +213,58 @@ func _get_enemy_rarity_weights(difficulty: String) -> Dictionary:
 	match difficulty:
 		"easy":
 			return {
-				"common": 8,
-				"rare": 3,
-				"epic": 1,
-				"legendary": 0
+				"common": 12,
+				"uncommon": 3,
+				"rare": 1,
+				"epic": 0,
+				"legendary": 0,
+				"mythic": 0,
+				"exotic": 0
 			}
 
 		"normal":
 			return {
-				"common": 5,
-				"rare": 4,
-				"epic": 2,
-				"legendary": 1
+				"common": 8,
+				"uncommon": 5,
+				"rare": 3,
+				"epic": 1,
+				"legendary": 0,
+				"mythic": 0,
+				"exotic": 0
 			}
 
 		"hard":
 			return {
-				"common": 2,
+				"common": 5,
+				"uncommon": 5,
 				"rare": 4,
-				"epic": 4,
-				"legendary": 2
+				"epic": 3,
+				"legendary": 1,
+				"mythic": 0,
+				"exotic": 0
 			}
 
 		"insane":
 			return {
 				"common": 1,
-				"rare": 2,
-				"epic": 5,
-				"legendary": 4
+				"uncommon": 2,
+				"rare": 5,
+				"epic": 7,
+				"legendary": 5,
+				"mythic": 3,
+				"exotic": 1
 			}
 
 		_:
 			return {
-				"common": 5,
-				"rare": 4,
-				"epic": 2,
-				"legendary": 1
+				"common": 8,
+				"uncommon": 5,
+				"rare": 3,
+				"epic": 1,
+				"legendary": 0,
+				"mythic": 0,
+				"exotic": 0
 			}
-
 # --- Sichtbarer Kartenstapel (nur Optik) -----------------------------------
 #
 # Baut den sichtbaren Ruecken-Stapel fuer eine Seite komplett neu auf,
