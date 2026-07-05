@@ -218,7 +218,12 @@ func _begin_turn(direction: int) -> void:
 	var new_target_y := _settle_target_y - step
 	_settle_target_y = new_target_y
 
-	_active_side = posmod(_active_side + direction, SIDE_COUNT)
+	# Die Kamera rotiert visuell in die Gegenrichtung der logischen Seitenfolge:
+	# direction=-1 schaut zur linken Szene (Pack Shop), direction=+1 zur rechten
+	# Szene (Upgrade Shop). Deshalb muss der aktive Seitenindex gegenläufig
+	# zur Eingaberichtung laufen, sonst werden PackShop/Upgrade vertauscht
+	# aktiviert und der sichtbare Screen bleibt nicht-pickable.
+	_active_side = posmod(_active_side - direction, SIDE_COUNT)
 	_update_active_scene_interaction()
 	_update_labels()
 
