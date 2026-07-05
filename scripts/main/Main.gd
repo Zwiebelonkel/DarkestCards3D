@@ -236,7 +236,9 @@ func _set_scene_interaction_enabled(node: Node, enabled: bool) -> void:
 			area.input_ray_pickable = enabled
 	if node is Control:
 		var control := node as Control
-		control.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+		if not control.has_meta("original_mouse_filter"):
+			control.set_meta("original_mouse_filter", control.mouse_filter)
+		control.mouse_filter = int(control.get_meta("original_mouse_filter")) if enabled else Control.MOUSE_FILTER_IGNORE
 	for child in node.get_children():
 		_set_scene_interaction_enabled(child, enabled)
 
