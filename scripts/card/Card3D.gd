@@ -89,11 +89,13 @@ signal attack_finished
 @export var select_highlight_color: Color = Color(1.0, 0.92, 0.3, 1.0)
 @export var select_lift: float = 0.08
 @export var select_duration: float = 0.15
+@export var effect_icon_hover_radius_px: float = 18.0
 
 var _is_selected: bool = false
 var _select_base_position: Vector3 = Vector3.ZERO
 var _select_tween: Tween = null
 var _has_select_base_position := false
+var _hovered_effect_icon_area: Area3D = null
 const EFFECT_ICON_PATH := "res://assets/effects/"
 const EFFECT_PLACEHOLDER := "res://assets/effects/placeholder.png"
 const EFFECT_ICON_HOLO_SHADER := preload("res://assets/shader/effect_icon_holo.gdshader")
@@ -141,6 +143,8 @@ func _ready() -> void:
 		return
 
 func _process(delta: float) -> void:
+	_update_effect_icon_hover()
+
 	if not _animated_image:
 		return
 
@@ -611,10 +615,13 @@ func _connect_effect_icon_areas() -> void:
 	for icon_area in icon_areas:
 		if icon_area == null:
 			continue
-		if not icon_area.mouse_entered.is_connected(_on_effect_icon_area_entered):
-			icon_area.mouse_entered.connect(_on_effect_icon_area_entered)
-		if not icon_area.mouse_exited.is_connected(_on_effect_icon_area_exited):
-			icon_area.mouse_exited.connect(_on_effect_icon_area_exited)
+		# Effect icons must not participate in Godot's ray picking: otherwise
+		# their small hover hitboxes become the front-most 3D collider and steal
+		# clicks/drags from cards, kiosk screens and shop machines behind them.
+		# Hover is detected manually in _update_effect_icon_hover() instead.
+		icon_area.input_ray_pickable = false
+		icon_area.collision_layer = 0
+		icon_area.collision_mask = 0
 
 
 func _set_effect_icon_areas_enabled(enabled: bool) -> void:
@@ -625,9 +632,65 @@ func _set_effect_icon_areas_enabled(enabled: bool) -> void:
 func _set_effect_icon_area_enabled(icon_area: Area3D, enabled: bool) -> void:
 	if icon_area == null:
 		return
-	icon_area.monitoring = enabled
-	icon_area.monitorable = enabled
+	icon_area.monitoring = false
+	icon_area.monitorable = false
+	icon_area.input_ray_pickable = false
+	icon_area.collision_layer = 0
+	icon_area.collision_mask = 0
+	icon_area.visible = enabled
+	if not enabled and _hovered_effect_icon_area == icon_area:
+		_hovered_effect_icon_area = null
+		effect_icon_unhovered.emit(self)
 
+
+func _update_effect_icon_hover() -> void:
+	if is_stack_decoration or not visible:
+		_clear_effect_icon_hover()
+		return
+
+	var camera := get_viewport().get_camera_3d()
+	if camera == null:
+		_clear_effect_icon_hover()
+		return
+
+	var mouse_pos := get_viewport().get_mouse_position()
+	var icon_areas: Array[Area3D] = [
+		effect_icon_area_1,
+		effect_icon_area_2,
+	]
+	var closest_area: Area3D = null
+	var closest_distance := effect_icon_hover_radius_px
+
+	for icon_area in icon_areas:
+		if icon_area == null or not icon_area.visible:
+			continue
+		if camera.is_position_behind(icon_area.global_position):
+			continue
+
+		var screen_pos := camera.unproject_position(icon_area.global_position)
+		var distance := mouse_pos.distance_to(screen_pos)
+
+		if distance <= closest_distance:
+			closest_distance = distance
+			closest_area = icon_area
+
+	if closest_area == _hovered_effect_icon_area:
+		return
+
+	if _hovered_effect_icon_area != null:
+		effect_icon_unhovered.emit(self)
+
+	_hovered_effect_icon_area = closest_area
+
+	if _hovered_effect_icon_area != null:
+		effect_icon_hovered.emit(self)
+
+
+func _clear_effect_icon_hover() -> void:
+	if _hovered_effect_icon_area == null:
+		return
+	_hovered_effect_icon_area = null
+	effect_icon_unhovered.emit(self)
 
 func _on_effect_icon_area_entered() -> void:
 	effect_icon_hovered.emit(self)

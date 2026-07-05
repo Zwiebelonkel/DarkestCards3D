@@ -117,6 +117,7 @@ var _card_rarities: Dictionary = {}
 var _row_cards: Dictionary = {}
 var _row_scroll_offsets: Dictionary = {}
 var _hovered_rarity: String = ""
+var _card_hover_counts: Dictionary = {}
 var _effect_overview: CardEffectOverviewUI = null
 var _effect_overview_layer: CanvasLayer = null
 
@@ -182,6 +183,7 @@ func _build_collection() -> void:
 	_card_rarities.clear()
 	_row_cards.clear()
 	_row_scroll_offsets.clear()
+	_card_hover_counts.clear()
 	_hovered_rarity = ""
 	_detail_card = null
 
@@ -333,6 +335,8 @@ func _ensure_effect_overview() -> void:
 
 
 func _on_effect_icon_hovered(card: Card3D) -> void:
+	_on_card_hovered(card)
+
 	if _detail_card != null or _deck_fan_open:
 		return
 	_ensure_effect_overview()
@@ -341,6 +345,8 @@ func _on_effect_icon_hovered(card: Card3D) -> void:
 
 
 func _on_effect_icon_unhovered(card: Card3D) -> void:
+	_on_card_unhovered(card)
+
 	if _effect_overview != null:
 		_effect_overview.hide_overview(card)
 
@@ -358,7 +364,12 @@ func _on_card_hovered(card: Card3D) -> void:
 	if not is_instance_valid(card) or not _base_positions.has(card):
 		return
 
+	var hover_count := int(_card_hover_counts.get(card, 0))
+	_card_hover_counts[card] = hover_count + 1
+
 	_hovered_rarity = str(_card_rarities.get(card, ""))
+	if hover_count > 0:
+		return
 
 	var base_pos: Vector3 = _base_positions[card]
 	var base_scale: Vector3 = _base_scales[card]
@@ -379,6 +390,12 @@ func _on_card_unhovered(card: Card3D) -> void:
 		return
 	if not is_instance_valid(card) or not _base_positions.has(card):
 		return
+
+	var hover_count := max(int(_card_hover_counts.get(card, 0)) - 1, 0)
+	if hover_count > 0:
+		_card_hover_counts[card] = hover_count
+		return
+	_card_hover_counts.erase(card)
 
 	if _hovered_rarity == str(_card_rarities.get(card, "")):
 		_hovered_rarity = ""
