@@ -228,10 +228,15 @@ func _format_effect_label(effect: Dictionary) -> String:
 	return label
 
 
-func heal(amount: int) -> void:
-	if amount <= 0:
+func heal(amount: int, allow_overheal: bool = false) -> void:
+	if amount <= 0 or is_dead():
 		return
-	current_hp = int(min(current_hp + amount, max_hp))
+
+	if allow_overheal:
+		current_hp += amount
+	else:
+		current_hp = min(current_hp + amount, max_hp)
+
 	_update_hp_label()
 
 

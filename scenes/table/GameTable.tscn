@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=18 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="2_3qfbk"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://48l5iy1dnyb" path="res://assets/environments/props/table/table.glb" id="4_8ay2t"]
 [ext_resource type="PackedScene" uid="uid://ct16nbwx12jao" path="res://scenes/BloodDecal3D.tscn" id="4_g603g"]
 [ext_resource type="PackedScene" uid="uid://dl4avw6u14dbx" path="res://assets/environments/props/dealer/scene.gltf" id="5_l1fpw"]
+[ext_resource type="PackedScene" uid="uid://gy067du0c3vj" path="res://scenes/Poison.tscn" id="5_wg4o8"]
+[ext_resource type="PackedScene" uid="uid://50cvkiq5q3be" path="res://scenes/Heal.tscn" id="6_6s2yc"]
 [ext_resource type="AudioStream" uid="uid://dj6sfixv3s6eo" path="res://assets/sounds/SFX/cardSelect.mp3" id="6_ch7uw"]
 [ext_resource type="AudioStream" uid="uid://dijntmyht7rcb" path="res://assets/sounds/SFX/cardDamage.mp3" id="7_ye1gf"]
 [ext_resource type="AudioStream" uid="uid://cf8ufynfrf6qq" path="res://assets/sounds/SFX/cardKill.mp3" id="8_g603g"]
@@ -28,6 +30,9 @@ blood_burst_scene = ExtResource("9_ye1gf")
 blood_decal_scene = ExtResource("4_g603g")
 blood_spawn_offset = Vector3(0, 0.065, 0)
 blood_decal_offset = Vector3(0, -0.095, 0)
+poison_vfx_scene = ExtResource("5_wg4o8")
+regeneration_vfx_scene = ExtResource("6_6s2yc")
+lifesteal_vfx_scene = ExtResource("6_6s2yc")
 match_camera_marker = NodePath("MatchCameraMarker")
 match_camera_rotation = Vector3(-90, 0, 0)
 inspect_camera_offset = Vector3(0, 1, 0.01)

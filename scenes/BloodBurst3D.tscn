@@ -4,6 +4,7 @@
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_blood"]
 lifetime_randomness = 0.91
+emission_shape_scale = Vector3(0.395, 0.035, 0.6)
 direction = Vector3(0, 1, 0)
 spread = 35.505
 initial_velocity_min = 0.5

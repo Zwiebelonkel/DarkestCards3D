@@ -36,6 +36,14 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @export var blood_spawn_offset := Vector3(0, 0.16, 0)
 @export var blood_decal_offset := Vector3(0, 0.012, 0)
 
+@export_group("Effect VFX")
+@export var poison_vfx_scene: PackedScene
+@export var regeneration_vfx_scene: PackedScene
+@export var lifesteal_vfx_scene: PackedScene
+@export var stun_vfx_scene: PackedScene
+@export var curse_vfx_scene: PackedScene
+@export var effect_vfx_offset := Vector3(0, 0.25, 0)
+
 @export_group("Match Camera")
 @export var match_camera_marker: Marker3D
 @export var match_camera_use_export_rotation := true
@@ -463,6 +471,7 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 
 	if attacker.consume_stun():
 		status_label.text = "%s ist betäubt und setzt aus!" % str(attacker.card_data.get("name", "?"))
+		_spawn_effect_vfx(attacker, stun_vfx_scene)
 		await get_tree().create_timer(0.5).timeout
 		_end_turn_to("enemy" if attacker_side == "player" else "player")
 		return
@@ -471,10 +480,7 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 	var defender_name: String = str(defender.card_data.get("name", "?"))
 	status_label.text = "%s kämpft gegen %s!" % [attacker_name, defender_name]
 
-	# Slot-Index des Verteidigers VOR dem ersten Treffer merken, da die
-	# Karte spaeter (sobald sie stirbt) sofort aus dem Slot-Array entfernt
-	# wird und Cleave danach sonst nicht mehr wüsste, wo sie stand.
-	var defender_slot_index: int = _find_slot_of(defender).get("index", -1)
+	var defender_slot_index: int = int(_find_slot_of(defender).get("index", -1))
 
 	var total_damage_done := 0
 	var defender_died := false
@@ -485,17 +491,7 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		if not is_instance_valid(attacker) or not is_instance_valid(defender) or defender.is_dead():
 			break
 
-		# Animation als "fire and forget" im Hintergrund starten (bewusst
-		# OHNE await) — so laeuft der Rueckflug parallel weiter, waehrend
-		# wir unten schon auf den Treffermoment reagieren. Den Rueckgabe-
-		# wert (Signal) einer Coroutine kann man in GDScript nur mit
-		# await einfangen, daher warten wir stattdessen auf die eigenen
-		# Signale attack_impact / attack_finished der Karte.
 		attacker.play_attack_animation(defender.global_position)
-
-		# Treffer/Schaden/Blut/SFX sollen am Scheitelpunkt der Animation
-		# passieren (kurz nach dem "Rammstoss"), nicht erst wenn die
-		# Karte komplett zurueckgeflogen ist.
 		await attacker.attack_impact
 
 		if _game_over or not is_instance_valid(attacker) or not is_instance_valid(defender):
@@ -511,8 +507,16 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		total_damage_done += int(hit_result.get("damage", 0))
 		defender_died = bool(hit_result.get("died", false))
 
-		if CardData.has_effect(attacker.card_data, "execute") and float(defender.current_hp) <= float(defender.max_hp) * float(CardData.get_effect(attacker.card_data, "execute").get("threshold", 0.25)):
-			defender_died = defender.take_damage(defender.current_hp)
+		var poison := CardData.get_effect(attacker.card_data, "poison")
+		if not poison.is_empty() and is_instance_valid(defender) and not defender_died:
+			defender.set_meta("poison_damage", int(poison.get("damage", 3)))
+			defender.set_meta("poison_turns", int(poison.get("turns", 3)))
+			_spawn_effect_vfx(defender, poison_vfx_scene)
+
+		if CardData.has_effect(attacker.card_data, "execute") and is_instance_valid(defender):
+			var threshold := float(CardData.get_effect(attacker.card_data, "execute").get("threshold", 0.25))
+			if float(defender.current_hp) <= float(defender.max_hp) * threshold:
+				defender_died = defender.take_damage(defender.current_hp)
 
 		var damage_intensity: float = clamp(
 			float(damage) / max(1.0, float(defender.max_hp)),
@@ -524,57 +528,77 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 			_spawn_blood_from_card(defender, damage_intensity)
 			_spawn_blood_decal_under_card(defender, true)
 
-		# Thorns- und Konter-Schaden passieren jetzt im SELBEN Frame wie
-		# der Angreifer-Treffer (Impact-Punkt), statt erst nach der
-		# kompletten Duell-Aufloesung — deshalb hier nur EIN gemeinsamer
-		# SFX-Aufruf fuer Angreifer-Treffer + Thorns + Konter zusammen,
-		# statt mehrerer zeitlich getrennter Sounds.
 		if is_instance_valid(attacker) and is_instance_valid(defender):
-			# Thorns kann den Attacker töten, aber ohne eigenes Blood/Decal.
-			var thorns_killed_attacker: bool = CombatResolver.apply_thorns(defender, attacker, int(hit_result.get("damage", 0)))
+			var thorns_killed_attacker: bool = CombatResolver.apply_thorns(
+				defender,
+				attacker,
+				int(hit_result.get("damage", 0))
+			)
 			attacker_died = attacker_died or thorns_killed_attacker
 
 		if is_instance_valid(attacker) and is_instance_valid(defender):
 			var counter_damage := defender.attack_value
 			var counter_result := CombatResolver.apply_incoming_damage(attacker, counter_damage)
-
-			# Counter-Schaden bleibt spielerisch aktiv,
-			# aber der Attacker bekommt KEIN Blut und KEIN Decal.
 			attacker_died = attacker_died or bool(counter_result.get("died", false))
 
 		_play_sfx(damage_sfx)
 
-		# Beide Karten "sterben" (Slot leeren, wegschleudern, Nachziehen)
-		# SOFORT beim Treffer — nicht erst, wenn der Angreifer seine
-		# komplette Rueckflug-Animation beendet hat.
 		if defender_died:
 			_remove_dead_card(defender)
 
 		if attacker_died:
 			_remove_dead_card(attacker)
 
-		# Danach noch auf das vollstaendige Ende der Rueckflug-Animation
-		# warten, damit sich Hits/Zuege weiterhin nicht ueberlappen.
 		if is_instance_valid(attacker):
 			await attacker.attack_finished
 
 		if defender_died or attacker_died:
 			break
 
-	CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
+	if is_instance_valid(attacker):
+		CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
 
-	if CardData.has_effect(attacker.card_data, "stun") and is_instance_valid(defender):
+		if total_damage_done > 0 and CardData.has_effect(attacker.card_data, "lifesteal"):
+			_spawn_effect_vfx(attacker, lifesteal_vfx_scene)
+
+	if CardData.has_effect(attacker.card_data, "stun") and is_instance_valid(defender) and not defender_died:
 		defender.stun_next_attack()
+		_spawn_effect_vfx(defender, stun_vfx_scene)
 
 	var curse := CardData.get_effect(attacker.card_data, "curse")
-	if not curse.is_empty() and is_instance_valid(defender):
+	if not curse.is_empty() and is_instance_valid(defender) and not defender_died:
 		defender.apply_curse(int(curse.get("value", 2)))
+		_spawn_effect_vfx(defender, curse_vfx_scene)
 
 	_apply_cleave(attacker, defender_slot_index, attacker_side)
 
-	# Sicherheitsnetz: falls attacker_died aus irgendeinem Grund noch
-	# nicht verarbeitet wurde. _remove_dead_card ist gefahrlos mehrfach
-	# aufrufbar (No-Op, wenn die Karte schon aus dem Slot entfernt ist).
+	if defender_died and is_instance_valid(attacker):
+		if CardData.has_effect(attacker.card_data, "draw_on_kill"):
+			var attacker_slot_info := _find_slot_of(attacker)
+			var attacker_side_now := str(attacker_slot_info.get("side", ""))
+			var attacker_slot_index := int(attacker_slot_info.get("index", -1))
+
+			if attacker_side_now != "" and attacker_slot_index != -1:
+				var slots: Array[Card3D] = _player_slots if attacker_side_now == "player" else _enemy_slots
+				var empty_slot := -1
+
+				for i in range(slots.size()):
+					if slots[i] == null:
+						empty_slot = i
+						break
+
+				if empty_slot != -1:
+					_draw_to_slot(attacker_side_now, empty_slot, true)
+
+		if CardData.has_effect(attacker.card_data, "chain_attack"):
+			var target_slots: Array[Card3D] = _enemy_slots if attacker_side == "player" else _player_slots
+			var next_target := _pick_random_living_card(target_slots)
+
+			if next_target != null:
+				await get_tree().create_timer(0.25).timeout
+				await _resolve_duel(attacker, next_target, attacker_side)
+				return
+
 	if attacker_died:
 		_remove_dead_card(attacker)
 
@@ -686,6 +710,10 @@ func _on_card_died(_card: Card3D, _side: String, _slot_index: int) -> void:
 
 func _end_turn_to(next_turn: String) -> void:
 	_current_turn = next_turn
+	
+	await _apply_start_turn_effects(next_turn)
+	if _check_game_over():
+		return
 
 	if next_turn == "enemy":
 		status_label.text = "Gegner ist am Zug..."
@@ -1080,3 +1108,40 @@ func _spawn_blood_decal_under_card(card: Card3D, is_kill: bool = false) -> void:
 
 	if decal.has_method("setup"):
 		decal.setup(is_kill)
+
+func _spawn_effect_vfx(card: Card3D, scene: PackedScene) -> void:
+	if scene == null or card == null or not is_instance_valid(card):
+		return
+
+	var vfx := scene.instantiate() as Node3D
+	add_child(vfx)
+	vfx.global_position = card.global_position + effect_vfx_offset
+
+
+func _apply_start_turn_effects(side: String) -> void:
+	var slots: Array[Card3D] = _player_slots if side == "player" else _enemy_slots
+
+	for card in slots:
+		if card == null or not is_instance_valid(card):
+			continue
+
+		var regen := CardData.get_effect(card.card_data, "regeneration")
+		if not regen.is_empty():
+			card.heal(int(regen.get("value", 3)), true)
+			_spawn_effect_vfx(card, regeneration_vfx_scene)
+
+		if card.has_meta("poison_turns"):
+			var turns := int(card.get_meta("poison_turns"))
+			var damage := int(card.get_meta("poison_damage"))
+
+			if turns > 0:
+				var died := card.take_damage(damage)
+				_spawn_effect_vfx(card, poison_vfx_scene)
+				card.set_meta("poison_turns", turns - 1)
+
+				if died:
+					_remove_dead_card(card)
+
+			if turns - 1 <= 0:
+				card.remove_meta("poison_turns")
+				card.remove_meta("poison_damage")
