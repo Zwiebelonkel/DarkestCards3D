@@ -33,11 +33,13 @@ static func apply_incoming_damage(defender: Card3D, raw_damage: int) -> Dictiona
 		died = false
 	return {"damage": damage, "died": died}
 
-static func heal_from_lifesteal(attacker: Card3D, damage_done: int) -> void:
+static func heal_from_lifesteal(attacker: Card3D, damage_done: int) -> int:
 	var lifesteal := CardData.get_effect(attacker.card_data, "lifesteal")
 	if lifesteal.is_empty() or damage_done <= 0:
-		return
-	attacker.heal(int(round(float(damage_done) * float(lifesteal.get("percent", 0.0)))))
+		return 0
+	var heal_amount := int(round(float(damage_done) * float(lifesteal.get("percent", 0.0))))
+	attacker.heal(heal_amount)
+	return heal_amount
 
 static func apply_thorns(defender: Card3D, attacker: Card3D, damage_taken: int) -> bool:
 	var thorns := CardData.get_effect(defender.card_data, "thorns")
