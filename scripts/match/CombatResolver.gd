@@ -31,9 +31,12 @@ static func apply_incoming_damage(defender: Card3D, raw_damage: int) -> Dictiona
 		if not armor.is_empty():
 			damage = int(round(float(damage) * (1.0 - clamp(float(armor.get("value", 0.0)), 0.0, 0.95))))
 	var died := defender.take_damage(damage)
+	var survival_effect := ""
 	if died and defender.try_survive_death():
 		died = false
-	return {"damage": damage, "died": died, "shield_blocked": shield_blocked}
+		survival_effect = str(defender.get_meta("last_survival_effect", ""))
+		defender.remove_meta("last_survival_effect")
+	return {"damage": damage, "died": died, "shield_blocked": shield_blocked, "survival_effect": survival_effect}
 
 static func heal_from_lifesteal(attacker: Card3D, damage_done: int) -> int:
 	var lifesteal := CardData.get_effect(attacker.card_data, "lifesteal")

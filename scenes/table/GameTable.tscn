@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=24 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="2_3qfbk"]
@@ -17,6 +17,10 @@
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="10_6cwm4"]
 [ext_resource type="PackedScene" uid="uid://bxjurjrv4wl4b" path="res://scenes/CardEffectOverview.tscn" id="15_overview"]
 [ext_resource type="PackedScene" uid="uid://dsh13ldburst" path="res://scenes/ShieldBurst3D.tscn" id="16_shield"]
+[ext_resource type="PackedScene" uid="uid://dney7f8j2glf2" path="res://scenes/Stun.tscn" id="1_stun"]
+[ext_resource type="PackedScene" uid="uid://cursevfxscene" path="res://scenes/Curse.tscn" id="17_curse"]
+[ext_resource type="PackedScene" uid="uid://thornsvfxscene" path="res://scenes/Thorns.tscn" id="18_thorns"]
+[ext_resource type="PackedScene" uid="uid://laststandvfxscene" path="res://scenes/LastStand.tscn" id="19_laststand"]
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
 albedo_color = Color(0.12, 0.08, 0.05, 1)
@@ -39,6 +43,10 @@ shield_vfx_scene = ExtResource("16_shield")
 overview_scene = ExtResource("15_overview")
 regeneration_vfx_scene = ExtResource("6_6s2yc")
 lifesteal_vfx_scene = ExtResource("6_6s2yc")
+stun_vfx_scene = ExtResource("1_stun")
+curse_vfx_scene = ExtResource("17_curse")
+thorns_vfx_scene = ExtResource("18_thorns")
+last_stand_vfx_scene = ExtResource("19_laststand")
 match_camera_marker = NodePath("MatchCameraMarker")
 match_camera_rotation = Vector3(-90, 0, 0)
 inspect_camera_offset = Vector3(0, 1, 0.01)

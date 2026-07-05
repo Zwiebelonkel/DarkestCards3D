@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://cursevfxscene"]
+
+[ext_resource type="Script" uid="uid://ba3so3310th54" path="res://scripts/ParticleBurst3D.gd" id="1_burst"]
+
+[sub_resource type="ParticleProcessMaterial" id="CurseParticles"]
+lifetime_randomness = 0.82
+emission_shape = 3
+emission_box_extents = Vector3(0.42, 0.16, 0.58)
+direction = Vector3(0, 1, 0)
+spread = 72.0
+initial_velocity_min = 0.18
+initial_velocity_max = 1.35
+gravity = Vector3(0, 0.18, 0)
+angular_velocity_min = -260.0
+angular_velocity_max = 260.0
+scale_min = 0.45
+scale_max = 1.25
+color = Color(0.58, 0.08, 0.95, 1)
+turbulence_noise_strength = 12.0
+turbulence_noise_scale = 2.4
+
+[sub_resource type="StandardMaterial3D" id="CurseMaterial"]
+albedo_color = Color(0.26, 0.02, 0.42, 1)
+emission_enabled = true
+emission = Color(0.72, 0.08, 1, 1)
+emission_energy_multiplier = 5.5
+
+[sub_resource type="BoxMesh" id="CurseShard"]
+material = SubResource("CurseMaterial")
+size = Vector3(0.018, 0.055, 0.018)
+
+[node name="Curse" type="Node3D"]
+script = ExtResource("1_burst")
+auto_free_time = 1.35
+
+[node name="Particles" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 150
+lifetime = 0.9
+one_shot = true
+explosiveness = 0.88
+randomness = 0.8
+fixed_fps = 60
+process_material = SubResource("CurseParticles")
+draw_pass_1 = SubResource("CurseShard")
