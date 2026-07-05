@@ -1,0 +1,198 @@
+[gd_scene load_steps=14 format=3 uid="uid://hsfn8ypja21m"]
+
+[ext_resource type="Script" uid="uid://bn3rv4pewgvkj" path="res://scripts/main/Main.gd" id="1_main"]
+[ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_dc040"]
+[ext_resource type="PackedScene" uid="uid://dcp3rwdcgfp5j" path="res://scenes/table/GameTable.tscn" id="2_table"]
+[ext_resource type="PackedScene" uid="uid://sbiyjx808dkn" path="res://scenes/ui/PackOpeningScreen.tscn" id="3_pack"]
+[ext_resource type="PackedScene" uid="uid://cvxblkstddw2n" path="res://scenes/ui/CollectionScreen.tscn" id="4_collection"]
+[ext_resource type="PackedScene" uid="uid://b3bkwwo77our5" path="res://scenes/PackShopMachine.tscn" id="4_qkm1d"]
+[ext_resource type="PackedScene" uid="uid://u8x4h4ejwtkq" path="res://assets/environments/props/hospital/hospitalRoom.glb" id="6_1rhdn"]
+[ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
+[ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
+[ext_resource type="AudioStream" uid="uid://dlgfiwpvx07wl" path="res://assets/sounds/theme.mp3" id="7_sjxhf"]
+[ext_resource type="PackedScene" uid="uid://cbj0qaueir1wc" path="res://scenes/ui/PauseMenu.tscn" id="10_pause"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1rhdn"]
+shader = ExtResource("2_dc040")
+shader_parameter/exposure = 1.074
+shader_parameter/contrast = 1.107
+shader_parameter/saturation = 1.12
+shader_parameter/enable_pixelate = true
+shader_parameter/pixel_factor = 1.579
+shader_parameter/enable_posterize = true
+shader_parameter/color_levels = 16.0
+shader_parameter/dither_strength = 0.35
+shader_parameter/chrom_aberration = 0.0
+shader_parameter/vignette_strength = 2.0
+shader_parameter/grain_strength = 0.2
+shader_parameter/tint_color = Vector3(0.95, 1.03, 0.9)
+shader_parameter/tint_strength = 0.15
+shader_parameter/viewport_size_override = Vector2(0, 0)
+
+[sub_resource type="Environment" id="Environment_dc040"]
+background_energy_multiplier = 0.0
+glow_enabled = true
+glow_normalized = true
+glow_intensity = 8.0
+glow_strength = 1.07
+glow_bloom = 0.32
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0413
+volumetric_fog_albedo = Color(1, 1, 0.647059, 1)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_main")
+sway_angle_degrees = 7.015
+
+[node name="CameraPivot" type="Node3D" parent="."]
+
+[node name="CameraTilt" type="Node3D" parent="CameraPivot"]
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/CameraTilt"]
+transform = Transform3D(1, 0, 0, 0, 0.978148, 0.207912, 0, -0.207912, 0.978148, 0, 2.05, -0.0595816)
+current = true
+fov = 58.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D"]
+
+[node name="ColorRect" type="ColorRect" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer"]
+material = SubResource("ShaderMaterial_1rhdn")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ScenePivot" type="Node3D" parent="."]
+
+[node name="GameTable" parent="ScenePivot" node_paths=PackedStringArray("table_camera") instance=ExtResource("2_table")]
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.15325)
+blood_spawn_offset = Vector3(0, 0.16, 0)
+blood_decal_offset = Vector3(0, 0.012, 0)
+table_camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
+
+[node name="PackShopMachine" parent="ScenePivot" instance=ExtResource("4_qkm1d")]
+transform = Transform3D(-1.18895e-07, 0, -2.72, 0, 2.72, 0, 2.72, 0, -1.18895e-07, -6.07893, -1.83417, 0.391837)
+
+[node name="PackOpeningScreen" parent="ScenePivot/PackShopMachine" index="6" node_paths=PackedStringArray("collection_screen")]
+collection_screen = NodePath("../../Collection")
+
+[node name="PackOpening" parent="ScenePivot" node_paths=PackedStringArray("upgrade_ui", "collection_screen", "screen_flash_camera") instance=ExtResource("3_pack")]
+transform = Transform3D(-3.0424e-08, -0.184273, 0.69602, -8.05484e-09, 0.69602, 0.184273, -0.72, 9.72804e-17, -3.14722e-08, -2.5473, 0.594067, 0)
+visible = false
+upgrade_ui = NodePath("../UpgradeMachine/UpgradeViewport/UpgradeUI")
+rarity_particle_spawn_box = Vector3(0.55, 0.055, 0.62)
+rarity_particle_up_spread = 22.36
+rarity_camera_shake_multiplier = 8.28
+rarity_particle_lifetime = 2.045
+collection_screen = NodePath("../Collection")
+screen_flash_camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
+
+[node name="Collection" parent="ScenePivot" node_paths=PackedStringArray("camera") instance=ExtResource("4_collection")]
+transform = Transform3D(-0.72, -4.39431e-10, -6.29429e-08, 0, 0.719982, -0.00502651, 6.29444e-08, -0.00502651, -0.719982, 0, 0.0367756, 3.28078)
+camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
+
+[node name="UpgradeMachine" parent="ScenePivot" instance=ExtResource("6_ko0rf")]
+transform = Transform3D(-1.18895e-07, 0, 2.72, 0, 2.72, 0, -2.72, 0, -1.18895e-07, 4.84266, -1.97875, 0)
+
+[node name="EmptySide" type="Node3D" parent="ScenePivot"]
+transform = Transform3D(-3.14722e-08, 0, -0.72, 0, 0.72, 0, 0.72, 0, -3.14722e-08, 6.2, 0, 0)
+
+[node name="EmptyLabel" type="Label3D" parent="ScenePivot/EmptySide"]
+transform = Transform3D(0.018, 0, 0, 0, 0.018, 0, 0, 0, 0.018, 0, 0.55, 0)
+text = "FREIE SEITE"
+font_size = 38
+outline_size = 8
+
+[node name="SpotLight3D" type="SpotLight3D" parent="ScenePivot"]
+transform = Transform3D(1, 0, 0, 0, -0.249552, 0.968361, 0, -0.968361, -0.249552, 0, 3.07559, -3.46703)
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 1.503
+light_volumetric_fog_energy = 2.026
+spot_range = 26.91
+spot_angle = 57.66
+script = ExtResource("7_ostsq")
+max_energy = 2.09
+
+[node name="SpotLight3D4" type="SpotLight3D" parent="ScenePivot"]
+transform = Transform3D(1, 0, 0, 0, -0.07054, 0.997509, 0, -0.997509, -0.07054, 0, 4.28754, 4.70532)
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 0.887
+spot_range = 9.388
+spot_angle = 48.43
+script = ExtResource("7_ostsq")
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="ScenePivot"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 3.07559, 0.00291157)
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 7.178
+spot_range = 4096.0
+spot_angle = 57.6563
+script = ExtResource("7_ostsq")
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="ScenePivot"]
+transform = Transform3D(0.760338, -2.83918e-08, 0.649528, -0.649528, -3.32354e-08, 0.760338, -1.54921e-15, -1, -4.37114e-08, -2.40881, 3.07559, 0.00291157)
+light_color = Color(1, 1, 0.807843, 1)
+light_energy = 7.178
+spot_range = 3.336
+spot_angle = 54.91
+script = ExtResource("7_ostsq")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 30
+visible = false
+
+[node name="Panel" type="PanelContainer" parent="HUD"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 430.0
+offset_bottom = 94.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/Panel/MarginContainer"]
+layout_mode = 2
+
+[node name="SideLabel" type="Label" parent="HUD/Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Game Table"
+
+[node name="HintLabel" type="Label" parent="HUD/Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "A/D drehen"
+
+[node name="PauseMenu" parent="." instance=ExtResource("10_pause")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_dc040")
+
+[node name="hospitalRoom" parent="." instance=ExtResource("6_1rhdn")]
+transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.925, 0.179363, -2.21619, 0.438384)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.58534, 0)
+light_color = Color(1, 1, 0.639216, 1)
+light_energy = 0.067
+light_indirect_energy = 1.35
+light_size = 0.155
+shadow_enabled = true
+omni_range = 1826.41
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_sjxhf")
+pitch_scale = 0.82
+autoplay = true
+bus = &"Music"
+
+[editable path="ScenePivot/PackShopMachine"]
+[editable path="ScenePivot/UpgradeMachine"]

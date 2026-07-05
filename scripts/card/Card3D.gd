@@ -623,9 +623,21 @@ func _get_effect_icon_path(effect: Dictionary) -> String:
 	var effect_type := str(effect.get("type", "")).strip_edges().to_lower()
 
 	if effect_type == "":
-		return EFFECT_PLACEHOLDER
+		return ""
 
-	var path := EFFECT_ICON_PATH + effect_type + ".png"
+	var file_name := effect_type
+
+	if effect_type == "armor":
+		var value := float(effect.get("value", 0.0))
+
+		if is_equal_approx(value, 0.25):
+			file_name = "armor_25"
+		elif is_equal_approx(value, 0.5):
+			file_name = "armor_50"
+		elif is_equal_approx(value, 0.75):
+			file_name = "armor_75"
+
+	var path := EFFECT_ICON_PATH + file_name + ".png"
 
 	if ResourceLoader.exists(path):
 		return path

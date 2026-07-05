@@ -54,6 +54,11 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @export var match_camera_rotation := Vector3(-68.0, 0.0, 0.0)
 @export var match_camera_duration: float = 0.65
 
+@export_group("Camera Shake")
+@export var impact_shake_strength := 0.035
+@export var impact_shake_duration := 0.14
+@export var impact_shake_rot_strength := 0.9
+
 
 
 @export_group("Card Inspect Camera")
@@ -97,6 +102,7 @@ var _enemy_slot_markers: Array[Marker3D] = []
 
 # "player" oder "enemy" — wer gerade am Zug ist.
 var _current_turn: String = "player"
+var _shake_tween: Tween = null
 
 # Vom Spieler bereits ausgewaehlte eigene Karte fuer das aktuelle Duell
 # (null, solange noch keine gewaehlt wurde).
@@ -523,6 +529,7 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 
 		attacker.play_attack_animation(defender.global_position)
 		await attacker.attack_impact
+		_shake_camera()
 
 		if _game_over or not is_instance_valid(attacker) or not is_instance_valid(defender):
 			return
@@ -1236,3 +1243,35 @@ func _apply_neighbor_heal(damaged_card: Card3D) -> void:
 
 		neighbor.heal(heal_amount)
 		_spawn_heal_from_card(neighbor)
+
+func _shake_camera(strength: float = impact_shake_strength, duration: float = impact_shake_duration) -> void:
+	if table_camera == null:
+		return
+
+	if _shake_tween != null:
+		_shake_tween.kill()
+
+	var original_transform := table_camera.global_transform
+	var original_rotation := table_camera.rotation_degrees
+
+	var shake_offset := Vector3(
+		_rng.randf_range(-strength, strength),
+		_rng.randf_range(-strength, strength),
+		_rng.randf_range(-strength, strength)
+	)
+
+	var shake_rot := Vector3(
+		_rng.randf_range(-impact_shake_rot_strength, impact_shake_rot_strength),
+		_rng.randf_range(-impact_shake_rot_strength, impact_shake_rot_strength),
+		_rng.randf_range(-impact_shake_rot_strength, impact_shake_rot_strength)
+	)
+
+	_shake_tween = create_tween()
+	_shake_tween.set_parallel(true)
+	_shake_tween.tween_property(table_camera, "global_position", original_transform.origin + shake_offset, duration * 0.35)
+	_shake_tween.tween_property(table_camera, "rotation_degrees", original_rotation + shake_rot, duration * 0.35)
+
+	_shake_tween.chain()
+	_shake_tween.set_parallel(true)
+	_shake_tween.tween_property(table_camera, "global_position", original_transform.origin, duration * 0.65)
+	_shake_tween.tween_property(table_camera, "rotation_degrees", original_rotation, duration * 0.65)

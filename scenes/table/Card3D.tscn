@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=4 uid="uid://41al4xxs2rs6"]
+[gd_scene load_steps=24 format=4 uid="uid://41al4xxs2rs6"]
 
 [ext_resource type="Script" uid="uid://bi1ys3fs0h2g0" path="res://scripts/card/Card3D.gd" id="1_card3d"]
 [ext_resource type="Texture2D" uid="uid://bel1bqmormce3" path="res://assets/cards/images/wanderer.png" id="2_og60t"]
@@ -11,6 +11,7 @@
 [ext_resource type="Shader" uid="uid://dgganigf5x7fg" path="res://assets/shader/card_shine.gdshader" id="6_x26xv"]
 [ext_resource type="Script" uid="uid://dy7v7eui8tfvg" path="res://scripts/labelMove.gd" id="9_nfpie"]
 [ext_resource type="Script" uid="uid://4wpksyu17f6k" path="res://scripts/typewriter.gd" id="10_skhxq"]
+[ext_resource type="Texture2D" uid="uid://bwtnfkr2uxmeb" path="res://assets/effects/placeholder.png" id="10_xwkok"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m3k2a"]
 
@@ -146,14 +147,18 @@ font_size = 34
 outline_size = 6
 
 [node name="EffectSlot1" type="Sprite3D" parent="."]
-transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, -0.000805348, -0.434228, -0.00301231)
+transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, 0, -0.418936, 0)
 pixel_size = 0.496
+shaded = true
 texture_filter = 0
+texture = ExtResource("10_xwkok")
 
 [node name="EffectSlot2" type="Sprite3D" parent="."]
-transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, -0.000805348, -0.288925, -0.00301231)
+transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, 0, -0.25805, 0)
 pixel_size = 0.496
+shaded = true
 texture_filter = 0
+texture = ExtResource("10_xwkok")
 
 [node name="AttackLabel" type="Label3D" parent="."]
 transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, -0.272691, -0.429498, -0.0116284)

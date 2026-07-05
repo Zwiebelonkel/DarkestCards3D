@@ -15,7 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan.png" id="9_c6mk0"]
 [ext_resource type="PackedScene" uid="uid://b73xv648efpap" path="res://scenes/BloodBurst3D.tscn" id="9_ye1gf"]
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="10_6cwm4"]
-[ext_resource type="PackedScene" uid="uid://ckd0sk2teffov" path="res://scenes/CardEffectOverview.tscn" id="15_overview"]
+[ext_resource type="PackedScene" uid="uid://bxjurjrv4wl4b" path="res://scenes/CardEffectOverview.tscn" id="15_overview"]
 [ext_resource type="PackedScene" uid="uid://dsh13ldburst" path="res://scenes/ShieldBurst3D.tscn" id="16_shield"]
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
