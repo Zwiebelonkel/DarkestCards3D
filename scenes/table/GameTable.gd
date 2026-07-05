@@ -40,6 +40,8 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 
 @export_group("Effect VFX")
 @export var poison_vfx_scene: PackedScene
+@export var shield_vfx_scene: PackedScene
+@export var overview_scene: PackedScene
 @export var regeneration_vfx_scene: PackedScene
 @export var lifesteal_vfx_scene: PackedScene
 @export var stun_vfx_scene: PackedScene
@@ -106,6 +108,7 @@ var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 # Sichtbare Ruecken-Karten pro Stapel (nur Optik, keine Spieldaten).
 var _player_stack_visuals: Array[Card3D] = []
 var _enemy_stack_visuals: Array[Card3D] = []
+var _effect_overview: CardEffectOverview = null
 
 
 func _ready() -> void:
@@ -117,6 +120,7 @@ func _ready() -> void:
 	_camera_base_transform = table_camera.global_transform
 	_collect_slot_markers()
 	_connect_menu_buttons()
+	_ensure_effect_overview()
 	_show_main_menu()
 
 
@@ -383,6 +387,30 @@ func _connect_card_input(card: Card3D, side: String, slot_index: int) -> void:
 
 	if not card.area.input_event.is_connected(_on_card_clicked):
 		card.area.input_event.connect(_on_card_clicked.bind(side, slot_index))
+	if not card.area.mouse_entered.is_connected(_on_card_hovered):
+		card.area.mouse_entered.connect(_on_card_hovered.bind(card))
+	if not card.area.mouse_exited.is_connected(_on_card_unhovered):
+		card.area.mouse_exited.connect(_on_card_unhovered.bind(card))
+
+
+func _ensure_effect_overview() -> void:
+	if _effect_overview != null and is_instance_valid(_effect_overview):
+		return
+	if overview_scene == null:
+		return
+	_effect_overview = overview_scene.instantiate() as CardEffectOverview
+	add_child(_effect_overview)
+
+
+func _on_card_hovered(card: Card3D) -> void:
+	_ensure_effect_overview()
+	if _effect_overview != null:
+		_effect_overview.show_for_card(card)
+
+
+func _on_card_unhovered(card: Card3D) -> void:
+	if _effect_overview != null:
+		_effect_overview.hide_overview(card)
 
 
 # --- Klick-Handling ---------------------------------------------------------
@@ -505,6 +533,8 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		)
 
 		var hit_result := CombatResolver.apply_incoming_damage(defender, damage)
+		if bool(hit_result.get("shield_blocked", false)):
+			_spawn_effect_vfx(defender, shield_vfx_scene)
 
 		total_damage_done += int(hit_result.get("damage", 0))
 		defender_died = bool(hit_result.get("died", false))
@@ -541,6 +571,8 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		if is_instance_valid(attacker) and is_instance_valid(defender):
 			var counter_damage := defender.attack_value
 			var counter_result := CombatResolver.apply_incoming_damage(attacker, counter_damage)
+			if bool(counter_result.get("shield_blocked", false)):
+				_spawn_effect_vfx(attacker, shield_vfx_scene)
 			attacker_died = attacker_died or bool(counter_result.get("died", false))
 
 		_play_sfx(damage_sfx)
@@ -647,6 +679,8 @@ func _apply_cleave(attacker: Card3D, center_slot_index: int, attacker_side: Stri
 			continue
 
 		var result := CombatResolver.apply_incoming_damage(target, side_damage)
+		if bool(result.get("shield_blocked", false)):
+			_spawn_effect_vfx(target, shield_vfx_scene)
 
 		var cleave_intensity: float = clamp(
 			float(side_damage) / max(1.0, float(target.max_hp)),
@@ -937,6 +971,8 @@ func _clear_match() -> void:
 
 	_selected_player_card = null
 	_game_over = false
+	if _effect_overview != null:
+		_effect_overview.hide_overview()
 
 func _limit_deck_size(pool: Array[Dictionary], size: int) -> Array[Dictionary]:
 	var limited: Array[Dictionary] = []

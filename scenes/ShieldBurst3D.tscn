@@ -1,0 +1,46 @@
+[gd_scene load_steps=5 format=3 uid="uid://dsh13ldburst"]
+
+[ext_resource type="Script" uid="uid://ba3so3310th54" path="res://scripts/ParticleBurst3D.gd" id="1_burst"]
+
+[sub_resource type="ParticleProcessMaterial" id="ShieldParticles"]
+lifetime_randomness = 0.65
+emission_shape = 3
+emission_box_extents = Vector3(0.55, 0.08, 0.75)
+direction = Vector3(0, 1, 0)
+spread = 52.0
+initial_velocity_min = 0.35
+initial_velocity_max = 1.8
+gravity = Vector3(0, -0.02, 0)
+scale_min = 0.35
+scale_max = 1.0
+color = Color(0.25, 0.72, 1, 1)
+turbulence_noise_strength = 8.0
+turbulence_noise_scale = 1.8
+
+[sub_resource type="StandardMaterial3D" id="ShieldMaterial"]
+albedo_color = Color(0.25, 0.72, 1, 1)
+emission_enabled = true
+emission = Color(0.25, 0.72, 1, 1)
+emission_energy_multiplier = 4.0
+
+[sub_resource type="SphereMesh" id="ShieldSpark"]
+material = SubResource("ShieldMaterial")
+radius = 0.014
+height = 0.028
+radial_segments = 6
+rings = 2
+
+[node name="ShieldBurst3D" type="Node3D"]
+script = ExtResource("1_burst")
+auto_free_time = 1.2
+
+[node name="Particles" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 180
+lifetime = 0.75
+one_shot = true
+explosiveness = 0.92
+randomness = 0.7
+fixed_fps = 60
+process_material = SubResource("ShieldParticles")
+draw_pass_1 = SubResource("ShieldSpark")
