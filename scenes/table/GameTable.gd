@@ -114,7 +114,8 @@ var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 # Sichtbare Ruecken-Karten pro Stapel (nur Optik, keine Spieldaten).
 var _player_stack_visuals: Array[Card3D] = []
 var _enemy_stack_visuals: Array[Card3D] = []
-var _effect_overview: CardEffectOverview = null
+var _effect_overview: CardEffectOverviewUI = null
+var _effect_overview_layer: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -393,10 +394,10 @@ func _connect_card_input(card: Card3D, side: String, slot_index: int) -> void:
 
 	if not card.area.input_event.is_connected(_on_card_clicked):
 		card.area.input_event.connect(_on_card_clicked.bind(side, slot_index))
-	if not card.area.mouse_entered.is_connected(_on_card_hovered):
-		card.area.mouse_entered.connect(_on_card_hovered.bind(card))
-	if not card.area.mouse_exited.is_connected(_on_card_unhovered):
-		card.area.mouse_exited.connect(_on_card_unhovered.bind(card))
+	if not card.effect_icon_hovered.is_connected(_on_effect_icon_hovered):
+		card.effect_icon_hovered.connect(_on_effect_icon_hovered)
+	if not card.effect_icon_unhovered.is_connected(_on_effect_icon_unhovered):
+		card.effect_icon_unhovered.connect(_on_effect_icon_unhovered)
 
 
 func _ensure_effect_overview() -> void:
@@ -404,17 +405,21 @@ func _ensure_effect_overview() -> void:
 		return
 	if overview_scene == null:
 		return
-	_effect_overview = overview_scene.instantiate() as CardEffectOverview
-	add_child(_effect_overview)
+	if _effect_overview_layer == null or not is_instance_valid(_effect_overview_layer):
+		_effect_overview_layer = CanvasLayer.new()
+		_effect_overview_layer.name = "EffectOverviewLayer"
+		add_child(_effect_overview_layer)
+	_effect_overview = overview_scene.instantiate() as CardEffectOverviewUI
+	_effect_overview_layer.add_child(_effect_overview)
 
 
-func _on_card_hovered(card: Card3D) -> void:
+func _on_effect_icon_hovered(card: Card3D) -> void:
 	_ensure_effect_overview()
 	if _effect_overview != null:
 		_effect_overview.show_for_card(card)
 
 
-func _on_card_unhovered(card: Card3D) -> void:
+func _on_effect_icon_unhovered(card: Card3D) -> void:
 	if _effect_overview != null:
 		_effect_overview.hide_overview(card)
 

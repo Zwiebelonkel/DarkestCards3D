@@ -2,6 +2,7 @@ extends Node3D
 class_name CollectionScreen
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
+const EFFECT_OVERVIEW_SCENE := preload("res://scenes/CardEffectOverview.tscn")
 const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 
 const RARITY_ORDER := [
@@ -116,6 +117,8 @@ var _card_rarities: Dictionary = {}
 var _row_cards: Dictionary = {}
 var _row_scroll_offsets: Dictionary = {}
 var _hovered_rarity: String = ""
+var _effect_overview: CardEffectOverviewUI = null
+var _effect_overview_layer: CanvasLayer = null
 
 var _detail_card: Card3D = null
 var _detail_tween_running := false
@@ -312,6 +315,39 @@ func _connect_card_input(card: Card3D) -> void:
 		card.area.mouse_exited.connect(_on_card_unhovered.bind(card))
 	if not card.area.input_event.is_connected(_on_card_input):
 		card.area.input_event.connect(_on_card_input.bind(card))
+	if not card.effect_icon_hovered.is_connected(_on_effect_icon_hovered):
+		card.effect_icon_hovered.connect(_on_effect_icon_hovered)
+	if not card.effect_icon_unhovered.is_connected(_on_effect_icon_unhovered):
+		card.effect_icon_unhovered.connect(_on_effect_icon_unhovered)
+
+
+func _ensure_effect_overview() -> void:
+	if _effect_overview != null and is_instance_valid(_effect_overview):
+		return
+	if _effect_overview_layer == null or not is_instance_valid(_effect_overview_layer):
+		_effect_overview_layer = CanvasLayer.new()
+		_effect_overview_layer.name = "EffectOverviewLayer"
+		add_child(_effect_overview_layer)
+	_effect_overview = EFFECT_OVERVIEW_SCENE.instantiate() as CardEffectOverviewUI
+	_effect_overview_layer.add_child(_effect_overview)
+
+
+func _on_effect_icon_hovered(card: Card3D) -> void:
+	if _detail_card != null or _deck_fan_open:
+		return
+	_ensure_effect_overview()
+	if _effect_overview != null:
+		_effect_overview.show_for_card(card)
+
+
+func _on_effect_icon_unhovered(card: Card3D) -> void:
+	if _effect_overview != null:
+		_effect_overview.hide_overview(card)
+
+
+func _hide_effect_overview() -> void:
+	if _effect_overview != null:
+		_effect_overview.hide_overview()
 
 
 func _on_card_hovered(card: Card3D) -> void:
@@ -336,6 +372,7 @@ func _on_card_hovered(card: Card3D) -> void:
 
 
 func _on_card_unhovered(card: Card3D) -> void:
+	_hide_effect_overview()
 	if _detail_card != null:
 		return
 	if _deck_fan_open:
@@ -421,6 +458,7 @@ func _on_card_input(_camera: Node, event: InputEvent, _position: Vector3, _norma
 
 
 func _open_detail_card(card: Card3D) -> void:
+	_hide_effect_overview()
 	if not is_instance_valid(card) or not _base_positions.has(card):
 		return
 
@@ -638,6 +676,7 @@ func _on_deck_overview_pressed() -> void:
 
 
 func _open_deck_fan() -> void:
+	_hide_effect_overview()
 	if _detail_card != null:
 		_close_detail_card()
 
