@@ -615,6 +615,8 @@ func _connect_effect_icon_areas() -> void:
 	for icon_area in icon_areas:
 		if icon_area == null:
 			continue
+		icon_area.add_to_group("effect_icon_hover_area")
+		icon_area.set_meta("keep_input_ray_pickable_disabled", true)
 		# Effect icons must not participate in Godot's ray picking: otherwise
 		# their small hover hitboxes become the front-most 3D collider and steal
 		# clicks/drags from cards, kiosk screens and shop machines behind them.
