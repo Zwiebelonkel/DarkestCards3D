@@ -1,0 +1,190 @@
+[gd_scene load_steps=20 format=3 uid="uid://dcp3rwdcgfp5j"]
+
+[ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
+[ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="2_3qfbk"]
+[ext_resource type="PackedScene" uid="uid://bpcv0s5e6orfb" path="res://scenes/Table3DButton.tscn" id="3_efmqq"]
+[ext_resource type="PackedScene" uid="uid://48l5iy1dnyb" path="res://assets/environments/props/table/table.glb" id="4_8ay2t"]
+[ext_resource type="PackedScene" uid="uid://ct16nbwx12jao" path="res://scenes/BloodDecal3D.tscn" id="4_g603g"]
+[ext_resource type="PackedScene" uid="uid://dl4avw6u14dbx" path="res://assets/environments/props/dealer/scene.gltf" id="5_l1fpw"]
+[ext_resource type="PackedScene" uid="uid://gy067du0c3vj" path="res://scenes/Poison.tscn" id="5_wg4o8"]
+[ext_resource type="PackedScene" uid="uid://50cvkiq5q3be" path="res://scenes/Heal.tscn" id="6_6s2yc"]
+[ext_resource type="AudioStream" uid="uid://dj6sfixv3s6eo" path="res://assets/sounds/SFX/cardSelect.mp3" id="6_ch7uw"]
+[ext_resource type="AudioStream" uid="uid://dijntmyht7rcb" path="res://assets/sounds/SFX/cardDamage.mp3" id="7_ye1gf"]
+[ext_resource type="AudioStream" uid="uid://cf8ufynfrf6qq" path="res://assets/sounds/SFX/cardKill.mp3" id="8_g603g"]
+[ext_resource type="Script" uid="uid://4pb8b05gokbq" path="res://scripts/Wobble.gd" id="8_vtfa6"]
+[ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan.png" id="9_c6mk0"]
+[ext_resource type="PackedScene" uid="uid://b73xv648efpap" path="res://scenes/BloodBurst3D.tscn" id="9_ye1gf"]
+[ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="10_6cwm4"]
+[ext_resource type="PackedScene" uid="uid://bxjurjrv4wl4b" path="res://scenes/CardEffectOverview.tscn" id="15_overview"]
+[ext_resource type="PackedScene" uid="uid://dsh13ldburst" path="res://scenes/ShieldBurst3D.tscn" id="16_shield"]
+
+[sub_resource type="StandardMaterial3D" id="TableMaterial"]
+albedo_color = Color(0.12, 0.08, 0.05, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_table"]
+size = Vector3(8, 0.3, 5)
+
+[node name="GameTable" type="Node3D" node_paths=PackedStringArray("match_camera_marker")]
+script = ExtResource("1_onr2p")
+card_scene = ExtResource("2_3qfbk")
+blood_burst_scene = ExtResource("9_ye1gf")
+blood_decal_scene = ExtResource("4_g603g")
+heal_burst_scene = ExtResource("6_6s2yc")
+poison_burst_scene = ExtResource("5_wg4o8")
+blood_spawn_offset = Vector3(0, 0.065, 0)
+blood_decal_offset = Vector3(0, -0.095, 0)
+poison_vfx_scene = ExtResource("5_wg4o8")
+shield_vfx_scene = ExtResource("16_shield")
+overview_scene = ExtResource("15_overview")
+regeneration_vfx_scene = ExtResource("6_6s2yc")
+lifesteal_vfx_scene = ExtResource("6_6s2yc")
+match_camera_marker = NodePath("MatchCameraMarker")
+match_camera_rotation = Vector3(-90, 0, 0)
+inspect_camera_offset = Vector3(0, 1, 0.01)
+
+[node name="MenuRoot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+
+[node name="ModeButtons" type="Node3D" parent="MenuRoot"]
+
+[node name="KIButton" parent="MenuRoot/ModeButtons" instance=ExtResource("3_efmqq")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, -0.535432, -0.275349, 1.64473)
+label_text = "KI"
+
+[node name="MultiplayerButton" parent="MenuRoot/ModeButtons" instance=ExtResource("3_efmqq")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 0.530309, -0.275349, 1.64473)
+label_text = "Multiplayer"
+disabled = true
+
+[node name="DifficultyButtons" type="Node3D" parent="MenuRoot"]
+visible = false
+
+[node name="EasyButton" parent="MenuRoot/DifficultyButtons" instance=ExtResource("3_efmqq")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, -1.6244, -0.26278, 1.64063)
+label_text = "Easy"
+
+[node name="NormalButton" parent="MenuRoot/DifficultyButtons" instance=ExtResource("3_efmqq")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, -0.511829, -0.26278, 1.64063)
+label_text = "Normal"
+
+[node name="HardButton" parent="MenuRoot/DifficultyButtons" instance=ExtResource("3_efmqq")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 0.557575, -0.26278, 1.64063)
+label_text = "Hard"
+
+[node name="InsaneButton" parent="MenuRoot/DifficultyButtons" instance=ExtResource("3_efmqq")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 1.68064, -0.26278, 1.64063)
+label_text = "Insane"
+
+[node name="EndButtons" type="Node3D" parent="MenuRoot"]
+visible = false
+
+[node name="ExitButton" parent="MenuRoot/EndButtons" instance=ExtResource("3_efmqq")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 0, 0, 0)
+label_text = "Exit"
+
+[node name="Table" type="MeshInstance3D" parent="."]
+visible = false
+material_override = SubResource("TableMaterial")
+mesh = SubResource("BoxMesh_table")
+
+[node name="PlayerSlots" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 1.2)
+
+[node name="Slot0" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="Slot1" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="Slot2" type="Marker3D" parent="PlayerSlots"]
+
+[node name="Slot3" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="Slot4" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="death" type="Marker3D" parent="PlayerSlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.31046)
+
+[node name="PlayerDeck" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0.2, 1.2)
+
+[node name="EnemySlots" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -1.2)
+
+[node name="Slot0" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="Slot1" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="Slot2" type="Marker3D" parent="EnemySlots"]
+
+[node name="Slot3" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="Slot4" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="death" type="Marker3D" parent="EnemySlots"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.33)
+
+[node name="EnemyDeck" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0.2, -1.2)
+
+[node name="CardSpawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+
+[node name="StatusLabel" type="Label3D" parent="."]
+transform = Transform3D(0.014, 0, 0, 0, -6.11959e-10, 0.014, 0, -0.014, -6.11959e-10, 0, 1.65, 0)
+visible = false
+pixel_size = 0.312
+text = "Du bist am Zug — wähle deine Karte"
+font_size = 34
+outline_size = 8
+
+[node name="MatchCameraMarker" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.74963, 0)
+
+[node name="table" parent="." instance=ExtResource("4_8ay2t")]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, -0.0445504, -0.092979, 0.0219615)
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="table"]
+transform = Transform3D(0.99996, 0, 0, 0, 0.99996, 0, 0, 0, 0.99996, 0.0264247, -0.4646, -0.00323573)
+size = Vector3(5.87708, 1.0708, 3.67908)
+
+[node name="dealer" parent="." instance=ExtResource("5_l1fpw")]
+transform = Transform3D(2.39, 0, 0, 0, 2.34364, 0.468475, 0, -0.468475, 2.34364, -0.0137849, -2.67248, -3.12406)
+script = ExtResource("8_vtfa6")
+amplitude = 0.05
+
+[node name="Sketchfab_model" parent="dealer" index="0"]
+visible = false
+
+[node name="satan" type="Sprite3D" parent="dealer"]
+transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, 0, 1.57048, 0.313926)
+pixel_size = 0.0195
+billboard = 1
+texture_filter = 0
+texture = ExtResource("9_c6mk0")
+hframes = 25
+script = ExtResource("10_6cwm4")
+fps = 15.0
+
+[node name="Audio" type="Node" parent="."]
+
+[node name="SelectSFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("6_ch7uw")
+bus = &"SFX"
+
+[node name="DamageSFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("7_ye1gf")
+bus = &"SFX"
+
+[node name="KillSFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("8_g603g")
+bus = &"SFX"
+
+[editable path="dealer"]
