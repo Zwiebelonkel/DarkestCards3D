@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://50cvkiq5q3be"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vumba"]
+lifetime_randomness = 0.91
+direction = Vector3(0, 1, 0)
+spread = 28.074
+initial_velocity_min = 0.2
+initial_velocity_max = 1.1
+gravity = Vector3(0, -0.025, 0)
+scale_min = 0.45
+scale_max = 1.35
+color = Color(0.0445781, 2.09632e-08, 6.01634e-09, 1)
+turbulence_noise_strength = 16.43
+turbulence_noise_scale = 2.117
+collision_mode = 1
+collision_friction = 1.0
+collision_bounce = 0.03
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_blood"]
+albedo_color = Color(0.811765, 0, 0, 1)
+metallic_specular = 0.0
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_33idl"]
+material = SubResource("StandardMaterial3D_blood")
+radius = 0.018
+height = 0.036
+radial_segments = 4
+rings = 1
+
+[node name="Heal" type="Node3D"]
+
+[node name="Particles" type="GPUParticles3D" parent="."]
+amount = 125
+lifetime = 0.89
+explosiveness = 0.9
+randomness = 0.75
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_vumba")
+draw_pass_1 = SubResource("SphereMesh_33idl")

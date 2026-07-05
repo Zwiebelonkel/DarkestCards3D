@@ -84,12 +84,12 @@ pitch_scale = 0.91
 bus = &"SFX"
 
 [node name="angel" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, 0, 1.28886, -10.2784)
+transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, 0, 2.43191, -10.2784)
 pixel_size = 0.092
 billboard = 1
 texture_filter = 0
 texture = ExtResource("7_efdwr")
 hframes = 18
 script = ExtResource("8_kelpw")
-fps = 15.0
+fps = 10.0
 TOTAL_FRAMES = 18

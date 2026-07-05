@@ -190,7 +190,6 @@ omni_range = 1826.41
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_sjxhf")
-volume_db = -18.602
 pitch_scale = 0.82
 autoplay = true
 bus = &"Music"

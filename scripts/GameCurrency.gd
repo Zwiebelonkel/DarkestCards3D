@@ -8,7 +8,7 @@ func _ready() -> void:
 	load_currency()
 
 func add_coins(amount: int) -> void:
-	var gained := max(amount, 0)
+	var gained : int = max(amount, 0)
 	if gained <= 0:
 		return
 
