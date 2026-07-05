@@ -12,7 +12,7 @@ signal pressed(pack_id: String)
 
 @onready var viewport: SubViewport = $SubViewport
 @onready var camera: Camera3D = $SubViewport/World/Camera3D
-@onready var light: OmniLight3D = $SubViewport/World/OmniLight3D
+#@onready var light: OmniLight3D = $SubViewport/World/OmniLight3D
 @onready var model_root: Node3D = $SubViewport/World/ModelRoot
 
 var pack_model: Node3D = null
@@ -53,11 +53,12 @@ func _setup_camera() -> void:
 
 
 func _setup_light() -> void:
-	if light == null:
-		return
-
-	light.position = Vector3(0, 2.0, 2.0)
-	light.light_energy = 2.5
+	pass
+	#if light == null:
+		#return
+#
+	#light.position = Vector3(0, 2.0, 2.0)
+	#light.light_energy = 2.5
 
 
 func _spawn_pack_model() -> void:

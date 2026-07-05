@@ -391,7 +391,7 @@ func _on_card_unhovered(card: Card3D) -> void:
 	if not is_instance_valid(card) or not _base_positions.has(card):
 		return
 
-	var hover_count := max(int(_card_hover_counts.get(card, 0)) - 1, 0)
+	var hover_count :int= max(int(_card_hover_counts.get(card, 0)) - 1, 0)
 	if hover_count > 0:
 		_card_hover_counts[card] = hover_count
 		return

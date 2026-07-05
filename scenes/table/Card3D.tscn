@@ -98,11 +98,11 @@ texture_filter = 1
 [sub_resource type="QuadMesh" id="QuadMesh_image"]
 size = Vector2(0.56, 0.34)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_card"]
-size = Vector3(0.78, 1.08, 0.08)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_effect_icon"]
 size = Vector3(0.16, 0.16, 0.04)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_card"]
+size = Vector3(0.78, 1.08, 0.08)
 
 [node name="Card3D" type="Node3D"]
 script = ExtResource("1_card3d")
