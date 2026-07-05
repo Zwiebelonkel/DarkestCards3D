@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://50cvkiq5q3be"]
 
-[ext_resource type="Script" path="res://scripts/ParticleBurst3D.gd" id="1_burst"]
+[ext_resource type="Script" uid="uid://ba3so3310th54" path="res://scripts/ParticleBurst3D.gd" id="1_burst"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vumba"]
 lifetime_randomness = 0.91

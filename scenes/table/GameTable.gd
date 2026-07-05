@@ -1132,3 +1132,71 @@ func _spawn_card_particle_burst(scene: PackedScene, card: Card3D) -> void:
 		Basis(),
 		card.global_position + blood_spawn_offset
 	)
+
+func _spawn_effect_vfx(card: Card3D, scene: PackedScene) -> void:
+	if scene == null:
+		return
+
+	if card == null or not is_instance_valid(card):
+		return
+
+	var vfx := scene.instantiate() as Node3D
+	add_child(vfx)
+	vfx.global_position = card.global_position + effect_vfx_offset
+
+
+func _apply_start_turn_effects(side: String) -> void:
+	var slots: Array[Card3D] = _player_slots if side == "player" else _enemy_slots
+
+	for card: Card3D in slots:
+		if card == null or not is_instance_valid(card):
+			continue
+
+		var regen := CardData.get_effect(card.card_data, "regeneration")
+		if not regen.is_empty():
+			card.heal(int(regen.get("value", 3)))
+			_spawn_effect_vfx(card, regeneration_vfx_scene)
+			
+		_apply_neighbor_heal(card)
+
+		if card.has_meta("poison_turns"):
+			var turns := int(card.get_meta("poison_turns"))
+			var damage := int(card.get_meta("poison_damage"))
+
+			if turns > 0:
+				var died := card.take_damage(damage)
+				_spawn_effect_vfx(card, poison_vfx_scene)
+				card.set_meta("poison_turns", turns - 1)
+
+				if died:
+					_remove_dead_card(card)
+
+			if turns - 1 <= 0:
+				card.remove_meta("poison_turns")
+				card.remove_meta("poison_damage")
+
+func _apply_neighbor_heal(damaged_card: Card3D) -> void:
+	var slot_info := _find_slot_of(damaged_card)
+	var side := str(slot_info.get("side", ""))
+	var index := int(slot_info.get("index", -1))
+
+	if side == "" or index == -1:
+		return
+
+	var heal_effect := CardData.get_effect(damaged_card.card_data, "neighbor_heal")
+	if heal_effect.is_empty():
+		return
+
+	var heal_amount := int(heal_effect.get("value", 2))
+	var slots: Array[Card3D] = _player_slots if side == "player" else _enemy_slots
+
+	for neighbor_index in [index - 1, index + 1]:
+		if neighbor_index < 0 or neighbor_index >= slots.size():
+			continue
+
+		var neighbor := slots[neighbor_index]
+		if neighbor == null or not is_instance_valid(neighbor):
+			continue
+
+		neighbor.heal(heal_amount)
+		_spawn_heal_from_card(neighbor)

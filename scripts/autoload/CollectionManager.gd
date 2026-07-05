@@ -89,3 +89,23 @@ func _migrate_legacy_collection() -> void:
 		collection["cards"][card_id] = amount
 		for i in range(amount):
 			collection["instances"].append(CardData.create_instance(str(card_id)))
+
+func unlock_all_cards() -> void:
+	var changed_card_ids: Array[String] = []
+
+	for card: Dictionary in CardDatabase.get_all_cards():
+		var card_id := str(card.get("id", ""))
+		if card_id == "":
+			continue
+
+		if get_amount(card_id) <= 0:
+			changed_card_ids.append(card_id)
+
+		create_card_instance(card_id)
+
+	save_collection()
+
+	if not changed_card_ids.is_empty():
+		collection_changed.emit(changed_card_ids)
+
+	print("Alle Karten freigeschaltet.")

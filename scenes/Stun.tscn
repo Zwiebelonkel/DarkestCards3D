@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dney7f8j2glf2"]
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5vpk7"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nnu22"]
 lifetime_randomness = 0.91
 direction = Vector3(0, 1, 0)
 spread = 28.074
@@ -17,17 +17,17 @@ collision_friction = 1.0
 collision_bounce = 0.03
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_blood"]
-albedo_color = Color(0, 1, 0.2, 1)
+albedo_color = Color(0.913725, 0.278431, 0, 1)
 metallic_specular = 0.0
 
-[sub_resource type="SphereMesh" id="SphereMesh_suvv6"]
+[sub_resource type="SphereMesh" id="SphereMesh_u202l"]
 material = SubResource("StandardMaterial3D_blood")
 radius = 0.018
 height = 0.036
 radial_segments = 4
 rings = 1
 
-[node name="Poison" type="Node3D"]
+[node name="Stun" type="Node3D"]
 
 [node name="Particles" type="GPUParticles3D" parent="."]
 emitting = false
@@ -37,5 +37,5 @@ one_shot = true
 explosiveness = 1.0
 randomness = 0.75
 fixed_fps = 60
-process_material = SubResource("ParticleProcessMaterial_5vpk7")
-draw_pass_1 = SubResource("SphereMesh_suvv6")
+process_material = SubResource("ParticleProcessMaterial_nnu22")
+draw_pass_1 = SubResource("SphereMesh_u202l")

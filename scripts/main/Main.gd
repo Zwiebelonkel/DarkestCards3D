@@ -86,6 +86,15 @@ func _ready() -> void:
 	_connect_pack_collection_refresh()
 	_update_labels()
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey \
+	and event.pressed \
+	and not event.echo \
+	and event.ctrl_pressed \
+	and event.keycode == KEY_A:
+
+		CollectionManager.unlock_all_cards()
+		_refresh_collection_screen()
 
 func _process(delta: float) -> void:
 	_read_input()
@@ -269,3 +278,12 @@ func _update_mouse_tilt(delta: float) -> void:
 		target_z,
 		delta * mouse_tilt_speed
 	)
+
+func _refresh_collection_screen() -> void:
+	var collection_screen := scene_pivot.get_node_or_null("Collection")
+
+	if collection_screen == null:
+		return
+
+	if collection_screen.has_method("refresh_collection"):
+		collection_screen.refresh_collection()
