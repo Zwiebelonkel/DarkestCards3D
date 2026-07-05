@@ -46,6 +46,8 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @export var lifesteal_vfx_scene: PackedScene
 @export var stun_vfx_scene: PackedScene
 @export var curse_vfx_scene: PackedScene
+@export var thorns_vfx_scene: PackedScene
+@export var last_stand_vfx_scene: PackedScene
 @export var effect_vfx_offset := Vector3(0, 0.25, 0)
 
 @export_group("Match Camera")
@@ -547,6 +549,8 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		var hit_result := CombatResolver.apply_incoming_damage(defender, damage)
 		if bool(hit_result.get("shield_blocked", false)):
 			_spawn_effect_vfx(defender, shield_vfx_scene)
+		if str(hit_result.get("survival_effect", "")) == "last_stand":
+			_spawn_effect_vfx(defender, last_stand_vfx_scene)
 
 		total_damage_done += int(hit_result.get("damage", 0))
 		defender_died = bool(hit_result.get("died", false))
@@ -573,11 +577,14 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 			_spawn_blood_decal_under_card(defender, true)
 
 		if is_instance_valid(attacker) and is_instance_valid(defender):
+			var thorns_damage_taken := int(hit_result.get("damage", 0))
 			var thorns_killed_attacker: bool = CombatResolver.apply_thorns(
 				defender,
 				attacker,
-				int(hit_result.get("damage", 0))
+				thorns_damage_taken
 			)
+			if thorns_damage_taken > 0 and not CardData.get_effect(defender.card_data, "thorns").is_empty():
+				_spawn_effect_vfx(defender, thorns_vfx_scene)
 			attacker_died = attacker_died or thorns_killed_attacker
 
 		if is_instance_valid(attacker) and is_instance_valid(defender):
@@ -585,6 +592,8 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 			var counter_result := CombatResolver.apply_incoming_damage(attacker, counter_damage)
 			if bool(counter_result.get("shield_blocked", false)):
 				_spawn_effect_vfx(attacker, shield_vfx_scene)
+			if str(counter_result.get("survival_effect", "")) == "last_stand":
+				_spawn_effect_vfx(attacker, last_stand_vfx_scene)
 			attacker_died = attacker_died or bool(counter_result.get("died", false))
 
 		_play_sfx(damage_sfx)
@@ -695,6 +704,8 @@ func _apply_cleave(attacker: Card3D, center_slot_index: int, attacker_side: Stri
 		var result := CombatResolver.apply_incoming_damage(target, side_damage)
 		if bool(result.get("shield_blocked", false)):
 			_spawn_effect_vfx(target, shield_vfx_scene)
+		if str(result.get("survival_effect", "")) == "last_stand":
+			_spawn_effect_vfx(target, last_stand_vfx_scene)
 
 		var cleave_intensity: float = clamp(
 			float(side_damage) / max(1.0, float(target.max_hp)),

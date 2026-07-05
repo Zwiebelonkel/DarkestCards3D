@@ -264,15 +264,20 @@ func consume_first_hit_shield() -> bool:
 
 
 func try_survive_death() -> bool:
+	if has_meta("last_survival_effect"):
+		remove_meta("last_survival_effect")
+
 	if _last_stand_available:
 		_last_stand_available = false
 		current_hp = 1
 		_update_hp_label()
+		set_meta("last_survival_effect", "last_stand")
 		return true
 	if _grave_return_available:
 		_grave_return_available = false
 		current_hp = int(max(round(float(max_hp) * 0.5), 1))
 		_update_hp_label()
+		set_meta("last_survival_effect", "grave_return")
 		return true
 	return false
 
