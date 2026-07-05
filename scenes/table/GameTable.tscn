@@ -14,6 +14,8 @@
 [ext_resource type="Script" uid="uid://4pb8b05gokbq" path="res://scripts/Wobble.gd" id="8_vtfa6"]
 [ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan.png" id="9_c6mk0"]
 [ext_resource type="PackedScene" uid="uid://b73xv648efpap" path="res://scenes/BloodBurst3D.tscn" id="9_ye1gf"]
+[ext_resource type="PackedScene" uid="uid://50cvkiq5q3be" path="res://scenes/Heal.tscn" id="10_heal"]
+[ext_resource type="PackedScene" uid="uid://gy067du0c3vj" path="res://scenes/Poison.tscn" id="11_poison"]
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="10_6cwm4"]
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
@@ -28,6 +30,8 @@ script = ExtResource("1_onr2p")
 card_scene = ExtResource("2_3qfbk")
 blood_burst_scene = ExtResource("9_ye1gf")
 blood_decal_scene = ExtResource("4_g603g")
+heal_burst_scene = ExtResource("10_heal")
+poison_burst_scene = ExtResource("11_poison")
 blood_spawn_offset = Vector3(0, 0.065, 0)
 blood_decal_offset = Vector3(0, -0.095, 0)
 poison_vfx_scene = ExtResource("5_wg4o8")

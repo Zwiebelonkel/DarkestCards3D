@@ -32,6 +32,8 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @export_group("Effects")
 @export var blood_burst_scene: PackedScene
 @export var blood_decal_scene: PackedScene
+@export var heal_burst_scene: PackedScene
+@export var poison_burst_scene: PackedScene
 
 @export var blood_spawn_offset := Vector3(0, 0.16, 0)
 @export var blood_decal_offset := Vector3(0, 0.012, 0)
@@ -555,11 +557,13 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		if defender_died or attacker_died:
 			break
 
-	if is_instance_valid(attacker):
-		CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
+	var lifesteal_heal := CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
+	if lifesteal_heal > 0:
+		_spawn_heal_from_card(attacker)
 
-		if total_damage_done > 0 and CardData.has_effect(attacker.card_data, "lifesteal"):
-			_spawn_effect_vfx(attacker, lifesteal_vfx_scene)
+	var poison := CardData.get_effect(attacker.card_data, "poison")
+	if not poison.is_empty() and is_instance_valid(defender):
+		_spawn_poison_from_card(defender)
 
 	if CardData.has_effect(attacker.card_data, "stun") and is_instance_valid(defender) and not defender_died:
 		defender.stun_next_attack()
@@ -1109,39 +1113,22 @@ func _spawn_blood_decal_under_card(card: Card3D, is_kill: bool = false) -> void:
 	if decal.has_method("setup"):
 		decal.setup(is_kill)
 
-func _spawn_effect_vfx(card: Card3D, scene: PackedScene) -> void:
-	if scene == null or card == null or not is_instance_valid(card):
+func _spawn_heal_from_card(card: Card3D) -> void:
+	_spawn_card_particle_burst(heal_burst_scene, card)
+
+func _spawn_poison_from_card(card: Card3D) -> void:
+	_spawn_card_particle_burst(poison_burst_scene, card)
+
+func _spawn_card_particle_burst(scene: PackedScene, card: Card3D) -> void:
+	if scene == null:
 		return
 
-	var vfx := scene.instantiate() as Node3D
-	add_child(vfx)
-	vfx.global_position = card.global_position + effect_vfx_offset
+	if card == null or not is_instance_valid(card):
+		return
 
-
-func _apply_start_turn_effects(side: String) -> void:
-	var slots: Array[Card3D] = _player_slots if side == "player" else _enemy_slots
-
-	for card in slots:
-		if card == null or not is_instance_valid(card):
-			continue
-
-		var regen := CardData.get_effect(card.card_data, "regeneration")
-		if not regen.is_empty():
-			card.heal(int(regen.get("value", 3)), true)
-			_spawn_effect_vfx(card, regeneration_vfx_scene)
-
-		if card.has_meta("poison_turns"):
-			var turns := int(card.get_meta("poison_turns"))
-			var damage := int(card.get_meta("poison_damage"))
-
-			if turns > 0:
-				var died := card.take_damage(damage)
-				_spawn_effect_vfx(card, poison_vfx_scene)
-				card.set_meta("poison_turns", turns - 1)
-
-				if died:
-					_remove_dead_card(card)
-
-			if turns - 1 <= 0:
-				card.remove_meta("poison_turns")
-				card.remove_meta("poison_damage")
+	var burst := scene.instantiate() as Node3D
+	add_child(burst)
+	burst.global_transform = Transform3D(
+		Basis(),
+		card.global_position + blood_spawn_offset
+	)
