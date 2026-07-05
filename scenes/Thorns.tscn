@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://thornsvfxscene"]
+
+[ext_resource type="Script" uid="uid://ba3so3310th54" path="res://scripts/ParticleBurst3D.gd" id="1_burst"]
+
+[sub_resource type="ParticleProcessMaterial" id="ThornsParticles"]
+lifetime_randomness = 0.55
+emission_shape = 3
+emission_box_extents = Vector3(0.46, 0.1, 0.64)
+direction = Vector3(0, 1, 0)
+spread = 94.0
+initial_velocity_min = 0.85
+initial_velocity_max = 2.6
+gravity = Vector3(0, -0.55, 0)
+angular_velocity_min = -420.0
+angular_velocity_max = 420.0
+scale_min = 0.7
+scale_max = 1.45
+color = Color(0.18, 1, 0.22, 1)
+turbulence_noise_strength = 3.0
+turbulence_noise_scale = 1.1
+
+[sub_resource type="StandardMaterial3D" id="ThornsMaterial"]
+albedo_color = Color(0.05, 0.44, 0.08, 1)
+emission_enabled = true
+emission = Color(0.25, 1, 0.25, 1)
+emission_energy_multiplier = 3.8
+
+[sub_resource type="BoxMesh" id="ThornSpike"]
+material = SubResource("ThornsMaterial")
+size = Vector3(0.026, 0.12, 0.026)
+
+[node name="Thorns" type="Node3D"]
+script = ExtResource("1_burst")
+auto_free_time = 1.15
+
+[node name="Particles" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 110
+lifetime = 0.72
+one_shot = true
+explosiveness = 1.0
+randomness = 0.62
+fixed_fps = 60
+process_material = SubResource("ThornsParticles")
+draw_pass_1 = SubResource("ThornSpike")

@@ -1,4 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dney7f8j2glf2"]
+[gd_scene load_steps=5 format=3 uid="uid://dney7f8j2glf2"]
+
+[ext_resource type="Script" uid="uid://ba3so3310th54" path="res://scripts/ParticleBurst3D.gd" id="1_burst"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nnu22"]
 lifetime_randomness = 0.91
@@ -28,6 +30,8 @@ radial_segments = 4
 rings = 1
 
 [node name="Stun" type="Node3D"]
+script = ExtResource("1_burst")
+auto_free_time = 1.2
 
 [node name="Particles" type="GPUParticles3D" parent="."]
 emitting = false
