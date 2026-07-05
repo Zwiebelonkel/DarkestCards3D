@@ -1,6 +1,7 @@
 [gd_scene load_steps=24 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
+[ext_resource type="PackedScene" uid="uid://dney7f8j2glf2" path="res://scenes/Stun.tscn" id="1_stun"]
 [ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="2_3qfbk"]
 [ext_resource type="PackedScene" uid="uid://bpcv0s5e6orfb" path="res://scenes/Table3DButton.tscn" id="3_efmqq"]
 [ext_resource type="PackedScene" uid="uid://48l5iy1dnyb" path="res://assets/environments/props/table/table.glb" id="4_8ay2t"]
@@ -17,10 +18,9 @@
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="10_6cwm4"]
 [ext_resource type="PackedScene" uid="uid://bxjurjrv4wl4b" path="res://scenes/CardEffectOverview.tscn" id="15_overview"]
 [ext_resource type="PackedScene" uid="uid://dsh13ldburst" path="res://scenes/ShieldBurst3D.tscn" id="16_shield"]
-[ext_resource type="PackedScene" uid="uid://dney7f8j2glf2" path="res://scenes/Stun.tscn" id="1_stun"]
 [ext_resource type="PackedScene" uid="uid://cursevfxscene" path="res://scenes/Curse.tscn" id="17_curse"]
-[ext_resource type="PackedScene" uid="uid://thornsvfxscene" path="res://scenes/Thorns.tscn" id="18_thorns"]
-[ext_resource type="PackedScene" uid="uid://laststandvfxscene" path="res://scenes/LastStand.tscn" id="19_laststand"]
+[ext_resource type="PackedScene" uid="uid://itk4c3ec5hk5" path="res://scenes/Thorns.tscn" id="18_thorns"]
+[ext_resource type="PackedScene" uid="uid://duwx2op48vlcw" path="res://scenes/LastStand.tscn" id="19_laststand"]
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
 albedo_color = Color(0.12, 0.08, 0.05, 1)

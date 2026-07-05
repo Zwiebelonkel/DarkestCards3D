@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://laststandvfxscene"]
+[gd_scene load_steps=5 format=3 uid="uid://duwx2op48vlcw"]
 
 [ext_resource type="Script" uid="uid://ba3so3310th54" path="res://scripts/ParticleBurst3D.gd" id="1_burst"]
 

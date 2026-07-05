@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://hsfn8ypja21m"]
+[gd_scene load_steps=15 format=3 uid="uid://hsfn8ypja21m"]
 
 [ext_resource type="Script" uid="uid://bn3rv4pewgvkj" path="res://scripts/main/Main.gd" id="1_main"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_dc040"]
@@ -9,8 +9,9 @@
 [ext_resource type="PackedScene" uid="uid://u8x4h4ejwtkq" path="res://assets/environments/props/hospital/hospitalRoom.glb" id="6_1rhdn"]
 [ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
-[ext_resource type="AudioStream" uid="uid://dlgfiwpvx07wl" path="res://assets/sounds/theme.mp3" id="7_sjxhf"]
 [ext_resource type="PackedScene" uid="uid://cbj0qaueir1wc" path="res://scenes/ui/PauseMenu.tscn" id="10_pause"]
+[ext_resource type="AudioStream" uid="uid://dlc0e0kbmvx4o" path="res://assets/sounds/theme2.mp3" id="11_p5fgu"]
+[ext_resource type="AudioStream" uid="uid://d20rs8dtp7wb0" path="res://assets/sounds/atmo.mp3" id="12_p5fgu"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1rhdn"]
 shader = ExtResource("2_dc040")
@@ -189,10 +190,15 @@ shadow_enabled = true
 omni_range = 1826.41
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("7_sjxhf")
-pitch_scale = 0.82
+stream = ExtResource("11_p5fgu")
+pitch_scale = 1.23
 autoplay = true
 bus = &"Music"
+
+[node name="Atmo" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_p5fgu")
+autoplay = true
+bus = &"SFX"
 
 [editable path="ScenePivot/PackShopMachine"]
 [editable path="ScenePivot/UpgradeMachine"]

@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://50cvkiq5q3be"]
+[gd_scene load_steps=6 format=3 uid="uid://50cvkiq5q3be"]
 
 [ext_resource type="Script" uid="uid://ba3so3310th54" path="res://scripts/ParticleBurst3D.gd" id="1_burst"]
+[ext_resource type="AudioStream" uid="uid://c0n6amefys7bv" path="res://assets/sounds/SFX/effects/inject.mp3" id="2_pq21t"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vumba"]
 lifetime_randomness = 0.91
@@ -49,3 +50,8 @@ randomness = 0.75
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_vumba")
 draw_pass_1 = SubResource("SphereMesh_33idl")
+
+[node name="sound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_pq21t")
+autoplay = true
+bus = &"SFX"

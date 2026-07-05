@@ -512,6 +512,9 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 	if _game_over:
 		return
 
+	if not is_instance_valid(attacker) or not is_instance_valid(defender):
+		return
+
 	if attacker.consume_stun():
 		status_label.text = "%s ist betäubt und setzt aus!" % str(attacker.card_data.get("name", "?"))
 		_spawn_effect_vfx(attacker, stun_vfx_scene)
@@ -519,11 +522,11 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		_end_turn_to("enemy" if attacker_side == "player" else "player")
 		return
 
-	var attacker_name: String = str(attacker.card_data.get("name", "?"))
-	var defender_name: String = str(defender.card_data.get("name", "?"))
+	var attacker_name := str(attacker.card_data.get("name", "?"))
+	var defender_name := str(defender.card_data.get("name", "?"))
 	status_label.text = "%s kämpft gegen %s!" % [attacker_name, defender_name]
 
-	var defender_slot_index: int = int(_find_slot_of(defender).get("index", -1))
+	var defender_slot_index := int(_find_slot_of(defender).get("index", -1))
 
 	var total_damage_done := 0
 	var defender_died := false
@@ -547,18 +550,20 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		)
 
 		var hit_result := CombatResolver.apply_incoming_damage(defender, damage)
+
 		if bool(hit_result.get("shield_blocked", false)):
 			_spawn_effect_vfx(defender, shield_vfx_scene)
+
 		if str(hit_result.get("survival_effect", "")) == "last_stand":
 			_spawn_effect_vfx(defender, last_stand_vfx_scene)
 
 		total_damage_done += int(hit_result.get("damage", 0))
 		defender_died = bool(hit_result.get("died", false))
 
-		var poison := CardData.get_effect(attacker.card_data, "poison")
-		if not poison.is_empty() and is_instance_valid(defender) and not defender_died:
-			defender.set_meta("poison_damage", int(poison.get("damage", 3)))
-			defender.set_meta("poison_turns", int(poison.get("turns", 3)))
+		var poison_effect := CardData.get_effect(attacker.card_data, "poison")
+		if not poison_effect.is_empty() and is_instance_valid(defender) and not defender_died:
+			defender.set_meta("poison_damage", int(poison_effect.get("damage", 3)))
+			defender.set_meta("poison_turns", int(poison_effect.get("turns", 3)))
 			_spawn_effect_vfx(defender, poison_vfx_scene)
 
 		if CardData.has_effect(attacker.card_data, "execute") and is_instance_valid(defender):
@@ -566,42 +571,43 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 			if float(defender.current_hp) <= float(defender.max_hp) * threshold:
 				defender_died = defender.take_damage(defender.current_hp)
 
-		var damage_intensity: float = clamp(
+		var damage_intensity : float = clamp(
 			float(damage) / max(1.0, float(defender.max_hp)),
 			0.45,
 			1.6
 		)
 
-		if defender_died:
+		if defender_died and is_instance_valid(defender):
 			_spawn_blood_from_card(defender, damage_intensity)
 			_spawn_blood_decal_under_card(defender, true)
 
 		if is_instance_valid(attacker) and is_instance_valid(defender):
 			var thorns_damage_taken := int(hit_result.get("damage", 0))
-			var thorns_killed_attacker: bool = CombatResolver.apply_thorns(
-				defender,
-				attacker,
-				thorns_damage_taken
-			)
+			var thorns_killed_attacker := CombatResolver.apply_thorns(defender, attacker, thorns_damage_taken)
+
 			if thorns_damage_taken > 0 and not CardData.get_effect(defender.card_data, "thorns").is_empty():
 				_spawn_effect_vfx(defender, thorns_vfx_scene)
+
 			attacker_died = attacker_died or thorns_killed_attacker
 
 		if is_instance_valid(attacker) and is_instance_valid(defender):
 			var counter_damage := defender.attack_value
 			var counter_result := CombatResolver.apply_incoming_damage(attacker, counter_damage)
+
 			if bool(counter_result.get("shield_blocked", false)):
 				_spawn_effect_vfx(attacker, shield_vfx_scene)
+
 			if str(counter_result.get("survival_effect", "")) == "last_stand":
 				_spawn_effect_vfx(attacker, last_stand_vfx_scene)
+
 			attacker_died = attacker_died or bool(counter_result.get("died", false))
 
 		_play_sfx(damage_sfx)
 
-		if defender_died:
+		if defender_died and is_instance_valid(defender):
 			_remove_dead_card(defender)
 
-		if attacker_died:
+		if attacker_died and is_instance_valid(attacker):
 			_remove_dead_card(attacker)
 
 		if is_instance_valid(attacker):
@@ -609,6 +615,12 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 
 		if defender_died or attacker_died:
 			break
+
+	if not is_instance_valid(attacker):
+		if _check_game_over():
+			return
+		_end_turn_to("enemy" if attacker_side == "player" else "player")
+		return
 
 	var lifesteal_heal := CombatResolver.heal_from_lifesteal(attacker, total_damage_done)
 	if lifesteal_heal > 0:
@@ -627,7 +639,8 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		defender.apply_curse(int(curse.get("value", 2)))
 		_spawn_effect_vfx(defender, curse_vfx_scene)
 
-	_apply_cleave(attacker, defender_slot_index, attacker_side)
+	if is_instance_valid(attacker):
+		_apply_cleave(attacker, defender_slot_index, attacker_side)
 
 	if defender_died and is_instance_valid(attacker):
 		if CardData.has_effect(attacker.card_data, "draw_on_kill"):
@@ -637,38 +650,30 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 
 			if attacker_side_now != "" and attacker_slot_index != -1:
 				var slots: Array[Card3D] = _player_slots if attacker_side_now == "player" else _enemy_slots
-				var empty_slot := -1
-
 				for i in range(slots.size()):
 					if slots[i] == null:
-						empty_slot = i
+						_draw_to_slot(attacker_side_now, i, true)
 						break
 
-				if empty_slot != -1:
-					_draw_to_slot(attacker_side_now, empty_slot, true)
-
-		if is_instance_valid(attacker) and CardData.has_effect(attacker.card_data, "chain_attack"):
+		if CardData.has_effect(attacker.card_data, "chain_attack"):
 			var target_slots: Array[Card3D] = _enemy_slots if attacker_side == "player" else _player_slots
 			var next_target := _pick_random_living_card(target_slots)
 
-			if next_target != null and is_instance_valid(attacker) and is_instance_valid(next_target):
+			if next_target != null and is_instance_valid(next_target):
 				await get_tree().create_timer(0.25).timeout
-				
+
 				if is_instance_valid(attacker) and is_instance_valid(next_target):
 					await _resolve_duel(attacker, next_target, attacker_side)
 					return
 
-	if attacker_died:
+	if attacker_died and is_instance_valid(attacker):
 		_remove_dead_card(attacker)
 
 	if _check_game_over():
 		return
 
-	if attacker_side == "player":
-		_end_turn_to("enemy")
-	else:
-		_end_turn_to("player")
-
+	_end_turn_to("enemy" if attacker_side == "player" else "player")
+	
 func _count_identical_on_board(card_id: String) -> int:
 	var count := 0
 	for card in _player_slots + _enemy_slots:
