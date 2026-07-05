@@ -33,6 +33,10 @@ const SIDE_HINTS := [
 @export var input_action_left := "left"
 @export var input_action_right := "right"
 
+@export_group("Debug")
+@export var debug_interaction_clicks := true
+@export var debug_interaction_ray_length := 100.0
+
 @onready var scene_pivot: Node3D = $ScenePivot
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var side_label: Label = %SideLabel
@@ -88,6 +92,7 @@ func _ready() -> void:
 	_update_labels()
 
 func _input(event: InputEvent) -> void:
+	_debug_interaction_click(event)
 	if event is InputEventKey \
 	and event.pressed \
 	and not event.echo \
@@ -96,6 +101,53 @@ func _input(event: InputEvent) -> void:
 
 		CollectionManager.unlock_all_cards()
 		_refresh_collection_screen()
+
+
+func _debug_interaction_click(event: InputEvent) -> void:
+	if not debug_interaction_clicks:
+		return
+
+	if not (event is InputEventMouseButton):
+		return
+
+	var mouse_event := event as InputEventMouseButton
+	if not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_LEFT:
+		return
+
+	var camera := get_viewport().get_camera_3d()
+	if camera == null:
+		print("[InteractionDebug] Click: keine aktive Camera3D gefunden. active_side=", _active_side, " (", SIDE_NAMES[_active_side], ")")
+		return
+
+	var mouse_position := mouse_event.position
+	var ray_origin := camera.project_ray_origin(mouse_position)
+	var ray_end := ray_origin + camera.project_ray_normal(mouse_position) * debug_interaction_ray_length
+	var query := PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+	query.collide_with_areas = true
+	query.collide_with_bodies = true
+
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		print("[InteractionDebug] Click: kein 3D-Treffer. active_side=", _active_side, " (", SIDE_NAMES[_active_side], ") mouse=", mouse_position)
+		return
+
+	var collider := hit.get("collider") as Object
+	var collider_node := collider as Node
+	var collider_path := "<kein Node>"
+	var pickable := "n/a"
+	if collider_node != null:
+		collider_path = str(collider_node.get_path())
+		if collider_node is Area3D:
+			pickable = str((collider_node as Area3D).input_ray_pickable)
+
+	print(
+		"[InteractionDebug] Click: active_side=", _active_side, " (", SIDE_NAMES[_active_side], ")",
+		" mouse=", mouse_position,
+		" hit=", collider_path,
+		" pickable=", pickable,
+		" position=", hit.get("position"),
+		" normal=", hit.get("normal")
+	)
 
 func _process(delta: float) -> void:
 	_read_input()
@@ -166,7 +218,12 @@ func _begin_turn(direction: int) -> void:
 	var new_target_y := _settle_target_y - step
 	_settle_target_y = new_target_y
 
-	_active_side = posmod(_active_side + direction, SIDE_COUNT)
+	# Die Kamera rotiert visuell in die Gegenrichtung der logischen Seitenfolge:
+	# direction=-1 schaut zur linken Szene (Pack Shop), direction=+1 zur rechten
+	# Szene (Upgrade Shop). Deshalb muss der aktive Seitenindex gegenläufig
+	# zur Eingaberichtung laufen, sonst werden PackShop/Upgrade vertauscht
+	# aktiviert und der sichtbare Screen bleibt nicht-pickable.
+	_active_side = posmod(_active_side - direction, SIDE_COUNT)
 	_update_active_scene_interaction()
 	_update_labels()
 
@@ -236,7 +293,9 @@ func _set_scene_interaction_enabled(node: Node, enabled: bool) -> void:
 			area.input_ray_pickable = enabled
 	if node is Control:
 		var control := node as Control
-		control.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+		if not control.has_meta("original_mouse_filter"):
+			control.set_meta("original_mouse_filter", control.mouse_filter)
+		control.mouse_filter = int(control.get_meta("original_mouse_filter")) if enabled else Control.MOUSE_FILTER_IGNORE
 	for child in node.get_children():
 		_set_scene_interaction_enabled(child, enabled)
 

@@ -5,6 +5,7 @@ class_name PackShopScreenInput
 @export var pack_shop_viewport: SubViewport
 @export var screen_size := Vector2(1.0, 0.65)
 @export var input_y_offset := 0.06
+@export var debug_screen_input := true
 
 
 func _ready() -> void:
@@ -25,7 +26,12 @@ func _on_screen_input_event(
 	_normal: Vector3,
 	_shape_idx: int
 ) -> void:
+	if debug_screen_input and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+		print("[InteractionDebug] ", name, ": ScreenArea input_event angekommen. event=", event, " world_position=", position)
+
 	if pack_shop_viewport == null:
+		if debug_screen_input:
+			print("[InteractionDebug] ", name, ": Viewport fehlt, Event wird nicht weitergeleitet.")
 		return
 
 	var local_pos := screen_area.to_local(position)
@@ -36,9 +42,13 @@ func _on_screen_input_event(
 	)
 
 	if uv.x < 0.0 or uv.x > 1.0:
+		if debug_screen_input and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+			print("[InteractionDebug] ", name, ": Klick außerhalb Screen-UV auf X. local=", local_pos, " uv=", uv)
 		return
 
 	if uv.y < 0.0 or uv.y > 1.0:
+		if debug_screen_input and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+			print("[InteractionDebug] ", name, ": Klick außerhalb Screen-UV auf Y. local=", local_pos, " uv=", uv)
 		return
 
 	var viewport_event := event.duplicate()
@@ -49,6 +59,9 @@ func _on_screen_input_event(
 
 	if viewport_event is InputEventMouse:
 		viewport_event.global_position = viewport_event.position
+
+	if debug_screen_input and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
+		print("[InteractionDebug] ", name, ": leite Klick an SubViewport weiter. uv=", uv, " viewport_position=", viewport_event.position)
 
 	pack_shop_viewport.push_input(viewport_event)
 	get_viewport().set_input_as_handled()
