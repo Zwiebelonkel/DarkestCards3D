@@ -638,14 +638,16 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 				if empty_slot != -1:
 					_draw_to_slot(attacker_side_now, empty_slot, true)
 
-		if CardData.has_effect(attacker.card_data, "chain_attack"):
+		if is_instance_valid(attacker) and CardData.has_effect(attacker.card_data, "chain_attack"):
 			var target_slots: Array[Card3D] = _enemy_slots if attacker_side == "player" else _player_slots
 			var next_target := _pick_random_living_card(target_slots)
 
-			if next_target != null:
+			if next_target != null and is_instance_valid(attacker) and is_instance_valid(next_target):
 				await get_tree().create_timer(0.25).timeout
-				await _resolve_duel(attacker, next_target, attacker_side)
-				return
+				
+				if is_instance_valid(attacker) and is_instance_valid(next_target):
+					await _resolve_duel(attacker, next_target, attacker_side)
+					return
 
 	if attacker_died:
 		_remove_dead_card(attacker)
