@@ -229,7 +229,11 @@ func _update_active_scene_interaction() -> void:
 
 func _set_scene_interaction_enabled(node: Node, enabled: bool) -> void:
 	if node is Area3D:
-		(node as Area3D).input_ray_pickable = enabled
+		var area := node as Area3D
+		if area.get_meta("keep_input_ray_pickable_disabled", false):
+			area.input_ray_pickable = false
+		else:
+			area.input_ray_pickable = enabled
 	if node is Control:
 		var control := node as Control
 		control.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
