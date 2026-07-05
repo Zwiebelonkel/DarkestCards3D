@@ -337,7 +337,9 @@ func _ensure_effect_overview() -> void:
 func _on_effect_icon_hovered(card: Card3D) -> void:
 	_on_card_hovered(card)
 
-	if _detail_card != null or _deck_fan_open:
+	if _deck_fan_open:
+		return
+	if _detail_card != null and card != _detail_card:
 		return
 	_ensure_effect_overview()
 	if _effect_overview != null:
