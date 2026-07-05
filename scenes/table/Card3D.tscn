@@ -126,6 +126,7 @@ mesh = SubResource("QuadMesh_image")
 
 [node name="EffectsLabel" type="Label3D" parent="."]
 transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, -0.342264, -0.272424, -0.00301231)
+visible = false
 pixel_size = 0.2615
 modulate = Color(0.45, 1, 0.75, 1)
 text = "Effects: -"
@@ -143,6 +144,16 @@ text = "CARD NAME"
 font = ExtResource("3_0y4x6")
 font_size = 34
 outline_size = 6
+
+[node name="EffectSlot1" type="Sprite3D" parent="."]
+transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, -0.000805348, -0.434228, -0.00301231)
+pixel_size = 0.496
+texture_filter = 0
+
+[node name="EffectSlot2" type="Sprite3D" parent="."]
+transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, -0.000805348, -0.288925, -0.00301231)
+pixel_size = 0.496
+texture_filter = 0
 
 [node name="AttackLabel" type="Label3D" parent="."]
 transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, -0.272691, -0.429498, -0.0116284)

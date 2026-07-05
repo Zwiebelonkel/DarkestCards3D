@@ -92,7 +92,12 @@ var _is_selected: bool = false
 var _select_base_position: Vector3 = Vector3.ZERO
 var _select_tween: Tween = null
 var _has_select_base_position := false
+const EFFECT_ICON_PATH := "res://assets/effects/"
+const EFFECT_PLACEHOLDER := "res://assets/effects/placeholder.png"
+const EFFECT_ICON_HOLO_SHADER := preload("res://assets/shader/effect_icon_holo.gdshader")
 
+@onready var effect_icon_1: Sprite3D = $EffectSlot1
+@onready var effect_icon_2: Sprite3D = $EffectSlot2
 # Wie "heftig" sich der Rarity-Shader pro Stufe verhaelt.
 # common bleibt bewusst praktisch unbewegt/ruhig, exotic ist maximal
 # chaotisch und hell.
@@ -190,7 +195,8 @@ func setup(data: Dictionary) -> void:
 	attack_label.text = str(attack)
 	_update_hp_label()
 	description_label.play(_wrap_text(description, 45))
-	effects_label.text = _build_effects_summary()
+	effects_label.visible = false
+	_apply_effect_icons()
 	rarity_label.text = rarity.to_upper()
 
 	_ensure_materials_resolved()
@@ -589,3 +595,70 @@ func clear_selected_immediate() -> void:
 		position = _select_base_position
 
 	_restore_glow_rarity_color()
+
+func _apply_effect_icons() -> void:
+	var icon_slots: Array[Sprite3D] = [
+		effect_icon_1,
+		effect_icon_2,
+	]
+
+	for slot in icon_slots:
+		if slot == null:
+			continue
+		slot.visible = false
+		slot.texture = null
+
+	var active_effects := CardData.get_active_effects(card_data)
+
+	for i in range(min(active_effects.size(), icon_slots.size())):
+		var slot := icon_slots[i]
+		if slot == null:
+			continue
+
+		var icon_path := _get_effect_icon_path(active_effects[i])
+		_apply_icon_texture(slot, icon_path)
+
+
+func _get_effect_icon_path(effect: Dictionary) -> String:
+	var effect_type := str(effect.get("type", "")).strip_edges().to_lower()
+
+	if effect_type == "":
+		return EFFECT_PLACEHOLDER
+
+	var path := EFFECT_ICON_PATH + effect_type + ".png"
+
+	if ResourceLoader.exists(path):
+		return path
+
+	return EFFECT_PLACEHOLDER
+
+
+func _apply_icon_texture(slot: Sprite3D, texture_path: String) -> void:
+	if texture_path == "":
+		slot.visible = false
+		slot.texture = null
+		slot.material_override = null
+		return
+
+	var texture := load(texture_path) as Texture2D
+
+	if texture == null:
+		texture = load(EFFECT_PLACEHOLDER) as Texture2D
+
+	if texture == null:
+		slot.visible = false
+		return
+
+	var rarity := str(card_data.get("rarity", "common")).to_lower()
+	var rarity_color := _get_rarity_color(rarity)
+
+	var mat := ShaderMaterial.new()
+	mat.shader = EFFECT_ICON_HOLO_SHADER
+	mat.set_shader_parameter("icon_texture", texture)
+	mat.set_shader_parameter("rarity_color", rarity_color)
+
+	slot.texture = texture
+	slot.material_override = mat
+	slot.visible = true
+	slot.modulate = Color.WHITE
+	slot.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
