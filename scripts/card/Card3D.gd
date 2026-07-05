@@ -68,6 +68,8 @@ var _current_frame := 0
 var _frame_timer := 0.0
 
 signal died(card: Card3D)
+signal effect_icon_hovered(card: Card3D)
+signal effect_icon_unhovered(card: Card3D)
 
 # Wird genau am Scheitelpunkt der Angriffsanimation ausgeloest (nach
 # dem Hinflug + "Rammstoss", bevor die Karte wieder zurueckfliegt).
@@ -98,6 +100,8 @@ const EFFECT_ICON_HOLO_SHADER := preload("res://assets/shader/effect_icon_holo.g
 
 @onready var effect_icon_1: Sprite3D = $EffectSlot1
 @onready var effect_icon_2: Sprite3D = $EffectSlot2
+@onready var effect_icon_area_1: Area3D = $EffectSlot1Area
+@onready var effect_icon_area_2: Area3D = $EffectSlot2Area
 # Wie "heftig" sich der Rarity-Shader pro Stufe verhaelt.
 # common bleibt bewusst praktisch unbewegt/ruhig, exotic ist maximal
 # chaotisch und hell.
@@ -123,6 +127,7 @@ func _ready() -> void:
 	_rng.seed = hash(Time.get_ticks_usec() ^ int(get_instance_id()))
 
 	_ensure_materials_resolved()
+	_connect_effect_icon_areas()
 
 	if is_stack_decoration:
 		# Reine Deko-Ruecken: kein Shine-Sweep, kein Rarity-Glow, keine
@@ -131,6 +136,7 @@ func _ready() -> void:
 		if area != null:
 			area.monitoring = false
 			area.monitorable = false
+		_set_effect_icon_areas_enabled(false)
 		rarity_mesh.visible = false
 		return
 
@@ -596,11 +602,52 @@ func clear_selected_immediate() -> void:
 
 	_restore_glow_rarity_color()
 
+func _connect_effect_icon_areas() -> void:
+	var icon_areas: Array[Area3D] = [
+		effect_icon_area_1,
+		effect_icon_area_2,
+	]
+
+	for icon_area in icon_areas:
+		if icon_area == null:
+			continue
+		if not icon_area.mouse_entered.is_connected(_on_effect_icon_area_entered):
+			icon_area.mouse_entered.connect(_on_effect_icon_area_entered)
+		if not icon_area.mouse_exited.is_connected(_on_effect_icon_area_exited):
+			icon_area.mouse_exited.connect(_on_effect_icon_area_exited)
+
+
+func _set_effect_icon_areas_enabled(enabled: bool) -> void:
+	_set_effect_icon_area_enabled(effect_icon_area_1, enabled)
+	_set_effect_icon_area_enabled(effect_icon_area_2, enabled)
+
+
+func _set_effect_icon_area_enabled(icon_area: Area3D, enabled: bool) -> void:
+	if icon_area == null:
+		return
+	icon_area.monitoring = enabled
+	icon_area.monitorable = enabled
+
+
+func _on_effect_icon_area_entered() -> void:
+	effect_icon_hovered.emit(self)
+
+
+func _on_effect_icon_area_exited() -> void:
+	effect_icon_unhovered.emit(self)
+
+
 func _apply_effect_icons() -> void:
 	var icon_slots: Array[Sprite3D] = [
 		effect_icon_1,
 		effect_icon_2,
 	]
+	var icon_areas: Array[Area3D] = [
+		effect_icon_area_1,
+		effect_icon_area_2,
+	]
+
+	_set_effect_icon_areas_enabled(false)
 
 	for slot in icon_slots:
 		if slot == null:
@@ -617,6 +664,7 @@ func _apply_effect_icons() -> void:
 
 		var icon_path := _get_effect_icon_path(active_effects[i])
 		_apply_icon_texture(slot, icon_path)
+		_set_effect_icon_area_enabled(icon_areas[i], slot.visible)
 
 
 func _get_effect_icon_path(effect: Dictionary) -> String:
