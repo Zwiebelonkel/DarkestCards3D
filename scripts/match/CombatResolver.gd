@@ -22,8 +22,10 @@ static func get_attack_damage(attacker: Card3D, identical_on_board: int = 1) -> 
 
 static func apply_incoming_damage(defender: Card3D, raw_damage: int) -> Dictionary:
 	var damage : float= max(raw_damage, 0)
+	var shield_blocked := false
 	if defender.consume_first_hit_shield():
 		damage = 0
+		shield_blocked = true
 	else:
 		var armor := CardData.get_effect(defender.card_data, "armor")
 		if not armor.is_empty():
@@ -31,7 +33,7 @@ static func apply_incoming_damage(defender: Card3D, raw_damage: int) -> Dictiona
 	var died := defender.take_damage(damage)
 	if died and defender.try_survive_death():
 		died = false
-	return {"damage": damage, "died": died}
+	return {"damage": damage, "died": died, "shield_blocked": shield_blocked}
 
 static func heal_from_lifesteal(attacker: Card3D, damage_done: int) -> int:
 	var lifesteal := CardData.get_effect(attacker.card_data, "lifesteal")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=20 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://41al4xxs2rs6" path="res://scenes/table/Card3D.tscn" id="2_3qfbk"]
@@ -12,6 +12,8 @@
 [ext_resource type="AudioStream" uid="uid://dijntmyht7rcb" path="res://assets/sounds/SFX/cardDamage.mp3" id="7_ye1gf"]
 [ext_resource type="AudioStream" uid="uid://cf8ufynfrf6qq" path="res://assets/sounds/SFX/cardKill.mp3" id="8_g603g"]
 [ext_resource type="Script" uid="uid://4pb8b05gokbq" path="res://scripts/Wobble.gd" id="8_vtfa6"]
+[ext_resource type="PackedScene" path="res://scenes/CardEffectOverview.tscn" id="15_overview"]
+[ext_resource type="PackedScene" path="res://scenes/ShieldBurst3D.tscn" id="16_shield"]
 [ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan.png" id="9_c6mk0"]
 [ext_resource type="PackedScene" uid="uid://b73xv648efpap" path="res://scenes/BloodBurst3D.tscn" id="9_ye1gf"]
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="10_6cwm4"]
@@ -33,6 +35,8 @@ poison_burst_scene = ExtResource("5_wg4o8")
 blood_spawn_offset = Vector3(0, 0.065, 0)
 blood_decal_offset = Vector3(0, -0.095, 0)
 poison_vfx_scene = ExtResource("5_wg4o8")
+shield_vfx_scene = ExtResource("16_shield")
+overview_scene = ExtResource("15_overview")
 regeneration_vfx_scene = ExtResource("6_6s2yc")
 lifesteal_vfx_scene = ExtResource("6_6s2yc")
 match_camera_marker = NodePath("MatchCameraMarker")

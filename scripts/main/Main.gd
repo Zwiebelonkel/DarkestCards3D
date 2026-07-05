@@ -4,15 +4,15 @@ class_name MainScene
 const SIDE_COUNT := 4
 const SIDE_NAMES := [
 	"Game Table",
-	"Pack Opening",
+	"Pack Shop",
 	"Collection",
-	"Leere Seite",
+	"Upgrade Shop",
 ]
 const SIDE_HINTS := [
 	"Tisch-Seite: Kartenkampf spielen",
-	"Pack-Seite: PackTop ziehen und Karten öffnen",
+	"Pack-Seite: Packs kaufen und öffnen",
 	"Collection-Seite: Sammlung ansehen",
-	"Diese Seite bleibt frei",
+	"Upgrade-Seite: Karten verbessern",
 ]
 
 @export_group("Rotation")
@@ -84,6 +84,7 @@ func _ready() -> void:
 	_settle_target_y = camera_pivot.rotation.y
 	_disable_embedded_scene_controls()
 	_connect_pack_collection_refresh()
+	_update_active_scene_interaction()
 	_update_labels()
 
 func _input(event: InputEvent) -> void:
@@ -166,6 +167,7 @@ func _begin_turn(direction: int) -> void:
 	_settle_target_y = new_target_y
 
 	_active_side = posmod(_active_side + direction, SIDE_COUNT)
+	_update_active_scene_interaction()
 	_update_labels()
 
 	var sway_y := new_target_y + deg_to_rad(sway_angle_degrees) * float(direction) * -1.0
@@ -207,6 +209,32 @@ func _update_labels() -> void:
 func _disable_embedded_scene_controls() -> void:
 	for child in scene_pivot.get_children():
 		_disable_embedded_scene_controls_recursive(child)
+
+
+func _update_active_scene_interaction() -> void:
+	var interactive_roots: Array[Array] = [
+		["GameTable"],
+		["PackShopMachine", "PackOpening"],
+		["Collection"],
+		["UpgradeMachine"],
+	]
+
+	for side_index in range(interactive_roots.size()):
+		var active := side_index == _active_side
+		for root_name in interactive_roots[side_index]:
+			var root := scene_pivot.get_node_or_null(str(root_name))
+			if root != null:
+				_set_scene_interaction_enabled(root, active)
+
+
+func _set_scene_interaction_enabled(node: Node, enabled: bool) -> void:
+	if node is Area3D:
+		(node as Area3D).input_ray_pickable = enabled
+	if node is Control:
+		var control := node as Control
+		control.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+	for child in node.get_children():
+		_set_scene_interaction_enabled(child, enabled)
 
 
 func _disable_embedded_scene_controls_recursive(node: Node) -> void:
