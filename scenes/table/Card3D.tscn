@@ -152,14 +152,12 @@ outline_size = 6
 [node name="EffectSlot1" type="Sprite3D" parent="."]
 transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, 0, -0.418936, 0)
 pixel_size = 0.496
-shaded = true
 texture_filter = 0
 texture = ExtResource("10_xwkok")
 
 [node name="EffectSlot2" type="Sprite3D" parent="."]
 transform = Transform3D(0.0046, 0, 0, 0, 0.0046, 0, 0, 0, 0.0046, 0, -0.25805, 0)
 pixel_size = 0.496
-shaded = true
 texture_filter = 0
 texture = ExtResource("10_xwkok")
 

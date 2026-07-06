@@ -44,6 +44,7 @@ volumetric_fog_albedo = Color(1, 1, 0.647059, 1)
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
 sway_angle_degrees = 7.015
+debug_interaction_clicks = false
 
 [node name="CameraPivot" type="Node3D" parent="."]
 
