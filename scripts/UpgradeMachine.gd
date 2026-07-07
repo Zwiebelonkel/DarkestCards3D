@@ -199,7 +199,7 @@ func _roll_effect() -> void:
 	var effects: Array[Dictionary] = EffectDatabase.roll_effects()
 
 	if effects.is_empty():
-		ui.show_message("Kein Effekt gerollt")
+		ui.show_message("Kein Glück :(")
 		ui.refresh_balance()
 		return
 

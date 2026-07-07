@@ -16,23 +16,45 @@ const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 @onready var health_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/HealthButton
 @onready var effect_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/EffectButton
 @onready var message_label: Label = $Panel/MarginContainer/VBoxContainer/MessageLabel
+@onready var panel: Panel = $Panel
 
-@onready var effect_option: OptionButton = $Panel/MarginContainer/VBoxContainer/EffectOption
-@onready var remove_effect_button: Button =$Panel/MarginContainer/VBoxContainer/ButtonRow/RemoveButton
+const EFFECT_ICON_PATH := "res://assets/effects/"
+const EFFECT_PLACEHOLDER := "res://assets/effects/placeholder.png"
+
+@onready var effect_option: OptionButton = get_node_or_null("Panel/MarginContainer/VBoxContainer/EffectOption") as OptionButton
+@onready var remove_effect_button: Button = get_node_or_null("Panel/MarginContainer/VBoxContainer/ButtonRow/RemoveButton") as Button
+@onready var effect_icon_row: HBoxContainer = get_node_or_null("Panel/MarginContainer/VBoxContainer/EffectIconRow") as HBoxContainer
+
+var effect_icon_buttons: Array[Button] = []
 
 var selected_card_id := ""
 var card_buttons: Array[Button] = []
 var message_tween: Tween = null
 var effect_entries: Array[Dictionary] = []
+var selected_effect_entry_index := -1
+
+var pending_remove_effect_index := -1
+var normal_effect_icons: Dictionary = {}
 
 
 func _ready() -> void:
 	add_to_group("upgrade_ui")
+	
+	if remove_effect_button != null:
+		remove_effect_button.visible = false
+
+	if effect_option != null:
+		effect_option.visible = false
+
+	_ensure_effect_icon_row()
+	_refresh_effect_icons("")
 
 	attack_button.pressed.connect(func(): attack_pressed.emit())
 	health_button.pressed.connect(func(): health_pressed.emit())
 	effect_button.pressed.connect(func(): effect_pressed.emit())
-	remove_effect_button.pressed.connect(_on_remove_effect_button_pressed)
+	if remove_effect_button != null:
+		remove_effect_button.pressed.connect(_on_remove_effect_button_pressed)
+	panel.gui_input.connect(_on_panel_gui_input)
 
 	if CardUpgradeManager.has_signal("upgrades_changed"):
 		var callback := Callable(self, "_on_upgrades_changed")
@@ -47,7 +69,6 @@ func _ready() -> void:
 	_set_upgrade_buttons_disabled(true)
 	refresh_balance()
 	show_message("")
-	_refresh_effect_option("")
 
 func set_cards(card_ids: Array) -> void:
 	for child in card_list.get_children():
@@ -114,7 +135,7 @@ func set_selected_card(card_id: String) -> void:
 
 	if data.is_empty():
 		info_label.text = "UNKNOWN CARD"
-		_refresh_effect_option("")
+		_refresh_effect_icons("")
 		return
 
 	var upgraded := CardUpgradeManager.apply_upgrades(card_id, data)
@@ -123,7 +144,7 @@ func set_selected_card(card_id: String) -> void:
 	var attack := int(upgraded.get("attack", 0))
 	var hp := int(upgraded.get("defense", 0))
 
-	_refresh_effect_option(card_id)
+	_refresh_effect_icons(card_id)
 
 	var effects_text := "None"
 
@@ -183,7 +204,8 @@ func _set_upgrade_buttons_disabled(disabled: bool) -> void:
 	attack_button.disabled = disabled
 	health_button.disabled = disabled
 	effect_button.disabled = disabled
-	remove_effect_button.disabled = disabled
+	if remove_effect_button != null:
+		remove_effect_button.disabled = disabled
 
 	if effect_option != null:
 		effect_option.disabled = disabled
@@ -274,52 +296,47 @@ func _update_upgrade_button_state() -> void:
 	if effect_option != null:
 		effect_option.disabled = CardUpgradeManager.get_effect_entries(selected_card_id).is_empty()
 
-func _refresh_effect_option(card_id: String) -> void:
-	effect_entries.clear()
-
-	if effect_option == null:
-		return
-
-	effect_option.clear()
-
-	if card_id == "":
-		effect_option.add_item("NO CARD SELECTED")
-		effect_option.disabled = true
-		return
-
-	effect_entries = CardUpgradeManager.get_effect_entries(card_id)
-
-	if effect_entries.is_empty():
-		effect_option.add_item("NO EFFECTS")
-		effect_option.disabled = true
-		return
-
-	for entry in effect_entries:
-		var source := str(entry.get("source", ""))
-		var effect: Dictionary = entry.get("effect", {})
-
-		var prefix := "BASE" if source == "base" else "UPGRADE"
-		var effect_name := _format_effect_name(effect)
-
-		effect_option.add_item("%s: %s" % [prefix, effect_name])
-
-	effect_option.selected = 0
-	effect_option.disabled = false
+#func _refresh_effect_option(card_id: String) -> void:
+	#effect_entries.clear()
+#
+	#if effect_option == null:
+		#return
+#
+	#effect_option.clear()
+#
+	#if card_id == "":
+		#effect_option.add_item("NO CARD SELECTED")
+		#effect_option.disabled = true
+		#return
+#
+	#effect_entries = CardUpgradeManager.get_effect_entries(card_id)
+#
+	#if effect_entries.is_empty():
+		#effect_option.add_item("NO EFFECTS")
+		#effect_option.disabled = true
+		#return
+#
+	#for entry in effect_entries:
+		#var source := str(entry.get("source", ""))
+		#var effect: Dictionary = entry.get("effect", {})
+#
+		#var prefix := "BASE" if source == "base" else "UPGRADE"
+		#var effect_name := _format_effect_name(effect)
+#
+		#effect_option.add_item("%s: %s" % [prefix, effect_name])
+#
+	#effect_option.selected = 0
+	#effect_option.disabled = false
+	#
 	
 func _on_remove_effect_button_pressed() -> void:
 	if selected_card_id == "":
 		return
 
-	if effect_entries.is_empty():
+	if selected_effect_entry_index < 0 or selected_effect_entry_index >= effect_entries.size():
 		return
 
-	var selected_index := effect_option.selected
-
-	if selected_index < 0 or selected_index >= effect_entries.size():
-		return
-
-	var entry := effect_entries[selected_index]
-
+	var entry := effect_entries[selected_effect_entry_index]
 	var source := str(entry.get("source", ""))
 	var effect_index := int(entry.get("index", -1))
 
@@ -348,3 +365,169 @@ func _format_effect_name(effect: Dictionary) -> String:
 		]
 
 	return label
+
+func _ensure_effect_icon_row() -> void:
+	if effect_icon_row != null:
+		return
+
+	effect_icon_row = HBoxContainer.new()
+	effect_icon_row.name = "EffectIconRow"
+	effect_icon_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	effect_icon_row.add_theme_constant_override("separation", 10)
+
+	var parent := info_label.get_parent()
+	parent.add_child(effect_icon_row)
+	parent.move_child(effect_icon_row, info_label.get_index() + 1)
+
+
+func _refresh_effect_icons(card_id: String) -> void:
+	pending_remove_effect_index = -1
+	selected_effect_entry_index = -1
+	effect_entries.clear()
+	effect_icon_buttons.clear()
+
+	if remove_effect_button != null:
+		remove_effect_button.disabled = true
+
+	_ensure_effect_icon_row()
+
+	for child in effect_icon_row.get_children():
+		child.queue_free()
+
+	if card_id == "":
+		return
+
+	effect_entries = CardUpgradeManager.get_effect_entries(card_id)
+
+	if effect_entries.is_empty():
+		return
+
+	for i in range(min(effect_entries.size(), 2)):
+		var entry := effect_entries[i]
+		var effect: Dictionary = entry.get("effect", {})
+
+		var button := Button.new()
+		button.custom_minimum_size = Vector2(54, 54)
+		button.focus_mode = Control.FOCUS_NONE
+		button.toggle_mode = true
+		button.tooltip_text = _format_effect_name(effect)
+		button.icon = _load_effect_icon(effect)
+		button.expand_icon = true
+
+		button.pressed.connect(_on_effect_icon_pressed.bind(i, button))
+
+		_style_effect_icon_button(button)
+
+		effect_icon_row.add_child(button)
+		effect_icon_buttons.append(button)
+
+func _load_effect_icon(effect: Dictionary) -> Texture2D:
+	var effect_type := str(effect.get("type", "")).strip_edges().to_lower()
+
+	if effect_type == "":
+		return load(EFFECT_PLACEHOLDER) as Texture2D
+
+	var file_name := effect_type
+
+	if effect_type == "armor":
+		var value := float(effect.get("value", 0.0))
+
+		if is_equal_approx(value, 0.25):
+			file_name = "armor_25"
+		elif is_equal_approx(value, 0.5):
+			file_name = "armor_50"
+		elif is_equal_approx(value, 0.75):
+			file_name = "armor_75"
+
+	var path := EFFECT_ICON_PATH + file_name + ".png"
+
+	if ResourceLoader.exists(path):
+		return load(path) as Texture2D
+
+	return load(EFFECT_PLACEHOLDER) as Texture2D
+
+
+func _style_effect_icon_button(button: Button) -> void:
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.05, 0.05, 0.06, 0.95)
+	normal.border_width_left = 2
+	normal.border_width_top = 2
+	normal.border_width_right = 2
+	normal.border_width_bottom = 2
+	normal.border_color = Color(0.55, 0.2, 0.2, 1.0)
+	normal.corner_radius_top_left = 6
+	normal.corner_radius_top_right = 6
+	normal.corner_radius_bottom_left = 6
+	normal.corner_radius_bottom_right = 6
+
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = Color(0.18, 0.07, 0.07, 1.0)
+	hover.border_color = Color.WHITE
+
+	var pressed := normal.duplicate() as StyleBoxFlat
+	pressed.bg_color = Color(0.35, 0.08, 0.08, 1.0)
+	pressed.border_color = Color.WHITE
+
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+
+func _on_effect_icon_selected(entry_index: int, button: Button) -> void:
+	selected_effect_entry_index = entry_index
+
+	for b in effect_icon_buttons:
+		b.button_pressed = b == button
+
+	if remove_effect_button != null:
+		remove_effect_button.disabled = false
+		
+func _on_effect_icon_pressed(entry_index: int, button: Button) -> void:
+	get_viewport().set_input_as_handled()
+
+	if pending_remove_effect_index == entry_index:
+		_confirm_remove_effect(entry_index)
+		return
+
+	clear_pending_remove_effect()
+
+	pending_remove_effect_index = entry_index
+
+	for b in effect_icon_buttons:
+		b.button_pressed = b == button
+
+	button.text = "X"
+	button.add_theme_color_override("font_color", Color.RED)
+	button.add_theme_font_size_override("font_size", 34)
+	
+func _confirm_remove_effect(entry_index: int) -> void:
+	if selected_card_id == "":
+		return
+
+	if entry_index < 0 or entry_index >= effect_entries.size():
+		return
+
+	var entry := effect_entries[entry_index]
+
+	var source := str(entry.get("source", ""))
+	var effect_index := int(entry.get("index", -1))
+
+	if source == "" or effect_index < 0:
+		return
+
+	pending_remove_effect_index = -1
+	remove_effect_pressed.emit(source, effect_index)
+	
+func clear_pending_remove_effect() -> void:
+	pending_remove_effect_index = -1
+
+	for button in effect_icon_buttons:
+		button.button_pressed = false
+		button.text = ""
+		button.remove_theme_color_override("font_color")
+		button.remove_theme_font_size_override("font_size")
+		
+
+func _on_panel_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		clear_pending_remove_effect()

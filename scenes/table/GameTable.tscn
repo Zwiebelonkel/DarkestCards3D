@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=26 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://dney7f8j2glf2" path="res://scenes/Stun.tscn" id="1_stun"]
@@ -20,7 +20,9 @@
 [ext_resource type="PackedScene" uid="uid://dsh13ldburst" path="res://scenes/ShieldBurst3D.tscn" id="16_shield"]
 [ext_resource type="PackedScene" uid="uid://cursevfxscene" path="res://scenes/Curse.tscn" id="17_curse"]
 [ext_resource type="PackedScene" uid="uid://itk4c3ec5hk5" path="res://scenes/Thorns.tscn" id="18_thorns"]
+[ext_resource type="Texture2D" uid="uid://dyabult4prx1r" path="res://assets/characters/flash.png" id="19_1as0s"]
 [ext_resource type="PackedScene" uid="uid://duwx2op48vlcw" path="res://scenes/LastStand.tscn" id="19_laststand"]
+[ext_resource type="Texture2D" uid="uid://xqj4ix8dr8n7" path="res://assets/characters/gun.png" id="19_p1hll"]
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
 albedo_color = Color(0.12, 0.08, 0.05, 1)
@@ -180,6 +182,21 @@ texture = ExtResource("9_c6mk0")
 hframes = 25
 script = ExtResource("10_6cwm4")
 fps = 15.0
+
+[node name="flash" type="Sprite3D" parent="dealer"]
+transform = Transform3D(1, 0, 0, 0, 1, 5.96046e-08, 0, -5.96046e-08, 1, -0.414842, 1.36047, 0.50158)
+pixel_size = 0.0145
+billboard = 1
+texture_filter = 0
+texture = ExtResource("19_1as0s")
+
+[node name="gun" type="Sprite3D" parent="dealer"]
+transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, -0.418, 1.231, 0.376)
+modulate = Color(0.125911, 0.125911, 0.125911, 1)
+pixel_size = 0.0115
+billboard = 1
+texture_filter = 0
+texture = ExtResource("19_p1hll")
 
 [node name="Audio" type="Node" parent="."]
 

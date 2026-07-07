@@ -41,6 +41,7 @@ shape = SubResource("BoxShape_screen")
 
 [node name="PackShopScreenInput" type="Node" parent="."]
 script = ExtResource("2_input")
+debug_screen_input = false
 
 [node name="PackShopViewport" type="SubViewport" parent="."]
 disable_3d = true
