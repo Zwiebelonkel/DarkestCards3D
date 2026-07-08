@@ -7,7 +7,7 @@ const HAND_SIZE: int = 5
 # zeigt. Bei sehr grossen Decks wuerde 1:1-Stapeln unnoetig viele
 # Meshes erzeugen, daher wird die sichtbare Stapelhoehe auf diesen Wert
 # gecappt — sieht trotzdem nach "vollem Stapel" aus.
-const MAX_VISIBLE_STACK_CARDS: int = 10
+const MAX_VISIBLE_STACK_CARDS: int = 20
 
 # Vertikaler Versatz zwischen zwei gestapelten Ruecken-Karten.
 const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
@@ -24,6 +24,8 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @onready var select_sfx: AudioStreamPlayer = $Audio/SelectSFX
 @onready var damage_sfx: AudioStreamPlayer = $Audio/DamageSFX
 @onready var kill_sfx: AudioStreamPlayer = $Audio/KillSFX
+@onready var flash_sprite: Sprite3D = $dealer/flash
+@onready var death_shot_sfx: AudioStreamPlayer = $Audio/DeathShotSFX
 
 @export_group("Timing")
 @export var enemy_turn_delay: float = 0.9
@@ -118,6 +120,11 @@ var _player_stack_visuals: Array[Card3D] = []
 var _enemy_stack_visuals: Array[Card3D] = []
 var _effect_overview: CardEffectOverviewUI = null
 var _effect_overview_layer: CanvasLayer = null
+
+var _last_match_was_loss := false
+var _loss_exit_running := false
+var _black_layer: CanvasLayer = null
+var _black_rect: ColorRect = null
 
 
 func _ready() -> void:
@@ -364,6 +371,7 @@ func _draw_to_slot(side: String, slot_index: int, animated: bool) -> void:
 	var card: Card3D = card_scene.instantiate() as Card3D
 	add_child(card)
 	card.setup(data)
+	_play_card_draw_sound(card)
 
 	var target_pos: Vector3 = slot_marker.global_position
 	var target_rot: Vector3 = Vector3(-90, 0, 0) if side == "player" else Vector3(-90, 180, 180)
@@ -849,12 +857,15 @@ func _check_game_over() -> bool:
 	if not player_has_cards and not enemy_has_cards:
 		status_label.text = "Unentschieden — du erhältst 5 Soul Coins."
 		reward = 5
+		_last_match_was_loss = false
 	elif not player_has_cards:
 		status_label.text = "Niederlage — du erhältst 2 Soul Coins."
 		reward = 2
+		_last_match_was_loss = true
 	else:
 		status_label.text = "Sieg! Du erhältst 10 Soul Coins."
 		reward = 10
+		_last_match_was_loss = false
 
 	GameCurrency.add_coins(reward)
 	var upgrade_ui := get_tree().get_first_node_in_group("upgrade_ui") as UpgradeUI
@@ -947,7 +958,7 @@ func _connect_menu_buttons() -> void:
 	difficulty_buttons.get_node("HardButton").pressed.connect(_on_difficulty_selected.bind("hard"))
 	difficulty_buttons.get_node("InsaneButton").pressed.connect(_on_difficulty_selected.bind("insane"))
 
-	end_buttons.get_node("ExitButton").pressed.connect(_show_main_menu)
+	end_buttons.get_node("ExitButton").pressed.connect(_on_exit_button_pressed)
 
 
 func _show_main_menu() -> void:
@@ -1298,3 +1309,153 @@ func _shake_camera(strength: float = impact_shake_strength, duration: float = im
 	_shake_tween.set_parallel(true)
 	_shake_tween.tween_property(table_camera, "global_position", original_transform.origin, duration * 0.65)
 	_shake_tween.tween_property(table_camera, "rotation_degrees", original_rotation, duration * 0.65)
+
+func _on_exit_button_pressed() -> void:
+	if _loss_exit_running:
+		return
+
+	if _last_match_was_loss:
+		await _play_loss_exit_sequence()
+	else:
+		_show_main_menu()
+
+
+func _play_loss_exit_sequence() -> void:
+	_loss_exit_running = true
+	end_buttons.visible = false
+
+	_move_camera_to_base_view()
+	await get_tree().create_timer(match_camera_duration + 0.15).timeout
+
+	await get_tree().create_timer(0.35).timeout
+
+	if flash_sprite != null:
+		flash_sprite.visible = true
+
+	if death_shot_sfx != null:
+		death_shot_sfx.play()
+
+	await get_tree().create_timer(0.1).timeout
+
+	if flash_sprite != null:
+		flash_sprite.visible = false
+
+	_show_black_screen()
+
+	await _play_hearing_recovery()
+
+	await get_tree().create_timer(1.0).timeout
+	await _fade_black_screen_out(2.0)
+
+	_show_main_menu()
+	_loss_exit_running = false
+	
+func _show_black_screen() -> void:
+	if _black_layer == null:
+		_black_layer = CanvasLayer.new()
+		_black_layer.name = "LossBlackLayer"
+		add_child(_black_layer)
+
+	if _black_rect == null:
+		_black_rect = ColorRect.new()
+		_black_rect.name = "BlackRect"
+		_black_rect.color = Color.BLACK
+		_black_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_black_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_black_layer.add_child(_black_rect)
+
+	_black_rect.visible = true
+	_black_rect.modulate.a = 1.0
+
+
+func _fade_black_screen_out(duration: float) -> void:
+	if _black_rect == null:
+		return
+
+	var tween := create_tween()
+	tween.tween_property(_black_rect, "modulate:a", 0.0, duration)
+	await tween.finished
+
+	if _black_rect != null:
+		_black_rect.visible = false
+
+
+func _get_or_create_lowpass() -> AudioEffectLowPassFilter:
+	var master_bus := AudioServer.get_bus_index("Master")
+	if master_bus == -1:
+		return null
+
+	var effect_index := 0
+
+	if AudioServer.get_bus_effect_count(master_bus) <= effect_index:
+		var lowpass := AudioEffectLowPassFilter.new()
+		lowpass.cutoff_hz = 20000.0
+		lowpass.resonance = 0.35
+		AudioServer.add_bus_effect(master_bus, lowpass, effect_index)
+
+	return AudioServer.get_bus_effect(master_bus, effect_index) as AudioEffectLowPassFilter
+
+
+func _play_hearing_recovery() -> void:
+	var master_bus := AudioServer.get_bus_index("Master")
+	if master_bus == -1:
+		return
+
+	var lowpass := _get_or_create_lowpass()
+	if lowpass == null:
+		return
+
+	AudioServer.set_bus_effect_enabled(master_bus, 0, true)
+
+	# Fast taub
+	lowpass.cutoff_hz = 350.0
+
+	# Erst komplette Stille
+	AudioServer.set_bus_volume_db(master_bus, -80.0)
+
+	await get_tree().create_timer(0.8).timeout
+
+	# Lautstärke langsam zurück
+	var volume_tween := create_tween()
+	volume_tween.tween_method(
+		func(db): AudioServer.set_bus_volume_db(master_bus, db),
+		-80.0,
+		0.0,
+		2.5
+	)
+
+	# Gehör langsam zurück
+	var filter_tween := create_tween()
+	filter_tween.tween_method(
+		func(freq): lowpass.cutoff_hz = freq,
+		350.0,
+		20000.0,
+		3.0
+	)
+
+	await filter_tween.finished
+
+	AudioServer.set_bus_effect_enabled(master_bus, 0, false)
+
+func _play_card_draw_sound(card: Card3D) -> void:
+	if card == null or not is_instance_valid(card):
+		return
+
+	var card_id := str(card.card_data.get("id", card.card_data.get("card_id", "")))
+
+	if card_id == "":
+		return
+
+	var sound_path := "res://assets/sounds/SFX/cards/" + card_id + ".ogg"
+
+	if not ResourceLoader.exists(sound_path):
+		return
+
+	var player := AudioStreamPlayer3D.new()
+	player.bus = "SFX"
+	player.stream = load(sound_path)
+	player.global_position = card.global_position
+	add_child(player)
+
+	player.play()
+	player.finished.connect(player.queue_free)

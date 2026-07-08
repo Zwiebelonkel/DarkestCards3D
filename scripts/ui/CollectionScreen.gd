@@ -483,6 +483,7 @@ func _open_detail_card(card: Card3D) -> void:
 
 	_detail_card = card
 	_detail_tween_running = true
+	_play_card_unique_sfx(card)
 
 	var base_scale: Vector3 = _base_scales[card]
 	var target_pos := camera.global_transform * detail_offset_from_camera
@@ -1131,6 +1132,7 @@ func _show_next_detail_card(direction: int) -> void:
 	_detail_tween_running = true
 	_detail_card = new_card
 	_detail_card_id = str(new_card.card_data.get("id", new_card.card_data.get("card_id", "")))
+	_play_card_unique_sfx(new_card)
 
 	var detail_pos := camera.global_transform * detail_offset_from_camera
 
@@ -1249,3 +1251,24 @@ func _refresh_upgraded_card_everywhere(card_id: String) -> void:
 
 	if _deck_button != null and is_instance_valid(_deck_button):
 		_update_deck_button_state()
+		
+func _play_card_unique_sfx(card: Card3D) -> void:
+	if card == null or not is_instance_valid(card):
+		return
+
+	var card_id := str(card.card_data.get("id", card.card_data.get("card_id", "")))
+	if card_id == "":
+		return
+
+	var sound_path := "res://assets/sounds/SFX/cards/" + card_id + ".ogg"
+
+	if not ResourceLoader.exists(sound_path):
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.bus = "SFX"
+	player.stream = load(sound_path)
+	add_child(player)
+
+	player.play()
+	player.finished.connect(player.queue_free)

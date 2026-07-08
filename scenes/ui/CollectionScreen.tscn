@@ -74,7 +74,7 @@ transform = Transform3D(2.53, 0, 0, 0, 2.12479, -0.267615, 0, 0.208525, 2.7269, 
 
 [node name="CardHoverSFX" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_ke5g5")
-volume_db = -2.114
+volume_db = -4.228
 pitch_scale = 1.31
 bus = &"SFX"
 

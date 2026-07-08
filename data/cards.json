@@ -717,7 +717,7 @@
 },
 {
   "id": "fliege",
-  "name": "Fliege",
+  "name": "Fly",
   "attack": 2,
   "defense": 1,
   "rarity": "common",
