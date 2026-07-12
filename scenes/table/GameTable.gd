@@ -27,6 +27,13 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @onready var flash_sprite: Sprite3D = $dealer/flash
 @onready var death_shot_sfx: AudioStreamPlayer = $Audio/DeathShotSFX
 
+@onready var dealer_gun: Sprite3D = $dealer/gun
+@onready var pistol_start_marker: Marker3D = $dealer/PistolStart
+@onready var pistol_end_marker: Marker3D = $dealer/PistolEnd
+
+@export var pistol_raise_duration: float = 0.55
+@export var pistol_aim_pause: float = 0.15
+
 @export_group("Timing")
 @export var enemy_turn_delay: float = 0.9
 @export var draw_animation_duration: float = 0.35
@@ -137,6 +144,8 @@ func _ready() -> void:
 	_collect_slot_markers()
 	_connect_menu_buttons()
 	_ensure_effect_overview()
+
+	_reset_dealer_gun()
 	_show_main_menu()
 
 
@@ -965,6 +974,7 @@ func _show_main_menu() -> void:
 	_table_state = TableState.MENU
 	_clear_match()
 	_move_camera_to_base_view()
+	_reset_dealer_gun()
 
 	mode_buttons.visible = true
 	difficulty_buttons.visible = false
@@ -1310,6 +1320,39 @@ func _shake_camera(strength: float = impact_shake_strength, duration: float = im
 	_shake_tween.tween_property(table_camera, "global_position", original_transform.origin, duration * 0.65)
 	_shake_tween.tween_property(table_camera, "rotation_degrees", original_rotation, duration * 0.65)
 
+func _reset_dealer_gun() -> void:
+	if dealer_gun == null or not is_instance_valid(dealer_gun):
+		return
+
+	if pistol_start_marker == null or not is_instance_valid(pistol_start_marker):
+		return
+
+	dealer_gun.global_transform = pistol_start_marker.global_transform
+
+
+func _raise_dealer_gun() -> void:
+	if dealer_gun == null or not is_instance_valid(dealer_gun):
+		return
+
+	if pistol_start_marker == null or not is_instance_valid(pistol_start_marker):
+		return
+
+	if pistol_end_marker == null or not is_instance_valid(pistol_end_marker):
+		return
+
+	dealer_gun.global_transform = pistol_start_marker.global_transform
+
+	var tween := create_tween()
+	tween.tween_property(
+		dealer_gun,
+		"global_transform",
+		pistol_end_marker.global_transform,
+		pistol_raise_duration
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+
+	await tween.finished
+
+
 func _on_exit_button_pressed() -> void:
 	if _loss_exit_running:
 		return
@@ -1324,11 +1367,17 @@ func _play_loss_exit_sequence() -> void:
 	_loss_exit_running = true
 	end_buttons.visible = false
 
+	# Kamera zurückfahren.
 	_move_camera_to_base_view()
 	await get_tree().create_timer(match_camera_duration + 0.15).timeout
 
-	await get_tree().create_timer(0.35).timeout
+	# Waffe nach oben bewegen.
+	await _raise_dealer_gun()
 
+	# Eine Sekunde mit erhobener Waffe warten.
+	await get_tree().create_timer(1.0).timeout
+
+	# Schuss.
 	if flash_sprite != null:
 		flash_sprite.visible = true
 
@@ -1340,14 +1389,24 @@ func _play_loss_exit_sequence() -> void:
 	if flash_sprite != null:
 		flash_sprite.visible = false
 
+	# Bildschirm schwarz machen.
 	_show_black_screen()
 
+	# Einen Frame warten, damit Schwarz garantiert gezeichnet wird.
+	await get_tree().process_frame
+
+	# Unsichtbar hinter dem Schwarz alles zurücksetzen.
+	_show_main_menu()
+	_reset_dealer_gun()
+
+	# Gehör wiederherstellen.
 	await _play_hearing_recovery()
 
 	await get_tree().create_timer(1.0).timeout
+
+	# Schwarz wieder ausblenden.
 	await _fade_black_screen_out(2.0)
 
-	_show_main_menu()
 	_loss_exit_running = false
 	
 func _show_black_screen() -> void:
@@ -1405,38 +1464,40 @@ func _play_hearing_recovery() -> void:
 	if lowpass == null:
 		return
 
+	var configured_master_db := AudioServer.get_bus_volume_db(master_bus)
+
 	AudioServer.set_bus_effect_enabled(master_bus, 0, true)
 
-	# Fast taub
 	lowpass.cutoff_hz = 350.0
-
-	# Erst komplette Stille
 	AudioServer.set_bus_volume_db(master_bus, -80.0)
 
 	await get_tree().create_timer(0.8).timeout
 
-	# Lautstärke langsam zurück
 	var volume_tween := create_tween()
 	volume_tween.tween_method(
-		func(db): AudioServer.set_bus_volume_db(master_bus, db),
+		func(db: float) -> void:
+			AudioServer.set_bus_volume_db(master_bus, db),
 		-80.0,
-		0.0,
+		configured_master_db,
 		2.5
 	)
 
-	# Gehör langsam zurück
 	var filter_tween := create_tween()
 	filter_tween.tween_method(
-		func(freq): lowpass.cutoff_hz = freq,
+		func(freq: float) -> void:
+			lowpass.cutoff_hz = freq,
 		350.0,
 		20000.0,
 		3.0
 	)
 
+	# Nur auf den längeren Tween warten.
 	await filter_tween.finished
 
+	AudioServer.set_bus_volume_db(master_bus, configured_master_db)
+	lowpass.cutoff_hz = 20000.0
 	AudioServer.set_bus_effect_enabled(master_bus, 0, false)
-
+	
 func _play_card_draw_sound(card: Card3D) -> void:
 	if card == null or not is_instance_valid(card):
 		return

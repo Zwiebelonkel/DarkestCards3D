@@ -843,5 +843,19 @@
 	  "value": 2
 	}
   ]
+},
+{
+  "id": "mini_man",
+  "name": "Mini-Man",
+  "attack": 10,
+  "defense": 5,
+  "rarity": "rare",
+  "description": "This man is EXTREMELY small. He so small, he only need ONE popcorn.",
+  "image": "res://assets/cards/images/smallMan.png",
+  "effects": [
+	{
+	  "type": "chain_attack"
+	}
+  ]
 }
 ]

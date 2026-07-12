@@ -230,7 +230,7 @@ func _apply_rip_physics(amount: float) -> void:
 		+ drag_top_rotation * amount * rip_rigid_influence
 
 	if _bend_material:
-		_bend_material.set_shader_parameter("bend_amount", eased)
+		_bend_material.set_shader_parameter("bend_amount", -eased)
 
 	_apply_base_shake(eased)
 
@@ -361,12 +361,12 @@ func _play_rip_snap_overshoot() -> void:
 		bend_snap_tween.tween_method(
 			func(v: float): _bend_material.set_shader_parameter("bend_amount", v),
 			_bend_material.get_shader_parameter("bend_amount"),
-			1.15,
+			-1.15,
 			rip_snap_overshoot_time
 		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		bend_snap_tween.tween_method(
 			func(v: float): _bend_material.set_shader_parameter("bend_amount", v),
-			1.15,
+			-1.15,
 			1.0,
 			rip_snap_overshoot_time
 		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)

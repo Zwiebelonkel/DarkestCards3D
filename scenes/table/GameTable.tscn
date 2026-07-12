@@ -192,6 +192,12 @@ billboard = 1
 texture_filter = 0
 texture = ExtResource("19_1as0s")
 
+[node name="PistolEnd" type="Marker3D" parent="dealer"]
+transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, -0.418, 1.231, 0.376)
+
+[node name="PistolStart" type="Marker3D" parent="dealer"]
+transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, -0.418, 0.746562, 0.279165)
+
 [node name="gun" type="Sprite3D" parent="dealer"]
 transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, -0.418, 1.231, 0.376)
 modulate = Color(0.125911, 0.125911, 0.125911, 1)
