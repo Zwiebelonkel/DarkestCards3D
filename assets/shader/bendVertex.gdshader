@@ -3,8 +3,8 @@ render_mode blend_mix, cull_back, depth_draw_opaque;
 
 uniform sampler2D albedo_texture : source_color;
 uniform float bend_amount : hint_range(0.0, 1.0) = 0.0;
-uniform float max_bend_angle : hint_range(0.0, 3.14159) = 1.15;
-uniform float lift_strength : hint_range(0.0, 1.0) = 0.18;
+uniform float max_bend_angle : hint_range(0.0, 6.28318) = 3.8;
+uniform float lift_strength : hint_range(0.0, 1.0) = 0.08;
 uniform float peel_softness : hint_range(0.001, 0.5) = 0.16;
 uniform float flip_direction : hint_range(0.0, 1.0) = 0.0;
 uniform float flutter_strength : hint_range(0.0, 0.2) = 0.025;
@@ -23,23 +23,35 @@ varying float v_free;
 void vertex() {
 	float raw_t = (VERTEX.x - anchor_x) / max(mesh_length, 0.001);
 
-	// Wichtig: Seite drehen
+	// Verlauf vom festen Anker bis zur freien Seite
 	float t = clamp(1.0 - raw_t, 0.0, 1.0);
 	v_t = t;
 
 	float peel_edge = clamp(bend_amount, 0.0, 0.98);
-	float unstuck = smoothstep(peel_edge - peel_softness, peel_edge + peel_softness, t);
-	float free_t = clamp((t - peel_edge) / max(0.001, 1.0 - peel_edge), 0.0, 1.0);
+
+	float unstuck = smoothstep(
+		peel_edge - peel_softness,
+		peel_edge + peel_softness,
+		t
+	);
+
+	float free_t = clamp(
+		(t - peel_edge) / max(0.001, 1.0 - peel_edge),
+		0.0,
+		1.0
+	);
+
 	v_free = free_t * unstuck;
 
+	// Weicher werdende Rollbewegung
 	float curve = free_t * free_t;
 	float angle = curve * max_bend_angle * bend_amount * unstuck;
+
 	float s = sin(angle);
 	float c = cos(angle);
 
 	float local_x = VERTEX.x - anchor_x;
 
-	// Richtung vom Anker zur freien Seite
 	float bend_dir = sign(local_x);
 	if (bend_dir == 0.0) {
 		bend_dir = 1.0;
@@ -47,22 +59,49 @@ void vertex() {
 
 	float dist = abs(local_x);
 
+	// X wird beim Rollen kürzer
 	float bent_local_x = bend_dir * dist * c;
-	float bent_y = VERTEX.y - dist * s;
 
-	float lift = lift_strength * bend_amount * unstuck * (0.15 + free_t * 0.85);
-	float flutter = sin(TIME * flutter_speed + UV.y * 18.0 + UV.x * 9.0)
-		* flutter_strength * bend_amount * unstuck * free_t;
+	// Das Packtop rollt sich in die Tiefe entlang der Z-Achse ein
+	float bent_z = VERTEX.z + dist * s;
 
-	// Anker bleibt wirklich an anchor_x fest
+	// Nur eine minimale zusätzliche Höhe für eine natürliche Rundung
+	float slight_lift =
+		lift_strength
+		* bend_amount
+		* unstuck
+		* free_t
+		* 0.08;
+
+	float flutter =
+		sin(
+			TIME * flutter_speed
+			+ UV.y * 18.0
+			+ UV.x * 9.0
+		)
+		* flutter_strength
+		* bend_amount
+		* unstuck
+		* free_t;
+
+	// Fester Anker
 	VERTEX.x = anchor_x + mix(local_x, bent_local_x, unstuck);
-	VERTEX.y = mix(VERTEX.y, bent_y, unstuck) - lift + flutter;
 
-	NORMAL = normalize((mat3(
-		vec3(c, -s, 0.0),
-		vec3(s, c, 0.0),
-		vec3(0.0, 0.0, 1.0)
-	) * NORMAL));
+	// Tiefe statt starker Bewegung nach oben
+	VERTEX.z = mix(VERTEX.z, bent_z, unstuck);
+
+	// Nur ganz leichte Bewegung auf Y
+	VERTEX.y += slight_lift + flutter;
+
+	// Normale ebenfalls um die Y-Achse drehen,
+	// da die Biegung jetzt in der X/Z-Ebene stattfindet
+	NORMAL = normalize(
+		mat3(
+			vec3(c, 0.0, -s),
+			vec3(0.0, 1.0, 0.0),
+			vec3(s, 0.0, c)
+		) * NORMAL
+	);
 }
 
 void fragment() {

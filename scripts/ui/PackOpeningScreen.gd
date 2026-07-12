@@ -25,11 +25,11 @@ const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
 @export_group("Rip Physik")
 @export var rip_fold_rotation_max: float = 55.0
 @export var rip_resistance_curve: float = 2.4
-@export var rip_bow_offset_max := Vector3(0.0, 0.05, -0.04)
+@export var rip_bow_offset_max := Vector3.ZERO
 @export var rip_snap_threshold: float = 0.82
 @export var rip_snap_overshoot_rotation := Vector3(-12.0, 10.0, -55.0)
 @export var rip_snap_overshoot_time: float = 0.09
-@export_range(0.0, 1.0) var rip_rigid_influence: float = 0.15
+@export_range(0.0, 1.0) var rip_rigid_influence: float = 0.0
 
 @export_group("Cards In Pack")
 @export var stack_base_position := Vector3(0, 0.62, -0.55)
@@ -222,15 +222,13 @@ func _setup_bend_mesh() -> void:
 func _apply_rip_physics(amount: float) -> void:
 	var eased := _rip_resistance(amount)
 
-	pack_top.position = _pack_top_start_position \
-		+ drag_top_max_offset * amount * rip_rigid_influence \
-		+ rip_bow_offset_max * eased * rip_rigid_influence
+	# Das Objekt selbst bleibt an seiner ursprünglichen Stelle.
+	pack_top.position = _pack_top_start_position
+	pack_top.rotation_degrees = _pack_top_start_rotation
 
-	pack_top.rotation_degrees = _pack_top_start_rotation \
-		+ drag_top_rotation * amount * rip_rigid_influence
-
+	# Nur die Vertices werden durch den Shader eingerollt.
 	if _bend_material:
-		_bend_material.set_shader_parameter("bend_amount", -eased)
+		_bend_material.set_shader_parameter("bend_amount", eased)
 
 	_apply_base_shake(eased)
 
@@ -534,6 +532,7 @@ func _reveal_top_card(card: Card3D) -> void:
 		_pending_collection_card_ids.append(card_id)
 
 	info_label.text = card_name + " gezogen"
+	_play_card_draw_sound(card)
 
 	_card_stack.erase(card)
 	_revealed_cards.append(card)
@@ -1283,3 +1282,26 @@ func _on_pack_mouse_entered() -> void:
 
 func _on_pack_mouse_exited() -> void:
 	_hovering_pack = false
+
+func _play_card_draw_sound(card: Card3D) -> void:
+	if card == null or not is_instance_valid(card):
+		return
+
+	var card_id := str(card.card_data.get("id", card.card_data.get("card_id", "")))
+
+	if card_id == "":
+		return
+
+	var sound_path := "res://assets/sounds/SFX/cards/" + card_id + ".ogg"
+
+	if not ResourceLoader.exists(sound_path):
+		return
+
+	var player := AudioStreamPlayer3D.new()
+	player.bus = "SFX"
+	player.stream = load(sound_path)
+	player.global_position = card.global_position
+	add_child(player)
+
+	player.play()
+	player.finished.connect(player.queue_free)

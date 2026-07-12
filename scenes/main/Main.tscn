@@ -1,17 +1,32 @@
-[gd_scene load_steps=15 format=3 uid="uid://hsfn8ypja21m"]
+[gd_scene load_steps=18 format=3 uid="uid://hsfn8ypja21m"]
 
 [ext_resource type="Script" uid="uid://bn3rv4pewgvkj" path="res://scripts/main/Main.gd" id="1_main"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_dc040"]
 [ext_resource type="PackedScene" uid="uid://dcp3rwdcgfp5j" path="res://scenes/table/GameTable.tscn" id="2_table"]
+[ext_resource type="Shader" uid="uid://d0eixl5l5m8c5" path="res://assets/shader/Lens.gdshader" id="3_jsdfw"]
 [ext_resource type="PackedScene" uid="uid://sbiyjx808dkn" path="res://scenes/ui/PackOpeningScreen.tscn" id="3_pack"]
 [ext_resource type="PackedScene" uid="uid://cvxblkstddw2n" path="res://scenes/ui/CollectionScreen.tscn" id="4_collection"]
 [ext_resource type="PackedScene" uid="uid://b3bkwwo77our5" path="res://scenes/PackShopMachine.tscn" id="4_qkm1d"]
+[ext_resource type="Texture2D" uid="uid://cs5188weoxb6j" path="res://assets/scratches.png" id="4_tck0d"]
 [ext_resource type="PackedScene" uid="uid://u8x4h4ejwtkq" path="res://assets/environments/props/hospital/hospitalRoom.glb" id="6_1rhdn"]
 [ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
 [ext_resource type="PackedScene" uid="uid://cbj0qaueir1wc" path="res://scenes/ui/PauseMenu.tscn" id="10_pause"]
 [ext_resource type="AudioStream" uid="uid://dlc0e0kbmvx4o" path="res://assets/sounds/theme2.mp3" id="11_p5fgu"]
 [ext_resource type="AudioStream" uid="uid://d20rs8dtp7wb0" path="res://assets/sounds/atmo.mp3" id="12_p5fgu"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u8lgh"]
+shader = ExtResource("3_jsdfw")
+shader_parameter/scratches_texture = ExtResource("4_tck0d")
+shader_parameter/dirt_strength = 0.0
+shader_parameter/scratch_strength = 0.125
+shader_parameter/vignette_strength = 0.829
+shader_parameter/distortion_strength = 0.0
+shader_parameter/blur_strength = 0.399
+shader_parameter/scratch_scroll_speed = 4.75e-08
+shader_parameter/flicker_strength = 0.01
+shader_parameter/dirt_color = Color(0.32, 0.27, 0.2, 1)
+shader_parameter/scratch_color = Color(0.85, 0.82, 0.72, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1rhdn"]
 shader = ExtResource("2_dc040")
@@ -57,7 +72,19 @@ fov = 58.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D"]
 
-[node name="ColorRect" type="ColorRect" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer"]
+[node name="DirtyLensRect" type="ColorRect" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer"]
+material = SubResource("ShaderMaterial_u8lgh")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D"]
+layer = 128
+
+[node name="ColorRect" type="ColorRect" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer2"]
 material = SubResource("ShaderMaterial_1rhdn")
 anchors_preset = 15
 anchor_right = 1.0
