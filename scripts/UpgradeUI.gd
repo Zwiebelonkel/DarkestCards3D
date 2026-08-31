@@ -8,347 +8,440 @@ signal effect_pressed
 signal remove_effect_pressed(effect_source: String, effect_index: int)
 
 const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
-
-@onready var balance_label: Label = $Panel/MarginContainer/VBoxContainer/BalanceLabel
-@onready var card_list: VBoxContainer = $Panel/MarginContainer/VBoxContainer/CardScroll/CardList
-@onready var info_label: Label = $Panel/MarginContainer/VBoxContainer/InfoLabel
-@onready var attack_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/AttackButton
-@onready var health_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/HealthButton
-@onready var effect_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonRow/EffectButton
-@onready var message_label: Label = $Panel/MarginContainer/VBoxContainer/MessageLabel
-@onready var panel: Panel = $Panel
-
 const EFFECT_ICON_PATH := "res://assets/effects/"
-const EFFECT_PLACEHOLDER := "res://assets/effects/placeholder.png"
+const EFFECT_PLACEHOLDER := preload("res://assets/effects/placeholder.png")
+const MAX_EFFECT_SLOTS := 2
 
-@onready var effect_option: OptionButton = get_node_or_null("Panel/MarginContainer/VBoxContainer/EffectOption") as OptionButton
-@onready var remove_effect_button: Button = get_node_or_null("Panel/MarginContainer/VBoxContainer/ButtonRow/RemoveButton") as Button
-@onready var effect_icon_row: HBoxContainer = get_node_or_null("Panel/MarginContainer/VBoxContainer/EffectIconRow") as HBoxContainer
+const COLOR_SURFACE := Color("141118")
+const COLOR_SURFACE_HIGH := Color("1d171f")
+const COLOR_BORDER := Color("6e2930")
+const COLOR_ACCENT := Color("d0525f")
+const COLOR_TEXT := Color("f3e7e4")
+const COLOR_MUTED := Color("a88e91")
 
-var effect_icon_buttons: Array[Button] = []
+@onready var balance_label: Label = %BalanceLabel
+@onready var card_count_label: Label = %CardCountLabel
+@onready var card_list: VBoxContainer = %CardList
+@onready var selected_name_label: Label = %SelectedNameLabel
+@onready var selected_rarity_label: Label = %SelectedRarityLabel
+@onready var attack_value_label: Label = %AttackValueLabel
+@onready var attack_bonus_label: Label = %AttackBonusLabel
+@onready var health_value_label: Label = %HealthValueLabel
+@onready var health_bonus_label: Label = %HealthBonusLabel
+@onready var effects_count_label: Label = %EffectsCountLabel
+@onready var effect_slot_1: Button = %EffectSlot1
+@onready var effect_slot_2: Button = %EffectSlot2
+@onready var remove_effect_button: Button = %RemoveButton
+@onready var attack_button: Button = %AttackButton
+@onready var health_button: Button = %HealthButton
+@onready var effect_button: Button = %EffectButton
+@onready var message_label: Label = %MessageLabel
 
 var selected_card_id := ""
-var card_buttons: Array[Button] = []
-var message_tween: Tween = null
+var card_buttons: Dictionary = {}
+var effect_slot_buttons: Array[Button] = []
 var effect_entries: Array[Dictionary] = []
 var selected_effect_entry_index := -1
+var message_tween: Tween = null
 
-var pending_remove_effect_index := -1
-var normal_effect_icons: Dictionary = {}
+var attack_cost := 5
+var health_cost := 5
+var effect_cost := 12
 
 
 func _ready() -> void:
 	add_to_group("upgrade_ui")
-	
-	if remove_effect_button != null:
-		remove_effect_button.visible = false
-
-	if effect_option != null:
-		effect_option.visible = false
-
-	_ensure_effect_icon_row()
-	_refresh_effect_icons("")
+	effect_slot_buttons = [effect_slot_1, effect_slot_2]
 
 	attack_button.pressed.connect(func(): attack_pressed.emit())
 	health_button.pressed.connect(func(): health_pressed.emit())
 	effect_button.pressed.connect(func(): effect_pressed.emit())
-	if remove_effect_button != null:
-		remove_effect_button.pressed.connect(_on_remove_effect_button_pressed)
-	panel.gui_input.connect(_on_panel_gui_input)
+	remove_effect_button.pressed.connect(_on_remove_effect_button_pressed)
+	effect_slot_1.pressed.connect(_on_effect_slot_pressed.bind(0))
+	effect_slot_2.pressed.connect(_on_effect_slot_pressed.bind(1))
 
 	if CardUpgradeManager.has_signal("upgrades_changed"):
-		var callback := Callable(self, "_on_upgrades_changed")
-		if not CardUpgradeManager.is_connected("upgrades_changed", callback):
-			CardUpgradeManager.connect("upgrades_changed", callback)
+		var upgrade_callback := Callable(self, "_on_upgrades_changed")
+		if not CardUpgradeManager.is_connected("upgrades_changed", upgrade_callback):
+			CardUpgradeManager.connect("upgrades_changed", upgrade_callback)
 
 	if GameCurrency.has_signal("coins_changed"):
 		var coins_callback := Callable(self, "_on_coins_changed")
 		if not GameCurrency.is_connected("coins_changed", coins_callback):
 			GameCurrency.connect("coins_changed", coins_callback)
 
-	_set_upgrade_buttons_disabled(true)
+	configure_costs(attack_cost, health_cost, effect_cost)
 	refresh_balance()
+	_show_empty_selection()
 	show_message("")
 
-func set_cards(card_ids: Array) -> void:
+
+func configure_costs(new_attack_cost: int, new_health_cost: int, new_effect_cost: int) -> void:
+	attack_cost = max(new_attack_cost, 0)
+	health_cost = max(new_health_cost, 0)
+	effect_cost = max(new_effect_cost, 0)
+
+	attack_button.text = "ANGRIFF +1\n%d SOUL COINS" % attack_cost
+	health_button.text = "LEBEN +1\n%d SOUL COINS" % health_cost
+	effect_button.text = "EFFEKT WÜRFELN\n%d SOUL COINS" % effect_cost
+
+
+func set_cards(card_ids: Array, owned_counts: Dictionary = {}) -> void:
+	var previous_selection := selected_card_id
+
 	for child in card_list.get_children():
+		card_list.remove_child(child)
 		child.queue_free()
 
 	card_buttons.clear()
-	selected_card_id = ""
 
-	var entries: Array = []
-
+	var entries: Array[Dictionary] = []
 	for card_id_raw in card_ids:
 		var card_id := str(card_id_raw)
 		var data := CardDatabase.get_card(card_id)
-
 		if data.is_empty():
 			continue
 
 		var rarity := str(data.get("rarity", "common"))
-
 		entries.append({
 			"id": card_id,
 			"data": data,
 			"rarity": rarity,
-			"rank": RarityEffectsData.rarity_rank(rarity)
+			"rank": RarityEffectsData.rarity_rank(rarity),
+			"amount": int(owned_counts.get(card_id, CollectionManager.get_amount(card_id)))
 		})
 
-	entries.sort_custom(func(a, b):
-		if a.rank == b.rank:
-			return String(a.data.get("name", "")).nocasecmp_to(String(b.data.get("name", ""))) < 0
-
-		return a.rank > b.rank
+	entries.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		if int(a.get("rank", 0)) == int(b.get("rank", 0)):
+			return String(a.get("data", {}).get("name", "")).nocasecmp_to(
+				String(b.get("data", {}).get("name", ""))
+			) < 0
+		return int(a.get("rank", 0)) > int(b.get("rank", 0))
 	)
 
 	for entry in entries:
+		var card_id := str(entry.get("id", ""))
 		var button := Button.new()
-		button.text = str(entry.data.get("name", entry.id))
 		button.focus_mode = Control.FOCUS_NONE
 		button.toggle_mode = true
-		button.custom_minimum_size = Vector2(0, 42)
-		button.pressed.connect(_on_card_button_pressed.bind(entry.id, button))
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.custom_minimum_size = Vector2(0, 58)
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		button.set_meta("owned_amount", int(entry.get("amount", 0)))
+		button.pressed.connect(_on_card_button_pressed.bind(card_id, button))
 
-		_style_card_button(button, entry.rarity)
+		_style_card_button(button, str(entry.get("rarity", "common")))
+		_update_card_button_content(card_id, button)
 
 		card_list.add_child(button)
-		card_buttons.append(button)
+		card_buttons[card_id] = button
 
-	_set_upgrade_buttons_disabled(true)
-	info_label.text = "SELECT CARD"
-	
-func _on_card_button_pressed(card_id: String, button: Button) -> void:
-	selected_card_id = card_id
+	card_count_label.text = "%d KARTENTYPEN" % entries.size()
 
-	for b in card_buttons:
-		b.button_pressed = b == button
-
-	card_selected.emit(card_id)
-	_update_upgrade_button_state()
+	if previous_selection != "" and card_buttons.has(previous_selection):
+		set_selected_card(previous_selection)
+	else:
+		selected_card_id = ""
+		_show_empty_selection()
 
 
 func set_selected_card(card_id: String) -> void:
-	selected_card_id = card_id
-
 	var data := CardDatabase.get_card(card_id)
-
 	if data.is_empty():
-		info_label.text = "UNKNOWN CARD"
-		_refresh_effect_icons("")
+		selected_card_id = ""
+		_show_empty_selection()
 		return
 
+	selected_card_id = card_id
+	_sync_card_button_selection()
+
 	var upgraded := CardUpgradeManager.apply_upgrades(card_id, data)
+	var rarity := str(data.get("rarity", "common"))
+	var attack_bonus := CardUpgradeManager.get_attack_bonus(card_id)
+	var health_bonus := CardUpgradeManager.get_health_bonus(card_id)
 
-	var name := str(upgraded.get("name", card_id))
-	var attack := int(upgraded.get("attack", 0))
-	var hp := int(upgraded.get("defense", 0))
+	selected_name_label.text = str(upgraded.get("name", card_id)).to_upper()
+	selected_rarity_label.text = _format_rarity(rarity)
+	selected_rarity_label.add_theme_color_override("font_color", _get_rarity_color(rarity))
+	attack_value_label.text = str(int(upgraded.get("attack", 0)))
+	attack_bonus_label.text = "+%d BONUS" % attack_bonus
+	health_value_label.text = str(int(upgraded.get("defense", 0)))
+	health_bonus_label.text = "+%d BONUS" % health_bonus
 
-	_refresh_effect_icons(card_id)
+	if card_buttons.has(card_id):
+		_update_card_button_content(card_id, card_buttons[card_id] as Button)
 
-	var effects_text := "None"
-
-	if not effect_entries.is_empty():
-		var names: Array[String] = []
-
-		for entry in effect_entries:
-			var source := str(entry.get("source", ""))
-			var effect: Dictionary = entry.get("effect", {})
-
-			var prefix := "BASE" if source == "base" else "UPG"
-			var effect_name := _format_effect_name(effect)
-
-			names.append("%s:%s" % [prefix, effect_name])
-
-		effects_text = ", ".join(names)
-
-	info_label.text = "%s\nATK: %d   HP: %d\nEFFECTS: %s" % [
-		name,
-		attack,
-		hp,
-		effects_text
-	]
-
+	_refresh_effect_slots(card_id)
 	_update_upgrade_button_state()
 
+
 func refresh_balance() -> void:
-	balance_label.text = "SOUL COINS: " + str(GameCurrency.coins)
+	balance_label.text = "%d SOUL COINS" % GameCurrency.coins
 
 
 func show_message(text: String) -> void:
-	if message_label == null:
-		return
-
-	if message_tween:
+	if message_tween != null:
 		message_tween.kill()
 		message_tween = null
 
-	if text == "":
-		message_label.visible = false
+	if text.is_empty():
+		message_label.text = " "
+		message_label.modulate.a = 0.0
 		return
 
-	message_label.text = text
-	message_label.visible = true
+	message_label.text = text.to_upper()
 	message_label.modulate.a = 1.0
 
 	message_tween = create_tween()
-	message_tween.tween_interval(1.2)
-	message_tween.tween_property(message_label, "modulate:a", 0.0, 0.25)
-	message_tween.tween_callback(func():
-		if message_label:
-			message_label.visible = false
-	)
+	message_tween.tween_interval(1.6)
+	message_tween.tween_property(message_label, "modulate:a", 0.0, 0.3)
+	message_tween.tween_callback(func(): message_label.text = " ")
+
+
+func _show_empty_selection() -> void:
+	selected_name_label.text = "KARTE AUSWÄHLEN"
+	selected_rarity_label.text = "—"
+	selected_rarity_label.add_theme_color_override("font_color", COLOR_MUTED)
+	attack_value_label.text = "—"
+	attack_bonus_label.text = "+0 BONUS"
+	health_value_label.text = "—"
+	health_bonus_label.text = "+0 BONUS"
+	_refresh_effect_slots("")
+	_sync_card_button_selection()
+	_set_upgrade_buttons_disabled(true)
 
 
 func _set_upgrade_buttons_disabled(disabled: bool) -> void:
 	attack_button.disabled = disabled
 	health_button.disabled = disabled
 	effect_button.disabled = disabled
-	if remove_effect_button != null:
-		remove_effect_button.disabled = disabled
-
-	if effect_option != null:
-		effect_option.disabled = disabled
+	remove_effect_button.disabled = true
 
 
-func _style_card_button(button: Button, rarity: String) -> void:
-	button.add_theme_font_override("font", VCR_FONT)
-	button.add_theme_font_size_override("font_size", 25)
-
-	var rarity_color := _get_rarity_color(rarity)
-	var bg := rarity_color.darkened(0.55)
-	var border := rarity_color
-	var hover_bg := rarity_color.darkened(0.35)
-	var pressed_bg := rarity_color.darkened(0.18)
-	var font_color := rarity_color.lightened(0.45)
-
-	button.add_theme_color_override("font_color", font_color)
-	button.add_theme_color_override("font_hover_color", Color.WHITE)
-	button.add_theme_color_override("font_pressed_color", Color.WHITE)
-	button.add_theme_color_override("font_disabled_color", Color(0.45, 0.45, 0.45, 1.0))
-
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = bg
-	normal.border_width_left = 2
-	normal.border_width_top = 2
-	normal.border_width_right = 2
-	normal.border_width_bottom = 2
-	normal.border_color = border
-	normal.corner_radius_top_left = 5
-	normal.corner_radius_top_right = 5
-	normal.corner_radius_bottom_left = 5
-	normal.corner_radius_bottom_right = 5
-
-	var hover := StyleBoxFlat.new()
-	hover.bg_color = hover_bg
-	hover.border_width_left = 2
-	hover.border_width_top = 2
-	hover.border_width_right = 2
-	hover.border_width_bottom = 2
-	hover.border_color = border.lightened(0.35)
-	hover.corner_radius_top_left = 5
-	hover.corner_radius_top_right = 5
-	hover.corner_radius_bottom_left = 5
-	hover.corner_radius_bottom_right = 5
-
-	var pressed := StyleBoxFlat.new()
-	pressed.bg_color = pressed_bg
-	pressed.border_width_left = 3
-	pressed.border_width_top = 3
-	pressed.border_width_right = 3
-	pressed.border_width_bottom = 3
-	pressed.border_color = Color.WHITE
-	pressed.corner_radius_top_left = 5
-	pressed.corner_radius_top_right = 5
-	pressed.corner_radius_bottom_left = 5
-	pressed.corner_radius_bottom_right = 5
-
-	button.add_theme_stylebox_override("normal", normal)
-	button.add_theme_stylebox_override("hover", hover)
-	button.add_theme_stylebox_override("pressed", pressed)
-	button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-	
-
-func _get_rarity_color(rarity: String) -> Color:
-	return RarityEffectsData.get_color(rarity)
-	
-func _on_upgrades_changed(card_id: String) -> void:
-	refresh_balance()
-
-	if selected_card_id == card_id:
-		call_deferred("set_selected_card", card_id)
-
-
-func _on_coins_changed(_coins: int) -> void:
-	refresh_balance()
-		
 func _update_upgrade_button_state() -> void:
-	if selected_card_id == "":
+	if selected_card_id.is_empty():
 		_set_upgrade_buttons_disabled(true)
 		return
 
 	attack_button.disabled = false
 	health_button.disabled = false
-
 	effect_button.disabled = CardUpgradeManager.get_free_effect_slots(selected_card_id) <= 0
-	remove_effect_button.disabled = CardUpgradeManager.get_effect_entries(selected_card_id).is_empty()
+	remove_effect_button.disabled = not _has_valid_effect_selection()
 
-	if effect_option != null:
-		effect_option.disabled = CardUpgradeManager.get_effect_entries(selected_card_id).is_empty()
 
-#func _refresh_effect_option(card_id: String) -> void:
-	#effect_entries.clear()
-#
-	#if effect_option == null:
-		#return
-#
-	#effect_option.clear()
-#
-	#if card_id == "":
-		#effect_option.add_item("NO CARD SELECTED")
-		#effect_option.disabled = true
-		#return
-#
-	#effect_entries = CardUpgradeManager.get_effect_entries(card_id)
-#
-	#if effect_entries.is_empty():
-		#effect_option.add_item("NO EFFECTS")
-		#effect_option.disabled = true
-		#return
-#
-	#for entry in effect_entries:
-		#var source := str(entry.get("source", ""))
-		#var effect: Dictionary = entry.get("effect", {})
-#
-		#var prefix := "BASE" if source == "base" else "UPGRADE"
-		#var effect_name := _format_effect_name(effect)
-#
-		#effect_option.add_item("%s: %s" % [prefix, effect_name])
-#
-	#effect_option.selected = 0
-	#effect_option.disabled = false
-	#
-	
-func _on_remove_effect_button_pressed() -> void:
-	if selected_card_id == "":
+func _on_card_button_pressed(card_id: String, button: Button) -> void:
+	selected_card_id = card_id
+	_sync_card_button_selection()
+	button.button_pressed = true
+	card_selected.emit(card_id)
+
+
+func _sync_card_button_selection() -> void:
+	for card_id in card_buttons:
+		var button := card_buttons[card_id] as Button
+		button.button_pressed = str(card_id) == selected_card_id
+
+
+func _update_card_button_content(card_id: String, button: Button) -> void:
+	var data := CardDatabase.get_card(card_id)
+	if data.is_empty():
 		return
 
-	if selected_effect_entry_index < 0 or selected_effect_entry_index >= effect_entries.size():
+	var amount := int(button.get_meta("owned_amount", CollectionManager.get_amount(card_id)))
+	var rarity := str(data.get("rarity", "common"))
+	var attack_bonus := CardUpgradeManager.get_attack_bonus(card_id)
+	var health_bonus := CardUpgradeManager.get_health_bonus(card_id)
+	var card_name := str(data.get("name", card_id)).to_upper()
+
+	button.text = "%s   x%d\n%s  |  +%d ATK  +%d LP" % [
+		card_name,
+		amount,
+		_format_rarity(rarity),
+		attack_bonus,
+		health_bonus
+	]
+	button.tooltip_text = "%s · %s · %d im Besitz" % [
+		str(data.get("name", card_id)),
+		_format_rarity(rarity),
+		amount
+	]
+
+
+func _style_card_button(button: Button, rarity: String) -> void:
+	button.add_theme_font_override("font", VCR_FONT)
+	button.add_theme_font_size_override("font_size", 16)
+	button.add_theme_color_override("font_color", COLOR_TEXT)
+	button.add_theme_color_override("font_hover_color", Color.WHITE)
+	button.add_theme_color_override("font_pressed_color", Color.WHITE)
+
+	var rarity_color := _get_rarity_color(rarity)
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = COLOR_SURFACE
+	normal.border_width_left = 5
+	normal.border_width_top = 1
+	normal.border_width_right = 1
+	normal.border_width_bottom = 1
+	normal.border_color = rarity_color.darkened(0.15)
+	normal.content_margin_left = 11.0
+	normal.corner_radius_top_left = 8
+	normal.corner_radius_top_right = 8
+	normal.corner_radius_bottom_left = 8
+	normal.corner_radius_bottom_right = 8
+
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = COLOR_SURFACE_HIGH
+	hover.border_color = rarity_color
+
+	var pressed := normal.duplicate() as StyleBoxFlat
+	pressed.bg_color = rarity_color.darkened(0.62)
+	pressed.border_width_left = 5
+	pressed.border_width_top = 2
+	pressed.border_width_right = 2
+	pressed.border_width_bottom = 2
+	pressed.border_color = rarity_color.lightened(0.18)
+
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+
+
+func _refresh_effect_slots(card_id: String) -> void:
+	selected_effect_entry_index = -1
+	effect_entries.clear()
+	remove_effect_button.disabled = true
+
+	if not card_id.is_empty():
+		effect_entries = CardUpgradeManager.get_effect_entries(card_id)
+
+	effects_count_label.text = "%d / %d BELEGT" % [effect_entries.size(), MAX_EFFECT_SLOTS]
+
+	for slot_index in range(MAX_EFFECT_SLOTS):
+		var button := effect_slot_buttons[slot_index]
+		button.button_pressed = false
+		button.icon = null
+
+		if card_id.is_empty():
+			button.disabled = true
+			button.text = "KARTE AUSWÄHLEN"
+			button.tooltip_text = ""
+			continue
+
+		if slot_index >= effect_entries.size():
+			button.disabled = true
+			button.text = "FREIER EFFEKT-SLOT"
+			button.tooltip_text = "Hier kann ein neuer Effekt hinzugefügt werden."
+			continue
+
+		var entry := effect_entries[slot_index]
+		var source := str(entry.get("source", ""))
+		var effect: Dictionary = entry.get("effect", {})
+		var source_label := "GRUNDEFFEKT" if source == "base" else "UPGRADE"
+		var effect_name := _format_effect_name(effect)
+
+		button.disabled = false
+		button.text = "%s\n%s" % [source_label, effect_name]
+		button.icon = _load_effect_icon(effect)
+		button.tooltip_text = "%s\n%s\nAuswählen, um den Effekt zu entfernen." % [
+			effect_name,
+			str(effect.get("description", ""))
+		]
+
+
+func _on_effect_slot_pressed(entry_index: int) -> void:
+	if entry_index < 0 or entry_index >= effect_entries.size():
+		_clear_effect_selection()
+		return
+
+	var clicked_button := effect_slot_buttons[entry_index]
+	if selected_effect_entry_index == entry_index and not clicked_button.button_pressed:
+		_clear_effect_selection()
+		return
+
+	selected_effect_entry_index = entry_index
+	for index in range(effect_slot_buttons.size()):
+		effect_slot_buttons[index].button_pressed = index == entry_index
+
+	remove_effect_button.disabled = false
+
+
+func _clear_effect_selection() -> void:
+	selected_effect_entry_index = -1
+	for button in effect_slot_buttons:
+		button.button_pressed = false
+	remove_effect_button.disabled = true
+
+
+func _has_valid_effect_selection() -> bool:
+	return selected_effect_entry_index >= 0 and selected_effect_entry_index < effect_entries.size()
+
+
+func _on_remove_effect_button_pressed() -> void:
+	if selected_card_id.is_empty() or not _has_valid_effect_selection():
 		return
 
 	var entry := effect_entries[selected_effect_entry_index]
 	var source := str(entry.get("source", ""))
 	var effect_index := int(entry.get("index", -1))
-
-	if source == "" or effect_index < 0:
+	if source.is_empty() or effect_index < 0:
 		return
 
+	remove_effect_button.disabled = true
 	remove_effect_pressed.emit(source, effect_index)
-	
-func _format_effect_name(effect: Dictionary) -> String:
-	var label := str(effect.get("name", effect.get("type", "Effect")))
 
-	label = label.replace("_", " ").capitalize()
+
+func _load_effect_icon(effect: Dictionary) -> Texture2D:
+	var effect_type := str(effect.get("type", "")).strip_edges().to_lower()
+	if effect_type.is_empty():
+		return EFFECT_PLACEHOLDER
+
+	var file_name := effect_type
+	if effect_type == "armor":
+		var value := float(effect.get("value", 0.0))
+		if is_equal_approx(value, 0.25):
+			file_name = "armor_25"
+		elif is_equal_approx(value, 0.5):
+			file_name = "armor_50"
+		elif is_equal_approx(value, 0.75):
+			file_name = "armor_75"
+
+	var path := EFFECT_ICON_PATH + file_name + ".png"
+	if ResourceLoader.exists(path):
+		return load(path) as Texture2D
+	return EFFECT_PLACEHOLDER
+
+
+func _format_effect_name(effect: Dictionary) -> String:
+	var effect_type := str(effect.get("type", "")).to_lower()
+	var translated_names := {
+		"armor": "PANZERUNG",
+		"regeneration": "REGENERATION",
+		"poison": "GIFT",
+		"lifesteal": "LEBENSRAUB",
+		"thorns": "DORNEN",
+		"cleave": "RUNDUMSCHLAG",
+		"double_strike": "DOPPELSCHLAG",
+		"stun": "BETÄUBUNG",
+		"chain_attack": "KETTENANGRIFF",
+		"triple_strike": "DREIFACHSCHLAG",
+		"last_stand": "LETZTES GEFECHT",
+		"execute": "HINRICHTUNG",
+		"shield_first_hit": "ERSTSCHLAGSCHILD",
+		"swarm_power": "SCHWARMKRAFT",
+		"grave_return": "GRABESRÜCKKEHR",
+		"deck_burn": "DECKBRAND",
+		"draw_on_kill": "KARTE BEI KILL",
+		"curse": "FLUCH",
+		"swap_stats": "WERTE TAUSCHEN",
+		"random_damage": "ZUFALLSSCHADEN",
+		"bodyguard": "LEIBWACHE",
+		"neighbor_heal": "NACHBARHEILUNG"
+	}
+
+	var label := str(translated_names.get(
+		effect_type,
+		str(effect.get("name", effect_type)).replace("_", " ").to_upper()
+	))
 
 	if effect.has("percent"):
 		label += " %d%%" % int(round(float(effect.get("percent", 0.0)) * 100.0))
@@ -359,175 +452,43 @@ func _format_effect_name(effect: Dictionary) -> String:
 		else:
 			label += " +%d" % int(round(value))
 	elif effect.has("damage") and effect.has("turns"):
-		label += " %d/%dT" % [
+		label += " %d/%d R" % [
 			int(effect.get("damage", 0)),
 			int(effect.get("turns", 0))
 		]
 
 	return label
 
-func _ensure_effect_icon_row() -> void:
-	if effect_icon_row != null:
-		return
 
-	effect_icon_row = HBoxContainer.new()
-	effect_icon_row.name = "EffectIconRow"
-	effect_icon_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	effect_icon_row.add_theme_constant_override("separation", 10)
-
-	var parent := info_label.get_parent()
-	parent.add_child(effect_icon_row)
-	parent.move_child(effect_icon_row, info_label.get_index() + 1)
-
-
-func _refresh_effect_icons(card_id: String) -> void:
-	pending_remove_effect_index = -1
-	selected_effect_entry_index = -1
-	effect_entries.clear()
-	effect_icon_buttons.clear()
-
-	if remove_effect_button != null:
-		remove_effect_button.disabled = true
-
-	_ensure_effect_icon_row()
-
-	for child in effect_icon_row.get_children():
-		child.queue_free()
-
-	if card_id == "":
-		return
-
-	effect_entries = CardUpgradeManager.get_effect_entries(card_id)
-
-	if effect_entries.is_empty():
-		return
-
-	for i in range(min(effect_entries.size(), 2)):
-		var entry := effect_entries[i]
-		var effect: Dictionary = entry.get("effect", {})
-
-		var button := Button.new()
-		button.custom_minimum_size = Vector2(54, 54)
-		button.focus_mode = Control.FOCUS_NONE
-		button.toggle_mode = true
-		button.tooltip_text = _format_effect_name(effect)
-		button.icon = _load_effect_icon(effect)
-		button.expand_icon = true
-
-		button.pressed.connect(_on_effect_icon_pressed.bind(i, button))
-
-		_style_effect_icon_button(button)
-
-		effect_icon_row.add_child(button)
-		effect_icon_buttons.append(button)
-
-func _load_effect_icon(effect: Dictionary) -> Texture2D:
-	var effect_type := str(effect.get("type", "")).strip_edges().to_lower()
-
-	if effect_type == "":
-		return load(EFFECT_PLACEHOLDER) as Texture2D
-
-	var file_name := effect_type
-
-	if effect_type == "armor":
-		var value := float(effect.get("value", 0.0))
-
-		if is_equal_approx(value, 0.25):
-			file_name = "armor_25"
-		elif is_equal_approx(value, 0.5):
-			file_name = "armor_50"
-		elif is_equal_approx(value, 0.75):
-			file_name = "armor_75"
-
-	var path := EFFECT_ICON_PATH + file_name + ".png"
-
-	if ResourceLoader.exists(path):
-		return load(path) as Texture2D
-
-	return load(EFFECT_PLACEHOLDER) as Texture2D
+func _format_rarity(rarity: String) -> String:
+	match rarity.to_lower():
+		"common":
+			return "GEWÖHNLICH"
+		"uncommon":
+			return "UNGEWÖHNLICH"
+		"rare":
+			return "SELTEN"
+		"epic":
+			return "EPISCH"
+		"legendary":
+			return "LEGENDÄR"
+		"mythic":
+			return "MYTHISCH"
+		"exotic":
+			return "EXOTISCH"
+		_:
+			return rarity.replace("_", " ").to_upper()
 
 
-func _style_effect_icon_button(button: Button) -> void:
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.05, 0.05, 0.06, 0.95)
-	normal.border_width_left = 2
-	normal.border_width_top = 2
-	normal.border_width_right = 2
-	normal.border_width_bottom = 2
-	normal.border_color = Color(0.55, 0.2, 0.2, 1.0)
-	normal.corner_radius_top_left = 6
-	normal.corner_radius_top_right = 6
-	normal.corner_radius_bottom_left = 6
-	normal.corner_radius_bottom_right = 6
+func _get_rarity_color(rarity: String) -> Color:
+	return RarityEffectsData.get_color(rarity)
 
-	var hover := normal.duplicate() as StyleBoxFlat
-	hover.bg_color = Color(0.18, 0.07, 0.07, 1.0)
-	hover.border_color = Color.WHITE
 
-	var pressed := normal.duplicate() as StyleBoxFlat
-	pressed.bg_color = Color(0.35, 0.08, 0.08, 1.0)
-	pressed.border_color = Color.WHITE
+func _on_upgrades_changed(card_id: String) -> void:
+	refresh_balance()
+	if selected_card_id == card_id:
+		call_deferred("set_selected_card", card_id)
 
-	button.add_theme_stylebox_override("normal", normal)
-	button.add_theme_stylebox_override("hover", hover)
-	button.add_theme_stylebox_override("pressed", pressed)
-	button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 
-func _on_effect_icon_selected(entry_index: int, button: Button) -> void:
-	selected_effect_entry_index = entry_index
-
-	for b in effect_icon_buttons:
-		b.button_pressed = b == button
-
-	if remove_effect_button != null:
-		remove_effect_button.disabled = false
-		
-func _on_effect_icon_pressed(entry_index: int, button: Button) -> void:
-	get_viewport().set_input_as_handled()
-
-	if pending_remove_effect_index == entry_index:
-		_confirm_remove_effect(entry_index)
-		return
-
-	clear_pending_remove_effect()
-
-	pending_remove_effect_index = entry_index
-
-	for b in effect_icon_buttons:
-		b.button_pressed = b == button
-
-	button.text = "X"
-	button.add_theme_color_override("font_color", Color.RED)
-	button.add_theme_font_size_override("font_size", 34)
-	
-func _confirm_remove_effect(entry_index: int) -> void:
-	if selected_card_id == "":
-		return
-
-	if entry_index < 0 or entry_index >= effect_entries.size():
-		return
-
-	var entry := effect_entries[entry_index]
-
-	var source := str(entry.get("source", ""))
-	var effect_index := int(entry.get("index", -1))
-
-	if source == "" or effect_index < 0:
-		return
-
-	pending_remove_effect_index = -1
-	remove_effect_pressed.emit(source, effect_index)
-	
-func clear_pending_remove_effect() -> void:
-	pending_remove_effect_index = -1
-
-	for button in effect_icon_buttons:
-		button.button_pressed = false
-		button.text = ""
-		button.remove_theme_color_override("font_color")
-		button.remove_theme_font_size_override("font_size")
-		
-
-func _on_panel_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
-		clear_pending_remove_effect()
+func _on_coins_changed(_coins: int) -> void:
+	refresh_balance()

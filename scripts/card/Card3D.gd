@@ -68,8 +68,8 @@ var _current_frame := 0
 var _frame_timer := 0.0
 
 signal died(card: Card3D)
-signal effect_icon_hovered(card: Card3D)
-signal effect_icon_unhovered(card: Card3D)
+signal card_hovered(card: Card3D)
+signal card_unhovered(card: Card3D)
 
 # Wird genau am Scheitelpunkt der Angriffsanimation ausgeloest (nach
 # dem Hinflug + "Rammstoss", bevor die Karte wieder zurueckfliegt).
@@ -89,13 +89,12 @@ signal attack_finished
 @export var select_highlight_color: Color = Color(1.0, 0.92, 0.3, 1.0)
 @export var select_lift: float = 0.08
 @export var select_duration: float = 0.15
-@export var effect_icon_hover_radius_px: float = 18.0
 
 var _is_selected: bool = false
 var _select_base_position: Vector3 = Vector3.ZERO
 var _select_tween: Tween = null
 var _has_select_base_position := false
-var _hovered_effect_icon_area: Area3D = null
+var _is_card_hovered := false
 const EFFECT_ICON_PATH := "res://assets/effects/"
 const EFFECT_PLACEHOLDER := "res://assets/effects/placeholder.png"
 const EFFECT_ICON_HOLO_SHADER := preload("res://assets/shader/effect_icon_holo.gdshader")
@@ -142,9 +141,9 @@ func _ready() -> void:
 		rarity_mesh.visible = false
 		return
 
-func _process(delta: float) -> void:
-	_update_effect_icon_hover()
+	_connect_card_hover_area()
 
+func _process(delta: float) -> void:
 	if not _animated_image:
 		return
 
@@ -312,6 +311,53 @@ func take_damage(amount: int) -> bool:
 
 func is_dead() -> bool:
 	return current_hp <= 0
+
+
+## Returns the gameplay-relevant state as plain Variants so the authoritative
+## host can send it through Godot's RPC layer. Visual/transient state (tweens,
+## materials and selection) deliberately stays local.
+func get_network_state() -> Dictionary:
+	return {
+		"card_data": card_data.duplicate(true),
+		"max_hp": max_hp,
+		"current_hp": current_hp,
+		"attack_value": attack_value,
+		"first_hit_shield_available": _first_hit_shield_available,
+		"last_stand_available": _last_stand_available,
+		"grave_return_available": _grave_return_available,
+		"skip_next_attack": _skip_next_attack,
+		"poison_damage": int(get_meta("poison_damage", 0)),
+		"poison_turns": int(get_meta("poison_turns", 0)),
+	}
+
+
+## Restores a snapshot created by get_network_state(). Calling setup first
+## rebuilds the card's visual presentation; the mutable combat values then
+## replace setup's defaults.
+func apply_network_state(state: Dictionary) -> void:
+	var data := state.get("card_data", {}) as Dictionary
+	setup(data.duplicate(true))
+
+	max_hp = maxi(int(state.get("max_hp", max_hp)), 1)
+	current_hp = clampi(int(state.get("current_hp", current_hp)), 0, max_hp)
+	attack_value = maxi(int(state.get("attack_value", attack_value)), 0)
+	_first_hit_shield_available = bool(state.get("first_hit_shield_available", _first_hit_shield_available))
+	_last_stand_available = bool(state.get("last_stand_available", _last_stand_available))
+	_grave_return_available = bool(state.get("grave_return_available", _grave_return_available))
+	_skip_next_attack = bool(state.get("skip_next_attack", _skip_next_attack))
+
+	attack_label.text = str(attack_value)
+	_update_hp_label()
+
+	var poison_turns := maxi(int(state.get("poison_turns", 0)), 0)
+	if poison_turns > 0:
+		set_meta("poison_turns", poison_turns)
+		set_meta("poison_damage", maxi(int(state.get("poison_damage", 0)), 0))
+	else:
+		if has_meta("poison_turns"):
+			remove_meta("poison_turns")
+		if has_meta("poison_damage"):
+			remove_meta("poison_damage")
 
 
 func _apply_card_image(image_path: String) -> void:
@@ -625,7 +671,7 @@ func _connect_effect_icon_areas() -> void:
 		# Effect icons must not participate in Godot's ray picking: otherwise
 		# their small hover hitboxes become the front-most 3D collider and steal
 		# clicks/drags from cards, kiosk screens and shop machines behind them.
-		# Hover is detected manually in _update_effect_icon_hover() instead.
+		# Effect details now use the card's full Area3D hover instead.
 		icon_area.input_ray_pickable = false
 		icon_area.collision_layer = 0
 		icon_area.collision_mask = 0
@@ -645,66 +691,29 @@ func _set_effect_icon_area_enabled(icon_area: Area3D, enabled: bool) -> void:
 	icon_area.collision_layer = 0
 	icon_area.collision_mask = 0
 	icon_area.visible = enabled
-	if not enabled and _hovered_effect_icon_area == icon_area:
-		_hovered_effect_icon_area = null
-		effect_icon_unhovered.emit(self)
 
 
-func _update_effect_icon_hover() -> void:
-	if is_stack_decoration or not visible:
-		_clear_effect_icon_hover()
+func _connect_card_hover_area() -> void:
+	if area == null:
 		return
+	if not area.mouse_entered.is_connected(_on_card_area_mouse_entered):
+		area.mouse_entered.connect(_on_card_area_mouse_entered)
+	if not area.mouse_exited.is_connected(_on_card_area_mouse_exited):
+		area.mouse_exited.connect(_on_card_area_mouse_exited)
 
-	var camera := get_viewport().get_camera_3d()
-	if camera == null:
-		_clear_effect_icon_hover()
+
+func _on_card_area_mouse_entered() -> void:
+	if is_stack_decoration or _is_card_hovered:
 		return
+	_is_card_hovered = true
+	card_hovered.emit(self)
 
-	var mouse_pos := get_viewport().get_mouse_position()
-	var icon_areas: Array[Area3D] = [
-		effect_icon_area_1,
-		effect_icon_area_2,
-	]
-	var closest_area: Area3D = null
-	var closest_distance := effect_icon_hover_radius_px
 
-	for icon_area in icon_areas:
-		if icon_area == null or not icon_area.visible:
-			continue
-		if camera.is_position_behind(icon_area.global_position):
-			continue
-
-		var screen_pos := camera.unproject_position(icon_area.global_position)
-		var distance := mouse_pos.distance_to(screen_pos)
-
-		if distance <= closest_distance:
-			closest_distance = distance
-			closest_area = icon_area
-
-	if closest_area == _hovered_effect_icon_area:
+func _on_card_area_mouse_exited() -> void:
+	if not _is_card_hovered:
 		return
-
-	if _hovered_effect_icon_area != null:
-		effect_icon_unhovered.emit(self)
-
-	_hovered_effect_icon_area = closest_area
-
-	if _hovered_effect_icon_area != null:
-		effect_icon_hovered.emit(self)
-
-
-func _clear_effect_icon_hover() -> void:
-	if _hovered_effect_icon_area == null:
-		return
-	_hovered_effect_icon_area = null
-	effect_icon_unhovered.emit(self)
-
-func _on_effect_icon_area_entered() -> void:
-	effect_icon_hovered.emit(self)
-
-
-func _on_effect_icon_area_exited() -> void:
-	effect_icon_unhovered.emit(self)
+	_is_card_hovered = false
+	card_unhovered.emit(self)
 
 
 func _apply_effect_icons() -> void:

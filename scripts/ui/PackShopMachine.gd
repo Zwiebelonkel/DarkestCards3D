@@ -6,7 +6,7 @@ const PACK_TYPES := {
 		"name": "BASIC PACK",
 		"cost": 5,
 		"card_count": 5,
-		"description": "Normal cards. Cheap and solid.",
+		"description": "Solider Einstieg mit zuverlässigen Karten.",
 		"scene": preload("res://assets/cards/pack/basic/pack.glb"),
 		"rarity_weights": {
 			"common": 65.0,
@@ -23,7 +23,7 @@ const PACK_TYPES := {
 		"name": "ULTRA PACK",
 		"cost": 20,
 		"card_count": 7,
-		"description": "Stronger pack with better pulls.",
+		"description": "Stärkere Auswahl mit deutlich besseren Chancen.",
 		"scene": preload("res://assets/cards/pack/ultra/pack.glb"),
 		"rarity_weights": {
 			"common": 35.0,
@@ -40,7 +40,7 @@ const PACK_TYPES := {
 		"name": "GOD PACK",
 		"cost": 35,
 		"card_count": 10,
-		"description": "Expensive. Big reveal energy.",
+		"description": "Höchste Chancen auf seltene und spektakuläre Karten.",
 		"scene": preload("res://assets/cards/pack/god/pack.glb"),
 		"rarity_weights": {
 			"common": 10.0,
@@ -104,12 +104,12 @@ func _connect_ui() -> void:
 
 func _on_pack_buy_pressed(pack_id: String) -> void:
 	if pack_opening_screen == null:
-		ui.show_message("Pack screen missing")
+		ui.show_message("Pack-Öffnung fehlt")
 		_play_error()
 		return
 
 	if not PACK_TYPES.has(pack_id):
-		ui.show_message("Unknown pack")
+		ui.show_message("Unbekanntes Pack")
 		_play_error()
 		return
 
@@ -117,12 +117,12 @@ func _on_pack_buy_pressed(pack_id: String) -> void:
 
 	if pack_opening_screen.buy_pack(pack_id, data):
 		ui.refresh_balance()
-		ui.show_message(str(data.get("name", "PACK")) + " BOUGHT")
+		ui.show_message(str(data.get("name", "PACK")) + " GEKAUFT · PACK AUFREISSEN")
 		ui.set_buy_locked(true)
 		_play_buy()
 	else:
 		ui.refresh_balance()
-		ui.show_message("BUY FAILED")
+		ui.show_message("Kauf fehlgeschlagen")
 		_play_error()
 
 
@@ -138,4 +138,4 @@ func _play_error() -> void:
 func _on_pack_ready_for_next_purchase() -> void:
 	ui.set_buy_locked(false)
 	ui.refresh_balance()
-	ui.show_message("READY")
+	ui.show_message("Bereit für das nächste Pack")

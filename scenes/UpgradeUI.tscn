@@ -1,40 +1,154 @@
-[gd_scene load_steps=8 format=3 uid="uid://bxf056eyllkvv"]
+[gd_scene load_steps=17 format=3 uid="uid://bxf056eyllkvv"]
 
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="1_font"]
 [ext_resource type="Script" uid="uid://bvhpn5cq6dft3" path="res://scripts/UpgradeUI.gd" id="2_script"]
 [ext_resource type="PackedScene" uid="uid://dvbrhqaah3n5i" path="res://scenes/crt.tscn" id="3_crt"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.0468619, 0.0468595, 0.0540001, 0.96)
+[sub_resource type="StyleBoxFlat" id="Style_root"]
+bg_color = Color(0.0431373, 0.0392157, 0.054902, 0.985)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.58, 0.24, 0.24, 0.85)
+border_color = Color(0.431373, 0.160784, 0.188235, 0.9)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
-bg_color = Color(0.45, 0.2, 0.2, 1)
+[sub_resource type="StyleBoxFlat" id="Style_surface_high"]
+bg_color = Color(0.113725, 0.0901961, 0.121569, 0.98)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.92, 0.4, 0.4, 1)
+border_color = Color(0.431373, 0.160784, 0.188235, 0.82)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
-bg_color = Color(0.56, 0.22, 0.22, 1)
+[sub_resource type="StyleBoxFlat" id="Style_coin"]
+bg_color = Color(0.113725, 0.0901961, 0.121569, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85098, 0.666667, 0.32549, 0.9)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="Style_surface"]
+bg_color = Color(0.0784314, 0.0666667, 0.0941176, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.431373, 0.160784, 0.188235, 0.62)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="Style_empty"]
+
+[sub_resource type="StyleBoxFlat" id="Style_effect_disabled"]
+bg_color = Color(0.0431373, 0.0392157, 0.054902, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25098, 0.2, 0.219608, 0.55)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="Style_effect_hover"]
+bg_color = Color(0.113725, 0.0901961, 0.121569, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 0.55, 0.55, 1)
+border_color = Color(0.815686, 0.321569, 0.372549, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
-bg_color = Color(0.34, 0.18, 0.18, 0.96)
+[sub_resource type="StyleBoxFlat" id="Style_effect_pressed"]
+bg_color = Color(0.207843, 0.0980392, 0.117647, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.815686, 0.321569, 0.372549, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="Style_effect_normal"]
+bg_color = Color(0.0431373, 0.0392157, 0.054902, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.431373, 0.160784, 0.188235, 0.72)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="Style_action_hover"]
+bg_color = Color(0.356863, 0.137255, 0.168627, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.815686, 0.321569, 0.372549, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="Style_action_pressed"]
+bg_color = Color(0.815686, 0.321569, 0.372549, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.952941, 0.905882, 0.894118, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="Style_action_disabled"]
+bg_color = Color(0.0705882, 0.0627451, 0.0784314, 0.86)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.7, 0.28, 0.28, 0.95)
+border_color = Color(0.25098, 0.2, 0.219608, 0.7)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="Style_action_normal"]
+bg_color = Color(0.207843, 0.0980392, 0.117647, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.431373, 0.160784, 0.188235, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
 
 [node name="UpgradeUI" type="Control"]
 layout_mode = 3
@@ -53,7 +167,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.1, 0.08, 0.08, 0.34)
+color = Color(0.0431373, 0.0392157, 0.054902, 1)
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -62,117 +176,465 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+theme_override_styles/panel = SubResource("Style_root")
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
-layout_mode = 0
+[node name="OuterMargin" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 9.0
-offset_right = -10.0
-offset_bottom = -9.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="MainVBox" type="VBoxContainer" parent="Panel/OuterMargin"]
 layout_mode = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 10
 
-[node name="MessageLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
-visible = false
+[node name="HeaderPanel" type="PanelContainer" parent="Panel/OuterMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.68, 0.68, 1)
+theme_override_styles/panel = SubResource("Style_surface_high")
+
+[node name="HeaderMargin" type="MarginContainer" parent="Panel/OuterMargin/MainVBox/HeaderPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="HeaderRow" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/HeaderPanel/HeaderMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderCopy" type="VBoxContainer" parent="Panel/OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="TitleLabel" type="Label" parent="Panel/OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/HeaderCopy"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 41
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+text = "UPGRADE-STATION"
 
-[node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="SubtitleLabel" type="Label" parent="Panel/OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/HeaderCopy"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.78, 0.78, 1)
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 51
-text = "CARD UPGRADE MACHINE"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 15
+text = "VERSTÄRKE DEINE KARTEN"
 
-[node name="BalanceLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 24)
+[node name="HeaderSpacer" type="Control" parent="Panel/OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.85, 1)
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 28
-text = "SOUL COINS: 0"
-horizontal_alignment = 1
+size_flags_horizontal = 3
 
-[node name="CardScroll" type="ScrollContainer" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 115)
+[node name="BalancePanel" type="PanelContainer" parent="Panel/OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow"]
+custom_minimum_size = Vector2(210, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_coin")
+
+[node name="BalanceMargin" type="MarginContainer" parent="Panel/OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/BalancePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 7
+
+[node name="BalanceLabel" type="Label" parent="Panel/OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/BalancePanel/BalanceMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85098, 0.666667, 0.32549, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 21
+text = "0 SOUL COINS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BodyRow" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="CardListPanel" type="PanelContainer" parent="Panel/OuterMargin/MainVBox/BodyRow"]
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_surface")
+
+[node name="CardListMargin" type="MarginContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 11
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 11
+theme_override_constants/margin_bottom = 10
+
+[node name="CardListVBox" type="VBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CardListHeader" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox"]
+layout_mode = 2
+
+[node name="CardListTitle" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox/CardListHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 19
+text = "DEINE KARTEN"
+
+[node name="CardListSpacer" type="Control" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox/CardListHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CardCountLabel" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox/CardListHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 14
+text = "0 KARTEN"
+vertical_alignment = 1
+
+[node name="CardListDivider" type="ColorRect" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.431373, 0.160784, 0.188235, 0.55)
+
+[node name="CardScroll" type="ScrollContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="CardList" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/CardScroll"]
+[node name="CardList" type="VBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox/CardScroll"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
-
-[node name="InfoLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 62)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.8, 0.8, 1)
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 39
-text = "SELECT CARD"
-autowrap_mode = 3
-
-[node name="ButtonRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
-layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="AttackButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonRow"]
-custom_minimum_size = Vector2(0, 101.36)
+[node name="DetailsPanel" type="PanelContainer" parent="Panel/OuterMargin/MainVBox/BodyRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 83
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
-text = "+ATK"
+theme_override_styles/panel = SubResource("Style_surface")
 
-[node name="HealthButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonRow"]
-custom_minimum_size = Vector2(0, 101.36)
+[node name="DetailsMargin" type="MarginContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel"]
 layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 83
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
-text = "+HP"
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
 
-[node name="EffectButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonRow"]
-custom_minimum_size = Vector2(0, 101.36)
+[node name="DetailsVBox" type="VBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin"]
 layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 83
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
-text = "ROLL"
+theme_override_constants/separation = 8
 
-[node name="RemoveButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonRow"]
-custom_minimum_size = Vector2(0, 101.36)
+[node name="SelectionHeader" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SelectedNameLabel" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/SelectionHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 25
+text = "KARTE AUSWÄHLEN"
+text_overrun_behavior = 3
+
+[node name="SelectedRarityLabel" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/SelectionHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 16
+text = "—"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="DetailsDivider" type="ColorRect" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.431373, 0.160784, 0.188235, 0.55)
+
+[node name="StatsRow" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox"]
+custom_minimum_size = Vector2(0, 82)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AttackStatPanel" type="PanelContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("Style_surface_high")
+
+[node name="AttackMargin" type="MarginContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/AttackStatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 7
+
+[node name="AttackVBox" type="VBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/AttackStatPanel/AttackMargin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="AttackCaption" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/AttackStatPanel/AttackMargin/AttackVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 14
+text = "ANGRIFF"
+
+[node name="AttackValueRow" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/AttackStatPanel/AttackMargin/AttackVBox"]
+layout_mode = 2
+
+[node name="AttackValueLabel" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/AttackStatPanel/AttackMargin/AttackVBox/AttackValueRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 30
+text = "—"
+
+[node name="AttackBonusLabel" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/AttackStatPanel/AttackMargin/AttackVBox/AttackValueRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.815686, 0.321569, 0.372549, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "+0"
+vertical_alignment = 1
+
+[node name="HealthStatPanel" type="PanelContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("Style_surface_high")
+
+[node name="HealthMargin" type="MarginContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/HealthStatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 7
+
+[node name="HealthVBox" type="VBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/HealthStatPanel/HealthMargin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="HealthCaption" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/HealthStatPanel/HealthMargin/HealthVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 14
+text = "LEBEN"
+
+[node name="HealthValueRow" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/HealthStatPanel/HealthMargin/HealthVBox"]
+layout_mode = 2
+
+[node name="HealthValueLabel" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/HealthStatPanel/HealthMargin/HealthVBox/HealthValueRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 30
+text = "—"
+
+[node name="HealthBonusLabel" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/StatsRow/HealthStatPanel/HealthMargin/HealthVBox/HealthValueRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.815686, 0.321569, 0.372549, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "+0"
+vertical_alignment = 1
+
+[node name="EffectsHeader" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox"]
+layout_mode = 2
+
+[node name="EffectsTitle" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/EffectsHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 18
+text = "EFFEKTE"
+
+[node name="EffectsCountLabel" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/EffectsHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 14
+text = "0 / 2 BELEGT"
+vertical_alignment = 1
+
+[node name="EffectSlotRow" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EffectSlot1" type="Button" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/EffectSlotRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+theme_override_colors/font_disabled_color = Color(0.658824, 0.556863, 0.568627, 0.62)
+theme_override_colors/font_hover_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_pressed_color = Color(0.952941, 0.905882, 0.894118, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 35
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
-text = "REMOVE EFFECT"
+theme_override_font_sizes/font_size = 15
+theme_override_styles/focus = SubResource("Style_empty")
+theme_override_styles/disabled = SubResource("Style_effect_disabled")
+theme_override_styles/hover = SubResource("Style_effect_hover")
+theme_override_styles/pressed = SubResource("Style_effect_pressed")
+theme_override_styles/normal = SubResource("Style_effect_normal")
+disabled = true
+toggle_mode = true
+text = "KARTE AUSWÄHLEN"
+expand_icon = true
+
+[node name="EffectSlot2" type="Button" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox/EffectSlotRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_colors/font_disabled_color = Color(0.658824, 0.556863, 0.568627, 0.62)
+theme_override_colors/font_hover_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_pressed_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+theme_override_styles/focus = SubResource("Style_empty")
+theme_override_styles/disabled = SubResource("Style_effect_disabled")
+theme_override_styles/hover = SubResource("Style_effect_hover")
+theme_override_styles/pressed = SubResource("Style_effect_pressed")
+theme_override_styles/normal = SubResource("Style_effect_normal")
+disabled = true
+toggle_mode = true
+text = "KARTE AUSWÄHLEN"
+expand_icon = true
+
+[node name="RemoveButton" type="Button" parent="Panel/OuterMargin/MainVBox/BodyRow/DetailsPanel/DetailsMargin/DetailsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_disabled_color = Color(0.658824, 0.556863, 0.568627, 0.5)
+theme_override_colors/font_hover_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_color = Color(0.815686, 0.321569, 0.372549, 1)
+theme_override_colors/font_pressed_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+theme_override_styles/focus = SubResource("Style_empty")
+theme_override_styles/disabled = SubResource("Style_effect_disabled")
+theme_override_styles/hover = SubResource("Style_action_hover")
+theme_override_styles/pressed = SubResource("Style_action_pressed")
+theme_override_styles/normal = SubResource("Style_effect_normal")
+disabled = true
+text = "AUSGEWÄHLTEN EFFEKT ENTFERNEN"
+
+[node name="FooterPanel" type="PanelContainer" parent="Panel/OuterMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 126)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_surface_high")
+
+[node name="FooterMargin" type="MarginContainer" parent="Panel/OuterMargin/MainVBox/FooterPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 9
+
+[node name="FooterVBox" type="VBoxContainer" parent="Panel/OuterMargin/MainVBox/FooterPanel/FooterMargin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="MessageLabel" type="Label" parent="Panel/OuterMargin/MainVBox/FooterPanel/FooterMargin/FooterVBox"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.815686, 0.321569, 0.372549, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 17
+text = " "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ActionRow" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/FooterPanel/FooterMargin/FooterVBox"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="AttackButton" type="Button" parent="Panel/OuterMargin/MainVBox/FooterPanel/FooterMargin/FooterVBox/ActionRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_colors/font_disabled_color = Color(0.658824, 0.556863, 0.568627, 0.5)
+theme_override_colors/font_hover_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_pressed_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("Style_empty")
+theme_override_styles/disabled = SubResource("Style_action_disabled")
+theme_override_styles/hover = SubResource("Style_action_hover")
+theme_override_styles/pressed = SubResource("Style_action_pressed")
+theme_override_styles/normal = SubResource("Style_action_normal")
+disabled = true
+text = "ANGRIFF +1
+5 SOUL COINS"
+
+[node name="HealthButton" type="Button" parent="Panel/OuterMargin/MainVBox/FooterPanel/FooterMargin/FooterVBox/ActionRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_colors/font_disabled_color = Color(0.658824, 0.556863, 0.568627, 0.5)
+theme_override_colors/font_hover_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_pressed_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("Style_empty")
+theme_override_styles/disabled = SubResource("Style_action_disabled")
+theme_override_styles/hover = SubResource("Style_action_hover")
+theme_override_styles/pressed = SubResource("Style_action_pressed")
+theme_override_styles/normal = SubResource("Style_action_normal")
+disabled = true
+text = "LEBEN +1
+5 SOUL COINS"
+
+[node name="EffectButton" type="Button" parent="Panel/OuterMargin/MainVBox/FooterPanel/FooterMargin/FooterVBox/ActionRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_colors/font_disabled_color = Color(0.658824, 0.556863, 0.568627, 0.5)
+theme_override_colors/font_hover_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_pressed_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("Style_empty")
+theme_override_styles/disabled = SubResource("Style_action_disabled")
+theme_override_styles/hover = SubResource("Style_action_hover")
+theme_override_styles/pressed = SubResource("Style_action_pressed")
+theme_override_styles/normal = SubResource("Style_action_normal")
+disabled = true
+text = "EFFEKT WÜRFELN
+12 SOUL COINS"
 
 [node name="CRTPostFXLayer" parent="." instance=ExtResource("3_crt")]
 script = null

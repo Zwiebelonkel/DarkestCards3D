@@ -1,8 +1,55 @@
-[gd_scene load_steps=6 format=3 uid="uid://dcp3rwdcgfp5m"]
+[gd_scene load_steps=16 format=3 uid="uid://dcp3rwdcgfp5m"]
 
 [ext_resource type="Script" uid="uid://dwf5xjyhc61gh" path="res://scripts/ui/MainMenu.gd" id="1_menu"]
 [ext_resource type="PackedScene" uid="uid://b40dvqf0l54j4" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_v3gjy"]
+[ext_resource type="PackedScene" uid="uid://dcp3rwdcgfp5j" path="res://scenes/table/GameTable.tscn" id="4_jen06"]
+[ext_resource type="PackedScene" uid="uid://u8x4h4ejwtkq" path="res://assets/environments/props/hospital/hospitalRoom.glb" id="5_blefk"]
+[ext_resource type="Shader" uid="uid://d0eixl5l5m8c5" path="res://assets/shader/Lens.gdshader" id="5_cius5"]
+[ext_resource type="Texture2D" uid="uid://b6rftkfr0rn73" path="res://assets/scratches2.png" id="6_kg8x7"]
+[ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="7_bkjnr"]
+[ext_resource type="PackedScene" uid="uid://g6mmig2vuj1q" path="res://scenes/Neon.tscn" id="7_eclvw"]
+[ext_resource type="AudioStream" uid="uid://ca2m8sijon4ep" path="res://assets/sounds/theme3.mp3" id="9_cius5"]
+
+[sub_resource type="Environment" id="Environment_cius5"]
+background_energy_multiplier = 0.0
+glow_enabled = true
+glow_normalized = true
+glow_intensity = 8.0
+glow_strength = 1.38
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0413
+volumetric_fog_albedo = Color(1, 1, 0.647059, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_440sr"]
+shader = ExtResource("5_cius5")
+shader_parameter/scratches_texture = ExtResource("6_kg8x7")
+shader_parameter/dirt_strength = 0.0
+shader_parameter/scratch_strength = 0.179
+shader_parameter/vignette_strength = 0.829
+shader_parameter/distortion_strength = 0.0
+shader_parameter/blur_strength = 0.265
+shader_parameter/scratch_scroll_speed = 4.75e-08
+shader_parameter/flicker_strength = 0.01
+shader_parameter/dirt_color = Color(0.32, 0.27, 0.2, 1)
+shader_parameter/scratch_color = Color(0.85, 0.82, 0.72, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m8347"]
+shader = ExtResource("7_bkjnr")
+shader_parameter/exposure = 1.074
+shader_parameter/contrast = 1.107
+shader_parameter/saturation = 1.12
+shader_parameter/enable_pixelate = true
+shader_parameter/pixel_factor = 1.579
+shader_parameter/enable_posterize = true
+shader_parameter/color_levels = 16.0
+shader_parameter/dither_strength = 0.35
+shader_parameter/chrom_aberration = 0.0
+shader_parameter/vignette_strength = 2.0
+shader_parameter/grain_strength = 0.2
+shader_parameter/tint_color = Vector3(0.95, 1.03, 0.9)
+shader_parameter/tint_strength = 0.15
+shader_parameter/viewport_size_override = Vector2(0, 0)
 
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
 bg_color = Color(0.035, 0.025, 0.04, 0.94)
@@ -19,31 +66,61 @@ corner_radius_bottom_left = 12
 [sub_resource type="Theme" id="Theme_v3gjy"]
 default_font = ExtResource("2_v3gjy")
 
-[node name="MainMenu" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MainMenu" type="Node3D"]
 script = ExtResource("1_menu")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_cius5")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.36792, -2.60684)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
+
+[node name="DirtyLensRect" type="ColorRect" parent="Camera3D/CanvasLayer"]
+material = SubResource("ShaderMaterial_440sr")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="Camera3D"]
+layer = 128
+
+[node name="ColorRect" type="ColorRect" parent="Camera3D/CanvasLayer2"]
+material = SubResource("ShaderMaterial_m8347")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
 color = Color(0.012, 0.009, 0.016, 1)
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -122.0
+offset_right = 260.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
 layout_mode = 2
@@ -56,11 +133,12 @@ theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 36
 theme_override_constants/margin_bottom = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 theme_override_font_sizes/font_size = 42
@@ -68,6 +146,7 @@ text = "Darkest Cards"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 theme_override_font_sizes/font_size = 22
@@ -142,4 +221,35 @@ cancel_button_text = "Abbrechen"
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]
 unique_name_in_owner = true
-layout_mode = 1
+
+[node name="ScenePivot" type="Node3D" parent="."]
+
+[node name="GameTable" parent="ScenePivot" instance=ExtResource("4_jen06")]
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.15325)
+script = null
+
+[node name="hospitalRoom" parent="." instance=ExtResource("5_blefk")]
+transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.925, 0.179363, -2.21619, 0.438384)
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_cius5")
+pitch_scale = 1.21
+autoplay = true
+bus = &"Music"
+
+[node name="Neon" parent="." instance=ExtResource("7_eclvw")]
+transform = Transform3D(1.19, 0, 0, 0, -1.39876e-08, -1, 0, 0.32, -4.37114e-08, 0, 0.7732, -6.89788)
+
+[node name="darkest" parent="Neon" index="0" node_paths=PackedStringArray("light")]
+light = NodePath("../../SpotLight3D")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.0761274, 0.997098, 0, -0.997098, 0.0761274, 0, 4.44249, -6.69372)
+light_color = Color(1, 0, 0, 1)
+light_energy = 11.214
+spot_range = 13.528
+spot_angle = 55.15
+
+[editable path="Neon"]
+[editable path="Neon/darkest"]
+[editable path="Neon/cards2"]

@@ -42,6 +42,7 @@ const SIDE_HINTS := [
 @onready var side_label: Label = %SideLabel
 @onready var hint_label: Label = %HintLabel
 @onready var camera_tilt: Node3D = $CameraPivot/CameraTilt
+@onready var screen_camera_focus: ScreenCameraFocus = $ScreenCameraFocus
 
 var _active_side := 0
 var _base_x_rotation := 0.0
@@ -81,15 +82,19 @@ var _phase_ease_kind: EaseKind = EaseKind.CUBIC_OUT
 var _settle_target_y := 0.0
 
 var _pending_direction := 0
+var _pack_opening_blocks_screen_focus := false
 
 
 func _ready() -> void:
 	_base_x_rotation = camera_pivot.rotation.x
 	_settle_target_y = camera_pivot.rotation.y
+	_setup_screen_camera_focus()
+	_connect_pack_opening_focus_state()
 	_disable_embedded_scene_controls()
 	_connect_pack_collection_refresh()
 	_update_active_scene_interaction()
 	_update_labels()
+	_update_screen_camera_focus_context()
 
 func _input(event: InputEvent) -> void:
 	_debug_interaction_click(event)
@@ -159,6 +164,7 @@ func _process(delta: float) -> void:
 
 	_advance_phase(delta)
 	_update_mouse_tilt(delta)
+	_update_screen_camera_focus_context()
 
 
 func _read_input() -> void:
@@ -211,6 +217,12 @@ func _advance_to_next_phase() -> void:
 
 
 func _begin_turn(direction: int) -> void:
+	# Ein eventuell aktiver Bildschirmfokus fährt zurück, bevor sich die
+	# übergeordnete Kamerabasis dreht. Position/FOV bleiben so unabhängig
+	# von der Seitenanimation.
+	if screen_camera_focus != null:
+		screen_camera_focus.set_context(_active_side, false)
+
 	# KERNFIX: der neue Zielwinkel wird von _settle_target_y aus berechnet -
 	# der letzten GÜLTIGEN Seite - niemals von camera_pivot.rotation.y (das
 	# wäre die fehlerhafte, visuelle Zwischenposition gewesen).
@@ -271,7 +283,7 @@ func _disable_embedded_scene_controls() -> void:
 func _update_active_scene_interaction() -> void:
 	var interactive_roots: Array[Array] = [
 		["GameTable"],
-		["PackShopMachine", "PackOpening"],
+		["PackShopMachine"],
 		["Collection"],
 		["UpgradeMachine"],
 	]
@@ -282,6 +294,60 @@ func _update_active_scene_interaction() -> void:
 			var root := scene_pivot.get_node_or_null(str(root_name))
 			if root != null:
 				_set_scene_interaction_enabled(root, active)
+
+
+func _setup_screen_camera_focus() -> void:
+	if screen_camera_focus == null:
+		return
+
+	var pack_screen := scene_pivot.get_node_or_null("PackShopMachine/ScreenArea") as Area3D
+	var upgrade_screen := scene_pivot.get_node_or_null("UpgradeMachine/ScreenArea") as Area3D
+
+	if pack_screen != null:
+		screen_camera_focus.register_screen(pack_screen, 1)
+	else:
+		push_warning("ScreenCameraFocus: PackShop-ScreenArea fehlt.")
+
+	if upgrade_screen != null:
+		screen_camera_focus.register_screen(upgrade_screen, 3)
+	else:
+		push_warning("ScreenCameraFocus: Upgrade-ScreenArea fehlt.")
+
+
+func _update_screen_camera_focus_context() -> void:
+	if screen_camera_focus == null:
+		return
+
+	var screen_side_active := _active_side == 1 or _active_side == 3
+	var focus_allowed := (
+		_phase == Phase.IDLE
+		and screen_side_active
+		and not _is_table_match_active()
+		and not _pack_opening_blocks_screen_focus
+	)
+	screen_camera_focus.set_context(_active_side, focus_allowed)
+
+
+func _connect_pack_opening_focus_state() -> void:
+	var pack_opening_screen := scene_pivot.get_node_or_null("PackShopMachine/PackOpeningScreen")
+	if pack_opening_screen == null:
+		push_warning("ScreenCameraFocus: PackOpeningScreen fehlt.")
+		return
+
+	if pack_opening_screen.has_signal("pack_opening_started"):
+		pack_opening_screen.pack_opening_started.connect(_on_pack_opening_started)
+	if pack_opening_screen.has_signal("pack_ready_for_next_purchase"):
+		pack_opening_screen.pack_ready_for_next_purchase.connect(_on_pack_opening_finished)
+
+
+func _on_pack_opening_started() -> void:
+	_pack_opening_blocks_screen_focus = true
+	_update_screen_camera_focus_context()
+
+
+func _on_pack_opening_finished() -> void:
+	_pack_opening_blocks_screen_focus = false
+	_update_screen_camera_focus_context()
 
 
 func _set_scene_interaction_enabled(node: Node, enabled: bool) -> void:
@@ -301,11 +367,15 @@ func _set_scene_interaction_enabled(node: Node, enabled: bool) -> void:
 
 
 func _disable_embedded_scene_controls_recursive(node: Node) -> void:
-	if node is Camera3D:
+	# Only take over cameras/listeners/environment nodes that share Main's
+	# viewport. Preview renderers live in their own SubViewports and need their
+	# cameras to remain current; disabling them leaves a valid but black texture.
+	var shares_main_viewport := node.get_viewport() == get_viewport()
+	if node is Camera3D and shares_main_viewport:
 		(node as Camera3D).current = false
-	if node is AudioListener3D:
+	if node is AudioListener3D and shares_main_viewport:
 		(node as AudioListener3D).current = false
-	if node is WorldEnvironment:
+	if node is WorldEnvironment and shares_main_viewport:
 		(node as WorldEnvironment).environment = null
 	if node is MenuNavigation:
 		(node as MenuNavigation).visible = false
@@ -328,7 +398,7 @@ func _is_table_match_active() -> bool:
 	
 
 func _connect_pack_collection_refresh() -> void:
-	var pack_opening_screen := scene_pivot.get_node_or_null("PackOpening")
+	var pack_opening_screen := scene_pivot.get_node_or_null("PackShopMachine/PackOpeningScreen")
 	var collection_screen := scene_pivot.get_node_or_null("Collection")
 
 	if pack_opening_screen == null:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=28 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://dney7f8j2glf2" path="res://scenes/Stun.tscn" id="1_stun"]
@@ -24,6 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://duwx2op48vlcw" path="res://scenes/LastStand.tscn" id="19_laststand"]
 [ext_resource type="Texture2D" uid="uid://xqj4ix8dr8n7" path="res://assets/characters/gun.png" id="19_p1hll"]
 [ext_resource type="AudioStream" uid="uid://65rdgeqebsfy" path="res://assets/sounds/SFX/shot.mp3" id="22_06uou"]
+[ext_resource type="PackedScene" path="res://scenes/multiplayer/MatchmakingScreen.tscn" id="23_online"]
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
 albedo_color = Color(0.12, 0.08, 0.05, 1)
@@ -66,7 +67,6 @@ label_text = "KI"
 [node name="MultiplayerButton" parent="MenuRoot/ModeButtons" instance=ExtResource("3_efmqq")]
 transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 0.530309, -0.275349, 1.64473)
 label_text = "Multiplayer"
-disabled = true
 
 [node name="DifficultyButtons" type="Node3D" parent="MenuRoot"]
 visible = false
@@ -93,6 +93,11 @@ visible = false
 [node name="ExitButton" parent="MenuRoot/EndButtons" instance=ExtResource("3_efmqq")]
 transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 0, 0, 0)
 label_text = "Exit"
+
+[node name="OnlineCanvas" type="CanvasLayer" parent="."]
+layer = 90
+
+[node name="MatchmakingScreen" parent="OnlineCanvas" instance=ExtResource("23_online")]
 
 [node name="Table" type="MeshInstance3D" parent="."]
 visible = false

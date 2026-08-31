@@ -2,6 +2,7 @@ extends Node3D
 class_name UpgradeMachine
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
+const EFFECT_OVERVIEW_SCENE := preload("res://scenes/CardEffectOverview.tscn")
 
 @export var upgrade_viewport: SubViewport
 @export var screen_mesh: MeshInstance3D
@@ -15,10 +16,12 @@ const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 @export var preview_card_position_offset := Vector3.ZERO
 @export var preview_card_rotation := Vector3(-90, 0, 0)
 @export var preview_card_scale := 0.55
-@export var preview_card_spin_speed := 35.0
+@export var preview_card_spin_speed := 12.0
 
 var selected_card_id := ""
 var preview_card: Card3D = null
+var _effect_overview_layer: CanvasLayer = null
+var _effect_overview: CardEffectOverviewUI = null
 
 @onready var ui: UpgradeUI = $UpgradeViewport/UpgradeUI as UpgradeUI
 
@@ -27,6 +30,7 @@ func _ready() -> void:
 	_setup_screen_material()
 	_connect_ui()
 	_connect_global_refresh_signals()
+	ui.configure_costs(attack_cost, health_cost, effect_cost)
 	_refresh_card_list()
 
 
@@ -87,7 +91,7 @@ func _remove_effect(effect_source: String, effect_index: int) -> void:
 
 func _refresh_card_list() -> void:
 	var owned := CollectionManager.get_owned_cards()
-	ui.set_cards(owned.keys())
+	ui.set_cards(owned.keys(), owned)
 
 
 func _on_collection_changed(_card_ids: Array[String]) -> void:
@@ -100,9 +104,7 @@ func _on_collection_changed(_card_ids: Array[String]) -> void:
 	var owned := CollectionManager.get_owned_cards()
 	if not owned.has(previous_selection) or int(owned[previous_selection]) <= 0:
 		selected_card_id = ""
-		if preview_card != null and is_instance_valid(preview_card):
-			preview_card.queue_free()
-			preview_card = null
+		_remove_preview_card()
 		return
 
 	selected_card_id = previous_selection
@@ -131,8 +133,7 @@ func _spawn_preview_card() -> void:
 		push_error("UpgradeMachine: CardPreviewPoint fehlt oder NodePath ist falsch.")
 		return
 
-	if preview_card != null and is_instance_valid(preview_card):
-		preview_card.queue_free()
+	_remove_preview_card()
 
 	var data := CardDatabase.get_card(selected_card_id)
 	if data.is_empty():
@@ -141,12 +142,57 @@ func _spawn_preview_card() -> void:
 	data = CardUpgradeManager.apply_upgrades(selected_card_id, data)
 
 	preview_card = CARD_SCENE.instantiate() as Card3D
-	add_child(preview_card)
+	card_preview_point.add_child(preview_card)
 	preview_card.setup(data)
 
-	preview_card.global_position = card_preview_point.global_position + preview_card_position_offset
+	preview_card.position = preview_card_position_offset
 	preview_card.rotation_degrees = preview_card_rotation
 	preview_card.scale = Vector3.ONE * preview_card_scale
+	_connect_preview_effect_overview(preview_card)
+
+
+func _remove_preview_card() -> void:
+	if preview_card == null or not is_instance_valid(preview_card):
+		preview_card = null
+		return
+	if _effect_overview != null:
+		_effect_overview.hide_overview(preview_card)
+	preview_card.queue_free()
+	preview_card = null
+
+
+func _connect_preview_effect_overview(card: Card3D) -> void:
+	if not is_instance_valid(card):
+		return
+	if not card.card_hovered.is_connected(_on_preview_card_hovered):
+		card.card_hovered.connect(_on_preview_card_hovered)
+	if not card.card_unhovered.is_connected(_on_preview_card_unhovered):
+		card.card_unhovered.connect(_on_preview_card_unhovered)
+
+
+func _ensure_effect_overview() -> void:
+	if _effect_overview != null and is_instance_valid(_effect_overview):
+		return
+	if _effect_overview_layer == null or not is_instance_valid(_effect_overview_layer):
+		_effect_overview_layer = CanvasLayer.new()
+		_effect_overview_layer.name = "EffectOverviewLayer"
+		_effect_overview_layer.layer = 40
+		add_child(_effect_overview_layer)
+	_effect_overview = EFFECT_OVERVIEW_SCENE.instantiate() as CardEffectOverviewUI
+	_effect_overview_layer.add_child(_effect_overview)
+
+
+func _on_preview_card_hovered(card: Card3D) -> void:
+	if CardData.get_active_effects(card.card_data).is_empty():
+		return
+	_ensure_effect_overview()
+	if _effect_overview != null:
+		_effect_overview.show_for_card(card)
+
+
+func _on_preview_card_unhovered(card: Card3D) -> void:
+	if _effect_overview != null:
+		_effect_overview.hide_overview(card)
 
 func _upgrade_attack() -> void:
 	if selected_card_id == "":
@@ -161,7 +207,7 @@ func _upgrade_attack() -> void:
 
 	ui.refresh_balance()
 	ui.set_selected_card(selected_card_id)
-	ui.show_message("+1 Angriff")
+	ui.show_message("Angriff um 1 erhöht")
 
 	_spawn_preview_card()
 
@@ -178,7 +224,7 @@ func _upgrade_health() -> void:
 
 	ui.refresh_balance()
 	ui.set_selected_card(selected_card_id)
-	ui.show_message("+1 Leben")
+	ui.show_message("Leben um 1 erhöht")
 
 	_spawn_preview_card()
 
@@ -188,7 +234,7 @@ func _roll_effect() -> void:
 		return
 
 	if CardUpgradeManager.get_free_effect_slots(selected_card_id) <= 0:
-		ui.show_message("Maximal 2 Effects")
+		ui.show_message("Alle Effekt-Slots sind belegt")
 		return
 
 	if not GameCurrency.spend_coins(effect_cost):
@@ -199,19 +245,19 @@ func _roll_effect() -> void:
 	var effects: Array[Dictionary] = EffectDatabase.roll_effects()
 
 	if effects.is_empty():
-		ui.show_message("Kein Glück :(")
+		ui.show_message("Keinen Effekt erhalten")
 		ui.refresh_balance()
 		return
 
 	var effect: Dictionary = effects[0]
 
 	if not CardUpgradeManager.add_effect(selected_card_id, effect):
-		ui.show_message("Maximal 2 Effects")
+		ui.show_message("Alle Effekt-Slots sind belegt")
 		ui.refresh_balance()
 		return
 
 	ui.refresh_balance()
 	ui.set_selected_card(selected_card_id)
-	ui.show_message("Effekt: " + str(effect.get("name")))
+	ui.show_message("Neuer Effekt: " + str(effect.get("name")))
 
 	_spawn_preview_card()

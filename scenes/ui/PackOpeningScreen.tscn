@@ -48,7 +48,7 @@ mesh = SubResource("Plane_floor")
 
 [node name="InfoLabel" type="Label3D" parent="."]
 transform = Transform3D(0.012, 0, 0, 0, 0.012, 0, 0, 0, 0.012, 0, 2.35, -1.4)
-text = "PackTop anklicken/abziehen"
+text = "Pack am Automaten auswählen"
 font_size = 34
 outline_size = 8
 

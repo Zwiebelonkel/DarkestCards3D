@@ -1,41 +1,322 @@
-[gd_scene load_steps=3 format=3 uid="uid://bxjurjrv4wl4b"]
+[gd_scene load_steps=9 format=3 uid="uid://bxjurjrv4wl4b"]
 
 [ext_resource type="Script" uid="uid://dtnrpjbfx4jp5" path="res://scripts/CardEffectOverview.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_font"]
 
+[sub_resource type="Theme" id="Theme_effect_panel"]
+default_font = ExtResource("2_font")
+default_font_size = 14
+
+[sub_resource type="StyleBoxFlat" id="Style_root"]
+bg_color = Color(0.0431373, 0.0392157, 0.054902, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.431373, 0.160784, 0.188235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.62)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="Style_count_badge"]
+bg_color = Color(0.121569, 0.0509804, 0.0666667, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.431373, 0.160784, 0.188235, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="Style_effect_row"]
+bg_color = Color(0.0784314, 0.0666667, 0.0941176, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.431373, 0.160784, 0.188235, 0.78)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="Style_icon_frame"]
+bg_color = Color(0.0431373, 0.0392157, 0.054902, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.815686, 0.321569, 0.372549, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="Style_value_badge"]
+bg_color = Color(0.145098, 0.0627451, 0.0823529, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.815686, 0.321569, 0.372549, 0.92)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="CardEffectOverviewUI" type="PanelContainer"]
 visible = false
+custom_minimum_size = Vector2(460, 0)
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -430.0
+offset_left = -484.0
 offset_top = 24.0
 offset_right = -24.0
-offset_bottom = 260.0
+offset_bottom = 370.0
+mouse_filter = 2
+theme = SubResource("Theme_effect_panel")
+theme_override_styles/panel = SubResource("Style_root")
 script = ExtResource("1_script")
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 18
+mouse_filter = 2
+theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
 [node name="VBox" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderText" type="VBoxContainer" parent="Margin/VBox/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 1
+
+[node name="Eyebrow" type="Label" parent="Margin/VBox/HeaderRow/HeaderText"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.815686, 0.321569, 0.372549, 1)
+theme_override_font_sizes/font_size = 12
+text = "KARTENEFFEKTE"
+
+[node name="CardNameLabel" type="Label" parent="Margin/VBox/HeaderRow/HeaderText"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_font_sizes/font_size = 21
+text = "CARD NAME"
+text_overrun_behavior = 3
+
+[node name="CountBadge" type="PanelContainer" parent="Margin/VBox/HeaderRow"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_count_badge")
+
+[node name="CountLabel" type="Label" parent="Margin/VBox/HeaderRow/CountBadge"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_font_sizes/font_size = 11
+text = "2 EFFEKTE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Divider" type="ColorRect" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.431373, 0.160784, 0.188235, 0.72)
+
+[node name="EffectsList" type="VBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 9
+
+[node name="EffectRow1" type="PanelContainer" parent="Margin/VBox/EffectsList"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_effect_row")
+
+[node name="RowMargin" type="MarginContainer" parent="Margin/VBox/EffectsList/EffectRow1"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 11
+theme_override_constants/margin_bottom = 9
+
+[node name="RowContent" type="HBoxContainer" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 11
+
+[node name="IconFrame" type="PanelContainer" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_icon_frame")
+
+[node name="IconMargin" type="MarginContainer" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent/IconFrame"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Icon" type="TextureRect" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent/IconFrame/IconMargin"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EffectText" type="VBoxContainer" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 5
+
+[node name="TitleRow" type="HBoxContainer" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent/EffectText"]
+layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
-[node name="TitleLabel" type="Label" parent="Margin/VBox"]
+[node name="EffectName" type="Label" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent/EffectText/TitleRow"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 22
-text = "EFFEKTE"
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_font_sizes/font_size = 17
+text = "EFFECT NAME"
+text_overrun_behavior = 3
 
-[node name="EffectsLabel" type="RichTextLabel" parent="Margin/VBox"]
-custom_minimum_size = Vector2(360, 150)
+[node name="ValueBadge" type="PanelContainer" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent/EffectText/TitleRow"]
 layout_mode = 2
-theme_override_fonts/normal_font = ExtResource("2_font")
-theme_override_font_sizes/normal_font_size = 16
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_value_badge")
+
+[node name="BadgeMargin" type="MarginContainer" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent/EffectText/TitleRow/ValueBadge"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="ValueLabel" type="Label" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent/EffectText/TitleRow/ValueBadge/BadgeMargin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_font_sizes/font_size = 10
+text = "PASSIV"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="Margin/VBox/EffectsList/EffectRow1/RowMargin/RowContent/EffectText"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.741176, 0.67451, 0.67451, 1)
+theme_override_font_sizes/font_size = 13
+text = "Effect description"
+autowrap_mode = 3
+
+[node name="EffectRow2" type="PanelContainer" parent="Margin/VBox/EffectsList"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_effect_row")
+
+[node name="RowMargin" type="MarginContainer" parent="Margin/VBox/EffectsList/EffectRow2"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 11
+theme_override_constants/margin_bottom = 9
+
+[node name="RowContent" type="HBoxContainer" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 11
+
+[node name="IconFrame" type="PanelContainer" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_icon_frame")
+
+[node name="IconMargin" type="MarginContainer" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent/IconFrame"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Icon" type="TextureRect" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent/IconFrame/IconMargin"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EffectText" type="VBoxContainer" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 5
+
+[node name="TitleRow" type="HBoxContainer" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent/EffectText"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="EffectName" type="Label" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent/EffectText/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_font_sizes/font_size = 17
+text = "EFFECT NAME"
+text_overrun_behavior = 3
+
+[node name="ValueBadge" type="PanelContainer" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent/EffectText/TitleRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Style_value_badge")
+
+[node name="BadgeMargin" type="MarginContainer" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent/EffectText/TitleRow/ValueBadge"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="ValueLabel" type="Label" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent/EffectText/TitleRow/ValueBadge/BadgeMargin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_font_sizes/font_size = 10
+text = "PASSIV"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="Margin/VBox/EffectsList/EffectRow2/RowMargin/RowContent/EffectText"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.741176, 0.67451, 0.67451, 1)
+theme_override_font_sizes/font_size = 13
+text = "Effect description"
+autowrap_mode = 3

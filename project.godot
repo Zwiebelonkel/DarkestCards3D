@@ -13,7 +13,8 @@ config_version=5
 config/name="DarkestCards"
 run/main_scene="res://scenes/main/MainMenu.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
-config/icon="res://icon.svg"
+boot_splash/image="uid://b3jlktytgdrf2"
+config/icon="uid://b3jlktytgdrf2"
 
 [autoload]
 
@@ -25,6 +26,7 @@ RarityEffects="*res://scripts/Rarityeffects.gd"
 CardUpgradeManager="*res://scripts/CardUpgradeManager.gd"
 EffectDatabase="*res://scripts/autoload/EffectDatabase.gd"
 SettingsManager="*res://scripts/autoload/SettingsManager.gd"
+NetworkManager="*res://scripts/autoload/NetworkManager.gd"
 
 [display]
 
@@ -46,3 +48,8 @@ right={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+
+[steam]
+
+initialization/app_data/app_id=480
+initialization/processes/initialize_on_startup=true

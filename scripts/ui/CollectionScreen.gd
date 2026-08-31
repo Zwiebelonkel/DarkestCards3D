@@ -108,6 +108,8 @@ var _drag_start_pos := Vector3.ZERO
 @export var camera: Camera3D
 @onready var cards_root: Node3D = $Cards
 @onready var empty_label: Label3D = $EmptyLabel
+@onready var clear_deck_button: Table3DButton = $ClearDeckButton
+@onready var random_deck_button: Table3DButton = $RandomDeckButton
 
 
 var _base_positions: Dictionary = {}
@@ -136,10 +138,16 @@ var _deck_fan_base_transforms: Dictionary = {}
 func _ready() -> void:
 	if not CardUpgradeManager.upgrades_changed.is_connected(_on_card_upgrades_changed):
 		CardUpgradeManager.upgrades_changed.connect(_on_card_upgrades_changed)
+
 	_build_collection()
 	_setup_deck_overview_button()
+	_setup_deck_management_buttons()
+
 	_deck_button_base_pos = _deck_button.position
 	_deck_button.visible = false
+
+	clear_deck_button.visible = false
+	random_deck_button.visible = false
 
 
 func _process(delta: float) -> void:
@@ -311,16 +319,19 @@ func _connect_card_input(card: Card3D) -> void:
 	if not card.area:
 		return
 
-	if not card.area.mouse_entered.is_connected(_on_card_hovered):
-		card.area.mouse_entered.connect(_on_card_hovered.bind(card))
-	if not card.area.mouse_exited.is_connected(_on_card_unhovered):
-		card.area.mouse_exited.connect(_on_card_unhovered.bind(card))
-	if not card.area.input_event.is_connected(_on_card_input):
-		card.area.input_event.connect(_on_card_input.bind(card))
-	if not card.effect_icon_hovered.is_connected(_on_effect_icon_hovered):
-		card.effect_icon_hovered.connect(_on_effect_icon_hovered)
-	if not card.effect_icon_unhovered.is_connected(_on_effect_icon_unhovered):
-		card.effect_icon_unhovered.connect(_on_effect_icon_unhovered)
+	var hover_started := _on_card_hovered.bind(card)
+	var hover_ended := _on_card_unhovered.bind(card)
+	var input_received := _on_card_input.bind(card)
+	if not card.area.mouse_entered.is_connected(hover_started):
+		card.area.mouse_entered.connect(hover_started)
+	if not card.area.mouse_exited.is_connected(hover_ended):
+		card.area.mouse_exited.connect(hover_ended)
+	if not card.area.input_event.is_connected(input_received):
+		card.area.input_event.connect(input_received)
+	if not card.card_hovered.is_connected(_on_effect_card_hovered):
+		card.card_hovered.connect(_on_effect_card_hovered)
+	if not card.card_unhovered.is_connected(_on_effect_card_unhovered):
+		card.card_unhovered.connect(_on_effect_card_unhovered)
 
 
 func _ensure_effect_overview() -> void:
@@ -334,21 +345,19 @@ func _ensure_effect_overview() -> void:
 	_effect_overview_layer.add_child(_effect_overview)
 
 
-func _on_effect_icon_hovered(card: Card3D) -> void:
-	_on_card_hovered(card)
-
-	if _deck_fan_open:
+func _on_effect_card_hovered(card: Card3D) -> void:
+	if _deck_fan_open and not _deck_fan_cards.has(card):
 		return
 	if _detail_card != null and card != _detail_card:
+		return
+	if CardData.get_active_effects(card.card_data).is_empty():
 		return
 	_ensure_effect_overview()
 	if _effect_overview != null:
 		_effect_overview.show_for_card(card)
 
 
-func _on_effect_icon_unhovered(card: Card3D) -> void:
-	_on_card_unhovered(card)
-
+func _on_effect_card_unhovered(card: Card3D) -> void:
 	if _effect_overview != null:
 		_effect_overview.hide_overview(card)
 
@@ -385,7 +394,6 @@ func _on_card_hovered(card: Card3D) -> void:
 
 
 func _on_card_unhovered(card: Card3D) -> void:
-	_hide_effect_overview()
 	if _detail_card != null:
 		return
 	if _deck_fan_open:
@@ -697,18 +705,35 @@ func _on_deck_overview_pressed() -> void:
 
 func _open_deck_fan() -> void:
 	_hide_effect_overview()
-	if _detail_card != null:
-		_close_detail_card()
 
-	var deck_ids: Array[String] = DeckManager.get_deck_cards()
-	if deck_ids.is_empty():
-		empty_label.text = "Dein Deck ist leer"
+	if _deck_fan_tween_running:
 		return
 
+	if _detail_card != null:
+		await _close_detail_card()
+
+	var deck_ids: Array[String] = DeckManager.get_deck_cards()
+
 	_deck_fan_open = true
-	_deck_fan_tween_running = true
+	_deck_fan_tween_running = false
+
 	_deck_fan_cards.clear()
 	_deck_fan_base_transforms.clear()
+
+	_set_deck_management_buttons_visible(true)
+
+	if deck_ids.is_empty():
+		empty_label.text = "Dein Deck ist leer"
+		empty_label.visible = true
+		return
+
+	empty_label.text = "Deck: %d / %d" % [
+		deck_ids.size(),
+		DeckManager.MAX_DECK_SIZE
+	]
+	empty_label.visible = true
+
+	_deck_fan_tween_running = true
 
 	var count: int = deck_ids.size()
 
@@ -721,7 +746,12 @@ func _open_deck_fan() -> void:
 
 		var card: Card3D = CARD_SCENE.instantiate() as Card3D
 		add_child(card)
-		var upgraded_data := CardUpgradeManager.apply_upgrades(card_id, data)
+
+		var upgraded_data := CardUpgradeManager.apply_upgrades(
+			card_id,
+			data
+		)
+
 		card.setup(upgraded_data)
 
 		var fan_transform: Dictionary = _calculate_fan_transform(i, count)
@@ -730,7 +760,12 @@ func _open_deck_fan() -> void:
 		var target_rot: Vector3 = fan_transform["rotation"]
 		var target_scale: Vector3 = fan_transform["scale"]
 
-		card.global_position = target_pos + Vector3(0, -deck_fan_rise_height, 0)
+		card.global_position = target_pos + Vector3(
+			0,
+			-deck_fan_rise_height,
+			0
+		)
+
 		card.rotation_degrees = target_rot
 		card.scale = target_scale * 0.01
 
@@ -741,6 +776,7 @@ func _open_deck_fan() -> void:
 
 		var tween: Tween = create_tween().set_parallel(true)
 		tween.set_ease(Tween.EASE_OUT)
+
 		tween.tween_property(
 			card,
 			"global_position",
@@ -757,18 +793,28 @@ func _open_deck_fan() -> void:
 
 		_connect_fan_card_input(card, card_id)
 
-	var last_delay: float = 0.0
+	var last_delay := 0.0
+
 	if count > 0:
 		last_delay = float(count - 1) * deck_fan_stagger
 
-	await get_tree().create_timer(last_delay + deck_fan_duration).timeout
+	await get_tree().create_timer(
+		last_delay + deck_fan_duration
+	).timeout
+
 	_deck_fan_tween_running = false
 
 func _connect_fan_card_input(card: Card3D, card_id: String) -> void:
 	if not card.area:
 		return
 
-	card.area.input_event.connect(_on_fan_card_input.bind(card, card_id))
+	var input_received := _on_fan_card_input.bind(card, card_id)
+	if not card.area.input_event.is_connected(input_received):
+		card.area.input_event.connect(input_received)
+	if not card.card_hovered.is_connected(_on_effect_card_hovered):
+		card.card_hovered.connect(_on_effect_card_hovered)
+	if not card.card_unhovered.is_connected(_on_effect_card_unhovered):
+		card.card_unhovered.connect(_on_effect_card_unhovered)
 
 
 func _on_fan_card_input(
@@ -794,31 +840,64 @@ func _on_fan_card_input(
 
 
 func _remove_card_from_fan(card: Card3D, card_id: String) -> void:
+	if card_id == "":
+		return
+	if _effect_overview != null:
+		_effect_overview.hide_overview(card)
+
 	DeckManager.remove_card(card_id)
 
 	_deck_fan_cards.erase(card)
 	_deck_fan_base_transforms.erase(card)
+
 	_play_fly_sfx()
 
 	if is_instance_valid(card):
 		var tween := create_tween().set_parallel(true)
 		tween.set_ease(Tween.EASE_IN)
-		tween.tween_property(card, "global_position", card.global_position + Vector3(0, -deck_fan_rise_height, 0), 0.22).set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(card, "scale", card.scale * 0.01, 0.22).set_trans(Tween.TRANS_CUBIC)
-		tween.finished.connect(func():
-			if is_instance_valid(card):
-				card.queue_free()
+
+		tween.tween_property(
+			card,
+			"global_position",
+			card.global_position + Vector3(
+				0,
+				-deck_fan_rise_height,
+				0
+			),
+			0.22
+		).set_trans(Tween.TRANS_CUBIC)
+
+		tween.tween_property(
+			card,
+			"scale",
+			card.scale * 0.01,
+			0.22
+		).set_trans(Tween.TRANS_CUBIC)
+
+		tween.finished.connect(
+			func() -> void:
+				if is_instance_valid(card):
+					card.queue_free()
 		)
+
+	_refresh_collection_amount_labels()
 
 	empty_label.text = "Deck: %d / %d" % [
 		DeckManager.battle_deck.size(),
 		DeckManager.MAX_DECK_SIZE
 	]
 
-	_refresh_collection_amount_labels()
+	empty_label.visible = true
+
+	if _deck_button != null and is_instance_valid(_deck_button):
+		_update_deck_button_state()
 
 	if _deck_fan_cards.is_empty():
-		_deck_fan_open = false
+		empty_label.text = "Dein Deck ist leer"
+
+		# Der Fan bleibt logisch geöffnet.
+		_deck_fan_open = true
+		_set_deck_management_buttons_visible(true)
 		return
 
 	_reflow_deck_fan()
@@ -827,29 +906,63 @@ func _close_deck_fan() -> void:
 	if not _deck_fan_open:
 		return
 
+	if _deck_fan_tween_running:
+		return
+	_hide_effect_overview()
+
 	_deck_fan_open = false
 	_deck_fan_tween_running = true
 
-	var cards_to_close := _deck_fan_cards.duplicate()
-	_deck_fan_cards.clear()
+	_set_deck_management_buttons_visible(false)
 
-	for card in cards_to_close:
-		if not is_instance_valid(card):
+	if _dragged_fan_card != null:
+		_dragged_fan_card = null
+		_dragged_fan_card_id = ""
+
+	var cards_to_close: Array[Card3D] = _deck_fan_cards.duplicate()
+
+	_deck_fan_cards.clear()
+	_deck_fan_base_transforms.clear()
+
+	for card: Card3D in cards_to_close:
+		if card == null or not is_instance_valid(card):
 			continue
 
 		var tween := create_tween().set_parallel(true)
 		tween.set_ease(Tween.EASE_IN)
-		tween.tween_property(card, "position", card.position + Vector3(0, -deck_fan_rise_height, 0), 0.22).set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(card, "scale", card.scale * 0.01, 0.22).set_trans(Tween.TRANS_CUBIC)
-		tween.finished.connect(func():
-			if is_instance_valid(card):
-				card.queue_free()
+
+		tween.tween_property(
+			card,
+			"global_position",
+			card.global_position + Vector3(
+				0,
+				-deck_fan_rise_height,
+				0
+			),
+			0.22
+		).set_trans(Tween.TRANS_CUBIC)
+
+		tween.tween_property(
+			card,
+			"scale",
+			card.scale * 0.01,
+			0.22
+		).set_trans(Tween.TRANS_CUBIC)
+
+		tween.finished.connect(
+			func() -> void:
+				if is_instance_valid(card):
+					card.queue_free()
 		)
 
-	_deck_fan_base_transforms.clear()
-
 	await get_tree().create_timer(0.24).timeout
+
 	_deck_fan_tween_running = false
+
+	empty_label.text = "Deck: %d / %d" % [
+		DeckManager.battle_deck.size(),
+		DeckManager.MAX_DECK_SIZE
+	]
 	
 func _mouse_hits_interactive_3d() -> bool:
 	if camera == null:
@@ -1272,3 +1385,301 @@ func _play_card_unique_sfx(card: Card3D) -> void:
 
 	player.play()
 	player.finished.connect(player.queue_free)
+
+func _setup_deck_management_buttons() -> void:
+	if clear_deck_button != null:
+		clear_deck_button.label_text = "CLEAR DECK"
+
+		if not clear_deck_button.pressed.is_connected(_on_clear_deck_pressed):
+			clear_deck_button.pressed.connect(_on_clear_deck_pressed)
+
+	if random_deck_button != null:
+		random_deck_button.label_text = "RANDOM DECK"
+
+		if not random_deck_button.pressed.is_connected(_on_random_deck_pressed):
+			random_deck_button.pressed.connect(_on_random_deck_pressed)
+
+	_set_deck_management_buttons_visible(false)
+
+func _set_deck_management_buttons_visible(value: bool) -> void:
+	if clear_deck_button != null and is_instance_valid(clear_deck_button):
+		clear_deck_button.visible = value
+
+	if random_deck_button != null and is_instance_valid(random_deck_button):
+		random_deck_button.visible = value
+
+func _on_clear_deck_pressed() -> void:
+	get_viewport().set_input_as_handled()
+
+	if not _deck_fan_open:
+		return
+
+	if _deck_fan_tween_running:
+		return
+	_hide_effect_overview()
+
+	_deck_fan_tween_running = true
+
+	if _dragged_fan_card != null:
+		_dragged_fan_card = null
+		_dragged_fan_card_id = ""
+
+	var deck_cards: Array[String] = DeckManager.get_deck_cards()
+
+	for card_id: String in deck_cards:
+		DeckManager.remove_card(card_id)
+
+	var visible_cards: Array[Card3D] = _deck_fan_cards.duplicate()
+
+	_deck_fan_cards.clear()
+	_deck_fan_base_transforms.clear()
+
+	for card: Card3D in visible_cards:
+		if card == null or not is_instance_valid(card):
+			continue
+
+		var tween := create_tween().set_parallel(true)
+		tween.set_ease(Tween.EASE_IN)
+
+		tween.tween_property(
+			card,
+			"global_position",
+			card.global_position + Vector3(
+				0,
+				-deck_fan_rise_height,
+				0
+			),
+			0.22
+		).set_trans(Tween.TRANS_CUBIC)
+
+		tween.tween_property(
+			card,
+			"scale",
+			card.scale * 0.01,
+			0.22
+		).set_trans(Tween.TRANS_CUBIC)
+
+		tween.finished.connect(
+			func() -> void:
+				if is_instance_valid(card):
+					card.queue_free()
+		)
+
+	_play_fly_sfx()
+
+	await get_tree().create_timer(0.24).timeout
+
+	_deck_fan_tween_running = false
+	_deck_fan_open = true
+
+	_set_deck_management_buttons_visible(true)
+	_refresh_collection_amount_labels()
+
+	empty_label.text = "Dein Deck ist leer"
+	empty_label.visible = true
+
+	if _deck_button != null and is_instance_valid(_deck_button):
+		_update_deck_button_state()
+
+func _on_random_deck_pressed() -> void:
+	get_viewport().set_input_as_handled()
+
+	if not _deck_fan_open:
+		return
+
+	if _deck_fan_tween_running:
+		return
+	_hide_effect_overview()
+
+	_deck_fan_tween_running = true
+
+	if _dragged_fan_card != null:
+		_dragged_fan_card = null
+		_dragged_fan_card_id = ""
+
+	# ---------------------------------------------------------
+	# Aktuelles Deck leeren
+	# ---------------------------------------------------------
+	var current_deck: Array[String] = DeckManager.get_deck_cards()
+
+	for card_id: String in current_deck:
+		DeckManager.remove_card(card_id)
+
+	# ---------------------------------------------------------
+	# Aktuell sichtbare Fan-Karten entfernen
+	# ---------------------------------------------------------
+	for card: Card3D in _deck_fan_cards:
+		if card != null and is_instance_valid(card):
+			card.queue_free()
+
+	_deck_fan_cards.clear()
+	_deck_fan_base_transforms.clear()
+
+	# ---------------------------------------------------------
+	# Pool aus allen tatsächlich besessenen Karten erstellen
+	# ---------------------------------------------------------
+	var random_pool: Array[String] = []
+	var owned_cards: Dictionary = CollectionManager.get_owned_cards()
+
+	for card_id_variant: Variant in owned_cards.keys():
+		var card_id := str(card_id_variant)
+		var owned_amount := int(
+			owned_cards.get(card_id_variant, 0)
+		)
+
+		if card_id == "":
+			continue
+
+		if owned_amount <= 0:
+			continue
+
+		var data: Dictionary = CardDatabase.get_card(card_id)
+
+		if data.is_empty():
+			continue
+
+		# Jede besessene Kopie kommt einmal in den Pool.
+		for copy_index: int in range(owned_amount):
+			random_pool.append(card_id)
+
+	random_pool.shuffle()
+
+	# ---------------------------------------------------------
+	# Deck bis zur Maximalgröße füllen
+	# ---------------------------------------------------------
+	for card_id: String in random_pool:
+		if DeckManager.is_full():
+			break
+
+		if not DeckManager.can_add_card(card_id):
+			continue
+
+		DeckManager.add_card(card_id)
+
+	_refresh_collection_amount_labels()
+
+	_deck_fan_tween_running = false
+	_deck_fan_open = true
+
+	_set_deck_management_buttons_visible(true)
+
+	var new_deck: Array[String] = DeckManager.get_deck_cards()
+
+	if new_deck.is_empty():
+		empty_label.text = "Keine Karten für Random Deck verfügbar"
+		empty_label.visible = true
+		return
+
+	empty_label.text = "Deck: %d / %d" % [
+		new_deck.size(),
+		DeckManager.MAX_DECK_SIZE
+	]
+
+	empty_label.visible = true
+
+	if _deck_button != null and is_instance_valid(_deck_button):
+		_update_deck_button_state()
+
+	# Fan mit dem neu erzeugten Deck wieder aufbauen.
+	await _rebuild_open_deck_fan()
+
+func _rebuild_open_deck_fan() -> void:
+	if not _deck_fan_open:
+		return
+
+	if _deck_fan_tween_running:
+		return
+	_hide_effect_overview()
+
+	var deck_ids: Array[String] = DeckManager.get_deck_cards()
+
+	for old_card: Card3D in _deck_fan_cards:
+		if old_card != null and is_instance_valid(old_card):
+			old_card.queue_free()
+
+	_deck_fan_cards.clear()
+	_deck_fan_base_transforms.clear()
+
+	_set_deck_management_buttons_visible(true)
+
+	if deck_ids.is_empty():
+		empty_label.text = "Dein Deck ist leer"
+		empty_label.visible = true
+		return
+
+	_deck_fan_tween_running = true
+
+	var count: int = deck_ids.size()
+
+	for i: int in range(count):
+		var card_id: String = deck_ids[i]
+		var data: Dictionary = CardDatabase.get_card(card_id)
+
+		if data.is_empty():
+			continue
+
+		var card: Card3D = CARD_SCENE.instantiate() as Card3D
+		add_child(card)
+
+		var upgraded_data := CardUpgradeManager.apply_upgrades(
+			card_id,
+			data
+		)
+
+		card.setup(upgraded_data)
+
+		var fan_transform: Dictionary = _calculate_fan_transform(
+			i,
+			count
+		)
+
+		var target_pos: Vector3 = fan_transform["position"]
+		var target_rot: Vector3 = fan_transform["rotation"]
+		var target_scale: Vector3 = fan_transform["scale"]
+
+		card.global_position = target_pos + Vector3(
+			0,
+			-deck_fan_rise_height,
+			0
+		)
+
+		card.rotation_degrees = target_rot
+		card.scale = target_scale * 0.01
+
+		_deck_fan_base_transforms[card] = fan_transform
+		_deck_fan_cards.append(card)
+
+		_connect_fan_card_input(card, card_id)
+
+		var delay: float = float(i) * deck_fan_stagger
+
+		var tween := create_tween().set_parallel(true)
+		tween.set_ease(Tween.EASE_OUT)
+
+		tween.tween_property(
+			card,
+			"global_position",
+			target_pos,
+			deck_fan_duration
+		).set_delay(delay).set_trans(Tween.TRANS_BACK)
+
+		tween.tween_property(
+			card,
+			"scale",
+			target_scale,
+			deck_fan_duration
+		).set_delay(delay).set_trans(Tween.TRANS_BACK)
+
+	var last_delay := 0.0
+
+	if count > 0:
+		last_delay = float(count - 1) * deck_fan_stagger
+
+	await get_tree().create_timer(
+		last_delay + deck_fan_duration
+	).timeout
+
+	_deck_fan_tween_running = false
+	_deck_fan_open = true
+
+	_set_deck_management_buttons_visible(true)

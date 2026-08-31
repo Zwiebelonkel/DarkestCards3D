@@ -1,8 +1,10 @@
 extends Node3D
 class_name PackOpeningScreen
+signal pack_opening_started
 signal pack_ready_for_next_purchase
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
+const EFFECT_OVERVIEW_SCENE := preload("res://scenes/CardEffectOverview.tscn")
 const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
 
 @export var card_count := 5
@@ -118,6 +120,8 @@ var _card_stack: Array[Card3D] = []
 var _revealed_cards: Array[Card3D] = []
 var _revealed_rest_positions: Dictionary = {}
 var _top_revealed_card: Card3D = null
+var _effect_overview_layer: CanvasLayer = null
+var _effect_overview: CardEffectOverviewUI = null
 var _pack_home_position := Vector3.ZERO
 var _pack_home_rotation := Vector3.ZERO
 var _pack_home_scale := Vector3.ONE
@@ -161,10 +165,6 @@ func _ready() -> void:
 
 	_setup_bend_mesh()
 
-	print("PackTopArea gefunden: ", pack_top_area)
-	print("PackTopArea pickable: ", pack_top_area.input_ray_pickable)
-	print("PackTopArea shapes: ", pack_top_area.get_child_count())
-
 	if pack_top_area:
 		pack_top_area.input_ray_pickable = true
 		pack_top_area.monitoring = true
@@ -182,8 +182,8 @@ func _ready() -> void:
 
 	_setup_screen_flash_overlay()
 
-	info_label.text = "PackTop ziehen"
 	_hide_pack_until_bought()
+	info_label.text = "Pack am Automaten auswählen"
 
 
 ## Erzeugt/holt das ShaderMaterial fuer den Bend-Mesh und initialisiert
@@ -292,7 +292,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		var drag_delta: Vector2 = event.position - _drag_start_mouse_pos
 
-		# Maus nach links ziehen = Pack aufreissen
+		# Maus nach rechts ziehen = Pack aufreissen
 		var amount: float = clamp(drag_delta.x / drag_open_distance, 0.0, 1.0)
 		_drag_progress = amount
 
@@ -303,7 +303,7 @@ func _input(event: InputEvent) -> void:
 		elif amount >= rip_snap_threshold:
 			info_label.text = "Fast durch..."
 		else:
-			info_label.text = "Nach links ziehen..."
+			info_label.text = "Nach rechts ziehen..."
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		_dragging_pack_top = false
@@ -330,7 +330,6 @@ func _on_pack_top_input(
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		_dragging_pack_top = true
-		print("Dragging")
 		_drag_start_mouse_pos = event.position
 		_drag_progress = 0.0
 		_rip_has_snapped = false
@@ -338,7 +337,7 @@ func _on_pack_top_input(
 		_pack_start_rotation = pack.rotation_degrees
 		_pack_top_start_position = pack_top.position
 		_pack_top_start_rotation = pack_top.rotation_degrees
-		info_label.text = "Pack nach links aufreissen..."
+		info_label.text = "Pack nach rechts aufreissen..."
 
 
 ## Wandelt den linearen Drag-Fortschritt (0..1) in eine "zaehe, dann
@@ -398,7 +397,7 @@ func _reset_pack_top_drag() -> void:
 		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	_drag_progress = 0.0
-	info_label.text = "Pack nach links aufreissen"
+	info_label.text = "Pack nach rechts aufreissen"
 
 func _open_pack_from_drag() -> void:
 	_opened = true
@@ -553,6 +552,7 @@ func _reveal_top_card(card: Card3D) -> void:
 		_connect_revealed_hover(previous_top_card)
 
 	_top_revealed_card = card
+	_connect_revealed_effect_overview(card)
 
 	_trigger_rarity_effects(rarity_id, rarity_data)
 	_animate_revealed_card(card, final_pos, rarity_data)
@@ -880,22 +880,71 @@ func _connect_revealed_hover(card: Card3D) -> void:
 	if not is_instance_valid(card) or not card.area:
 		return
 
-	if not card.area.mouse_entered.is_connected(_on_revealed_card_hover_start):
-		card.area.mouse_entered.connect(_on_revealed_card_hover_start.bind(card))
+	_connect_revealed_effect_overview(card)
 
-	if not card.area.mouse_exited.is_connected(_on_revealed_card_hover_end):
-		card.area.mouse_exited.connect(_on_revealed_card_hover_end.bind(card))
+	var hover_started := _on_revealed_card_hover_start.bind(card)
+	var hover_ended := _on_revealed_card_hover_end.bind(card)
+	if not card.area.mouse_entered.is_connected(hover_started):
+		card.area.mouse_entered.connect(hover_started)
+
+	if not card.area.mouse_exited.is_connected(hover_ended):
+		card.area.mouse_exited.connect(hover_ended)
 
 
 func _disconnect_revealed_hover(card: Card3D) -> void:
 	if not is_instance_valid(card) or not card.area:
 		return
 
-	if card.area.mouse_entered.is_connected(_on_revealed_card_hover_start):
-		card.area.mouse_entered.disconnect(_on_revealed_card_hover_start)
+	var hover_started := _on_revealed_card_hover_start.bind(card)
+	var hover_ended := _on_revealed_card_hover_end.bind(card)
+	if card.area.mouse_entered.is_connected(hover_started):
+		card.area.mouse_entered.disconnect(hover_started)
 
-	if card.area.mouse_exited.is_connected(_on_revealed_card_hover_end):
-		card.area.mouse_exited.disconnect(_on_revealed_card_hover_end)
+	if card.area.mouse_exited.is_connected(hover_ended):
+		card.area.mouse_exited.disconnect(hover_ended)
+
+	if card.card_hovered.is_connected(_on_revealed_effect_card_hovered):
+		card.card_hovered.disconnect(_on_revealed_effect_card_hovered)
+
+	if card.card_unhovered.is_connected(_on_revealed_effect_card_unhovered):
+		card.card_unhovered.disconnect(_on_revealed_effect_card_unhovered)
+
+
+func _connect_revealed_effect_overview(card: Card3D) -> void:
+	if not is_instance_valid(card):
+		return
+
+	if not card.card_hovered.is_connected(_on_revealed_effect_card_hovered):
+		card.card_hovered.connect(_on_revealed_effect_card_hovered)
+
+	if not card.card_unhovered.is_connected(_on_revealed_effect_card_unhovered):
+		card.card_unhovered.connect(_on_revealed_effect_card_unhovered)
+
+
+func _ensure_effect_overview() -> void:
+	if _effect_overview != null and is_instance_valid(_effect_overview):
+		return
+
+	_effect_overview_layer = CanvasLayer.new()
+	_effect_overview_layer.name = "EffectOverviewLayer"
+	_effect_overview_layer.layer = 40
+	add_child(_effect_overview_layer)
+
+	_effect_overview = EFFECT_OVERVIEW_SCENE.instantiate() as CardEffectOverviewUI
+	_effect_overview_layer.add_child(_effect_overview)
+
+
+func _on_revealed_effect_card_hovered(card: Card3D) -> void:
+	if CardData.get_active_effects(card.card_data).is_empty():
+		return
+	_ensure_effect_overview()
+	if _effect_overview != null:
+		_effect_overview.show_for_card(card)
+
+
+func _on_revealed_effect_card_unhovered(card: Card3D) -> void:
+	if _effect_overview != null:
+		_effect_overview.hide_overview(card)
 
 
 func _on_revealed_card_hover_start(card: Card3D) -> void:
@@ -936,6 +985,9 @@ func _realign_stack_in_pack() -> void:
 
 
 func _clear_old_cards() -> void:
+	if _effect_overview != null:
+		_effect_overview.hide_overview()
+
 	for card in _card_stack:
 		if is_instance_valid(card):
 			card.queue_free()
@@ -974,6 +1026,8 @@ func _collect_revealed_cards() -> void:
 
 	_collecting_cards = true
 	_waiting_for_collect_click = false
+	if _effect_overview != null:
+		_effect_overview.hide_overview()
 	info_label.text = "Karten werden gesammelt..."
 
 	var target_pos := global_position + Vector3(0, 1.2, -0.8)
@@ -1157,8 +1211,9 @@ func buy_pack(pack_id: String, pack_data: Dictionary) -> bool:
 	)
 	card_count = int(pack_data.get("card_count", card_count))
 	_pack_bought = true
+	pack_opening_started.emit()
 
-	info_label.text = str(pack_data.get("name", "Pack")) + " gekauft - PackTop ziehen"
+	info_label.text = str(pack_data.get("name", "Pack")) + " gekauft - Oberteil nach rechts ziehen"
 	var pack_scene := pack_data.get("scene", null) as PackedScene
 	_set_pack_model(pack_scene)
 	_show_bought_pack()

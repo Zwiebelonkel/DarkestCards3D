@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://g6mmig2vuj1q"]
+
+[ext_resource type="PackedScene" uid="uid://dtxnywuxrk4dx" path="res://assets/environments/props/Neon/1/darkest.glb" id="1_x4gib"]
+[ext_resource type="Script" uid="uid://di78aownu2qsv" path="res://scripts/neon.gd" id="2_8dnuj"]
+[ext_resource type="PackedScene" uid="uid://c7d50u5v5f5ot" path="res://assets/environments/props/Neon/1/cards.glb" id="3_lihwe"]
+
+[node name="Neon" type="Node3D"]
+
+[node name="darkest" parent="." node_paths=PackedStringArray("neon_mesh") instance=ExtResource("1_x4gib")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.23186, 0, 0)
+script = ExtResource("2_8dnuj")
+neon_mesh = NodePath("cards")
+
+[node name="cards" parent="darkest" index="0"]
+transform = Transform3D(1.435, 0, 0, 0, 1, 0, 0, 0, 1, 2.22487, 0, -1.25286)
+
+[node name="cards2" parent="." node_paths=PackedStringArray("neon_mesh") instance=ExtResource("3_lihwe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.28814, 0, 0)
+script = ExtResource("2_8dnuj")
+neon_mesh = NodePath("cards")
+
+[node name="cards" parent="cards2" index="0"]
+transform = Transform3D(1.435, 0, 0, 0, 1, 0, 0, 0, 1, -2.32792, 0, 0.250572)
+
+[editable path="darkest"]
+[editable path="cards2"]

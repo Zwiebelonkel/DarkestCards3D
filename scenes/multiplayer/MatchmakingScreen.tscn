@@ -1,3 +1,374 @@
-[gd_scene format=3]
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/multiplayer/Matchmaking.gd" id="1_matchmaking"]
+[ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.025, 0.018, 0.03, 0.985)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.64, 0.055, 0.095, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="SectionStyle"]
+bg_color = Color(0.055, 0.04, 0.06, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.32, 0.12, 0.15, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StatusStyle"]
+bg_color = Color(0.09, 0.025, 0.035, 0.7)
+border_width_left = 3
+border_color = Color(0.72, 0.08, 0.12, 1)
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+
+[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
+bg_color = Color(0.105, 0.07, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.13, 0.17, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+bg_color = Color(0.42, 0.045, 0.075, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.88, 0.16, 0.2, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
+bg_color = Color(0.68, 0.045, 0.075, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.24, 0.28, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="ButtonDisabled"]
+bg_color = Color(0.075, 0.065, 0.07, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18, 0.15, 0.16, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="ButtonFocus"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.3, 0.34, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="LobbyTheme"]
+default_font = ExtResource("2_font")
+default_font_size = 17
+Button/colors/font_color = Color(0.94, 0.9, 0.9, 1)
+Button/colors/font_disabled_color = Color(0.39, 0.35, 0.36, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(1, 1, 1, 1)
+Button/font_sizes/font_size = 16
+Button/styles/disabled = SubResource("ButtonDisabled")
+Button/styles/focus = SubResource("ButtonFocus")
+Button/styles/hover = SubResource("ButtonHover")
+Button/styles/normal = SubResource("ButtonNormal")
+Button/styles/pressed = SubResource("ButtonPressed")
+ItemList/colors/font_color = Color(0.86, 0.82, 0.83, 1)
+ItemList/colors/font_hovered_color = Color(1, 1, 1, 1)
+ItemList/colors/font_selected_color = Color(1, 1, 1, 1)
+ItemList/styles/panel = SubResource("SectionStyle")
 
 [node name="MatchmakingScreen" type="Control"]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme = SubResource("LobbyTheme")
+script = ExtResource("1_matchmaking")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.78)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(940, 620)
+layout_mode = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 26
+
+[node name="MainColumn" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.9, 0.91, 1)
+theme_override_font_sizes/font_size = 34
+text = "STEAM-ONLINE"
+
+[node name="SteamStatusLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.7, 0.71, 1)
+theme_override_font_sizes/font_size = 14
+text = "STEAM: WIRD GEPRÜFT  ·  APP 480"
+vertical_alignment = 1
+
+[node name="StatusPanel" type="PanelContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StatusStyle")
+
+[node name="StatusMargin" type="MarginContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/StatusPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/StatusPanel/StatusMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.78, 0.79, 1)
+theme_override_font_sizes/font_size = 15
+text = "Steam-Verbindung wird geprüft …"
+autowrap_mode = 2
+vertical_alignment = 1
+
+[node name="Content" type="HSplitContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn"]
+custom_minimum_size = Vector2(0, 420)
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 520
+
+[node name="BrowserColumn" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content"]
+custom_minimum_size = Vector2(510, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BrowserHeader" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BrowserTitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn/BrowserHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.86, 0.86, 1)
+theme_override_font_sizes/font_size = 20
+text = "OFFENE LOBBYS"
+
+[node name="LobbyCountLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn/BrowserHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.59, 0.53, 0.54, 1)
+theme_override_font_sizes/font_size = 14
+text = "0 GEFUNDEN"
+vertical_alignment = 1
+
+[node name="LobbyList" type="ItemList" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 270)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_selected_color = Color(1, 0.92, 0.93, 1)
+theme_override_colors/guide_color = Color(0.2, 0.12, 0.14, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_separation = 8
+theme_override_styles/panel = SubResource("SectionStyle")
+allow_reselect = true
+same_column_width = true
+
+[node name="BrowserHint" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.52, 0.47, 0.48, 1)
+theme_override_font_sizes/font_size = 13
+text = "Lobby auswählen und beitreten – oder selbst hosten."
+autowrap_mode = 2
+
+[node name="BrowserActions" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HostButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn/BrowserActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "LOBBY HOSTEN"
+
+[node name="RefreshButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn/BrowserActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "AKTUALISIEREN"
+
+[node name="JoinButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn/BrowserActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "BEITRETEN"
+
+[node name="LobbySection" type="PanelContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content"]
+custom_minimum_size = Vector2(330, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("SectionStyle")
+
+[node name="LobbyMargin" type="MarginContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="LobbyColumn" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin"]
+layout_mode = 2
+theme_override_constants/separation = 11
+
+[node name="CurrentLobbyTitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.88, 0.89, 1)
+theme_override_font_sizes/font_size = 20
+text = "KEINE LOBBY AKTIV"
+horizontal_alignment = 1
+
+[node name="LobbyIdLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.52, 0.47, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+text = "LOBBY-ID: —"
+horizontal_alignment = 1
+
+[node name="Separator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+layout_mode = 2
+
+[node name="MembersHeading" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.62, 0.63, 1)
+theme_override_font_sizes/font_size = 14
+text = "SPIELER"
+
+[node name="MemberListLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 116)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.88, 0.84, 0.85, 1)
+theme_override_font_sizes/font_size = 15
+text = "Noch nicht in einer Lobby."
+autowrap_mode = 2
+
+[node name="ConnectionLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.73, 0.2, 0.24, 1)
+theme_override_font_sizes/font_size = 13
+text = "NICHT VERBUNDEN"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="InviteButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+disabled = true
+text = "FREUNDE EINLADEN"
+
+[node name="StartButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+disabled = true
+text = "MATCH STARTEN"
+
+[node name="BackButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "ZURÜCK"
+
+[node name="FooterHint" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.42, 0.38, 0.39, 1)
+theme_override_font_sizes/font_size = 12
+text = "ESC: ZURÜCK  ·  HOST STARTET, SOBALD EIN GEGENSPIELER VERBUNDEN IST"
+horizontal_alignment = 1

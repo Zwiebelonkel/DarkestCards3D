@@ -1,4 +1,4 @@
-extends Control
+extends Node3D
 class_name MainMenu
 
 const MAIN_SCENE := "res://scenes/main/Main.tscn"
@@ -35,6 +35,10 @@ func _ready() -> void:
 	reset_confirmation.confirmed.connect(_reset_game_data)
 	settings_menu.closed.connect(_on_settings_closed)
 	quit_button.pressed.connect(Callable(get_tree(), "quit"))
+	if not NetworkManager.lobby_state_changed.is_connected(_on_online_lobby_state_changed):
+		NetworkManager.lobby_state_changed.connect(_on_online_lobby_state_changed)
+	if NetworkManager.has_active_session():
+		call_deferred("_change_scene", MAIN_SCENE)
 
 
 func _change_scene(scene_path: String) -> void:
@@ -84,3 +88,10 @@ func _reset_game_data() -> void:
 
 func _on_settings_closed() -> void:
 	settings_button.grab_focus()
+
+
+func _on_online_lobby_state_changed() -> void:
+	# Accepting a Steam invite can happen from the main menu. Move into the hub;
+	# GameTable will detect the active lobby and open its lobby overlay.
+	if NetworkManager.current_lobby_id > 0:
+		_change_scene(MAIN_SCENE)

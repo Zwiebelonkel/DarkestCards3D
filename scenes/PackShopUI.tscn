@@ -1,39 +1,114 @@
-[gd_scene load_steps=7 format=3 uid="uid://cky5vinmmg21m"]
+[gd_scene load_steps=14 format=3 uid="uid://cky5vinmmg21m"]
 
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="1_font"]
 [ext_resource type="Script" uid="uid://rgga6om1s71w" path="res://scripts/ui/PackShopUI.gd" id="2_script"]
+[ext_resource type="PackedScene" uid="uid://dvbrhqaah3n5i" path="res://scenes/crt.tscn" id="3_crt"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.0468619, 0.0468595, 0.0540001, 0.96)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_root"]
+bg_color = Color(0.0431373, 0.0392157, 0.054902, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.58, 0.24, 0.24, 0.85)
+border_color = Color(0.431373, 0.160784, 0.188235, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.0784314, 0.0666667, 0.0941176, 1)
+border_width_bottom = 1
+border_color = Color(0.431373, 0.160784, 0.188235, 0.72)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chip"]
+bg_color = Color(0.113725, 0.0901961, 0.121569, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.431373, 0.160784, 0.188235, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info"]
+bg_color = Color(0.0784314, 0.0666667, 0.0941176, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25098, 0.188235, 0.207843, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_disabled"]
+bg_color = Color(0.101961, 0.0901961, 0.109804, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25098, 0.211765, 0.223529, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
-bg_color = Color(0.45, 0.2, 0.2, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.92, 0.4, 0.4, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
-bg_color = Color(0.56, 0.22, 0.22, 1)
+bg_color = Color(0.552941, 0.211765, 0.25098, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 0.55, 0.55, 1)
+border_color = Color(0.898039, 0.427451, 0.466667, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.431373, 0.160784, 0.188235, 0.35)
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+bg_color = Color(0.321569, 0.113725, 0.141176, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.952941, 0.905882, 0.894118, 0.85)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
-bg_color = Color(0.34, 0.18, 0.18, 0.96)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.7, 0.28, 0.28, 0.95)
+bg_color = Color(0.431373, 0.160784, 0.188235, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.658824, 0.270588, 0.309804, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_status"]
+bg_color = Color(0.113725, 0.0901961, 0.121569, 1)
+border_width_left = 3
+border_color = Color(0.431373, 0.160784, 0.188235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="PackShopUI" type="Control"]
 layout_mode = 3
@@ -52,7 +127,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.1, 0.08, 0.08, 0.34)
+color = Color(0.0431373, 0.0392157, 0.054902, 1)
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -61,70 +136,219 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_root")
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
-layout_mode = 0
+[node name="OuterMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 9.0
-offset_right = -10.0
-offset_bottom = -9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="MainVBox" type="VBoxContainer" parent="OuterMargin"]
 layout_mode = 2
-theme_override_constants/separation = 7
+theme_override_constants/separation = 12
 
-[node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="HeaderPanel" type="PanelContainer" parent="OuterMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 68)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.78, 0.78, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="HeaderMargin" type="MarginContainer" parent="OuterMargin/MainVBox/HeaderPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="HeaderRow" type="HBoxContainer" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleBlock" type="VBoxContainer" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+
+[node name="TitleLabel" type="Label" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/TitleBlock"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 58
-text = "PACK DISPENSER"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 30
+text = "PACK-AUTOMAT"
 
-[node name="BalanceLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 32)
+[node name="SubtitleLabel" type="Label" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/TitleBlock"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.85, 1)
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 34
-text = "SOUL COINS: 0"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+text = "AUSWÄHLEN  //  KAUFEN  //  AUFREISSEN"
 
-[node name="PreviewRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="HeaderSpacer" type="Control" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow"]
 layout_mode = 2
-theme_override_constants/separation = 90
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="BalanceChip" type="PanelContainer" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow"]
+custom_minimum_size = Vector2(220, 50)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="BalanceMargin" type="MarginContainer" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/BalanceChip"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 5
+
+[node name="BalanceRow" type="HBoxContainer" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/BalanceChip/BalanceMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CoinGlyph" type="Label" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/BalanceChip/BalanceMargin/BalanceRow"]
+custom_minimum_size = Vector2(28, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.835294, 0.682353, 0.262745, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 24
+text = "◆"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BalanceText" type="VBoxContainer" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/BalanceChip/BalanceMargin/BalanceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -2
+
+[node name="BalanceCaption" type="Label" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/BalanceChip/BalanceMargin/BalanceRow/BalanceText"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 11
+text = "SOUL COINS"
+
+[node name="BalanceLabel" type="Label" parent="OuterMargin/MainVBox/HeaderPanel/HeaderMargin/HeaderRow/BalanceChip/BalanceMargin/BalanceRow/BalanceText"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 23
+text = "0"
+
+[node name="PreviewRow" type="HBoxContainer" parent="OuterMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 330)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
 alignment = 1
 
-[node name="InfoLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 230)
+[node name="InfoPanel" type="PanelContainer" parent="OuterMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.8, 0.8, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_info")
+
+[node name="InfoMargin" type="MarginContainer" parent="OuterMargin/MainVBox/InfoPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="InfoRow" type="HBoxContainer" parent="OuterMargin/MainVBox/InfoPanel/InfoMargin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="InfoText" type="VBoxContainer" parent="OuterMargin/MainVBox/InfoPanel/InfoMargin/InfoRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="InfoTitleLabel" type="Label" parent="OuterMargin/MainVBox/InfoPanel/InfoMargin/InfoRow/InfoText"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 46
-text = "SELECT PACK"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 21
+text = "PACK AUSWÄHLEN"
+
+[node name="InfoDescriptionLabel" type="Label" parent="OuterMargin/MainVBox/InfoPanel/InfoMargin/InfoRow/InfoText"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.658824, 0.556863, 0.568627, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 15
+text = "Wähle eines der verfügbaren Packs aus."
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="BuyButton" type="Button" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="InfoMetaLabel" type="Label" parent="OuterMargin/MainVBox/InfoPanel/InfoMargin/InfoRow/InfoText"]
 visible = false
-custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
-focus_mode = 0
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 0.85)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 76
+theme_override_font_sizes/font_size = 13
+text = "— KARTEN  //  — SOUL COINS"
+
+[node name="BuyButton" type="Button" parent="OuterMargin/MainVBox/InfoPanel/InfoMargin/InfoRow"]
+custom_minimum_size = Vector2(275, 64)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_disabled_color = Color(0.658824, 0.556863, 0.568627, 0.65)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_pressed_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_button_disabled")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
-text = "BUY PACK"
+text = "PACK KAUFEN"
 
-[node name="MessageLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
-visible = false
+[node name="StatusPanel" type="PanelContainer" parent="OuterMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.68, 0.68, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_status")
+
+[node name="StatusMargin" type="MarginContainer" parent="OuterMargin/MainVBox/StatusPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 6
+
+[node name="StatusRow" type="HBoxContainer" parent="OuterMargin/MainVBox/StatusPanel/StatusMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="StatusGlyph" type="Label" parent="OuterMargin/MainVBox/StatusPanel/StatusMargin/StatusRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.898039, 0.427451, 0.466667, 1)
 theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 72
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 15
+text = ">"
+vertical_alignment = 1
+
+[node name="MessageLabel" type="Label" parent="OuterMargin/MainVBox/StatusPanel/StatusMargin/StatusRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 14
+text = "WÄHLE EIN PACK AUS"
+vertical_alignment = 1
+clip_text = true
+
+[node name="CRTPostFXLayer" parent="." instance=ExtResource("3_crt")]
+script = null
+
+[editable path="CRTPostFXLayer"]

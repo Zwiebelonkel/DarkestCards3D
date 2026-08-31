@@ -2,6 +2,11 @@ extends Node3D
 class_name GameTable
 
 const HAND_SIZE: int = 5
+const SATAN_LAUGH_TEXTURE := preload("res://assets/characters/satanLaught.png")
+const SATAN_IDLE_FRAMES := 25
+const SATAN_LAUGH_FRAMES := 2
+const SATAN_IDLE_FPS := 15.0
+const SATAN_LAUGH_FPS := 20.0
 
 # Wie viele sichtbare Ruecken-Karten der Stapel maximal gleichzeitig
 # zeigt. Bei sehr grossen Decks wuerde 1:1-Stapeln unnoetig viele
@@ -26,6 +31,7 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @onready var kill_sfx: AudioStreamPlayer = $Audio/KillSFX
 @onready var flash_sprite: Sprite3D = $dealer/flash
 @onready var death_shot_sfx: AudioStreamPlayer = $Audio/DeathShotSFX
+@onready var dealer_satan: Sprite3D = $dealer/satan
 
 @onready var dealer_gun: Sprite3D = $dealer/gun
 @onready var pistol_start_marker: Marker3D = $dealer/PistolStart
@@ -83,6 +89,7 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 enum TableState {
 	MENU,
 	DIFFICULTY_SELECT,
+	ONLINE_LOBBY,
 	PLAYING,
 	GAME_OVER
 }
@@ -94,6 +101,7 @@ var _selected_difficulty := "normal"
 @onready var mode_buttons: Node3D = $MenuRoot/ModeButtons
 @onready var difficulty_buttons: Node3D = $MenuRoot/DifficultyButtons
 @onready var end_buttons: Node3D = $MenuRoot/EndButtons
+@onready var matchmaking_screen: Control = $OnlineCanvas/MatchmakingScreen
 
 var _camera_base_transform: Transform3D
 var _inspected_card: Card3D = null
@@ -132,10 +140,25 @@ var _last_match_was_loss := false
 var _loss_exit_running := false
 var _black_layer: CanvasLayer = null
 var _black_rect: ColorRect = null
+var _satan_idle_texture: Texture2D = null
+
+# Online matches are host-authoritative. "player"/"enemy" remain the local
+# visual sides on every machine; snapshots are mirrored for the client.
+var _online_mode := false
+var _online_is_host := false
+var _online_action_in_progress := false
+var _online_reward_granted := false
+var _online_disconnect_reason := ""
+var _online_turn_sequence := 0
+# The host stores selection in canonical board coordinates. On the client,
+# canonical "enemy" maps to the local player side and vice versa.
+var _online_selected_side := ""
+var _online_selected_slot := -1
 
 
 func _ready() -> void:
 	_rng.randomize()
+	_satan_idle_texture = dealer_satan.texture if dealer_satan != null else null
 
 	if table_camera == null:
 		table_camera = $Camera3D
@@ -143,10 +166,19 @@ func _ready() -> void:
 	_camera_base_transform = table_camera.global_transform
 	_collect_slot_markers()
 	_connect_menu_buttons()
+	_connect_online_signals()
 	_ensure_effect_overview()
 
 	_reset_dealer_gun()
 	_show_main_menu()
+
+	# A Steam invite can be accepted while this scene is loading. In that case
+	# immediately expose the already joined lobby instead of returning to KI.
+	if NetworkManager.has_active_session():
+		if NetworkManager.is_match_in_progress():
+			_on_online_match_started.call_deferred()
+		else:
+			_show_multiplayer_menu()
 
 
 func _collect_slot_markers() -> void:
@@ -411,12 +443,13 @@ func _connect_card_input(card: Card3D, side: String, slot_index: int) -> void:
 	if card.area == null:
 		return
 
-	if not card.area.input_event.is_connected(_on_card_clicked):
-		card.area.input_event.connect(_on_card_clicked.bind(side, slot_index))
-	if not card.effect_icon_hovered.is_connected(_on_effect_icon_hovered):
-		card.effect_icon_hovered.connect(_on_effect_icon_hovered)
-	if not card.effect_icon_unhovered.is_connected(_on_effect_icon_unhovered):
-		card.effect_icon_unhovered.connect(_on_effect_icon_unhovered)
+	var card_clicked := _on_card_clicked.bind(side, slot_index)
+	if not card.area.input_event.is_connected(card_clicked):
+		card.area.input_event.connect(card_clicked)
+	if not card.card_hovered.is_connected(_on_effect_card_hovered):
+		card.card_hovered.connect(_on_effect_card_hovered)
+	if not card.card_unhovered.is_connected(_on_effect_card_unhovered):
+		card.card_unhovered.connect(_on_effect_card_unhovered)
 
 
 func _ensure_effect_overview() -> void:
@@ -432,13 +465,15 @@ func _ensure_effect_overview() -> void:
 	_effect_overview_layer.add_child(_effect_overview)
 
 
-func _on_effect_icon_hovered(card: Card3D) -> void:
+func _on_effect_card_hovered(card: Card3D) -> void:
+	if CardData.get_active_effects(card.card_data).is_empty():
+		return
 	_ensure_effect_overview()
 	if _effect_overview != null:
 		_effect_overview.show_for_card(card)
 
 
-func _on_effect_icon_unhovered(card: Card3D) -> void:
+func _on_effect_card_unhovered(card: Card3D) -> void:
 	if _effect_overview != null:
 		_effect_overview.hide_overview(card)
 
@@ -469,6 +504,8 @@ func _on_card_clicked(
 
 	if _game_over:
 		return
+	if _online_action_in_progress:
+		return
 
 	if mouse_event.button_index != MOUSE_BUTTON_LEFT:
 		return
@@ -484,6 +521,32 @@ func _on_card_clicked(
 func _select_player_card(slot_index: int) -> void:
 	var card: Card3D = _player_slots[slot_index]
 	if card == null or not is_instance_valid(card):
+		return
+
+	if _online_mode:
+		var should_select := _selected_player_card != card
+		var canonical_side := "player" if _online_is_host else "enemy"
+		var canonical_slot := slot_index if should_select else -1
+
+		if _online_is_host:
+			_set_authoritative_online_selection(
+				canonical_side if should_select else "",
+				canonical_slot
+			)
+		else:
+			# Apply immediately for responsive input. The host validates the request
+			# and echoes the authoritative value back to both views.
+			_apply_online_selection_visual(
+				canonical_side if should_select else "",
+				canonical_slot
+			)
+			_rpc_request_card_selection.rpc_id(1, canonical_slot, _online_turn_sequence)
+
+		if should_select:
+			_play_sfx(select_sfx)
+			status_label.text = "Wähle nun die gegnerische Karte zum Angriff"
+		else:
+			status_label.text = "Du bist am Zug — wähle deine Karte"
 		return
 
 	if _selected_player_card == card:
@@ -515,6 +578,21 @@ func _try_attack_enemy(slot_index: int) -> void:
 	_selected_player_card = null
 	attacker.clear_selected_immediate()
 
+	if _online_mode:
+		var attacker_info := _find_slot_of(attacker)
+		var attacker_slot := int(attacker_info.get("index", -1))
+		if attacker_slot < 0:
+			return
+
+		_online_action_in_progress = true
+		if _online_is_host:
+			_set_authoritative_online_selection("", -1)
+			await _resolve_duel(attacker, enemy_card, "player")
+		else:
+			status_label.text = "Aktion wird an den Host gesendet..."
+			_rpc_request_attack.rpc_id(1, attacker_slot, slot_index, _online_turn_sequence)
+		return
+
 	await _resolve_duel(attacker, enemy_card, "player")
 
 
@@ -538,6 +616,9 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		await get_tree().create_timer(0.5).timeout
 		_end_turn_to("enemy" if attacker_side == "player" else "player")
 		return
+
+	if _online_mode and _online_is_host:
+		_broadcast_online_attack(attacker, defender)
 
 	var attacker_name := str(attacker.card_data.get("name", "?"))
 	var defender_name := str(defender.card_data.get("name", "?"))
@@ -794,10 +875,21 @@ func _on_card_died(_card: Card3D, _side: String, _slot_index: int) -> void:
 # --- Zugwechsel & Gegner-KI --------------------------------------------------
 
 func _end_turn_to(next_turn: String) -> void:
+	if _online_mode and _online_is_host:
+		_set_authoritative_online_selection("", -1)
 	_current_turn = next_turn
 	
 	await _apply_start_turn_effects(next_turn)
 	if _check_game_over():
+		return
+
+	if _online_mode:
+		if _online_is_host:
+			_online_turn_sequence += 1
+		_online_action_in_progress = false
+		_update_status_for_current_turn()
+		if _online_is_host:
+			_sync_online_state()
 		return
 
 	if next_turn == "enemy":
@@ -852,6 +944,9 @@ func _pick_random_living_card(slots: Array[Card3D]) -> Card3D:
 # Karten im Deck hat. Gibt true zurueck, wenn das Spiel dadurch beendet
 # wurde (damit der Aufrufer keine weitere Zug-Logik mehr ausfuehrt).
 func _check_game_over() -> bool:
+	if _game_over:
+		return true
+
 	var player_has_cards: bool = _has_any_card(_player_slots) or not _player_deck.is_empty()
 	var enemy_has_cards: bool = _has_any_card(_enemy_slots) or not _enemy_deck.is_empty()
 
@@ -876,6 +971,8 @@ func _check_game_over() -> bool:
 		reward = 10
 		_last_match_was_loss = false
 
+	_set_satan_laughing(_last_match_was_loss)
+
 	GameCurrency.add_coins(reward)
 	var upgrade_ui := get_tree().get_first_node_in_group("upgrade_ui") as UpgradeUI
 	if upgrade_ui != null:
@@ -884,6 +981,10 @@ func _check_game_over() -> bool:
 	end_buttons.visible = true
 	mode_buttons.visible = false
 	difficulty_buttons.visible = false
+	_online_action_in_progress = false
+
+	if _online_mode and _online_is_host:
+		_sync_online_state()
 
 	return true
 
@@ -960,7 +1061,8 @@ func _connect_menu_buttons() -> void:
 	var multiplayer_button: Table3DButton = mode_buttons.get_node("MultiplayerButton")
 
 	ki_button.pressed.connect(_show_difficulty_menu)
-	multiplayer_button.set_disabled(true)
+	multiplayer_button.set_disabled(false)
+	multiplayer_button.pressed.connect(_show_multiplayer_menu)
 
 	difficulty_buttons.get_node("EasyButton").pressed.connect(_on_difficulty_selected.bind("easy"))
 	difficulty_buttons.get_node("NormalButton").pressed.connect(_on_difficulty_selected.bind("normal"))
@@ -970,8 +1072,486 @@ func _connect_menu_buttons() -> void:
 	end_buttons.get_node("ExitButton").pressed.connect(_on_exit_button_pressed)
 
 
+func _connect_online_signals() -> void:
+	if matchmaking_screen.has_signal("closed"):
+		matchmaking_screen.connect("closed", _on_matchmaking_closed)
+
+	if not NetworkManager.match_started.is_connected(_on_online_match_started):
+		NetworkManager.match_started.connect(_on_online_match_started)
+	if not NetworkManager.session_closed.is_connected(_on_online_session_closed):
+		NetworkManager.session_closed.connect(_on_online_session_closed)
+	if not NetworkManager.lobby_state_changed.is_connected(_on_online_lobby_state_changed):
+		NetworkManager.lobby_state_changed.connect(_on_online_lobby_state_changed)
+
+
+func _show_multiplayer_menu() -> void:
+	if _online_mode:
+		return
+
+	_table_state = TableState.ONLINE_LOBBY
+	mode_buttons.visible = false
+	difficulty_buttons.visible = false
+	end_buttons.visible = false
+	status_label.text = "Steam-Lobby"
+
+	if matchmaking_screen.has_method("open"):
+		matchmaking_screen.call("open")
+	else:
+		matchmaking_screen.visible = true
+
+
+func _on_matchmaking_closed() -> void:
+	if _online_mode:
+		return
+	_show_main_menu()
+
+
+func _on_online_lobby_state_changed() -> void:
+	if _online_mode or NetworkManager.current_lobby_id <= 0:
+		return
+	if _table_state == TableState.MENU:
+		_show_multiplayer_menu()
+
+
+func _on_online_match_started() -> void:
+	if _online_mode:
+		return
+	_online_mode = true
+	_online_is_host = NetworkManager.is_host
+	_online_action_in_progress = false
+	_online_reward_granted = false
+	_online_disconnect_reason = ""
+	_online_turn_sequence = 0
+	_online_selected_side = ""
+	_online_selected_slot = -1
+
+	if matchmaking_screen.has_method("close_without_leaving"):
+		matchmaking_screen.call("close_without_leaving")
+	else:
+		matchmaking_screen.visible = false
+
+	_start_online_match()
+
+
+func _start_online_match() -> void:
+	_table_state = TableState.PLAYING
+	_clear_match()
+	_move_camera_to_match_view()
+	_game_over = false
+	_current_turn = "player"
+	_online_turn_sequence = 1
+	_selected_player_card = null
+	_online_selected_side = ""
+	_online_selected_slot = -1
+
+	mode_buttons.visible = false
+	difficulty_buttons.visible = false
+	end_buttons.visible = false
+
+	if not _online_is_host:
+		status_label.text = "Host bereitet das Match vor..."
+		_rpc_request_online_state.rpc_id(1)
+		return
+
+	var player_pool := _deck_from_player_payload(NetworkManager.local_player_data)
+	var enemy_pool := _deck_from_player_payload(NetworkManager.remote_player_data)
+	if player_pool.is_empty() or enemy_pool.is_empty():
+		status_label.text = "Online-Match konnte nicht gestartet werden: Deck fehlt."
+		_game_over = true
+		_table_state = TableState.GAME_OVER
+		end_buttons.visible = true
+		return
+
+	player_pool.shuffle()
+	enemy_pool.shuffle()
+	_player_deck = _limit_deck_size(player_pool, deck_size)
+	_enemy_deck = _limit_deck_size(enemy_pool, deck_size)
+
+	for i: int in range(HAND_SIZE):
+		_draw_to_slot("player", i, false)
+		_draw_to_slot("enemy", i, false)
+
+	_rebuild_stack_visual("player")
+	_rebuild_stack_visual("enemy")
+	_update_status_for_current_turn()
+	_sync_online_state()
+
+
+func _deck_from_player_payload(payload: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var raw_deck: Variant = payload.get("deck", [])
+	if not (raw_deck is Array):
+		return result
+
+	for entry: Variant in raw_deck:
+		if entry is Dictionary:
+			result.append((entry as Dictionary).duplicate(true))
+	return result
+
+
+func _on_online_session_closed(reason: String) -> void:
+	if not _online_mode or _table_state != TableState.PLAYING:
+		return
+
+	_online_disconnect_reason = reason
+	_online_action_in_progress = false
+	_online_selected_side = ""
+	_online_selected_slot = -1
+	_clear_online_selection_visuals()
+	_game_over = true
+	_table_state = TableState.GAME_OVER
+	status_label.text = reason if reason != "" else "Online-Verbindung wurde beendet."
+	mode_buttons.visible = false
+	difficulty_buttons.visible = false
+	end_buttons.visible = true
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_request_attack(attacker_slot: int, target_slot: int, turn_sequence: int) -> void:
+	if not _online_mode or not _online_is_host or _game_over:
+		return
+	var sender_id := multiplayer.get_remote_sender_id()
+	if not NetworkManager.is_connected_game_peer(sender_id):
+		return
+	if _online_action_in_progress or _current_turn != "enemy" or turn_sequence != _online_turn_sequence:
+		_sync_online_state()
+		return
+	if attacker_slot < 0 or attacker_slot >= HAND_SIZE or target_slot < 0 or target_slot >= HAND_SIZE:
+		_sync_online_state()
+		return
+
+	var attacker: Card3D = _enemy_slots[attacker_slot]
+	var defender: Card3D = _player_slots[target_slot]
+	if attacker == null or defender == null or not is_instance_valid(attacker) or not is_instance_valid(defender):
+		_sync_online_state()
+		return
+
+	_set_authoritative_online_selection("", -1)
+	_online_action_in_progress = true
+	await _resolve_duel(attacker, defender, "enemy")
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_request_card_selection(slot_index: int, turn_sequence: int) -> void:
+	if not _online_mode or not _online_is_host or _game_over:
+		return
+
+	var sender_id := multiplayer.get_remote_sender_id()
+	if not NetworkManager.is_connected_game_peer(sender_id):
+		return
+
+	# A client can only select its own canonical "enemy" card during its
+	# current turn. It never supplies a side, so it cannot highlight host cards.
+	if (
+		_online_action_in_progress
+		or _current_turn != "enemy"
+		or turn_sequence != _online_turn_sequence
+		or slot_index < -1
+		or slot_index >= HAND_SIZE
+	):
+		_rpc_apply_online_state.rpc_id(sender_id, _build_online_snapshot())
+		return
+
+	if slot_index == -1:
+		_set_authoritative_online_selection("", -1)
+		return
+
+	var card := _enemy_slots[slot_index]
+	if card == null or not is_instance_valid(card) or card.is_dead():
+		_rpc_apply_online_state.rpc_id(sender_id, _build_online_snapshot())
+		return
+
+	_set_authoritative_online_selection("enemy", slot_index)
+
+
+func _set_authoritative_online_selection(canonical_side: String, slot_index: int) -> void:
+	if not _online_mode or not _online_is_host:
+		return
+
+	if canonical_side == "" or slot_index < 0:
+		canonical_side = ""
+		slot_index = -1
+	elif (
+		canonical_side not in ["player", "enemy"]
+		or canonical_side != _current_turn
+		or slot_index >= HAND_SIZE
+	):
+		return
+	else:
+		var card := _get_card_from_slot(canonical_side, slot_index)
+		if card == null or not is_instance_valid(card) or card.is_dead():
+			return
+
+	_online_selected_side = canonical_side
+	_online_selected_slot = slot_index
+	_apply_online_selection_visual(canonical_side, slot_index)
+
+	if NetworkManager.has_connected_opponent():
+		_rpc_apply_online_selection.rpc(
+			canonical_side,
+			slot_index,
+			_online_turn_sequence
+		)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_apply_online_selection(
+	canonical_side: String,
+	slot_index: int,
+	turn_sequence: int
+) -> void:
+	if not _online_mode or _online_is_host or _game_over:
+		return
+	if turn_sequence != _online_turn_sequence:
+		_rpc_request_online_state.rpc_id(1)
+		return
+	if canonical_side == "":
+		if slot_index != -1:
+			_rpc_request_online_state.rpc_id(1)
+			return
+	elif canonical_side not in ["player", "enemy"] or slot_index < 0 or slot_index >= HAND_SIZE:
+		_rpc_request_online_state.rpc_id(1)
+		return
+
+	_online_selected_side = canonical_side
+	_online_selected_slot = slot_index
+	_apply_online_selection_visual(canonical_side, slot_index)
+
+
+func _apply_online_selection_visual(canonical_side: String, slot_index: int) -> void:
+	_clear_online_selection_visuals()
+	if canonical_side == "" or slot_index < 0 or slot_index >= HAND_SIZE:
+		return
+
+	var local_side := _canonical_side_to_local(canonical_side)
+	var card := _get_card_from_slot(local_side, slot_index)
+	if card == null or not is_instance_valid(card):
+		return
+
+	card.set_selected(true)
+	if local_side == "player":
+		_selected_player_card = card
+
+
+func _clear_online_selection_visuals() -> void:
+	for card: Card3D in _player_slots + _enemy_slots:
+		if card != null and is_instance_valid(card):
+			card.clear_selected_immediate()
+	_selected_player_card = null
+
+
+func _broadcast_online_attack(attacker: Card3D, defender: Card3D) -> void:
+	if not NetworkManager.has_connected_opponent():
+		return
+
+	var attacker_info := _find_slot_of(attacker)
+	var defender_info := _find_slot_of(defender)
+	var attacker_side := str(attacker_info.get("side", ""))
+	var defender_side := str(defender_info.get("side", ""))
+	var attacker_slot := int(attacker_info.get("index", -1))
+	var defender_slot := int(defender_info.get("index", -1))
+	if attacker_side == "" or defender_side == "" or attacker_slot < 0 or defender_slot < 0:
+		return
+
+	_rpc_play_online_attack.rpc(attacker_side, attacker_slot, defender_side, defender_slot)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_play_online_attack(
+	canonical_attacker_side: String,
+	attacker_slot: int,
+	canonical_defender_side: String,
+	defender_slot: int
+) -> void:
+	if not _online_mode or _online_is_host or _game_over:
+		return
+
+	var local_attacker_side := _canonical_side_to_local(canonical_attacker_side)
+	var local_defender_side := _canonical_side_to_local(canonical_defender_side)
+	var attacker := _get_card_from_slot(local_attacker_side, attacker_slot)
+	var defender := _get_card_from_slot(local_defender_side, defender_slot)
+	if attacker == null or defender == null or not is_instance_valid(attacker) or not is_instance_valid(defender):
+		return
+
+	attacker.clear_selected_immediate()
+	attacker.play_attack_animation(defender.global_position)
+	status_label.text = "%s greift %s an..." % [
+		str(attacker.card_data.get("name", "?")),
+		str(defender.card_data.get("name", "?")),
+	]
+
+
+func _canonical_side_to_local(canonical_side: String) -> String:
+	if _online_is_host:
+		return canonical_side
+	return "enemy" if canonical_side == "player" else "player"
+
+
+func _sync_online_state() -> void:
+	if not _online_mode or not _online_is_host or not NetworkManager.has_connected_opponent():
+		return
+	_rpc_apply_online_state.rpc(_build_online_snapshot())
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_request_online_state() -> void:
+	if not _online_mode or not _online_is_host or not NetworkManager.has_connected_opponent():
+		return
+	var sender_id := multiplayer.get_remote_sender_id()
+	if sender_id <= 1:
+		return
+	_rpc_apply_online_state.rpc_id(sender_id, _build_online_snapshot())
+
+
+func _build_online_snapshot() -> Dictionary:
+	return {
+		"current_turn": _current_turn,
+		"turn_sequence": _online_turn_sequence,
+		"selected_side": _online_selected_side,
+		"selected_slot": _online_selected_slot,
+		"game_over": _game_over,
+		"winner": _get_canonical_winner(),
+		# Hidden draw order/card data stays on the authority. Clients only need
+		# counts to render the two face-down piles.
+		"player_deck_count": _player_deck.size(),
+		"enemy_deck_count": _enemy_deck.size(),
+		"player_slots": _serialize_online_slots(_player_slots),
+		"enemy_slots": _serialize_online_slots(_enemy_slots),
+	}
+
+
+func _serialize_online_slots(slots: Array[Card3D]) -> Array:
+	var result: Array = []
+	for card: Card3D in slots:
+		if card == null or not is_instance_valid(card):
+			result.append(null)
+		else:
+			result.append(card.get_network_state())
+	return result
+
+
+func _get_canonical_winner() -> String:
+	if not _game_over:
+		return ""
+	var player_has_cards := _has_any_card(_player_slots) or not _player_deck.is_empty()
+	var enemy_has_cards := _has_any_card(_enemy_slots) or not _enemy_deck.is_empty()
+	if player_has_cards == enemy_has_cards:
+		return "draw"
+	return "player" if player_has_cards else "enemy"
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_apply_online_state(state: Dictionary) -> void:
+	if _online_is_host:
+		return
+
+	if not _online_mode:
+		_online_mode = true
+		_online_is_host = false
+		_online_reward_granted = false
+		if matchmaking_screen.has_method("close_without_leaving"):
+			matchmaking_screen.call("close_without_leaving")
+		else:
+			matchmaking_screen.visible = false
+		_move_camera_to_match_view()
+
+	_table_state = TableState.PLAYING
+	_clear_match()
+
+	# The host's canonical "enemy" side belongs to the client. Mirror both
+	# decks and slot arrays so each player always interacts with the near side.
+	_player_deck = _network_placeholder_deck(int(state.get("enemy_deck_count", 0)))
+	_enemy_deck = _network_placeholder_deck(int(state.get("player_deck_count", 0)))
+	_restore_online_slots("player", state.get("enemy_slots", []))
+	_restore_online_slots("enemy", state.get("player_slots", []))
+	_rebuild_stack_visual("player")
+	_rebuild_stack_visual("enemy")
+
+	var canonical_turn := str(state.get("current_turn", "player"))
+	_current_turn = _canonical_side_to_local(canonical_turn)
+	_online_turn_sequence = int(state.get("turn_sequence", _online_turn_sequence))
+	_online_selected_side = str(state.get("selected_side", ""))
+	_online_selected_slot = int(state.get("selected_slot", -1))
+	_game_over = bool(state.get("game_over", false))
+	_online_action_in_progress = false
+	if _online_selected_side != canonical_turn:
+		_online_selected_side = ""
+		_online_selected_slot = -1
+	_apply_online_selection_visual(_online_selected_side, _online_selected_slot)
+
+	mode_buttons.visible = false
+	difficulty_buttons.visible = false
+	end_buttons.visible = _game_over
+
+	if _game_over:
+		_table_state = TableState.GAME_OVER
+		_apply_online_result(str(state.get("winner", "draw")))
+	else:
+		_update_status_for_current_turn()
+
+
+func _network_placeholder_deck(card_count: int) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for _index in range(clampi(card_count, 0, deck_size)):
+		result.append({})
+	return result
+
+
+func _restore_online_slots(side: String, value: Variant) -> void:
+	if not (value is Array):
+		return
+	var states := value as Array
+	for slot_index in range(mini(states.size(), HAND_SIZE)):
+		var state: Variant = states[slot_index]
+		if state is Dictionary and not (state as Dictionary).is_empty():
+			_spawn_card_from_network_state(side, slot_index, state as Dictionary)
+
+
+func _spawn_card_from_network_state(side: String, slot_index: int, state: Dictionary) -> void:
+	var card := card_scene.instantiate() as Card3D
+	add_child(card)
+	card.apply_network_state(state)
+	card.global_position = _get_slot_marker(side, slot_index).global_position
+	card.rotation_degrees = Vector3(-90, 0, 0) if side == "player" else Vector3(-90, 180, 180)
+	card.died.connect(_on_card_died.bind(side, slot_index))
+	_connect_card_input(card, side, slot_index)
+
+	if side == "player":
+		_player_slots[slot_index] = card
+	else:
+		_enemy_slots[slot_index] = card
+
+
+func _apply_online_result(canonical_winner: String) -> void:
+	var reward := 0
+	match canonical_winner:
+		"enemy":
+			status_label.text = "Sieg! Du erhältst 10 Soul Coins."
+			reward = 10
+			_last_match_was_loss = false
+		"player":
+			status_label.text = "Niederlage — du erhältst 2 Soul Coins."
+			reward = 2
+			_last_match_was_loss = true
+		_:
+			status_label.text = "Unentschieden — du erhältst 5 Soul Coins."
+			reward = 5
+			_last_match_was_loss = false
+
+	_set_satan_laughing(_last_match_was_loss)
+
+	if _online_reward_granted:
+		return
+	_online_reward_granted = true
+	GameCurrency.add_coins(reward)
+	var upgrade_ui := get_tree().get_first_node_in_group("upgrade_ui") as UpgradeUI
+	if upgrade_ui != null:
+		upgrade_ui.refresh_balance()
+
+
 func _show_main_menu() -> void:
 	_table_state = TableState.MENU
+	_set_satan_laughing(false)
 	_clear_match()
 	_move_camera_to_base_view()
 	_reset_dealer_gun()
@@ -1006,6 +1586,7 @@ func _on_difficulty_selected(difficulty: String) -> void:
 func _clear_match() -> void:
 	for card in _player_slots + _enemy_slots:
 		if card != null and is_instance_valid(card):
+			card.clear_selected_immediate()
 			card.queue_free()
 
 	for card in _player_stack_visuals + _enemy_stack_visuals:
@@ -1021,6 +1602,8 @@ func _clear_match() -> void:
 	_enemy_stack_visuals.clear()
 
 	_selected_player_card = null
+	_online_selected_side = ""
+	_online_selected_slot = -1
 	_game_over = false
 	if _effect_overview != null:
 		_effect_overview.hide_overview()
@@ -1090,9 +1673,18 @@ func _move_camera_to_base_view() -> void:
 
 
 func leave_table_view() -> void:
+	if _table_state == TableState.ONLINE_LOBBY or _online_mode:
+		_online_mode = false
+		_online_is_host = false
+		_online_action_in_progress = false
+		if NetworkManager.has_active_session():
+			NetworkManager.leave_lobby("Lobby verlassen.")
+		if matchmaking_screen.has_method("close_without_leaving"):
+			matchmaking_screen.call("close_without_leaving")
+
 	_move_camera_to_base_view()
 
-	if _table_state == TableState.PLAYING or _table_state == TableState.GAME_OVER:
+	if _table_state == TableState.PLAYING or _table_state == TableState.GAME_OVER or _table_state == TableState.ONLINE_LOBBY:
 		_show_main_menu()
 
 func _get_match_camera_transform() -> Transform3D:
@@ -1111,7 +1703,11 @@ func _get_match_camera_transform() -> Transform3D:
 	return target
 
 func is_match_active() -> bool:
-	return _table_state == TableState.PLAYING or _table_state == TableState.GAME_OVER
+	return (
+		_table_state == TableState.ONLINE_LOBBY
+		or _table_state == TableState.PLAYING
+		or _table_state == TableState.GAME_OVER
+	)
 
 func _animate_card_death(card: Card3D, side: String) -> void:
 	if not is_instance_valid(card):
@@ -1330,6 +1926,27 @@ func _reset_dealer_gun() -> void:
 	dealer_gun.global_transform = pistol_start_marker.global_transform
 
 
+func _set_satan_laughing(is_laughing: bool) -> void:
+	if dealer_satan == null or not is_instance_valid(dealer_satan):
+		return
+
+	var target_texture: Texture2D = SATAN_LAUGH_TEXTURE if is_laughing else _satan_idle_texture
+	if target_texture == null:
+		return
+
+	var target_frames := SATAN_LAUGH_FRAMES if is_laughing else SATAN_IDLE_FRAMES
+	var target_fps := SATAN_LAUGH_FPS if is_laughing else SATAN_IDLE_FPS
+	if dealer_satan.has_method("play_sheet"):
+		dealer_satan.call("play_sheet", target_texture, target_frames, target_fps, true)
+		return
+
+	# Fallback, falls der Sprite spaeter ohne SpriteAnim-Script verwendet wird.
+	dealer_satan.texture = target_texture
+	dealer_satan.hframes = target_frames
+	dealer_satan.vframes = 1
+	dealer_satan.frame = 0
+
+
 func _raise_dealer_gun() -> void:
 	if dealer_gun == null or not is_instance_valid(dealer_gun):
 		return
@@ -1355,6 +1972,14 @@ func _raise_dealer_gun() -> void:
 
 func _on_exit_button_pressed() -> void:
 	if _loss_exit_running:
+		return
+	if _online_mode:
+		_online_mode = false
+		_online_is_host = false
+		_online_action_in_progress = false
+		if NetworkManager.has_active_session():
+			NetworkManager.leave_lobby("Online-Match verlassen.")
+		_show_main_menu()
 		return
 
 	if _last_match_was_loss:

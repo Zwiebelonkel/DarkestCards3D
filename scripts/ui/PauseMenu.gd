@@ -10,6 +10,7 @@ const MAIN_MENU_SCENE := "res://scenes/main/MainMenu.tscn"
 @onready var settings_menu: SettingsMenu = %SettingsMenu
 
 var _is_open := false
+var _tree_paused_by_menu := false
 
 
 func _ready() -> void:
@@ -37,7 +38,12 @@ func open() -> void:
 	_is_open = true
 	visible = true
 	panel.visible = true
-	get_tree().paused = true
+	# Pausing the SceneTree would freeze the authoritative table while the
+	# remote player continues to send actions. Online this is therefore a
+	# non-blocking overlay; offline it keeps the previous pause behaviour.
+	_tree_paused_by_menu = not NetworkManager.has_active_session()
+	if _tree_paused_by_menu:
+		get_tree().paused = true
 	continue_button.grab_focus()
 
 
@@ -45,7 +51,9 @@ func close() -> void:
 	_is_open = false
 	visible = false
 	settings_menu.visible = false
-	get_tree().paused = false
+	if _tree_paused_by_menu:
+		get_tree().paused = false
+	_tree_paused_by_menu = false
 
 
 func _open_settings() -> void:
@@ -61,4 +69,7 @@ func _on_settings_closed() -> void:
 
 func _go_to_main_menu() -> void:
 	get_tree().paused = false
+	_tree_paused_by_menu = false
+	if NetworkManager.has_active_session():
+		NetworkManager.leave_lobby("Zum Hauptmenü zurückgekehrt.")
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
