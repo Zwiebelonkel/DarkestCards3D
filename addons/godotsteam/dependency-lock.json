@@ -1,0 +1,23 @@
+{
+  "release": "v4.20.1-gde",
+  "reported_plugin_version": "4.20",
+  "engine_baseline": "4.4",
+  "source": "https://codeberg.org/godotsteam/godotsteam/releases/tag/v4.20.1-gde",
+  "archive_url": "https://codeberg.org/godotsteam/godotsteam/releases/download/v4.20.1-gde/godotsteam-4.20.1-gdextension-plugin-4.4.zip",
+  "archive_sha256": "1CB9430BB90A6302ED33A1F6536A2FEBEF7B1738EB0D584EF4740809867F68B1",
+  "reason": "4.22.1 calls close() through a destroyed engine MultiplayerPeerExtension during native destruction. This bundle calls _close() directly.",
+  "windows_x86_64": [
+    {
+      "file": "libgodotsteam.windows.template_debug.x86_64.dll",
+      "sha256": "A5A54FD7152B3FAEB60AD302CF119A82F3A62ED38F702C58EBA655849EBEB88F"
+    },
+    {
+      "file": "libgodotsteam.windows.template_release.x86_64.dll",
+      "sha256": "C057070A12778D9A00A6A43A187D2495E58D9884ADA42FC0438E2F0AC0BD62B8"
+    },
+    {
+      "file": "steam_api64.dll",
+      "sha256": "EB17909A76668CF9AE0B92A618A34A50F6C73D3A6787CB4DD8CE36A8B10BFB75"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dpvqk7he4b1n1"
+
+[deps]
+
+files=["res://localization/dealer.en.translation", "res://localization/dealer.de.translation", "res://localization/dealer.es.translation", "res://localization/dealer.fr.translation", "res://localization/dealer.pl.translation"]
+
+source_file="res://localization/dealer.csv"
+dest_files=["res://localization/dealer.en.translation", "res://localization/dealer.de.translation", "res://localization/dealer.es.translation", "res://localization/dealer.fr.translation", "res://localization/dealer.pl.translation"]
+
+[params]
+
+compress=true
+delimiter=0

@@ -1,0 +1,74 @@
+[gd_scene load_steps=9 format=3 uid="uid://40ujoatdq5fj"]
+
+[ext_resource type="PackedScene" uid="uid://cc38yiwfpqqq0" path="res://scenes/rooms/HospitalRoomShell.tscn" id="1_shell"]
+[ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="2_door"]
+[ext_resource type="PackedScene" uid="uid://bu2rbglf7l317" path="res://scenes/props/SlotMachine.tscn" id="3_slots"]
+
+[sub_resource type="StandardMaterial3D" id="Material_floor"]
+albedo_color = Color(0.13, 0.15, 0.12, 1)
+roughness = 0.98
+
+[sub_resource type="BoxMesh" id="Mesh_floor"]
+material = SubResource("Material_floor")
+size = Vector3(2.3, 0.12, 3.266)
+
+[sub_resource type="StandardMaterial3D" id="Material_wall"]
+albedo_color = Color(0.28, 0.3, 0.25, 1)
+roughness = 0.94
+
+[sub_resource type="BoxMesh" id="Mesh_ceiling"]
+material = SubResource("Material_wall")
+size = Vector3(2.3, 0.12, 3.266)
+
+[sub_resource type="BoxMesh" id="Mesh_side"]
+material = SubResource("Material_wall")
+size = Vector3(2.3, 5.763, 0.12)
+
+[node name="EmptyHospitalRoom" type="Node3D"]
+
+[node name="Shell" parent="." instance=ExtResource("1_shell")]
+transform = Transform3D(-0.695, 0, 0, 0, 0.695, 0, 0, 0, -0.925, 0, -2.21619, 0)
+
+[node name="CameraAnchor" type="Marker3D" parent="."]
+transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 0, 0, 0)
+
+[node name="SlotMachine" parent="." instance=ExtResource("3_slots")]
+transform = Transform3D(1.50996e-07, 0, -2, 0, 2, 0, 2, 0, 1.50996e-07, 4.09562, -1.47335, -0.2)
+interaction_enabled = false
+
+[node name="DoorApproach" type="Marker3D" parent="."]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, -6.46851, 0, -4.06162)
+
+[node name="ReturnDoor" parent="." instance=ExtResource("2_door")]
+transform = Transform3D(1.37784e-07, 0, -1.825, 0, 1.825, 0, 1.825, 0, 1.37784e-07, -8.46851, -2.22292, -4.06162)
+hover_open_degrees = 25.0
+travel_open_degrees = 100.0
+
+[node name="RoomLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.68198, 4.39407, 0)
+light_color = Color(0.890196, 0.25098, 0.180392, 1)
+light_energy = 2.623
+light_indirect_energy = 0.7
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 22.0
+omni_attenuation = 1.29
+
+[node name="Connector" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.46851, -2.22292, -4.06162)
+
+[node name="Floor" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0)
+mesh = SubResource("Mesh_floor")
+
+[node name="Ceiling" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.823, 0)
+mesh = SubResource("Mesh_ceiling")
+
+[node name="SideNear" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8815, -1.573)
+mesh = SubResource("Mesh_side")
+
+[node name="SideFar" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8815, 1.573)
+mesh = SubResource("Mesh_side")

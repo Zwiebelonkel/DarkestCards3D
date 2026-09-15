@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://ntad1p8pwgdo"
+
+[deps]
+
+files=["res://localization/journal.en.translation", "res://localization/journal.de.translation", "res://localization/journal.es.translation", "res://localization/journal.fr.translation", "res://localization/journal.pl.translation"]
+
+source_file="res://localization/journal.csv"
+dest_files=["res://localization/journal.en.translation", "res://localization/journal.de.translation", "res://localization/journal.es.translation", "res://localization/journal.fr.translation", "res://localization/journal.pl.translation"]
+
+[params]
+
+compress=true
+delimiter=0

@@ -20,6 +20,7 @@ const COLOR_DISCONNECTED := Color(0.73, 0.2, 0.24, 1.0)
 @onready var host_button: Button = %HostButton
 @onready var refresh_button: Button = %RefreshButton
 @onready var join_button: Button = %JoinButton
+@onready var role_selector: OptionButton = %RoleSelector
 @onready var current_lobby_title: Label = %CurrentLobbyTitle
 @onready var lobby_id_label: Label = %LobbyIdLabel
 @onready var member_list_label: Label = %MemberListLabel
@@ -30,16 +31,23 @@ const COLOR_DISCONNECTED := Color(0.73, 0.2, 0.24, 1.0)
 
 var _network_manager: Node
 var _selected_lobby_id := NO_LOBBY_ID
+var _status_source := "Steam-Verbindung wird geprüft …"
+var _status_arguments: Array = []
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	_network_manager = get_node_or_null(NETWORK_MANAGER_PATH)
+	Localization.locale_changed.connect(_on_locale_changed)
+	# Names are Steam user content; translate only the surrounding UI template.
+	lobby_list.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	member_list_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 
 	host_button.pressed.connect(_on_host_pressed)
 	refresh_button.pressed.connect(_on_refresh_pressed)
 	join_button.pressed.connect(_on_join_pressed)
+	role_selector.item_selected.connect(_on_role_selected)
 	invite_button.pressed.connect(_on_invite_pressed)
 	start_button.pressed.connect(_on_start_pressed)
 	back_button.pressed.connect(_on_back_pressed)
@@ -118,7 +126,7 @@ func _on_lobby_list_updated(entries: Array) -> void:
 	if entries.is_empty():
 		_set_status("Keine offenen Lobbys gefunden. Du kannst selbst eine hosten.")
 	else:
-		_set_status("%d offene %s gefunden." % [entries.size(), "Lobby" if entries.size() == 1 else "Lobbys"])
+		_set_status("Eine offene Lobby gefunden." if entries.size() == 1 else "%d offene Lobbys gefunden.", false, [] if entries.size() == 1 else [entries.size()])
 	_update_controls()
 
 
@@ -128,9 +136,13 @@ func _on_lobby_state_changed() -> void:
 	if _is_in_lobby():
 		_clear_selection()
 		_set_status(
-			"Lobby geöffnet. Lade jetzt einen Freund ein."
+			"Lobby geöffnet: 2 Spieler und 2 Zuschauer. Lade deine Freunde ein."
 			if _is_host()
-			else "Lobby beigetreten. Warte, bis der Host das Match startet."
+			else (
+				"Zuschauerplatz gewählt. Du siehst den Kampf von oben, sobald der Host startet."
+				if _is_local_spectator()
+				else "Lobby beigetreten. Warte, bis der Host das Match startet."
+			)
 		)
 	elif visible:
 		_set_status("Keine Lobby aktiv. Wähle eine Lobby oder hoste selbst.")
@@ -139,7 +151,9 @@ func _on_lobby_state_changed() -> void:
 func _on_connection_state_changed() -> void:
 	_refresh_lobby_state()
 	_update_controls()
-	if _has_connected_opponent():
+	if _is_in_lobby() and _is_local_spectator():
+		_set_status("Zuschauermodus: Warte, bis beide Spieler bereit sind und der Host startet.")
+	elif _has_connected_opponent():
 		_set_status("Gegenspieler verbunden. Das Match ist startbereit.")
 	elif _is_in_lobby():
 		_set_status("Lobby aktiv. Warte auf einen Gegenspieler.")
@@ -175,6 +189,10 @@ func _on_join_pressed() -> void:
 	_join_selected_lobby()
 
 
+func _on_role_selected(_index: int) -> void:
+	_update_controls()
+
+
 func _on_invite_pressed() -> void:
 	if _call_network_bool(&"invite_friends"):
 		_set_status("Steam-Einladung wird geöffnet …")
@@ -196,7 +214,7 @@ func _on_start_pressed() -> void:
 
 
 func _on_back_pressed() -> void:
-	if _network_manager != null and _is_in_lobby() and _network_manager.has_method(&"leave_lobby"):
+	if _network_manager != null and (_is_in_lobby() or _call_network_bool(&"is_lobby_operation_pending")) and _network_manager.has_method(&"leave_lobby"):
 		_network_manager.call(&"leave_lobby")
 	close_without_leaving()
 	closed.emit()
@@ -217,8 +235,9 @@ func _join_selected_lobby() -> void:
 	if _selected_lobby_id == NO_LOBBY_ID:
 		_set_status("Bitte zuerst eine Lobby auswählen.", true)
 		return
-	_set_status("Lobby wird betreten …")
-	if not _call_network_bool(&"join_lobby", [_selected_lobby_id]):
+	var as_spectator := role_selector.get_selected_id() == 1
+	_set_status("Zuschauerplatz wird angefragt …" if as_spectator else "Spielerplatz wird angefragt …")
+	if not _call_network_bool(&"join_lobby", [_selected_lobby_id, as_spectator]):
 		_set_status("Der Lobby konnte nicht beigetreten werden.", true)
 	_update_controls()
 
@@ -245,23 +264,26 @@ func _refresh_lobby_state() -> void:
 	if not in_lobby:
 		current_lobby_title.text = "KEINE LOBBY AKTIV"
 		lobby_id_label.text = "LOBBY-ID: —"
-		member_list_label.text = "Noch nicht in einer Lobby."
+		member_list_label.text = Localization.text("Noch nicht in einer Lobby.")
 		connection_label.text = "NICHT VERBUNDEN"
 		connection_label.add_theme_color_override("font_color", COLOR_DISCONNECTED)
 		return
 
-	current_lobby_title.text = "DEINE LOBBY · %s" % ("HOST" if host else "CLIENT")
-	lobby_id_label.text = "LOBBY-ID: %d" % lobby_id
+	current_lobby_title.text = Localization.format_text("DEINE LOBBY · %s", [Localization.text("HOST" if host else ("ZUSCHAUER" if _is_local_spectator() else "SPIELER"))])
+	lobby_id_label.text = Localization.format_text("LOBBY-ID: %d", [lobby_id])
 	var member_names := _get_lobby_member_names()
 	if member_names.is_empty():
-		member_list_label.text = "Spielerliste wird geladen …"
+		member_list_label.text = Localization.text("Spielerliste wird geladen …")
 	else:
 		var member_lines: PackedStringArray = []
 		for member_name in member_names:
 			member_lines.append("• %s" % member_name)
 		member_list_label.text = "\n".join(member_lines)
 
-	if connected:
+	if _is_local_spectator():
+		connection_label.text = "ZUSCHAUER · KAMERA VON OBEN"
+		connection_label.add_theme_color_override("font_color", COLOR_CONNECTED)
+	elif connected:
 		connection_label.text = "GEGENSPIELER VERBUNDEN"
 		connection_label.add_theme_color_override("font_color", COLOR_CONNECTED)
 	elif host:
@@ -284,20 +306,25 @@ func _populate_lobby_list(entries: Array) -> void:
 		var lobby_id := int(entry.get("id", NO_LOBBY_ID))
 		if lobby_id == NO_LOBBY_ID:
 			continue
-		var lobby_name := str(entry.get("name", "Lobby von %s" % str(entry.get("owner_name", "Unbekannt"))))
-		var owner_name := str(entry.get("owner_name", "Unbekannt"))
-		var members := int(entry.get("members", 0))
-		var max_members := int(entry.get("max_members", 2))
-		lobby_list.add_item("%s    [%d/%d]" % [lobby_name, members, max_members])
+		var owner_name := str(entry.get("owner_name", Localization.text("Unbekannt")))
+		if bool(entry.get("owner_name_is_fallback", false)):
+			owner_name = Localization.text("Unbekannt")
+		var lobby_name := str(entry.get("name", Localization.format_text("Lobby von %s", [owner_name])))
+		var name_source := str(entry.get("name_source", ""))
+		if not name_source.is_empty():
+			lobby_name = Localization.format_text(name_source, [owner_name])
+		var players := int(entry.get("players", 1))
+		var spectators := int(entry.get("spectators", 0))
+		lobby_list.add_item(Localization.format_text("%s  [S %d/2 · Z %d/2]", [lobby_name, players, spectators]))
 		var item_index := lobby_list.item_count - 1
 		lobby_list.set_item_metadata(item_index, lobby_id)
-		lobby_list.set_item_tooltip(item_index, "Host: %s\nLobby-ID: %d" % [owner_name, lobby_id])
+		lobby_list.set_item_tooltip(item_index, Localization.format_text("Host: %s\nSpieler: %d/2 · Zuschauer: %d/2\nLobby-ID: %d\nZuschauer benötigen kein Deck. Beitritt vor Matchstart.", [owner_name, players, spectators, lobby_id]))
 		if lobby_id == previous_selection:
 			lobby_list.select(item_index)
 			_selected_lobby_id = lobby_id
 
 	var lobby_count := lobby_list.item_count
-	lobby_count_label.text = "%d GEFUNDEN" % lobby_count
+	lobby_count_label.text = Localization.format_text("%d GEFUNDEN", [lobby_count])
 
 
 func _update_controls() -> void:
@@ -310,13 +337,17 @@ func _update_controls() -> void:
 	host_button.disabled = not steam_ready or in_lobby or operation_pending
 	refresh_button.disabled = not steam_ready or in_lobby or operation_pending
 	join_button.disabled = not steam_ready or in_lobby or operation_pending or _selected_lobby_id == NO_LOBBY_ID
+	role_selector.disabled = not steam_ready or in_lobby or operation_pending
+	join_button.text = "ZUSCHAUEN" if role_selector.get_selected_id() == 1 else "BEITRETEN"
 	lobby_list.mouse_filter = Control.MOUSE_FILTER_IGNORE if in_lobby or operation_pending or not steam_ready else Control.MOUSE_FILTER_STOP
 	invite_button.disabled = not steam_ready or not in_lobby
 	start_button.visible = host
 	start_button.disabled = not can_start
 	start_button.tooltip_text = "Match starten" if can_start else "Ein Gegenspieler muss verbunden sein."
-	back_button.text = "LOBBY VERLASSEN" if in_lobby else "ZURÜCK"
-	back_button.disabled = operation_pending
+	back_button.text = "LOBBY VERLASSEN" if in_lobby else ("ABBRECHEN" if operation_pending else "ZURÜCK")
+	# Steam requests may take several seconds; the user can cancel them while
+	# the operation guard keeps host/join disabled until the callback settles.
+	back_button.disabled = false
 
 
 func _set_steam_status(ready: bool, detail: String) -> void:
@@ -331,12 +362,27 @@ func _set_steam_status(ready: bool, detail: String) -> void:
 		steam_status_label.add_theme_color_override("font_color", COLOR_STEAM_ERROR)
 
 
-func _set_status(message: String, is_error := false) -> void:
-	status_label.text = message
+func _set_status(message: String, is_error := false, arguments: Array = []) -> void:
+	_status_source = message
+	_status_arguments = arguments.duplicate()
+	_render_status()
 	status_label.add_theme_color_override(
 		"font_color",
 		Color(0.98, 0.47, 0.5, 1.0) if is_error else Color(0.9, 0.78, 0.79, 1.0)
 	)
+
+
+func _render_status() -> void:
+	status_label.text = Localization.format_text(_status_source, _status_arguments) if not _status_arguments.is_empty() else Localization.text(_status_source)
+
+
+func _on_locale_changed() -> void:
+	if _network_manager != null:
+		var entries: Variant = _network_manager.get("lobby_entries")
+		_populate_lobby_list(entries if entries is Array else [])
+	_refresh_lobby_state()
+	_update_controls()
+	_render_status()
 
 
 func _clear_selection() -> void:
@@ -366,6 +412,10 @@ func _is_in_lobby() -> bool:
 
 func _is_host() -> bool:
 	return _network_manager != null and bool(_network_manager.get("is_host"))
+
+
+func _is_local_spectator() -> bool:
+	return _call_network_bool(&"is_local_spectator")
 
 
 func _has_connected_opponent() -> bool:

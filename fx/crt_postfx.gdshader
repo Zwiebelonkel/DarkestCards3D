@@ -2,10 +2,8 @@ shader_type canvas_item;
 render_mode unshaded;
 
 // CRT / VHS / Glitch Post-FX for Godot 4.4
-// ColorRect-Version ohne UV / SCREEN_UV / FRAGCOORD / SCREEN_PIXEL_SIZE im Fragment.
-// Das Script setzt viewport_size automatisch.
+// Sample the actual render target, including when used without CrtPostFX.gd.
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
-uniform vec2 viewport_size = vec2(600.0, 338.0);
 
 uniform float effect_enabled = 1.0;
 
@@ -33,13 +31,6 @@ uniform float vignette_strength = 1.1;
 uniform vec4 tint_color : source_color = vec4(0.949, 1.0, 0.855, 1.0);
 
 
-varying vec2 postfx_uv;
-
-void vertex() {
-	vec2 safe_size = max(viewport_size, vec2(1.0, 1.0));
-	postfx_uv = VERTEX / safe_size;
-}
-
 float hash11(float p) {
 	p = fract(p * 0.1031);
 	p *= p + 33.33;
@@ -51,10 +42,6 @@ float hash21(vec2 p) {
 	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
 	p3 += dot(p3, p3.yzx + 33.33);
 	return fract((p3.x + p3.y) * p3.z);
-}
-
-vec2 get_pixel_size() {
-	return 1.0 / max(viewport_size, vec2(1.0, 1.0));
 }
 
 vec2 curve_uv(vec2 uv) {
@@ -101,8 +88,7 @@ vec3 sample_screen_rgb_split(vec2 uv) {
 	return vec3(r, g, b);
 }
 
-vec3 apply_phosphor_glow(vec3 color, vec2 uv) {
-	vec2 pixel_size = get_pixel_size();
+vec3 apply_phosphor_glow(vec3 color, vec2 uv, vec2 pixel_size) {
 	float px = pixel_size.x;
 	float py = pixel_size.y;
 
@@ -133,8 +119,8 @@ vec3 apply_scanlines(vec3 color, vec2 uv) {
 	return color;
 }
 
-vec3 apply_noise_and_flicker(vec3 color, vec2 uv) {
-	vec2 pixel_coord = uv * viewport_size;
+vec3 apply_noise_and_flicker(vec3 color, vec2 uv, vec2 pixel_size) {
+	vec2 pixel_coord = uv / pixel_size;
 	float grain = hash21(pixel_coord + vec2(TIME * 95.17, TIME * 41.73));
 	color += (grain - 0.5) * noise_intensity;
 
@@ -158,37 +144,23 @@ vec3 apply_vignette_and_grade(vec3 color, vec2 uv) {
 }
 
 void fragment() {
-	vec2 base_uv = clamp(postfx_uv, vec2(0.0, 0.0), vec2(1.0, 1.0));
+	vec2 base_uv = SCREEN_UV;
 
-if (effect_enabled < 0.5) {
-	COLOR = texture(screen_texture, base_uv);
-} else {
-	vec2 uv = curve_uv(base_uv);
-	float border = outside_screen(uv);
+	if (effect_enabled < 0.5) {
+		COLOR = texture(screen_texture, base_uv);
+	} else {
+		vec2 uv = curve_uv(base_uv);
+		float border = outside_screen(uv);
 
-	uv = apply_glitch(uv);
+		uv = apply_glitch(uv);
 
-	vec3 color = sample_screen_rgb_split(uv);
-	color = apply_phosphor_glow(color, uv);
-	color = apply_scanlines(color, base_uv);
-	color = apply_noise_and_flicker(color, base_uv);
-	color = apply_vignette_and_grade(color, base_uv);
+		vec3 color = sample_screen_rgb_split(uv);
+		color = apply_phosphor_glow(color, uv, SCREEN_PIXEL_SIZE);
+		color = apply_scanlines(color, base_uv);
+		color = apply_noise_and_flicker(color, base_uv, SCREEN_PIXEL_SIZE);
+		color = apply_vignette_and_grade(color, base_uv);
 
-	color = mix(color, vec3(0.0, 0.0, 0.0), border);
-	COLOR = vec4(clamp(color, 0.0, 1.0), 1.0);
-}
-
-	vec2 uv = curve_uv(base_uv);
-	float border = outside_screen(uv);
-
-	uv = apply_glitch(uv);
-
-	vec3 color = sample_screen_rgb_split(uv);
-	color = apply_phosphor_glow(color, uv);
-	color = apply_scanlines(color, base_uv);
-	color = apply_noise_and_flicker(color, base_uv);
-	color = apply_vignette_and_grade(color, base_uv);
-
-	color = mix(color, vec3(0.0, 0.0, 0.0), border);
-	COLOR = vec4(clamp(color, 0.0, 1.0), 1.0);
+		color = mix(color, vec3(0.0, 0.0, 0.0), border);
+		COLOR = vec4(clamp(color, 0.0, 1.0), 1.0);
+	}
 }

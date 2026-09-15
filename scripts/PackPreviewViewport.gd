@@ -13,7 +13,7 @@ const UNAFFORDABLE_COLOR := Color(0.835294, 0.388235, 0.423529, 1.0)
 
 @export var pack_id := ""
 @export var pack_name := ""
-@export var pack_cost := 0
+@export var pack_cost := 0.0
 @export var pack_card_count := 0
 @export var pack_scene: PackedScene
 @export var accent_color := Color(0.501961, 0.4, 0.909804, 1.0)
@@ -35,6 +35,8 @@ var _viewport_timer := 0.0
 var _selected := false
 var _locked := false
 var _affordable := true
+var _required_level := 1
+var _level_unlocked := true
 var _hovered := false
 
 
@@ -92,8 +94,14 @@ func _spawn_pack_model() -> void:
 
 func _refresh_labels() -> void:
 	name_label.text = pack_name
-	cards_label.text = "%d KARTEN" % pack_card_count
-	price_label.text = "%d COINS" % pack_cost
+	cards_label.text = Localization.format_text("%d KARTEN", [pack_card_count])
+	price_label.text = Localization.format_text("%s COINS", [GameCurrency.format_coins(pack_cost, true)])
+
+
+func set_price(price: float) -> void:
+	pack_cost = price
+	if is_node_ready():
+		_refresh_labels()
 
 
 func _force_viewport_refresh() -> void:
@@ -149,6 +157,13 @@ func set_affordable(value: bool) -> void:
 		_refresh_visual_state()
 
 
+func set_level_requirement(required_level: int, player_level: int) -> void:
+	_required_level = required_level
+	_level_unlocked = player_level >= required_level
+	if is_node_ready():
+		_refresh_visual_state()
+
+
 func _on_mouse_entered() -> void:
 	_hovered = true
 	if not _locked:
@@ -185,6 +200,12 @@ func _refresh_visual_state() -> void:
 		state_label.text = "ÖFFNUNG LÄUFT"
 		state_label.add_theme_color_override("font_color", MUTED_COLOR)
 		mouse_default_cursor_shape = Control.CURSOR_ARROW
+	elif not _level_unlocked:
+		state_label.text = Localization.format_text("AB LEVEL %d", [_required_level])
+		state_label.add_theme_color_override("font_color", accent_color)
+		# Level-locked packs remain selectable so their model, price and
+		# contents can still be inspected before purchase becomes available.
+		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	elif not _affordable:
 		state_label.text = "ZU WENIG COINS"
 		state_label.add_theme_color_override("font_color", UNAFFORDABLE_COLOR)

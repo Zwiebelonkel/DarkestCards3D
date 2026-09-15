@@ -2,6 +2,10 @@ shader_type spatial;
 render_mode blend_add, cull_disabled, unshaded, depth_draw_never;
 
 uniform vec4 rarity_color : source_color = vec4(0.2, 0.6, 1.0, 1.0);
+uniform bool rainbow_mode = false;
+uniform float rainbow_speed : hint_range(0.0, 0.3) = 0.10;
+uniform float rainbow_clock_offset = 0.0;
+uniform float rainbow_glow_strength : hint_range(0.0, 10.0) = 2.2;
 
 uniform float thickness : hint_range(0.001, 0.3) = 0.055;
 uniform float softness : hint_range(0.001, 0.3) = 0.045;
@@ -16,6 +20,13 @@ uniform float jaggedness : hint_range(0.0, 1.0) = 0.65;
 uniform float pulse_strength : hint_range(0.0, 1.0) = 0.25;
 
 varying vec2 v_uv;
+varying vec2 v_card_position;
+varying float v_front_normal;
+
+vec3 rainbow_color(float hue) {
+	vec3 bands = abs(fract(vec3(hue) + vec3(0.0, 0.6666667, 0.3333333)) * 6.0 - 3.0);
+	return mix(vec3(1.0), clamp(bands - 1.0, 0.0, 1.0), 0.86);
+}
 
 float hash(float n) {
 	return fract(sin(n) * 43758.5453123);
@@ -37,9 +48,29 @@ float rounded_box_sdf(vec2 p, vec2 b, float r) {
 
 void vertex() {
 	v_uv = UV;
+	// The imported rarity mesh spans -1..1 in each local axis. Its UVs are
+	// an atlas; local position keeps the Secret ring aligned to the card.
+	v_card_position = VERTEX.xy;
+	v_front_normal = NORMAL.z;
 }
 
 void fragment() {
+	if (rainbow_mode) {
+		// Restrict the effect to the front rim. Neither printed content nor
+		// face-down cards disclose a rainbow finish.
+		vec2 p = v_card_position * vec2(0.396, 0.60);
+		float edge = rounded_box_sdf(p, vec2(0.396, 0.60), 0.028);
+		float rim = (1.0 - smoothstep(0.014, 0.036, abs(edge))) * step(edge, 0.0);
+		if (!FRONT_FACING || v_front_normal < 0.5 || rim <= 0.001) {
+			discard;
+		}
+		float hue = atan(p.y, p.x) / 6.2831853 - (TIME + rainbow_clock_offset) * rainbow_speed;
+		vec3 color = rainbow_color(hue);
+		// Unshaded materials feed bloom through HDR albedo, not emission.
+		ALBEDO = color * rainbow_glow_strength;
+		EMISSION = ALBEDO;
+		ALPHA = rim * rarity_color.a;
+	} else {
 	vec2 uv = v_uv;
 
 	vec2 p = uv - vec2(0.5);
@@ -79,4 +110,5 @@ void fragment() {
 	ALBEDO = col;
 	EMISSION = col;
 	ALPHA = alpha * rarity_color.a;
+	}
 }

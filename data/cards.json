@@ -163,6 +163,21 @@
 	"effects": []
   },
   {
+	"id": "mampa",
+	"name": "Mampa",
+	"attack": 5,
+	"defense": 7,
+	"rarity": "rare",
+	"description": "Er wirft ein Schatten auf Gegner und Blendet Sie, Gegner Schlagen dann wild um sich.",
+	"image": "res://assets/cards/images/mampa.png",
+	"effects": [
+	{
+	  "type": "stun",
+	  "chance": 1
+	}
+  ]
+  },
+  {
 	"id": "ant",
 	"name": "Ant",
 	"attack": 2,
@@ -225,7 +240,7 @@
 	"rarity": "exotic",
 	"description": "This HÄNDLER accepts cash only..",
 	"image": "res://assets/cards/images/händler.png",
-	"effects": [{ "type": "deck_burn", "amount": 1 }]
+	"effects": [{ "type": "draw_on_kill" }]
   },
   {
 	"id": "headshot",
@@ -468,6 +483,45 @@
 	"effects": [{ "type": "double_strike" }]
   },
   {
+	"id": "usb_stick",
+	"name": "USB-Stick",
+	"attack": 32,
+	"defense": 32,
+	"rarity": "secret",
+	"description": "More space than meets the eye.",
+	"image": "",
+	"animated": false,
+	"artwork_scene": "res://scenes/cards/UsbSecretRoom.tscn",
+	"random_reward": false,
+	"effects": []
+  },
+  {
+	"id": "cigarettes",
+	"name": "Zigaretten",
+	"attack": 32,
+	"defense": 32,
+	"rarity": "secret",
+	"description": "A room with a smoking section.",
+	"image": "",
+	"animated": false,
+	"artwork_scene": "res://scenes/cards/CigarettesSecretRoom.tscn",
+	"random_reward": false,
+	"effects": []
+  },
+  {
+	"id": "moewenmilch",
+	"name": "Möwenmilch",
+	"attack": 32,
+	"defense": 32,
+	"rarity": "secret",
+	"description": "The sea breeze comes in a can.",
+	"image": "",
+	"animated": false,
+	"artwork_scene": "res://scenes/cards/SeagullMilkSecretRoom.tscn",
+	"random_reward": false,
+	"effects": []
+  },
+  {
 	"id": "bus_driver",
 	"name": "Bus Driver",
 	"attack": 18,
@@ -654,8 +708,8 @@
   {
   "id": "pepe",
   "name": "Pepe",
-  "attack": 22,
-  "defense": 22,
+  "attack": 6,
+  "defense": 7,
   "rarity": "rare",
   "description": "The one and only.",
   "image": "res://assets/cards/images/frog.png",
@@ -667,7 +721,7 @@
   "effects": [
 	{
 	  "type": "neighbor_heal",
-	  "value": 2
+	  "value": 1
 	},
 	{
 	  "type": "shield_first_hit"
@@ -855,6 +909,974 @@
   "effects": [
 	{
 	  "type": "chain_attack"
+	}
+  ]
+},
+{
+  "id": "piss",
+  "name": "Pisse-Eimer",
+  "attack": 1,
+  "defense": 5,
+  "rarity": "epic",
+  "description": "Ein Eimer voller Pisse. Trifft beim Angriff alle gegnerischen Karten gleichzeitig.",
+  "image": "res://assets/cards/images/piss.png",
+	"animated":true,
+	"frame_count":5,
+	"frame_columns":5,
+	"frame_rows":1,
+	"frame_fps":12,
+  "effects": [{ "type": "lava" }]
+},
+{
+  "id": "clicker",
+  "name": "Clicker",
+  "category": "special",
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "common",
+  "description": "Einmalig. Schaltet den Clicker frei: 0,02 SoulCoins pro Klick. Nicht im Kampf einsetzbar.",
+  "image": "res://assets/cards/images/clicker.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":40,
+  "effects": []
+},
+{
+  "id": "clicker_upgrade",
+  "name": "Clicker Upgrade",
+  "category": "special",
+  "attack": 0,
+  "defense": 0,
+  "rarity": "uncommon",
+  "description": "Jede Kopie: +0,01 SoulCoins pro Klick. Benötigt Clicker. Nicht im Kampf einsetzbar.",
+  "image": "res://assets/cards/images/clickerUpgrade.png",
+	"animated":true,
+	"frame_count":5,
+	"frame_columns":5,
+	"frame_rows":1,
+	"frame_fps":12,
+  "effects": []
+},
+{
+  "id": "starting_hand_1",
+  "name": "Starthand I",
+  "category": "special",
+  "unique_unlock": true,
+  "starting_hand_slots": 1,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "uncommon",
+  "description": "Einmalig. Schaltet 1 wählbaren Starthand-Platz frei. Sonderkarte, keine Kampfkarte.",
+  "image": "res://assets/cards/images/extraHand1.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
+  "effects": []
+},
+{
+  "id": "starting_hand_2",
+  "name": "Starthand II",
+  "category": "special",
+  "unique_unlock": true,
+  "starting_hand_slots": 2,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "rare",
+  "description": "Einmalig. Erweitert auf 2 wählbare Starthand-Plätze. Benötigt Starthand I. Kein Kampf.",
+  "image": "res://assets/cards/images/extraHand2.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":4,
+  "effects": []
+},
+{
+  "id": "starting_hand_3",
+  "name": "Starthand III",
+  "category": "special",
+  "unique_unlock": true,
+  "starting_hand_slots": 3,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "epic",
+  "description": "Einmalig. Erweitert auf 3 wählbare Starthand-Plätze. Benötigt Starthand II. Kein Kampf.",
+  "image": "res://assets/cards/images/extraHand3.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":6,
+  "effects": []
+},
+{
+  "id": "starting_hand_4",
+  "name": "Starthand IV",
+  "category": "special",
+  "unique_unlock": true,
+  "starting_hand_slots": 4,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Einmalig. Erweitert auf 4 wählbare Starthand-Plätze. Benötigt Starthand III. Kein Kampf.",
+  "image": "res://assets/cards/images/extraHand4.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":8,
+  "effects": []
+},
+{
+  "id": "starting_hand_5",
+  "name": "Starthand V",
+  "category": "special",
+  "unique_unlock": true,
+  "starting_hand_slots": 5,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "mythic",
+  "description": "Einmalig. Erweitert auf 5 wählbare Starthand-Plätze. Benötigt Starthand IV. Kein Kampf.",
+  "image": "res://assets/cards/images/extraHand5.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":10,
+  "effects": []
+},
+{
+  "id": "slot_room_key",
+  "name": "Schlüsselkarte",
+  "category": "special",
+  "unique_unlock": true,
+  "random_reward": false,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Ein alter Schlüssel, der zu einer verschlossenen Tür passt.",
+  "image": "res://assets/cards/images/doorKey.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
+  "effects": []
+},
+{
+  "id": "lucky_coin",
+  "name": "Lucky Coin",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Permanent: +5% relative chance of Rare-or-higher rewards.",
+  "flavor_text": "A lucky coin that somehow always lands on the expensive side.",
+  "requires": [],
+  "upgrade_modifiers": {
+	"lucky_coin_bonus": 0.05
+  },
+  "reward_weight": 0.02,
+  "image": "res://assets/cards/images/roulette.png",
+  "animated": true,
+  "frame_count": 4,
+  "frame_columns": 4,
+  "frame_rows": 1,
+  "frame_fps": 8,
+  "effects": []
+},
+{
+  "id": "golden_clicker",
+  "name": "Golden Clicker",
+  "category": "special",
+  "permanent_upgrade": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "epic",
+  "description": "Permanent per copy: +0.05 SoulCoins per manual click. Requires Clicker.",
+  "flavor_text": "Same clicking. More capitalism.",
+  "requires": [
+	"clicker"
+  ],
+  "upgrade_modifiers": {
+	"manual_click_bonus": 0.05
+  },
+  "image": "res://assets/cards/images/clickerUpgrade.png",
+  "animated": true,
+  "frame_count": 5,
+  "frame_columns": 5,
+  "frame_rows": 1,
+  "frame_fps": 12,
+  "effects": []
+},
+{
+  "id": "auto_clicker",
+  "name": "Auto Clicker",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "mythic",
+  "description": "Permanent: +0.02 SoulCoins per second while playing. Requires Clicker.",
+  "flavor_text": "Why click yourself when a machine can waste electricity for you?",
+  "requires": [
+	"clicker"
+  ],
+  "upgrade_modifiers": {
+	"auto_click_coins_per_second": 0.02
+  },
+  "image": "res://assets/cards/images/clicker.png",
+  "animated": true,
+  "frame_count": 2,
+  "frame_columns": 2,
+  "frame_rows": 1,
+  "frame_fps": 40,
+  "effects": []
+},
+{
+  "id": "black_market_access",
+  "name": "Black Market Access",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Permanent: opens the Black Market and its separate shop.",
+  "flavor_text": "You were never supposed to find this place.",
+  "requires": [],
+  "upgrade_modifiers": {},
+  "area_unlock": "black_market",
+  "image": "res://assets/cards/images/doorKey.png",
+  "animated": true,
+  "frame_count": 2,
+  "frame_columns": 2,
+  "frame_rows": 1,
+  "frame_fps": 2,
+  "effects": []
+},
+{
+  "id": "dealer_license",
+  "name": "Dealer License",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "mythic",
+  "description": "Permanent: 10% discount on all normal shop prices.",
+  "flavor_text": "Officially licensed. Probably.",
+  "requires": [],
+  "upgrade_modifiers": {
+	"shop_discount": 0.1
+  },
+  "image": "res://assets/cards/images/creditcard.png",
+  "effects": []
+},
+{
+  "id": "fusion_upgrade_1",
+  "name": "Fusion Upgrade I",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Permanent: fusion requires 4 matching cards.",
+  "flavor_text": "Five was excessive anyway.",
+  "requires": [],
+  "upgrade_modifiers": {
+	"fusion_requirement": 4
+  },
+  "image": "res://assets/cards/images/mechanic.png",
+  "animated": true,
+  "frame_count": 5,
+  "frame_columns": 5,
+  "frame_rows": 1,
+  "frame_fps": 5,
+  "effects": []
+},
+{
+  "id": "fusion_upgrade_2",
+  "name": "Fusion Upgrade II",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "mythic",
+  "description": "Permanent: fusion requires 3 matching cards. Requires Fusion Upgrade I.",
+  "flavor_text": "Three copies. One terrible decision.",
+  "requires": [
+	"fusion_upgrade_1"
+  ],
+  "upgrade_modifiers": {
+	"fusion_requirement": 3
+  },
+  "image": "res://assets/cards/images/mechanic.png",
+  "animated": true,
+  "frame_count": 5,
+  "frame_columns": 5,
+  "frame_rows": 1,
+  "frame_fps": 5,
+  "effects": []
+},
+{
+  "id": "soulcoin_boost_1",
+  "name": "Cracked Piggy Bank",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "rare",
+  "description": "Permanent: +2% total normal SoulCoin income. Only the highest tier applies.",
+  "requires": [],
+  "upgrade_modifiers": {
+	"soulcoin_multiplier": 1.02
+  },
+  "image": "res://assets/cards/images/creditcard.png",
+  "effects": []
+},
+{
+  "id": "soulcoin_boost_2",
+  "name": "Golden Piggy Bank",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "epic",
+  "description": "Permanent: +5% total normal SoulCoin income. Only the highest tier applies. Requires Cracked Piggy Bank.",
+  "requires": [
+	"soulcoin_boost_1"
+  ],
+  "upgrade_modifiers": {
+	"soulcoin_multiplier": 1.05
+  },
+  "image": "res://assets/cards/images/creditcard.png",
+  "effects": []
+},
+{
+  "id": "soulcoin_boost_3",
+  "name": "Money Printer",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Permanent: +10% total normal SoulCoin income. Only the highest tier applies. Requires Golden Piggy Bank.",
+  "requires": [
+	"soulcoin_boost_2"
+  ],
+  "upgrade_modifiers": {
+	"soulcoin_multiplier": 1.1
+  },
+  "image": "res://assets/cards/images/creditcard.png",
+  "effects": []
+},
+{
+  "id": "soulcoin_boost_4",
+  "name": "Infinite Wallet",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "mythic",
+  "description": "Permanent: +15% total normal SoulCoin income. Only the highest tier applies. Requires Money Printer.",
+  "requires": [
+	"soulcoin_boost_3"
+  ],
+  "upgrade_modifiers": {
+	"soulcoin_multiplier": 1.15
+  },
+  "image": "res://assets/cards/images/creditcard.png",
+  "effects": []
+},
+{
+  "id": "xp_boost_1",
+  "name": "Study Notes",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "rare",
+  "description": "Permanent: +2% total regular XP rewards. Only the highest tier applies.",
+  "requires": [],
+  "upgrade_modifiers": {
+	"xp_multiplier": 1.02
+  },
+  "image": "res://assets/cards/images/harald.png",
+  "animated": true,
+  "frame_count": 6,
+  "frame_columns": 6,
+  "frame_rows": 1,
+  "frame_fps": 5,
+  "effects": []
+},
+{
+  "id": "xp_boost_2",
+  "name": "Training Manual",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "epic",
+  "description": "Permanent: +5% total regular XP rewards. Only the highest tier applies. Requires Study Notes.",
+  "requires": [
+	"xp_boost_1"
+  ],
+  "upgrade_modifiers": {
+	"xp_multiplier": 1.05
+  },
+  "image": "res://assets/cards/images/harald.png",
+  "animated": true,
+  "frame_count": 6,
+  "frame_columns": 6,
+  "frame_rows": 1,
+  "frame_fps": 5,
+  "effects": []
+},
+{
+  "id": "xp_boost_3",
+  "name": "Ancient Knowledge",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Permanent: +10% total regular XP rewards. Only the highest tier applies. Requires Training Manual.",
+  "requires": [
+	"xp_boost_2"
+  ],
+  "upgrade_modifiers": {
+	"xp_multiplier": 1.1
+  },
+  "image": "res://assets/cards/images/harald.png",
+  "animated": true,
+  "frame_count": 6,
+  "frame_columns": 6,
+  "frame_rows": 1,
+  "frame_fps": 5,
+  "effects": []
+},
+{
+  "id": "xp_boost_4",
+  "name": "Forbidden Knowledge",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "mythic",
+  "description": "Permanent: +15% total regular XP rewards. Only the highest tier applies. Requires Ancient Knowledge.",
+  "requires": [
+	"xp_boost_3"
+  ],
+  "upgrade_modifiers": {
+	"xp_multiplier": 1.15
+  },
+  "image": "res://assets/cards/images/harald.png",
+  "animated": true,
+  "frame_count": 6,
+  "frame_columns": 6,
+  "frame_rows": 1,
+  "frame_fps": 5,
+  "effects": []
+},
+{
+  "id": "graveyard_key",
+  "name": "Graveyard Key",
+  "category": "special",
+  "random_reward": false,
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Permanent: opens the locked Graveyard area.",
+  "flavor_text": "The dead rarely lock their doors. This time they did.",
+  "requires": [],
+  "upgrade_modifiers": {},
+  "area_unlock": "graveyard",
+  "image": "res://assets/cards/images/doorKey.png",
+  "animated": true,
+  "frame_count": 2,
+  "frame_columns": 2,
+  "frame_rows": 1,
+  "frame_fps": 2,
+  "effects": []
+},
+{
+  "id": "basement_key",
+  "name": "Basement Key",
+  "category": "special",
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Permanent: opens the locked Basement area.",
+  "flavor_text": "There was never supposed to be a basement.",
+  "requires": [],
+  "upgrade_modifiers": {},
+  "area_unlock": "basement",
+  "image": "res://assets/cards/images/doorKey.png",
+  "animated": true,
+  "frame_count": 2,
+  "frame_columns": 2,
+  "frame_rows": 1,
+  "frame_fps": 2,
+  "effects": []
+},
+{
+  "id": "rat",
+  "name": "Rat",
+  "category": "combat",
+  "attack": 2,
+  "defense": 2,
+  "rarity": "common",
+  "description": "Lives in your walls. Pays no rent.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": []
+},
+{
+  "id": "street_dog",
+  "name": "Street Dog",
+  "category": "combat",
+  "attack": 3,
+  "defense": 4,
+  "rarity": "common",
+  "description": "He has seen things.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": []
+},
+{
+  "id": "brick",
+  "name": "Brick",
+  "category": "combat",
+  "attack": 4,
+  "defense": 6,
+  "rarity": "common",
+  "description": "Surprisingly effective.",
+  "image": "res://assets/cards/images/brick.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
+  "effects": []
+},
+{
+  "id": "plastic_chair",
+  "name": "Plastic Chair",
+  "category": "combat",
+  "attack": 2,
+  "defense": 7,
+  "rarity": "common",
+  "description": "The strongest chair ever created.",
+  "image": "res://assets/cards/images/plasticChair.png",
+	"animated":true,
+	"frame_count":4,
+	"frame_columns":4,
+	"frame_rows":1,
+	"frame_fps":5,
+  "effects": [
+	{
+	  "type": "armor",
+	  "value": 0.1,
+	  "name": "Armor 10%",
+	  "description": "Reduces regular incoming damage by 10% (rounded)."
+	}
+  ]
+},
+{
+  "id": "angry_pigeon",
+  "name": "Angry Pigeon",
+  "category": "combat",
+  "attack": 4,
+  "defense": 2,
+  "rarity": "common",
+  "description": "It chose violence.",
+  "image": "res://assets/cards/images/angryPigeon.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":7,
+  "effects": []
+},
+{
+  "id": "moldy_bread",
+  "name": "Moldy Bread",
+  "category": "combat",
+  "attack": 1,
+  "defense": 5,
+  "rarity": "common",
+  "description": "Still technically food.",
+  "image": "res://assets/cards/images/moldyBread.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
+  "effects": [
+	{
+	  "type": "poison",
+	  "damage": 1,
+	  "turns": 2
+	}
+  ]
+},
+{
+  "id": "bottle",
+  "name": "Bottle",
+  "category": "combat",
+  "attack": 5,
+  "defense": 1,
+  "rarity": "common",
+  "description": "Empty. Unfortunately.",
+  "image": "res://assets/cards/images/bottle.png",
+	"animated":true,
+	"frame_count":3,
+	"frame_columns":3,
+	"frame_rows":1,
+	"frame_fps":5,
+  "effects": []
+},
+{
+  "id": "shopping_cart",
+  "name": "Shopping Cart",
+  "category": "combat",
+  "attack": 2,
+  "defense": 8,
+  "rarity": "common",
+  "description": "One wheel is always broken.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": []
+},
+{
+  "id": "sock",
+  "name": "Sock",
+  "category": "combat",
+  "attack": 1,
+  "defense": 3,
+  "rarity": "common",
+  "description": "Nobody knows where the other one went.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": []
+},
+{
+  "id": "sewer_rat",
+  "name": "Sewer Rat",
+  "category": "combat",
+  "attack": 4,
+  "defense": 3,
+  "rarity": "common",
+  "description": "The upgraded version nobody asked for.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": []
+},
+{
+  "id": "crab",
+  "name": "Crab",
+  "category": "combat",
+  "attack": 5,
+  "defense": 7,
+  "rarity": "uncommon",
+  "description": "Sideways movement. Forward aggression.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "thorns",
+	  "percent": 0.15
+	}
+  ]
+},
+{
+  "id": "security_guard",
+  "name": "Security Guard",
+  "category": "combat",
+  "attack": 4,
+  "defense": 10,
+  "rarity": "uncommon",
+  "description": "He is not paid enough for this.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "armor",
+	  "value": 0.25
+	}
+  ]
+},
+{
+  "id": "drunk_guy",
+  "name": "Drunk Guy",
+  "category": "combat",
+  "attack": 8,
+  "defense": 4,
+  "rarity": "uncommon",
+  "description": "Nobody knows where the next punch lands.",
+  "image": "res://assets/cards/images/drunkenMan.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
+  "effects": [
+	{
+	  "type": "random_damage",
+	  "min": 0.5,
+	  "max": 1.5
+	}
+  ]
+},
+{
+  "id": "stray_cat",
+  "name": "Stray Cat",
+  "category": "combat",
+  "attack": 5,
+  "defense": 5,
+  "rarity": "uncommon",
+  "description": "Cute until it isn't.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "lifesteal",
+	  "percent": 0.1
+	}
+  ]
+},
+{
+  "id": "broken_robot",
+  "name": "Broken Robot",
+  "category": "combat",
+  "attack": 7,
+  "defense": 8,
+  "rarity": "uncommon",
+  "description": "Error. Violence module still operational.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": []
+},
+{
+  "id": "cactus_dealer",
+  "name": "Cactus Dealer",
+  "category": "combat",
+  "attack": 6,
+  "defense": 6,
+  "rarity": "uncommon",
+  "description": "Business is painful.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "thorns",
+	  "percent": 0.2
+	}
+  ]
+},
+{
+  "id": "sewer_worker",
+  "name": "Sewer Worker",
+  "category": "combat",
+  "attack": 6,
+  "defense": 9,
+  "rarity": "uncommon",
+  "description": "Something down there knows his name.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "armor",
+	  "value": 0.1,
+	  "name": "Armor 10%",
+	  "description": "Reduces regular incoming damage by 10% (rounded)."
+	}
+  ]
+},
+{
+  "id": "angry_goose",
+  "name": "Angry Goose",
+  "category": "combat",
+  "attack": 7,
+  "defense": 5,
+  "rarity": "uncommon",
+  "description": "Peace was never an option.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": []
+},
+{
+  "id": "trash_monster",
+  "name": "Trash Monster",
+  "category": "combat",
+  "attack": 6,
+  "defense": 8,
+  "rarity": "uncommon",
+  "description": "One man's trash is another man's problem.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "random_damage",
+	  "min": 0.75,
+	  "max": 1.25
+	}
+  ]
+},
+{
+  "id": "rat_king",
+  "name": "Rat King",
+  "category": "combat",
+  "attack": 3,
+  "defense": 5,
+  "rarity": "uncommon",
+  "description": "There are more rats than king.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "swarm_power"
+	}
+  ]
+},
+{
+  "id": "butcher",
+  "name": "Butcher",
+  "category": "combat",
+  "attack": 10,
+  "defense": 8,
+  "rarity": "rare",
+  "description": "Fresh meat. Questionable origin.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "cleave",
+	  "side_damage": 0.5
+	}
+  ]
+},
+{
+  "id": "paramedic",
+  "name": "Paramedic",
+  "category": "combat",
+  "attack": 6,
+  "defense": 12,
+  "rarity": "rare",
+  "description": "He arrived eventually.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "neighbor_heal",
+	  "value": 1,
+	  "description": "At the start of its turn, heals adjacent allies by 1 HP."
+	}
+  ]
+},
+{
+  "id": "bouncer",
+  "name": "Bouncer",
+  "category": "combat",
+  "attack": 7,
+  "defense": 10,
+  "rarity": "rare",
+  "description": "You're not on the list.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "armor",
+	  "value": 0.35,
+	  "name": "Armor 35%",
+	  "description": "Reduces regular incoming damage by 35% (rounded)."
+	}
+  ]
+},
+{
+  "id": "pickpocket",
+  "name": "Pickpocket",
+  "category": "combat",
+  "attack": 9,
+  "defense": 8,
+  "rarity": "rare",
+  "description": "Check your pockets.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "curse",
+	  "value": 1
+	}
+  ]
+},
+{
+  "id": "rabid_dog",
+  "name": "Rabid Dog",
+  "category": "combat",
+  "attack": 13,
+  "defense": 5,
+  "rarity": "rare",
+  "description": "Do not pet.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "poison",
+	  "damage": 2,
+	  "turns": 2
+	}
+  ]
+},
+{
+  "id": "cultist",
+  "name": "Cultist",
+  "category": "combat",
+  "attack": 7,
+  "defense": 13,
+  "rarity": "rare",
+  "description": "Death is mostly administrative.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "grave_return"
+	}
+  ]
+},
+{
+  "id": "chainsaw_guy",
+  "name": "Chainsaw Guy",
+  "category": "combat",
+  "attack": 11,
+  "defense": 7,
+  "rarity": "rare",
+  "description": "OSHA would like a word.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "cleave",
+	  "side_damage": 0.5
+	}
+  ]
+},
+{
+  "id": "repair_bot",
+  "name": "Repair Bot",
+  "category": "combat",
+  "attack": 8,
+  "defense": 12,
+  "rarity": "rare",
+  "description": "Repairs everything except itself.",
+  "image": "res://assets/effects/placeholder.png",
+  "effects": [
+	{
+	  "type": "neighbor_heal",
+	  "value": 1,
+	  "description": "At the start of its turn, heals adjacent allies by 1 HP."
 	}
   ]
 }

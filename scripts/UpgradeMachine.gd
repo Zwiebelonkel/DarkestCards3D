@@ -19,6 +19,7 @@ const EFFECT_OVERVIEW_SCENE := preload("res://scenes/CardEffectOverview.tscn")
 @export var preview_card_spin_speed := 12.0
 
 var selected_card_id := ""
+var _filtered_deck: Array[String] = []
 var preview_card: Card3D = null
 var _effect_overview_layer: CanvasLayer = null
 var _effect_overview: CardEffectOverviewUI = null
@@ -60,6 +61,7 @@ func _setup_screen_material() -> void:
 
 func _connect_ui() -> void:
 	ui.card_selected.connect(_on_card_selected)
+	ui.deck_filter_toggled.connect(_on_deck_filter_toggled)
 	ui.attack_pressed.connect(_upgrade_attack)
 	ui.health_pressed.connect(_upgrade_health)
 	ui.effect_pressed.connect(_roll_effect)
@@ -91,28 +93,30 @@ func _remove_effect(effect_source: String, effect_index: int) -> void:
 
 func _refresh_card_list() -> void:
 	var owned := CollectionManager.get_owned_cards()
-	ui.set_cards(owned.keys(), owned)
+	var card_ids := owned.keys()
+	_filtered_deck.assign(DeckManager.get_deck_cards() if ui.deck_only else [])
+	if ui.deck_only:
+		card_ids = card_ids.filter(func(card_id: Variant) -> bool: return _filtered_deck.has(str(card_id)))
+	ui.set_cards(card_ids, owned)
+	# Filtering away a selection must also clear the machine's upgrade target.
+	if selected_card_id != ui.selected_card_id:
+		selected_card_id = ui.selected_card_id
+		if selected_card_id.is_empty():
+			_remove_preview_card()
+
+
+func _on_deck_filter_toggled(_deck_only: bool) -> void:
+	_refresh_card_list()
 
 
 func _on_collection_changed(_card_ids: Array[String]) -> void:
-	var previous_selection := selected_card_id
 	_refresh_card_list()
-
-	if previous_selection == "":
+	if selected_card_id.is_empty():
 		return
-
-	var owned := CollectionManager.get_owned_cards()
-	if not owned.has(previous_selection) or int(owned[previous_selection]) <= 0:
-		selected_card_id = ""
-		_remove_preview_card()
-		return
-
-	selected_card_id = previous_selection
-	ui.set_selected_card(previous_selection)
 	_spawn_preview_card()
 
 
-func _on_coins_changed(_coins: int) -> void:
+func _on_coins_changed(_coins: float) -> void:
 	ui.refresh_balance()
 
 
@@ -122,6 +126,10 @@ func _on_card_selected(card_id: String) -> void:
 	ui.set_selected_card(card_id)
 
 func _process(delta: float) -> void:
+	# Deck editing has no change signal. Compare its small card-id list only
+	# while filtering, including changes made while this machine stays loaded.
+	if ui.deck_only and DeckManager.battle_deck != _filtered_deck:
+		_refresh_card_list()
 	if preview_card != null and is_instance_valid(preview_card):
 		preview_card.rotate_y(deg_to_rad(preview_card_spin_speed) * delta)
 
@@ -135,7 +143,7 @@ func _spawn_preview_card() -> void:
 
 	_remove_preview_card()
 
-	var data := CardDatabase.get_card(selected_card_id)
+	var data := CollectionManager.get_display_card(selected_card_id)
 	if data.is_empty():
 		return
 
@@ -195,10 +203,11 @@ func _on_preview_card_unhovered(card: Card3D) -> void:
 		_effect_overview.hide_overview(card)
 
 func _upgrade_attack() -> void:
-	if selected_card_id == "":
+	if not _can_buy_upgrade():
 		return
 
-	if not GameCurrency.spend_coins(attack_cost):
+	var cost := CardUpgradeManager.get_stat_upgrade_cost(selected_card_id, attack_cost)
+	if not GameCurrency.spend_coins(cost):
 		ui.show_message("Nicht genug Soul Coins")
 		ui.refresh_balance()
 		return
@@ -212,10 +221,11 @@ func _upgrade_attack() -> void:
 	_spawn_preview_card()
 
 func _upgrade_health() -> void:
-	if selected_card_id == "":
+	if not _can_buy_upgrade():
 		return
 
-	if not GameCurrency.spend_coins(health_cost):
+	var cost := CardUpgradeManager.get_stat_upgrade_cost(selected_card_id, health_cost)
+	if not GameCurrency.spend_coins(cost):
 		ui.show_message("Nicht genug Soul Coins")
 		ui.refresh_balance()
 		return
@@ -229,15 +239,24 @@ func _upgrade_health() -> void:
 	_spawn_preview_card()
 
 
+func _can_buy_upgrade() -> bool:
+	return (
+		not selected_card_id.is_empty()
+		and CollectionManager.get_amount(selected_card_id) > 0
+		and CardData.is_combat_card(CardDatabase.get_card(selected_card_id))
+	)
+
+
 func _roll_effect() -> void:
-	if selected_card_id == "":
+	if not _can_buy_upgrade():
 		return
 
 	if CardUpgradeManager.get_free_effect_slots(selected_card_id) <= 0:
 		ui.show_message("Alle Effekt-Slots sind belegt")
 		return
 
-	if not GameCurrency.spend_coins(effect_cost):
+	var cost := CardUpgradeManager.get_effect_roll_cost(selected_card_id, effect_cost)
+	if not GameCurrency.spend_coins(cost):
 		ui.show_message("Nicht genug Soul Coins")
 		ui.refresh_balance()
 		return
@@ -245,8 +264,10 @@ func _roll_effect() -> void:
 	var effects: Array[Dictionary] = EffectDatabase.roll_effects()
 
 	if effects.is_empty():
+		CardUpgradeManager.record_effect_roll(selected_card_id, false)
 		ui.show_message("Keinen Effekt erhalten")
 		ui.refresh_balance()
+		ui.set_selected_card(selected_card_id)
 		return
 
 	var effect: Dictionary = effects[0]
@@ -256,8 +277,9 @@ func _roll_effect() -> void:
 		ui.refresh_balance()
 		return
 
+	CardUpgradeManager.record_effect_roll(selected_card_id, true)
 	ui.refresh_balance()
 	ui.set_selected_card(selected_card_id)
-	ui.show_message("Neuer Effekt: " + str(effect.get("name")))
+	ui.show_message(Localization.format_text("Neuer Effekt: %s", [Localization.localized_arg(str(effect.get("name")))]))
 
 	_spawn_preview_card()

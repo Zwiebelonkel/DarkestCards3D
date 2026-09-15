@@ -5,7 +5,6 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wnyem"]
 shader = ExtResource("1_n4iqi")
-shader_parameter/viewport_size = Vector2(1000, 600)
 shader_parameter/effect_enabled = 1.0
 shader_parameter/crt_curvature = 0.02
 shader_parameter/scanline_intensity = 0.635

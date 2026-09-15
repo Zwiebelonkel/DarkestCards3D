@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/rooms/BasementCatEncounter.gd" id="1_encounter"]
+[ext_resource type="Texture2D" path="res://assets/characters/cat.png" id="2_cat"]
+
+[node name="BasementCatEncounter" type="Node3D"]
+script = ExtResource("1_encounter")
+
+[node name="Cat" type="Sprite3D" parent="."]
+position = Vector3(6.25, -1.87792, -7.2)
+pixel_size = 0.03
+texture_filter = 0
+billboard = 1
+texture = ExtResource("2_cat")
+hframes = 2
+
+[node name="CatCornerLight" type="OmniLight3D" parent="."]
+position = Vector3(4.8, 1.0, -2.5)
+light_color = Color(0.82, 0.7, 0.48, 1)
+light_energy = 0.85
+light_specular = 0.0
+omni_range = 7.0
+omni_attenuation = 1.3

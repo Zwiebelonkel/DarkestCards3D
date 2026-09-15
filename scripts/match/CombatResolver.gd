@@ -5,10 +5,12 @@ static func get_active_effects(card: Card3D) -> Array[Dictionary]:
 	return CardData.get_active_effects(card.card_data)
 
 static func get_hit_count(attacker: Card3D) -> int:
-	if CardData.has_effect(attacker.card_data, "triple_strike"):
-		return 3
-	if CardData.has_effect(attacker.card_data, "double_strike"):
-		return 2
+	var triple := CardData.get_effect(attacker.card_data, "triple_strike")
+	if not triple.is_empty():
+		return clampi(int(triple.get("hits", 3)), 1, 8)
+	var double := CardData.get_effect(attacker.card_data, "double_strike")
+	if not double.is_empty():
+		return clampi(int(double.get("hits", 2)), 1, 8)
 	return 1
 
 static func get_attack_damage(attacker: Card3D, identical_on_board: int = 1) -> int:
@@ -20,31 +22,55 @@ static func get_attack_damage(attacker: Card3D, identical_on_board: int = 1) -> 
 		damage = int(round(float(damage) * randf_range(float(random_damage.get("min", 0.75)), float(random_damage.get("max", 1.25)))))
 	return max(damage, 0)
 
-static func apply_incoming_damage(defender: Card3D, raw_damage: int) -> Dictionary:
-	var damage : float= max(raw_damage, 0)
-	var shield_blocked := false
-	if defender.consume_first_hit_shield():
-		damage = 0
-		shield_blocked = true
-	else:
-		var armor := CardData.get_effect(defender.card_data, "armor")
-		if not armor.is_empty():
-			damage = int(round(float(damage) * (1.0 - clamp(float(armor.get("value", 0.0)), 0.0, 0.95))))
+## Pure mitigation: callers such as Bodyguard can divide this result without
+## applying armor a second time or consuming anyone's shield.
+static func get_damage_after_armor(defender: Card3D, raw_damage: int) -> int:
+	var damage := maxi(raw_damage, 0)
+	var armor := CardData.get_effect(defender.card_data, "armor")
+	if not armor.is_empty():
+		damage = roundi(float(damage) * (1.0 - clampf(float(armor.get("value", 0.25)), 0.0, 0.95)))
+	return damage
+
+
+## Damage that deliberately bypasses mitigation (poison, execute, redirected
+## damage) still uses the same one-use death saves as an ordinary hit. Grave
+## Return restores health after the hit, so its damage is measured before
+## revival and its restored HP is reported separately. Last Stand prevents
+## the final point of damage instead.
+static func apply_damage_with_survival(defender: Card3D, damage: int) -> Dictionary:
+	if damage <= 0 or defender.is_dead():
+		return {"damage": 0, "died": defender.is_dead(), "shield_blocked": false, "survival_effect": "", "healed": 0}
+	var hp_before := defender.current_hp
 	var died := defender.take_damage(damage)
+	var damage_taken := maxi(hp_before - defender.current_hp, 0)
 	var survival_effect := ""
+	var healed := 0
 	if died and defender.try_survive_death():
 		died = false
 		survival_effect = str(defender.get_meta("last_survival_effect", ""))
 		defender.remove_meta("last_survival_effect")
-	return {"damage": damage, "died": died, "shield_blocked": shield_blocked, "survival_effect": survival_effect}
+		if survival_effect == "grave_return":
+			healed = defender.current_hp
+		else:
+			damage_taken = maxi(hp_before - defender.current_hp, 0)
+	return {"damage": damage_taken, "died": died, "shield_blocked": false, "survival_effect": survival_effect, "healed": healed}
+
+
+static func apply_incoming_damage(defender: Card3D, raw_damage: int) -> Dictionary:
+	if raw_damage <= 0 or defender.is_dead():
+		return apply_damage_with_survival(defender, 0)
+	if defender.consume_first_hit_shield():
+		return {"damage": 0, "died": false, "shield_blocked": true, "survival_effect": "", "healed": 0}
+	return apply_damage_with_survival(defender, get_damage_after_armor(defender, raw_damage))
 
 static func heal_from_lifesteal(attacker: Card3D, damage_done: int) -> int:
 	var lifesteal := CardData.get_effect(attacker.card_data, "lifesteal")
 	if lifesteal.is_empty() or damage_done <= 0:
 		return 0
-	var heal_amount := int(round(float(damage_done) * float(lifesteal.get("percent", 0.0))))
+	var hp_before := attacker.current_hp
+	var heal_amount := int(round(float(damage_done) * float(lifesteal.get("percent", 0.2))))
 	attacker.heal(heal_amount)
-	return heal_amount
+	return maxi(attacker.current_hp - hp_before, 0)
 
 static func apply_thorns(defender: Card3D, attacker: Card3D, damage_taken: int) -> bool:
 	var thorns := CardData.get_effect(defender.card_data, "thorns")

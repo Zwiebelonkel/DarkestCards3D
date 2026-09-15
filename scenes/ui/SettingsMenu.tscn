@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://b40dvqf0l54j4"]
+[gd_scene load_steps=8 format=3 uid="uid://b40dvqf0l54j4"]
 
 [ext_resource type="Script" uid="uid://ml0fv2ty5yrp" path="res://scripts/ui/SettingsMenu.gd" id="1_settings"]
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_pguvw"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SatanVoicePortrait.tscn" id="3_portrait"]
 
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
 bg_color = Color(0.035, 0.025, 0.04, 0.96)
@@ -14,6 +15,32 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="MicPreviewStyle"]
+bg_color = Color(0.055, 0.027, 0.038, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.36, 0.09, 0.13, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="MicMeterBackground"]
+bg_color = Color(0.055, 0.045, 0.06, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="MicMeterFill"]
+bg_color = Color(0.78, 0.08, 0.13, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="SettingsMenu" type="Control"]
 process_mode = 3
@@ -44,34 +71,50 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(520, 520)
+unique_name_in_owner = true
+custom_minimum_size = Vector2(660, 680)
 layout_mode = 2
 theme_override_styles/panel = SubResource("PanelStyle")
 
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer/ScrollContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 28
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 28
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_pguvw")
 theme_override_font_sizes/font_size = 36
 text = "Settings"
 horizontal_alignment = 1
 
-[node name="FrameLimitLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="LanguageLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Language"
+
+[node name="LanguageOptionButton" type="OptionButton" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+
+[node name="FrameLimitLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_pguvw")
 text = "Frame Limit"
 
-[node name="FrameLimitSpinBox" type="SpinBox" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="FrameLimitSpinBox" type="SpinBox" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 240.0
@@ -79,28 +122,40 @@ step = 5.0
 value = 60.0
 suffix = " FPS (0 = unlimited)"
 
-[node name="FullscreenCheckBox" type="CheckBox" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="FullscreenCheckBox" type="CheckBox" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_pguvw")
 text = "Fullscreen"
 
-[node name="Scale3DHeader" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="DamageNumbersCheckBox" type="CheckBox" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Show damage numbers"
+
+[node name="TurnArrowsCheckBox" type="CheckBox" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Show turn arrows"
+
+[node name="Scale3DHeader" type="HBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Scale3DLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Scale3DHeader"]
+[node name="Scale3DLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/Scale3DHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_pguvw")
 text = "3D Scale"
 
-[node name="Scale3DValueLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Scale3DHeader"]
+[node name="Scale3DValueLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/Scale3DHeader"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_pguvw")
 text = "100%"
 
-[node name="Scale3DSlider" type="HSlider" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Scale3DSlider" type="HSlider" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.5
@@ -108,43 +163,323 @@ max_value = 2.0
 step = 0.05
 value = 1.0
 
-[node name="MasterLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="MasterLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_pguvw")
 text = "Master Volume"
 
-[node name="MasterSlider" type="HSlider" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="MasterSlider" type="HSlider" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.01
-value = 1.0
+value = 0.3
 
-[node name="MusicLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="MusicLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_pguvw")
 text = "Music Volume"
 
-[node name="MusicSlider" type="HSlider" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="MusicSlider" type="HSlider" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.01
-value = 1.0
+value = 0.3
 
-[node name="SFXLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="SFXLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_pguvw")
 text = "SFX Volume"
 
-[node name="SFXSlider" type="HSlider" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="SFXSlider" type="HSlider" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.01
+value = 0.3
+
+[node name="SatanVoiceSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SatanVoiceTitle" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.25, 0.28, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 20
+text = "Satan Live Voice Chat"
+
+[node name="SatanVoiceEnabledCheckBox" type="CheckBox" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Enable always-on Satan voice chat"
+
+[node name="SatanVoicePrivacy" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.65, 0.7, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 13
+text = "While an online match is active, your Steam microphone is continuously sent live to the other player. Audio is never saved."
+autowrap_mode = 2
+
+[node name="SatanVoiceInputInfo" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.52, 0.58, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 12
+text = "Input: the voice microphone configured in Steam / Windows."
+autowrap_mode = 2
+
+[node name="MicrophoneTestPanel" type="PanelContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.25, 0.28, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 18
+text = "Microphone Test"
+
+[node name="MicTestStartButton" type="Button" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Start Mic"
+
+[node name="MicTestSatanPreviewPanel" type="PanelContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(0, 156)
+layout_mode = 2
+theme_override_styles/panel = SubResource("MicPreviewStyle")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="PortraitCenter" type="CenterContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(148, 0)
+layout_mode = 2
+
+[node name="PortraitAnchor" type="Control" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel/MarginContainer/HBoxContainer/PortraitCenter"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="MicTestSatanPortrait" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel/MarginContainer/HBoxContainer/PortraitCenter/PortraitAnchor" instance=ExtResource("3_portrait")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="VoiceInfo" type="VBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel/MarginContainer/HBoxContainer/VoiceInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.66, 0.69, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 13
+text = "YOUR VOICE"
+
+[node name="MicTestSatanStateLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel/MarginContainer/HBoxContainer/VoiceInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.52, 0.57, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 24
+text = "MIC OFF"
+
+[node name="MicTestSatanHintLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MicTestSatanPreviewPanel/MarginContainer/HBoxContainer/VoiceInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.6, 0.56, 0.62, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 12
+text = "Start the microphone test to animate Satan with your voice."
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="MeterRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MeterRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Input level"
+
+[node name="MicTestLevelMeter" type="ProgressBar" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MeterRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("MicMeterBackground")
+theme_override_styles/fill = SubResource("MicMeterFill")
+min_value = -60.0
+max_value = 0.0
+value = -60.0
+show_percentage = false
+
+[node name="MicTestLevelValue" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/MeterRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "— dB"
+horizontal_alignment = 2
+
+[node name="MicTestStatusLabel" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.65, 0.7, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 13
+text = "Ready. Steam microphone starts only after you click Start Mic."
+autowrap_mode = 2
+
+[node name="TestControls" type="HBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MicTestMonitorButton" type="Button" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/TestControls"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Live Satan Test"
+
+[node name="MicTestStopButton" type="Button" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer/TestControls"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Stop"
+
+[node name="Privacy" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/MicrophoneTestPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.52, 0.58, 1)
+theme_override_fonts/font = ExtResource("2_pguvw")
+theme_override_font_sizes/font_size = 12
+text = "The live test is local only. Use headphones to prevent feedback. Nothing is saved or transmitted."
+autowrap_mode = 2
+
+[node name="SatanVoiceGrid" type="GridContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 8
+
+[node name="SatanVoicePitchRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid"]
+layout_mode = 2
+theme_override_constants/separation = 200
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/SatanVoicePitchRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Your pitch"
+
+[node name="SatanVoicePitchSlider" type="HSlider" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/SatanVoicePitchRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.35
+max_value = 0.9
+step = 0.01
+value = 0.62
+
+[node name="SatanVoicePitchValue" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/SatanVoicePitchRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(55, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "62%"
+horizontal_alignment = 2
+
+[node name="MicrophoneGainRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/MicrophoneGainRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+tooltip_text = "How loudly the other player hears your microphone."
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Microphone gain"
+
+[node name="MicrophoneGainSlider" type="HSlider" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/MicrophoneGainRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Applied to your outgoing voice and the local microphone test."
+max_value = 4.0
+step = 0.05
 value = 1.0
 
-[node name="CloseButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="MicrophoneGainValue" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/MicrophoneGainRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(55, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "100%"
+horizontal_alignment = 2
+
+[node name="SatanVoiceVolumeRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/SatanVoiceVolumeRow"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+tooltip_text = "How loudly you hear the other player."
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "Voice chat volume"
+
+[node name="SatanVoiceVolumeSlider" type="HSlider" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/SatanVoiceVolumeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.3
+
+[node name="SatanVoiceVolumeValue" type="Label" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer/SatanVoiceGrid/SatanVoiceVolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(55, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_pguvw")
+text = "30%"
+horizontal_alignment = 2
+
+[node name="CloseButton" type="Button" parent="CenterContainer/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2

@@ -43,7 +43,7 @@ func _open_external_piskel() -> void:
 	if err == OK:
 		_update_status("Piskel wurde im Browser geöffnet. Exportiere dort ein PNG und importiere es danach hier.")
 	else:
-		_update_status("Piskel konnte nicht geöffnet werden. URL: %s" % PISKEL_URL)
+		_update_status(Localization.format_text("Piskel konnte nicht geöffnet werden. URL: %s", [PISKEL_URL]))
 
 
 func _show_import_dialog() -> void:
@@ -62,11 +62,11 @@ func _import_sprite(path: String) -> void:
 	var target_path := "%s/%s.png" % [SAVE_DIR, safe_name]
 	var save_err := image.save_png(target_path)
 	if save_err != OK:
-		_update_status("Sprite konnte nicht gespeichert werden: %s" % error_string(save_err))
+		_update_status(Localization.format_text("Sprite konnte nicht gespeichert werden: %s", [error_string(save_err)]))
 		return
 
 	preview.texture = ImageTexture.create_from_image(image)
-	_update_status("Sprite importiert und gespeichert unter: %s" % ProjectSettings.globalize_path(target_path))
+	_update_status(Localization.format_text("Sprite importiert und gespeichert unter: %s", [ProjectSettings.globalize_path(target_path)]))
 
 
 func _close_embedded_piskel() -> void:

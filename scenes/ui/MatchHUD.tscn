@@ -1,3 +1,136 @@
-[gd_scene format=3]
+[gd_scene load_steps=11 format=3 uid="uid://cd72kehtehl53"]
+
+[ext_resource type="Script" uid="uid://dptmwo7iopji3" path="res://scripts/ui/MatchHUD.gd" id="1_hud"]
+[ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan.png" id="2_idle"]
+[ext_resource type="Texture2D" uid="uid://ro4ri6d4s3vm" path="res://assets/characters/satanHover.png" id="3_speaking"]
+[ext_resource type="Texture2D" uid="uid://b6eoswry28qul" path="res://assets/characters/satanLaught.png" id="4_loud"]
+[ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="5_font"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SatanVoicePortrait.tscn" id="6_portrait"]
+
+[sub_resource type="StyleBoxFlat" id="VoiceIdle"]
+bg_color = Color(0.025, 0.018, 0.03, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.09, 0.12, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="VoiceSpeaking"]
+bg_color = Color(0.055, 0.018, 0.025, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.82, 0.11, 0.16, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.55, 0.01, 0.025, 0.52)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="VoiceLoud"]
+bg_color = Color(0.13, 0.012, 0.018, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.16, 0.12, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.9, 0.015, 0.02, 0.65)
+shadow_size = 13
+
+[sub_resource type="StyleBoxFlat" id="PortraitStyle"]
+bg_color = Color(0.09, 0.065, 0.075, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.24, 0.13, 0.15, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="MatchHUD" type="Control"]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hud")
+satan_idle_texture = ExtResource("2_idle")
+satan_speaking_texture = ExtResource("3_speaking")
+satan_loud_texture = ExtResource("4_loud")
+idle_panel_style = SubResource("VoiceIdle")
+speaking_panel_style = SubResource("VoiceSpeaking")
+loud_panel_style = SubResource("VoiceLoud")
+
+[node name="OpponentVoiceIndicator" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 200.0
+offset_bottom = 198.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("VoiceIdle")
+
+[node name="MarginContainer" type="MarginContainer" parent="OpponentVoiceIndicator"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OpponentVoiceIndicator/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 5
+
+[node name="Header" type="HBoxContainer" parent="OpponentVoiceIndicator/MarginContainer/VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="OpponentVoiceIndicator/MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.84, 0.85, 1)
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 13
+text = "GEGENSPIELER"
+
+[node name="VoiceStateLabel" type="Label" parent="OpponentVoiceIndicator/MarginContainer/VBoxContainer/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.64, 0.59, 0.61, 1)
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 11
+text = "STILL"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="PortraitPanel" type="PanelContainer" parent="OpponentVoiceIndicator/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(160, 128)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PortraitStyle")
+
+[node name="SatanVoicePortrait" parent="OpponentVoiceIndicator/MarginContainer/VBoxContainer/PortraitPanel" instance=ExtResource("6_portrait")]
+unique_name_in_owner = true
+layout_mode = 2

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dcp3rwdcgfp5m"]
+[gd_scene load_steps=18 format=3 uid="uid://dcp3rwdcgfp5m"]
 
 [ext_resource type="Script" uid="uid://dwf5xjyhc61gh" path="res://scripts/ui/MainMenu.gd" id="1_menu"]
 [ext_resource type="PackedScene" uid="uid://b40dvqf0l54j4" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
@@ -10,6 +10,8 @@
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="7_bkjnr"]
 [ext_resource type="PackedScene" uid="uid://g6mmig2vuj1q" path="res://scenes/Neon.tscn" id="7_eclvw"]
 [ext_resource type="AudioStream" uid="uid://ca2m8sijon4ep" path="res://assets/sounds/theme3.mp3" id="9_cius5"]
+[ext_resource type="PackedScene" uid="uid://byptauqy0lmst" path="res://scenes/ui/LevelProgress.tscn" id="10_level_progress"]
+[ext_resource type="Script" uid="uid://c8m2n7eio1hk3" path="res://scripts/ui/SaveSlotPicker.gd" id="11_slots"]
 
 [sub_resource type="Environment" id="Environment_cius5"]
 background_energy_multiplier = 0.0
@@ -75,6 +77,9 @@ environment = SubResource("Environment_cius5")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.36792, -2.60684)
 
+[node name="LevelProgress" parent="Camera3D" instance=ExtResource("10_level_progress")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.265307, 0)
+
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
 
 [node name="DirtyLensRect" type="ColorRect" parent="Camera3D/CanvasLayer"]
@@ -116,9 +121,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -260.0
-offset_top = -122.0
-offset_right = 260.0
+offset_left = -550.0
+offset_top = -308.0
+offset_right = 550.0
+offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -128,12 +134,12 @@ theme_override_styles/panel = SubResource("PanelStyle")
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 36
-theme_override_constants/margin_top = 32
-theme_override_constants/margin_right = 36
-theme_override_constants/margin_bottom = 32
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 16
 
@@ -154,17 +160,47 @@ text = "Hauptmenü"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 
-[node name="PackOpeningButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="SaveSlotHeading" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.75, 0.66, 1)
+theme_override_fonts/font = ExtResource("2_v3gjy")
+theme_override_font_sizes/font_size = 20
+text = "save_slot_heading"
+
+[node name="SaveSlotPicker" type="GridContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+script = ExtResource("11_slots")
+
+[node name="SaveSlotStatus" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_v3gjy")
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
+
+[node name="Actions" type="HFlowContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 10
+alignment = 1
+
+[node name="PackOpeningButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Actions"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Play"
 
-[node name="CollectionButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="CollectionButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Actions"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 54)
@@ -172,7 +208,7 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Collection"
 
-[node name="GameTableButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="GameTableButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Actions"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 54)
@@ -180,7 +216,7 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Game Table"
 
-[node name="PiskelToolButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="PiskelToolButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Actions"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 54)
@@ -188,21 +224,21 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Piskel Asset Tool"
 
-[node name="SettingsButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="SettingsButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Actions"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
 text = "Settings"
 
-[node name="ResetButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ResetButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Actions"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_v3gjy")
-text = "Spiel zurücksetzen"
+text = "Spielstand zurücksetzen"
 
-[node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Actions"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
@@ -211,12 +247,12 @@ text = "Beenden"
 
 [node name="ResetConfirmation" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
-title = "Spiel zurücksetzen"
+title = "Spielstand zurücksetzen"
 initial_position = 2
 size = Vector2i(513, 150)
 theme = SubResource("Theme_v3gjy")
 ok_button_text = "Zurücksetzen"
-dialog_text = "Alle gespeicherten Daten werden gelöscht. Fortfahren?"
+dialog_text = "save_slot_reset_confirm"
 cancel_button_text = "Abbrechen"
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2_settings")]

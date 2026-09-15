@@ -1,9 +1,17 @@
 extends Node3D
 class_name CollectionScreen
 
+signal slot_room_key_requested
+signal angel_dialog_changed(opened: bool)
+
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
+const NEW_CARD_LABEL := preload("res://scripts/card/NewCardLabel.gd")
 const EFFECT_OVERVIEW_SCENE := preload("res://scenes/CardEffectOverview.tscn")
 const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
+const COLLECTION_CARD_WIDTH := 0.792
+const COLLECTION_CARD_TILT := -18.0
+const STARTING_HAND_VIEW := preload("res://scripts/ui/StartingHandSlots.gd")
+const ANGEL_DIALOG_SCRIPT := preload("res://scripts/rooms/AngelDialogue.gd")
 
 const RARITY_ORDER := [
 	"common",
@@ -13,6 +21,7 @@ const RARITY_ORDER := [
 	"legendary",
 	"mythic",
 	"exotic",
+	"secret",
 ]
 
 const RARITY_NAMES := {
@@ -23,6 +32,7 @@ const RARITY_NAMES := {
 	"legendary": "LEGENDARY",
 	"mythic": "MYTHIC",
 	"exotic": "EXOTIC",
+	"secret": "SECRET",
 }
 @onready var card_hover_sfx: AudioStreamPlayer = $CardHoverSFX
 @onready var fly_sfx: AudioStreamPlayer = $CardRemoveSFX
@@ -37,6 +47,8 @@ const RARITY_NAMES := {
 @export var row_scroll_step := 0.45
 @export var row_scroll_duration := 0.15
 @export var row_visible_width := 4.2
+@export_range(0.0, 0.3, 0.01) var row_stack_spread := 0.12
+@export_range(0.01, 0.4, 0.01) var row_stack_depth := 0.18
 
 @export_group("Eingangs-Animation")
 @export var spawn_rise_height := 0.6
@@ -70,6 +82,7 @@ const RARITY_NAMES := {
 @export var add_button_slide_duration := 0.22
 
 var _deck_button_base_pos := Vector3.ZERO
+var _deck_button_scene_transform := Transform3D.IDENTITY
 var _deck_button_tween: Tween = null
 
 @export_group("Deck Overview Button")
@@ -80,7 +93,7 @@ var _deck_button_tween: Tween = null
 @export var deck_overview_label := "DECK ANSEHEN"
 
 @export_group("Deck Fan View")
-@export var deck_fan_offset_from_camera := Vector3(0, -0.35, -2.4)
+@export var deck_fan_offset_from_camera := Vector3(0, 0.47, -2.8)
 @export var deck_fan_card_scale := 0.62
 @export var deck_fan_radius := 3.6
 @export var deck_fan_max_angle_degrees := 64.0
@@ -104,6 +117,13 @@ var _deck_button_tween: Tween = null
 var _dragged_fan_card: Card3D = null
 var _dragged_fan_card_id := ""
 var _drag_start_pos := Vector3.ZERO
+var _drag_pointer_offset := Vector3.ZERO
+var _starting_hand_view: StartingHandSlots
+var _deck_input_suspended := false
+var _collection_refresh_pending := false
+var _slot_room_key_request_pending := false
+var angel_dialog: ANGEL_DIALOG_SCRIPT
+var _angel_context_enabled := true
 
 @export var camera: Camera3D
 @onready var cards_root: Node3D = $Cards
@@ -119,7 +139,8 @@ var _card_rarities: Dictionary = {}
 var _row_cards: Dictionary = {}
 var _row_scroll_offsets: Dictionary = {}
 var _hovered_rarity: String = ""
-var _card_hover_counts: Dictionary = {}
+var _hovered_cards: Dictionary = {}
+var _card_hover_tweens: Dictionary = {}
 var _effect_overview: CardEffectOverviewUI = null
 var _effect_overview_layer: CanvasLayer = null
 
@@ -133,24 +154,86 @@ var _deck_fan_open := false
 var _deck_fan_tween_running := false
 var _deck_fan_cards: Array[Card3D] = []
 var _deck_fan_base_transforms: Dictionary = {}
+var _deck_reflow_tweens: Dictionary = {}
 
 
 func _ready() -> void:
+	add_to_group("collection_screens")
 	if not CardUpgradeManager.upgrades_changed.is_connected(_on_card_upgrades_changed):
 		CardUpgradeManager.upgrades_changed.connect(_on_card_upgrades_changed)
+	if not CollectionManager.collection_changed.is_connected(_on_collection_changed):
+		CollectionManager.collection_changed.connect(_on_collection_changed)
 
 	_build_collection()
 	_setup_deck_overview_button()
 	_setup_deck_management_buttons()
 
 	_deck_button_base_pos = _deck_button.position
+	_deck_button_scene_transform = _deck_button.transform
 	_deck_button.visible = false
 
 	clear_deck_button.visible = false
 	random_deck_button.visible = false
+	_setup_angel_dialog()
+	visibility_changed.connect(_sync_angel_context)
+
+
+func _setup_angel_dialog() -> void:
+	var actor := get_node_or_null("angel") as Sprite3D
+	if actor == null:
+		return
+	angel_dialog = ANGEL_DIALOG_SCRIPT.new()
+	angel_dialog.name = "AngelDialogue"
+	angel_dialog.actor = actor
+	angel_dialog.camera = camera
+	angel_dialog.context_available = _angel_context_available
+	add_child(angel_dialog)
+	angel_dialog.modal_changed.connect(_on_angel_modal_changed)
+	_sync_angel_context()
+
+
+func is_angel_dialog_open() -> bool:
+	return is_instance_valid(angel_dialog) and angel_dialog.is_dialog_open()
+
+
+func set_angel_context_enabled(enabled: bool) -> void:
+	_angel_context_enabled = enabled
+	_sync_angel_context()
+
+
+func _angel_context_available() -> bool:
+	# The dialog's own input lock is separate from external suspension: an
+	# already open conversation must not invalidate its own collection context.
+	return (
+		_angel_context_enabled and is_inside_tree() and is_visible_in_tree()
+		and not get_tree().paused and not _deck_input_suspended
+		and is_instance_valid(camera) and get_viewport().get_camera_3d() == camera
+		and _detail_card == null and not _detail_tween_running
+		and not _deck_fan_open and not _deck_fan_tween_running
+		and _dragged_fan_card == null and not _slot_room_key_request_pending
+	)
+
+
+func _sync_angel_context() -> void:
+	if not is_instance_valid(angel_dialog):
+		return
+	angel_dialog.camera = camera
+	angel_dialog.set_interaction_enabled(_angel_context_available())
+
+
+func _on_angel_modal_changed(opened: bool) -> void:
+	if opened:
+		_reset_collection_hover()
+		_hide_effect_overview()
+	angel_dialog_changed.emit(opened)
 
 
 func _process(delta: float) -> void:
+	_sync_angel_context()
+	if is_angel_dialog_open():
+		return
+	if _collection_refresh_pending and _can_refresh_collection():
+		refresh_collection()
 	if _dragged_fan_card != null:
 		_update_dragged_fan_card()
 		return
@@ -182,7 +265,12 @@ func _process(delta: float) -> void:
 
 
 func _build_collection() -> void:
+	_reset_collection_hover()
 	for child in cards_root.get_children():
+		if child is Label3D:
+			# Free the stable label name before rebuilding in the same frame.
+			child.name = "RetiredLabel_" + str(child.get_instance_id())
+			child.hide()
 		child.queue_free()
 
 	_base_positions.clear()
@@ -191,7 +279,7 @@ func _build_collection() -> void:
 	_card_rarities.clear()
 	_row_cards.clear()
 	_row_scroll_offsets.clear()
-	_card_hover_counts.clear()
+	_hovered_cards.clear()
 	_hovered_rarity = ""
 	_detail_card = null
 
@@ -200,17 +288,14 @@ func _build_collection() -> void:
 		_row_scroll_offsets[rarity] = 0.0
 
 	var owned := CollectionManager.get_owned_cards()
-	empty_label.visible = owned.is_empty()
-
-	if owned.is_empty():
-		return
+	empty_label.text = "Noch keine Karten in der Sammlung"
+	empty_label.visible = true
 
 	for card_id in owned.keys():
-		var available_amount := _get_available_amount(card_id)
-
-		var data := CardDatabase.get_card(card_id)
-		if data.is_empty():
+		var data := CollectionManager.get_display_card(card_id)
+		if data.is_empty() or CardData.is_upgrade_collection_card(data):
 			continue
+		empty_label.visible = false
 
 		var rarity := str(data.get("rarity", "common")).to_lower()
 		if not _row_cards.has(rarity):
@@ -222,36 +307,89 @@ func _build_collection() -> void:
 			"amount": _get_available_amount(card_id),
 		})
 
+	if empty_label.visible:
+		if _has_received_secret():
+			_add_rarity_label("secret", RARITY_ORDER.find("secret"))
+		return
+
 	var global_index := 0
 
 	for row_index in range(RARITY_ORDER.size()):
 		var rarity: String = RARITY_ORDER[row_index]
-		_add_rarity_label(rarity, row_index)
+		if rarity != "secret" or _has_received_secret():
+			_add_rarity_label(rarity, row_index)
 
 		var cards: Array = _row_cards[rarity]
 
 		for i in range(cards.size()):
 			var entry: Dictionary = cards[i]
-			var card := CARD_SCENE.instantiate() as Card3D
-			cards_root.add_child(card)
-			var upgraded_data := CardUpgradeManager.apply_upgrades(str(entry["id"]), entry["data"])
-			card.setup(upgraded_data)
-
-			var target_pos := _row_card_position(rarity, i)
-			var target_rot := Vector3(-18, 0, 0)
-
-			_base_positions[card] = target_pos
-			_base_rotations[card] = target_rot
-			_base_scales[card] = card.scale
-			_card_rarities[card] = rarity
-
-			_add_amount_label(card, int(entry["amount"]))
+			var card := _create_collection_card(str(entry["id"]), rarity, i)
+			var target_pos: Vector3 = _base_positions[card]
+			var target_rot: Vector3 = _base_rotations[card]
 			_spawn_card(card, target_pos, target_rot, global_index)
 
 			cards[i] = card
 			global_index += 1
 
 		_row_cards[rarity] = cards
+
+
+func _create_collection_card(card_id: String, rarity: String, index: int) -> Card3D:
+	var card := CARD_SCENE.instantiate() as Card3D
+	cards_root.add_child(card)
+	card.setup(CardUpgradeManager.apply_upgrades(card_id, CollectionManager.get_display_card(card_id)))
+	if CollectionManager.is_card_new(card_id):
+		var new_label := NEW_CARD_LABEL.new()
+		new_label.name = "NewLabel"
+		card.add_child(new_label)
+		new_label.watch_collection_card(card_id)
+	card.position = _row_card_position(rarity, index)
+	card.rotation_degrees = Vector3(COLLECTION_CARD_TILT, 0, 0)
+	_base_positions[card] = card.position
+	_base_rotations[card] = card.rotation_degrees
+	_base_scales[card] = card.scale
+	_card_rarities[card] = rarity
+	_add_amount_label(card, _get_available_amount(card_id))
+	return card
+
+
+func _has_received_secret() -> bool:
+	for data: Dictionary in CardDatabase.get_all_cards():
+		if data.get("rarity") == "secret" and CollectionManager.has_discovered_card(str(data.get("id", ""))):
+			return true
+	return false
+
+
+func _refresh_secret_cards() -> void:
+	# A grant can arrive during physics picking or while another card is in
+	# detail. Append immediately after input without rebuilding that active view.
+	if _has_received_secret() and cards_root.get_node_or_null("RarityLabel_secret") == null:
+		_add_rarity_label("secret", RARITY_ORDER.find("secret"))
+	var existing := {}
+	for card: Card3D in _row_cards.get("secret", []):
+		if is_instance_valid(card):
+			existing[str(card.card_data.get("id", ""))] = card
+	for card_id: String in CollectionManager.get_owned_cards():
+		var data := CollectionManager.get_display_card(card_id)
+		if data.get("rarity") != "secret" or CardData.is_upgrade_collection_card(data):
+			continue
+		if existing.has(card_id):
+			var card := existing[card_id] as Card3D
+			var updated := CardUpgradeManager.apply_upgrades(card_id, data)
+			if card.card_data != updated:
+				card.setup(updated)
+			continue
+		var cards: Array = _row_cards["secret"]
+		var card := _create_collection_card(card_id, "secret", cards.size())
+		cards.append(card)
+		_connect_card_input(card)
+		_update_collection_amount_visibility(card)
+		empty_label.visible = _deck_fan_open
+	for card_id: String in existing:
+		if CollectionManager.get_amount(card_id) == 0:
+			_collection_refresh_pending = true
+	_refresh_collection_amount_labels()
+	_update_deck_button_state()
 
 
 func _add_rarity_label(rarity: String, row_index: int) -> void:
@@ -262,8 +400,13 @@ func _add_rarity_label(rarity: String, row_index: int) -> void:
 	label.font_size = 26
 	label.outline_size = 6
 	label.pixel_size = 0.008
-	label.position = Vector3(row_label_x, row_label_y, -row_index * row_spacing_z)
-	label.rotation_degrees = Vector3(-18, 0, 0)
+	# Keep the existing label placement where it fits, with a clear gutter
+	# before the fixed left edge of the card stack even for long rarity names.
+	var text_width := label.font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, label.font_size).x * label.pixel_size
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	var label_right := minf(row_label_x + text_width * 0.5, row_start_x - COLLECTION_CARD_WIDTH * 0.5 - 0.18)
+	label.position = Vector3(label_right, row_label_y, -row_index * row_spacing_z)
+	label.rotation_degrees = Vector3(COLLECTION_CARD_TILT, 0, 0)
 	cards_root.add_child(label)
 
 
@@ -273,12 +416,83 @@ func _row_card_position(rarity: String, index: int) -> Vector3:
 		row_index = 0
 
 	var scroll_offset: float = _row_scroll_offsets.get(rarity, 0.0)
+	var spacing := maxf(card_spacing_x, 0.01)
+	var cards_passed := maxf(-scroll_offset / spacing, 0.0)
+	# A bounded fan keeps even very long rows beside their rarity label.
+	# Fractional progress makes cards enter and leave the pile continuously.
+	var layer_step := minf(0.03, row_stack_depth / maxf(cards_passed, 1.0))
+	var spread_step := minf(0.02, row_stack_spread / maxf(cards_passed, 1.0))
+	var natural_x := row_start_x + index * spacing + scroll_offset
+	var layer := minf(float(index), cards_passed)
+	var stacked_x := row_start_x + layer * spread_step
+	# Incoming cards stay in front of the pile while sliding onto its top.
+	var depth := minf(layer * layer_step, row_stack_depth)
+	var front := Vector3(0.0, -sin(deg_to_rad(COLLECTION_CARD_TILT)), cos(deg_to_rad(COLLECTION_CARD_TILT)))
+	return Vector3(maxf(natural_x, stacked_x), 0.0, -row_index * row_spacing_z) + front * depth
 
-	return Vector3(
-		row_start_x + index * card_spacing_x + scroll_offset,
-		0.0,
-		-row_index * row_spacing_z
-	)
+
+func _row_min_scroll_offset(rarity: String) -> float:
+	var count: int = _row_cards.get(rarity, []).size()
+	# Include the final card's width, rather than an extra empty spacing cell.
+	return minf(0.0, row_visible_width - (maxi(count - 1, 0) * maxf(card_spacing_x, 0.01) + COLLECTION_CARD_WIDTH))
+
+
+func _is_card_buried_in_row(card: Card3D) -> bool:
+	var rarity := str(_card_rarities.get(card, ""))
+	var cards: Array = _row_cards.get(rarity, [])
+	var index := cards.find(card)
+	if index < 0:
+		return false
+	var offset: float = _row_scroll_offsets.get(rarity, 0.0)
+	var top_index := mini(int(floor(maxf(-offset, 0.0) / maxf(card_spacing_x, 0.01))), cards.size() - 1)
+	return index < top_index
+
+
+func _update_collection_amount_visibility(card: Card3D, force_visible: bool = false) -> void:
+	var label := card.get_node_or_null("AmountLabel") as Label3D
+	if label != null:
+		label.visible = force_visible or card == _detail_card or _hovered_cards.has(card) or not _is_card_buried_in_row(card)
+
+
+func _get_scroll_rarity_at(mouse_position: Vector2) -> String:
+	if camera == null or not is_visible_in_tree() or _detail_card != null or _detail_tween_running or _deck_fan_open or _deck_fan_tween_running:
+		return ""
+	if get_viewport().get_camera_3d() != camera:
+		return ""
+	var hit_card := _collection_card_under_mouse(mouse_position)
+	if hit_card != null and _card_rarities.has(hit_card):
+		return str(_card_rarities[hit_card])
+
+	# Keep the row scrollable in its gaps and next to the pile, even when a
+	# moving card's Area3D has just sent mouse_exited under a still pointer.
+	var nearest_rarity := ""
+	var nearest_distance := INF
+	var tilt := Basis(Vector3.RIGHT, deg_to_rad(COLLECTION_CARD_TILT))
+	for rarity: String in RARITY_ORDER:
+		if _row_cards.get(rarity, []).is_empty():
+			continue
+		var row_is_interactive := false
+		for card: Card3D in _row_cards[rarity]:
+			if is_instance_valid(card) and card.is_visible_in_tree() and card.area.input_ray_pickable:
+				row_is_interactive = true
+				break
+		if not row_is_interactive:
+			continue
+		var row_z := -float(RARITY_ORDER.find(rarity)) * row_spacing_z
+		var row_center := Vector3(row_start_x + (row_visible_width - COLLECTION_CARD_WIDTH) * 0.5, 0, row_z)
+		var left := row_start_x - COLLECTION_CARD_WIDTH * 0.5 - 0.18
+		var right := row_start_x + row_visible_width - COLLECTION_CARD_WIDTH * 0.5
+		var corners := PackedVector2Array()
+		for corner: Vector2 in [Vector2(left, -0.65), Vector2(right, -0.65), Vector2(right, 0.73), Vector2(left, 0.73)]:
+			var local_corner := Vector3(corner.x, 0, row_z) + tilt * Vector3(0, corner.y, 0)
+			corners.append(camera.unproject_position(cards_root.to_global(local_corner)))
+		if Geometry2D.is_point_in_polygon(mouse_position, corners):
+			var center_on_screen := camera.unproject_position(cards_root.to_global(row_center))
+			var distance := absf(mouse_position.y - center_on_screen.y)
+			if distance < nearest_distance:
+				nearest_distance = distance
+				nearest_rarity = rarity
+	return nearest_rarity
 
 
 func _add_amount_label(card: Card3D, amount: int) -> void:
@@ -286,8 +500,9 @@ func _add_amount_label(card: Card3D, amount: int) -> void:
 	label.font = VCR_FONT
 	label.name = "AmountLabel"
 	label.text = "x" + str(amount)
-	label.position = Vector3(0.28, -0.48, 0.1)
-	label.pixel_size = 0.008
+	label.position = Vector3(0.36, 0.665, 0.1)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	label.pixel_size = 0.005
 	label.font_size = 24
 	label.outline_size = 5
 	card.add_child(label)
@@ -303,16 +518,15 @@ func _spawn_card(card: Card3D, target_pos: Vector3, target_rot: Vector3, index: 
 	var delay := index * spawn_stagger
 
 	var tween := create_tween().set_parallel(true)
+	_card_hover_tweens[card] = tween
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(card, "position", target_pos, spawn_duration).set_delay(delay).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(card, "scale", base_scale, spawn_duration).set_delay(delay).set_trans(Tween.TRANS_BACK)
 
-	await tween.finished
-
-	if not is_instance_valid(card):
-		return
-
-	_connect_card_input(card)
+	tween.finished.connect(func() -> void:
+		if is_instance_valid(card):
+			_connect_card_input(card)
+	)
 
 
 func _connect_card_input(card: Card3D) -> void:
@@ -346,10 +560,16 @@ func _ensure_effect_overview() -> void:
 
 
 func _on_effect_card_hovered(card: Card3D) -> void:
+	if is_angel_dialog_open():
+		return
 	if _deck_fan_open and not _deck_fan_cards.has(card):
 		return
 	if _detail_card != null and card != _detail_card:
 		return
+	if _detail_card == null and not _deck_fan_open:
+		var front_card := _collection_card_under_mouse(get_viewport().get_mouse_position())
+		if front_card != null and front_card != card:
+			return
 	if CardData.get_active_effects(card.card_data).is_empty():
 		return
 	_ensure_effect_overview()
@@ -368,59 +588,101 @@ func _hide_effect_overview() -> void:
 
 
 func _on_card_hovered(card: Card3D) -> void:
-	if _detail_card != null:
+	if is_angel_dialog_open() or _slot_room_key_request_pending or _deck_input_suspended or not is_visible_in_tree() or get_tree().paused:
 		return
-	if _deck_fan_open:
+	if not is_instance_valid(camera) or get_viewport().get_camera_3d() != camera:
+		return
+	if _detail_card != null or _detail_tween_running:
+		return
+	if _deck_fan_open or _deck_fan_tween_running:
 		return
 	if not is_instance_valid(card) or not _base_positions.has(card):
 		return
-
-	var hover_count := int(_card_hover_counts.get(card, 0))
-	_card_hover_counts[card] = hover_count + 1
+	if not card.is_visible_in_tree() or card.area == null or not card.area.input_ray_pickable:
+		return
+	var front_card := _collection_card_under_mouse(get_viewport().get_mouse_position())
+	if front_card != null and front_card != card:
+		return
+	for previous_card: Variant in _hovered_cards.keys():
+		if previous_card != card:
+			_on_card_unhovered(previous_card)
 
 	_hovered_rarity = str(_card_rarities.get(card, ""))
-	if hover_count > 0:
+	if _hovered_cards.has(card):
 		return
-
-	var base_pos: Vector3 = _base_positions[card]
-	var base_scale: Vector3 = _base_scales[card]
-	
+	_hovered_cards[card] = true
+	CollectionManager.mark_card_seen(str(card.card_data.get("id", "")))
 	_play_card_hover_sfx()
-
-	var tween := create_tween().set_parallel(true)
-	tween.tween_property(card, "position", base_pos + hover_lift, hover_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(card, "rotation_degrees", hover_rotation, hover_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(card, "scale", base_scale * hover_scale, hover_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_animate_collection_hover(card, true)
 
 
 func _on_card_unhovered(card: Card3D) -> void:
-	if _detail_card != null:
-		return
-	if _deck_fan_open:
+	# A detail/fan transition can move the area out from under the pointer.
+	# Always release its hover state, even while collection animation is suspended.
+	_hovered_cards.erase(card)
+	if _hovered_rarity == str(_card_rarities.get(card, "")):
+		_hovered_rarity = ""
+		for hovered_card: Variant in _hovered_cards:
+			_hovered_rarity = str(_card_rarities.get(hovered_card, ""))
+	if _detail_card != null or _detail_tween_running or _deck_fan_open or _deck_fan_tween_running:
 		return
 	if not is_instance_valid(card) or not _base_positions.has(card):
 		return
+	_animate_collection_hover(card, false)
 
-	var hover_count :int= max(int(_card_hover_counts.get(card, 0)) - 1, 0)
-	if hover_count > 0:
-		_card_hover_counts[card] = hover_count
-		return
-	_card_hover_counts.erase(card)
 
-	if _hovered_rarity == str(_card_rarities.get(card, "")):
-		_hovered_rarity = ""
+func _animate_collection_hover(card: Card3D, hovered: bool, duration: float = -1.0) -> void:
+	# Scrolling can finish a row's entrance early; these idempotent connections
+	# keep a cancelled entrance tween from leaving its cards unresponsive.
+	_connect_card_input(card)
+	var previous: Tween = _card_hover_tweens.get(card)
+	if previous != null and previous.is_valid():
+		previous.kill()
 
 	var base_pos: Vector3 = _base_positions[card]
 	var base_rot: Vector3 = _base_rotations[card]
 	var base_scale: Vector3 = _base_scales[card]
-
+	var move_duration := hover_duration if duration < 0.0 else duration
+	_update_collection_amount_visibility(card, hovered)
 	var tween := create_tween().set_parallel(true)
-	tween.tween_property(card, "position", base_pos, hover_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(card, "rotation_degrees", base_rot, hover_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(card, "scale", base_scale, hover_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_card_hover_tweens[card] = tween
+	tween.tween_property(card, "position", base_pos + hover_lift if hovered else base_pos, move_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card, "rotation_degrees", hover_rotation if hovered else base_rot, move_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card, "scale", base_scale * hover_scale if hovered else base_scale, move_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+
+func _reset_collection_hover(preserve_card: Card3D = null) -> void:
+	for card: Variant in _card_hover_tweens.keys():
+		var tween: Tween = _card_hover_tweens[card]
+		if tween != null and tween.is_valid():
+			tween.kill()
+		if is_instance_valid(card) and card != preserve_card and _base_positions.has(card):
+			card.position = _base_positions[card]
+			card.rotation_degrees = _base_rotations[card]
+			card.scale = _base_scales[card]
+			_connect_card_input(card)
+	_card_hover_tweens.clear()
+	_hovered_cards.clear()
+	_hovered_rarity = ""
+	for card: Variant in _base_positions:
+		if is_instance_valid(card):
+			_update_collection_amount_visibility(card, card == preserve_card)
+
+
+func _restore_collection_hover_under_mouse() -> void:
+	for card: Variant in _base_positions:
+		if is_instance_valid(card):
+			_update_collection_amount_visibility(card)
+	if camera == null or _detail_card != null or _deck_fan_open:
+		return
+	var card := _collection_card_under_mouse(get_viewport().get_mouse_position())
+	if card != null and _base_positions.has(card):
+		_on_card_hovered(card)
 
 
 func _scroll_row(rarity: String, direction: int) -> void:
+	if is_angel_dialog_open():
+		return
 	if rarity == "":
 		return
 	if not _row_cards.has(rarity):
@@ -430,11 +692,13 @@ func _scroll_row(rarity: String, direction: int) -> void:
 	if cards.is_empty():
 		return
 
-	var min_offset :float= min(0.0, row_visible_width - float(cards.size()) * card_spacing_x)
+	var min_offset := _row_min_scroll_offset(rarity)
 	var current_offset: float = _row_scroll_offsets.get(rarity, 0.0)
 
 	current_offset += float(direction) * row_scroll_step
 	current_offset = clamp(current_offset, min_offset, 0.0)
+	if is_equal_approx(current_offset, float(_row_scroll_offsets.get(rarity, 0.0))):
+		return
 
 	_row_scroll_offsets[rarity] = current_offset
 
@@ -449,12 +713,18 @@ func _scroll_row(rarity: String, direction: int) -> void:
 		if card == _detail_card:
 			continue
 
-		var tween := create_tween()
-		tween.tween_property(card, "position", new_pos, row_scroll_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		# Scroll and hover share a tween, so rapid wheel input or a late
+		# mouse-exit cannot pull a card back toward an obsolete row position.
+		_animate_collection_hover(card, _hovered_cards.has(card), row_scroll_duration)
 
 
 func _on_card_input(_camera: Node, event: InputEvent, _position: Vector3, _normal: Vector3, _shape_idx: int, card: Card3D) -> void:
+	if is_angel_dialog_open() or _slot_room_key_request_pending or _deck_input_suspended or not is_visible_in_tree() or get_tree().paused:
+		return
 	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed):
+		return
+	var front_card := _collection_card_under_mouse(event.position)
+	if front_card != null and front_card != card:
 		return
 
 	if _deck_fan_open:
@@ -480,22 +750,25 @@ func _on_card_input(_camera: Node, event: InputEvent, _position: Vector3, _norma
 	elif _detail_card == null:
 		_open_detail_card(card)
 	else:
-		_close_detail_card()
+		await _close_detail_card()
 		_open_detail_card(card)
 
 
 func _open_detail_card(card: Card3D) -> void:
+	if is_angel_dialog_open() or _slot_room_key_request_pending:
+		return
 	_hide_effect_overview()
 	if not is_instance_valid(card) or not _base_positions.has(card):
 		return
 
+	_reset_collection_hover(card)
 	_detail_card = card
 	_detail_tween_running = true
 	_play_card_unique_sfx(card)
 
 	var base_scale: Vector3 = _base_scales[card]
 	var target_pos := camera.global_transform * detail_offset_from_camera
-	var target_scale := base_scale * detail_scale
+	var target_scale := _detail_target_scale(card, base_scale)
 
 	var tween := create_tween().set_parallel(true)
 	tween.tween_property(card, "global_position", target_pos, detail_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
@@ -508,10 +781,29 @@ func _open_detail_card(card: Card3D) -> void:
 	_detail_tween_running = false
 
 
+func _detail_target_scale(card: Card3D, base_scale: Vector3) -> Vector3:
+	var target_scale := base_scale * detail_scale
+	if str(card.card_data.get("id", "")) != CollectionManager.SLOT_ROOM_KEY_ID:
+		return target_scale
+	# Fit the whole key card in the standalone camera's narrower lens as well
+	# as the hub, leaving room for its action without changing normal cards.
+	var viewport_size := get_viewport().get_visible_rect().size
+	var depth := absf(detail_offset_from_camera.z)
+	var top := camera.project_position(Vector2(viewport_size.x * 0.5, viewport_size.y * 0.09), depth)
+	var bottom := camera.project_position(Vector2(viewport_size.x * 0.5, viewport_size.y * 0.91), depth)
+	var parent_scale := (card.get_parent() as Node3D).global_basis.get_scale()
+	var height := 1.3 * target_scale.y * parent_scale.y
+	return target_scale * minf(1.0, top.distance_to(bottom) / maxf(height, 0.001))
+
+
 func _close_detail_card() -> void:
+	if _detail_switch_tween != null and _detail_switch_tween.is_valid():
+		_detail_switch_tween.kill()
+	_detail_switch_tween = null
 	_hide_deck_button()
 	_detail_card_id = ""
 	var card := _detail_card
+	_reset_collection_hover(card)
 	if not is_instance_valid(card) or not _base_positions.has(card):
 		_detail_card = null
 		return
@@ -530,9 +822,54 @@ func _close_detail_card() -> void:
 
 	await tween.finished
 	_detail_tween_running = false
+	_restore_collection_hover_under_mouse()
+
+
+func _input(event: InputEvent) -> void:
+	if is_angel_dialog_open():
+		return
+	# If a GUI consumes the release, cancel after dispatch instead of leaving a
+	# card attached to the pointer. Normal drops finish in _unhandled_input first.
+	if _dragged_fan_card != null and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		_cancel_deck_drag.call_deferred()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_cancel_deck_drag()
+		if is_instance_valid(angel_dialog):
+			angel_dialog.close_dialog()
+
+
+func _cancel_deck_drag() -> void:
+	var card := _dragged_fan_card
+	_dragged_fan_card = null
+	_dragged_fan_card_id = ""
+	if not is_instance_valid(card):
+		return
+	_stop_deck_reflow(card)
+	var base: Dictionary = _deck_fan_base_transforms.get(card, {})
+	if not base.is_empty():
+		card.global_position = base["position"]
+		card.rotation_degrees = base["rotation"]
+		card.scale = base["scale"]
+	_refresh_starting_hand_slots()
+
+
+func suspend_deck_input(suspended: bool) -> void:
+	_deck_input_suspended = suspended
+	if suspended:
+		_cancel_deck_drag()
+	_sync_angel_context()
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_angel_dialog_open() or not is_visible_in_tree() or get_tree().paused or _deck_input_suspended or _slot_room_key_request_pending:
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if _try_remove_hovered_deck_card(event):
+			return
+
 	# ---------------------------------------------------------
 	# Karte aus dem Deck ziehen
 	# ---------------------------------------------------------
@@ -559,6 +896,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 			# Nur Linksklick behandeln
 			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+				var card := _collection_card_under_mouse(event.position)
+				if card != null and not _deck_fan_tween_running:
+					_start_drag_fan_card(card, str(card.card_data.get("id", "")))
+					get_viewport().set_input_as_handled()
+					return
+				if is_instance_valid(_starting_hand_view) and _starting_hand_view.contains_pointer(event.position):
+					get_viewport().set_input_as_handled()
+					return
 
 				# Klick auf irgendein 3D-Objekt?
 				# Dann NICHT schließen.
@@ -566,6 +911,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					return
 
 				# Wirklich daneben geklickt
+				get_viewport().set_input_as_handled()
 				_close_deck_fan()
 				return
 
@@ -589,11 +935,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	# ---------------------------------------------------------
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			_scroll_row(_hovered_rarity, 1)
+			var rarity := _get_scroll_rarity_at(event.position)
+			_scroll_row(rarity, 1)
+			if not rarity.is_empty():
+				get_viewport().set_input_as_handled()
 			return
 
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_scroll_row(_hovered_rarity, -1)
+			var rarity := _get_scroll_rarity_at(event.position)
+			_scroll_row(rarity, -1)
+			if not rarity.is_empty():
+				get_viewport().set_input_as_handled()
 			return
 
 
@@ -611,12 +963,67 @@ func _unhandled_input(event: InputEvent) -> void:
 
 			_close_detail_card()
 
+
+func _collection_card_under_mouse(mouse_position: Vector2) -> Card3D:
+	if is_angel_dialog_open() or not is_visible_in_tree() or not is_instance_valid(camera):
+		return null
+	if get_viewport().get_camera_3d() != camera:
+		return null
+	var from := camera.project_ray_origin(mouse_position)
+	var query := PhysicsRayQueryParameters3D.create(
+		from, from + camera.project_ray_normal(mouse_position) * 100.0
+	)
+	query.collide_with_areas = true
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	var area := hit.get("collider") as Area3D
+	if area == null or not area.input_ray_pickable or not area.is_visible_in_tree():
+		return null
+	var card := area.get_parent() as Card3D
+	if card == null:
+		return null
+	if _deck_fan_open:
+		return card if _deck_fan_cards.has(card) else null
+	return card if _base_positions.has(card) else null
+
+
+func _try_remove_hovered_deck_card(event: InputEventMouseButton) -> bool:
+	if is_angel_dialog_open() or get_tree().paused or _detail_card != null or _detail_tween_running:
+		return false
+	if _deck_fan_tween_running or _dragged_fan_card != null:
+		return false
+	var card := _collection_card_under_mouse(event.position)
+	if card == null:
+		return false
+	# Handle the closest card before physics picking dispatches to overlapping Areas.
+	get_viewport().set_input_as_handled()
+	if not event.pressed:
+		return true
+	var card_id := str(card.card_data.get("id", ""))
+	if not CardData.is_combat_card(card.card_data) or DeckManager.get_card_count(card_id) == 0:
+		return true
+	if _deck_fan_open:
+		var starting_slot := DeckManager.get_starting_deck_indices().find(int(card.get_meta("deck_index", -1)))
+		if starting_slot >= 0:
+			DeckManager.remove_starting_card(starting_slot)
+			_reflow_deck_fan()
+			_play_fly_sfx()
+		else:
+			_remove_card_from_fan(card, card_id)
+	elif DeckManager.remove_card(card_id):
+		_refresh_collection_amount_labels()
+		_play_fly_sfx()
+		empty_label.text = Localization.format_text("Deck: %d / %d", [DeckManager.battle_deck.size(), DeckManager.MAX_DECK_SIZE])
+	return true
+
 # ---------------------------------------------------------------------------
 # Deck-Button (im Detail-View, "ADD TO DECK")
 # ---------------------------------------------------------------------------
 
-func _show_deck_button(_card: Card3D) -> void:
+func _show_deck_button(card: Card3D) -> void:
 	if _detail_card_id == "":
+		return
+	if _detail_card_id != CollectionManager.SLOT_ROOM_KEY_ID and not CardData.is_combat_card(card.card_data):
+		_hide_deck_button()
 		return
 
 	if not _deck_button.pressed.is_connected(_on_add_to_deck_pressed):
@@ -624,6 +1031,17 @@ func _show_deck_button(_card: Card3D) -> void:
 
 	if _deck_button_tween:
 		_deck_button_tween.kill()
+
+	_deck_button.transform = _deck_button_scene_transform
+	_deck_button_base_pos = _deck_button_scene_transform.origin
+	var target_scale := Vector3.ONE
+	if _detail_card_id == CollectionManager.SLOT_ROOM_KEY_ID:
+		# The standalone collection and the hub use different cameras. Keep
+		# this key action on screen rather than at the scene's fixed deck button.
+		var pointer := get_viewport().get_visible_rect().size * Vector2(0.875, 0.72)
+		var world_position := camera.project_position(pointer, absf(detail_offset_from_camera.z) + 1.8)
+		_deck_button_base_pos = to_local(world_position)
+		target_scale = Vector3.ONE * 0.38 / global_basis.get_scale()
 
 	_deck_button.visible = true
 	_deck_button.position = _deck_button_base_pos + add_button_slide_offset
@@ -636,44 +1054,87 @@ func _show_deck_button(_card: Card3D) -> void:
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
 
-	_deck_button_tween.tween_property(_deck_button, "scale", Vector3.ONE, add_button_slide_duration)\
+	_deck_button_tween.tween_property(_deck_button, "scale", target_scale, add_button_slide_duration)\
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
 
 func _update_deck_button_state() -> void:
-	if _deck_button == null:
+	if _deck_button == null or _detail_card_id == "":
+		return
+	if _detail_card_id == CollectionManager.SLOT_ROOM_KEY_ID:
+		_set_detail_button_state("Zur Tür", _slot_room_key_request_pending or CollectionManager.get_amount(_detail_card_id) <= 0)
+		return
+	if not CardData.is_combat_card(CardDatabase.get_card(_detail_card_id)):
+		_set_detail_button_state("SONDERKARTE", true)
 		return
 
 	if DeckManager.is_full():
-		_deck_button.label_text = "DECK FULL"
-		_deck_button.set_disabled(true)
+		_set_detail_button_state("DECK FULL", true)
 		return
 
 	if not DeckManager.can_add_card(_detail_card_id):
-		_deck_button.label_text = "MAX OWNED"
-		_deck_button.set_disabled(true)
+		_set_detail_button_state("MAX OWNED", true)
 		return
 
 	var amount_in_deck := DeckManager.get_card_count(_detail_card_id)
-	_deck_button.label_text = "ADD TO DECK " + str(amount_in_deck) + "/" + str(CollectionManager.get_amount(_detail_card_id))
-	_deck_button.set_disabled(false)
+	_set_detail_button_state(Localization.format_text("ADD TO DECK %d/%d", [amount_in_deck, CollectionManager.get_amount(_detail_card_id)]), false)
+
+
+func _set_detail_button_state(text: String, disabled: bool) -> void:
+	_deck_button.label_text = text
+	_deck_button.label.text = text
+	_deck_button.set_disabled(disabled)
 
 
 func _on_add_to_deck_pressed() -> void:
 	get_viewport().set_input_as_handled()
 
+	if is_angel_dialog_open() or _slot_room_key_request_pending or _detail_tween_running or _deck_fan_tween_running or _deck_input_suspended or not is_visible_in_tree() or get_tree().paused:
+		return
 	if _detail_card_id == "":
+		return
+	if _detail_card_id == CollectionManager.SLOT_ROOM_KEY_ID:
+		_request_slot_room_key()
+		return
+	if not CardData.is_combat_card(CardDatabase.get_card(_detail_card_id)):
 		return
 
 	var added := DeckManager.add_card(_detail_card_id)
 
 	if added:
-		empty_label.text = "Deck: %d / %d" % [DeckManager.battle_deck.size(), DeckManager.MAX_DECK_SIZE]
+		empty_label.text = Localization.format_text("Deck: %d / %d", [DeckManager.battle_deck.size(), DeckManager.MAX_DECK_SIZE])
 		_refresh_collection_amount_labels()
 		_update_deck_button_state()
 	else:
 		empty_label.text = "Karte konnte nicht hinzugefügt werden"
 
+	_update_deck_button_state()
+
+
+func _request_slot_room_key() -> void:
+	if is_angel_dialog_open() or _slot_room_key_request_pending or CollectionManager.get_amount(CollectionManager.SLOT_ROOM_KEY_ID) <= 0:
+		return
+	_slot_room_key_request_pending = true
+	_update_deck_button_state()
+	await _close_detail_card()
+	if CollectionManager.get_amount(CollectionManager.SLOT_ROOM_KEY_ID) <= 0:
+		finish_slot_room_key_request()
+		return
+	if slot_room_key_requested.get_connections().is_empty():
+		# The main menu also opens this collection as a standalone scene. Carry
+		# only the focus request into the hub; Main still owns the door reveal.
+		CollectionManager.set_meta("slot_room_key_focus_requested", true)
+		var scene_error := get_tree().change_scene_to_file("res://scenes/main/Main.tscn")
+		if scene_error != OK:
+			CollectionManager.remove_meta("slot_room_key_focus_requested")
+			finish_slot_room_key_request()
+			push_warning("Die Tür konnte nicht geöffnet werden: Raum konnte nicht geladen werden.")
+		return
+	slot_room_key_requested.emit()
+
+
+func finish_slot_room_key_request() -> void:
+	_slot_room_key_request_pending = false
 	_update_deck_button_state()
 
 
@@ -694,6 +1155,8 @@ func _on_deck_overview_pressed() -> void:
 	# Fan-View, der gerade erst geöffnet wird, im selben Frame wieder schließt.
 	get_viewport().set_input_as_handled()
 
+	if is_angel_dialog_open() or _slot_room_key_request_pending or _deck_input_suspended or not is_visible_in_tree() or get_tree().paused:
+		return
 	if _deck_fan_tween_running:
 		return
 
@@ -704,6 +1167,8 @@ func _on_deck_overview_pressed() -> void:
 
 
 func _open_deck_fan() -> void:
+	if is_angel_dialog_open():
+		return
 	_hide_effect_overview()
 
 	if _deck_fan_tween_running:
@@ -711,35 +1176,42 @@ func _open_deck_fan() -> void:
 
 	if _detail_card != null:
 		await _close_detail_card()
+	_reset_collection_hover()
 
 	var deck_ids: Array[String] = DeckManager.get_deck_cards()
 
 	_deck_fan_open = true
 	_deck_fan_tween_running = false
+	cards_root.visible = false
 
 	_deck_fan_cards.clear()
 	_deck_fan_base_transforms.clear()
 
 	_set_deck_management_buttons_visible(true)
+	_show_starting_hand_slots()
 
 	if deck_ids.is_empty():
 		empty_label.text = "Dein Deck ist leer"
 		empty_label.visible = true
 		return
 
-	empty_label.text = "Deck: %d / %d" % [
+	empty_label.text = Localization.format_text("Deck: %d / %d", [
 		deck_ids.size(),
 		DeckManager.MAX_DECK_SIZE
-	]
+	])
 	empty_label.visible = true
 
 	_deck_fan_tween_running = true
 
 	var count: int = deck_ids.size()
+	var deck_data := DeckManager.get_deck_card_data()
+	var selected := DeckManager.get_starting_deck_indices()
+	var assigned_count := selected.size() - selected.count(-1)
+	var fan_index := 0
 
 	for i: int in range(count):
 		var card_id: String = deck_ids[i]
-		var data: Dictionary = CardDatabase.get_card(card_id)
+		var data: Dictionary = deck_data[i]
 
 		if data.is_empty():
 			continue
@@ -747,14 +1219,13 @@ func _open_deck_fan() -> void:
 		var card: Card3D = CARD_SCENE.instantiate() as Card3D
 		add_child(card)
 
-		var upgraded_data := CardUpgradeManager.apply_upgrades(
-			card_id,
-			data
-		)
+		card.setup(data)
+		card.set_meta("deck_index", i)
 
-		card.setup(upgraded_data)
-
-		var fan_transform: Dictionary = _calculate_fan_transform(i, count)
+		var starting_slot := selected.find(i)
+		var fan_transform: Dictionary = _starting_card_transform(starting_slot) if starting_slot >= 0 else _calculate_fan_transform(fan_index, count - assigned_count)
+		if starting_slot < 0:
+			fan_index += 1
 
 		var target_pos: Vector3 = fan_transform["position"]
 		var target_rot: Vector3 = fan_transform["rotation"]
@@ -826,7 +1297,7 @@ func _on_fan_card_input(
 	card: Card3D,
 	card_id: String
 ) -> void:
-	if _deck_fan_tween_running:
+	if is_angel_dialog_open() or not _deck_fan_open or _deck_fan_tween_running or get_tree().paused or _deck_input_suspended:
 		return
 
 	if event is InputEventMouseButton:
@@ -845,10 +1316,19 @@ func _remove_card_from_fan(card: Card3D, card_id: String) -> void:
 	if _effect_overview != null:
 		_effect_overview.hide_overview(card)
 
-	DeckManager.remove_card(card_id)
+	var deck_index := int(card.get_meta("deck_index", -1))
+	if not DeckManager.remove_card_at(deck_index):
+		return
 
 	_deck_fan_cards.erase(card)
 	_deck_fan_base_transforms.erase(card)
+	_stop_deck_reflow(card)
+	for remaining in _deck_fan_cards:
+		var previous := int(remaining.get_meta("deck_index", -1))
+		if previous > deck_index:
+			remaining.set_meta("deck_index", previous - 1)
+	_refresh_fan_instance_finishes()
+	_refresh_starting_hand_slots()
 
 	_play_fly_sfx()
 
@@ -882,10 +1362,10 @@ func _remove_card_from_fan(card: Card3D, card_id: String) -> void:
 
 	_refresh_collection_amount_labels()
 
-	empty_label.text = "Deck: %d / %d" % [
+	empty_label.text = Localization.format_text("Deck: %d / %d", [
 		DeckManager.battle_deck.size(),
 		DeckManager.MAX_DECK_SIZE
-	]
+	])
 
 	empty_label.visible = true
 
@@ -912,8 +1392,10 @@ func _close_deck_fan() -> void:
 
 	_deck_fan_open = false
 	_deck_fan_tween_running = true
+	cards_root.visible = true
 
 	_set_deck_management_buttons_visible(false)
+	_hide_starting_hand_slots()
 
 	if _dragged_fan_card != null:
 		_dragged_fan_card = null
@@ -927,6 +1409,7 @@ func _close_deck_fan() -> void:
 	for card: Card3D in cards_to_close:
 		if card == null or not is_instance_valid(card):
 			continue
+		_stop_deck_reflow(card)
 
 		var tween := create_tween().set_parallel(true)
 		tween.set_ease(Tween.EASE_IN)
@@ -959,10 +1442,11 @@ func _close_deck_fan() -> void:
 
 	_deck_fan_tween_running = false
 
-	empty_label.text = "Deck: %d / %d" % [
+	empty_label.text = Localization.format_text("Deck: %d / %d", [
 		DeckManager.battle_deck.size(),
 		DeckManager.MAX_DECK_SIZE
-	]
+	])
+	_restore_collection_hover_under_mouse()
 	
 func _mouse_hits_interactive_3d() -> bool:
 	if camera == null:
@@ -987,7 +1471,7 @@ func _mouse_hits_interactive_3d() -> bool:
 		return false
 
 	if collider is Area3D:
-		return true
+		return (collider as Area3D).input_ray_pickable and (collider as Area3D).is_visible_in_tree()
 
 	return false
 
@@ -999,8 +1483,10 @@ func _get_available_amount(card_id: String) -> int:
 	)
 	
 func _start_drag_fan_card(card: Card3D, card_id: String) -> void:
-	if not is_instance_valid(card):
+	if is_angel_dialog_open() or not is_instance_valid(card) or _dragged_fan_card != null or _deck_fan_tween_running or _deck_input_suspended:
 		return
+	_hide_effect_overview()
+	_stop_deck_reflow(card)
 
 	_dragged_fan_card = card
 	_dragged_fan_card_id = card_id
@@ -1009,6 +1495,10 @@ func _start_drag_fan_card(card: Card3D, card_id: String) -> void:
 	if _deck_fan_base_transforms.has(card):
 		var base: Dictionary = _deck_fan_base_transforms[card]
 		_drag_start_pos = base["position"]
+	var plane := Plane(camera.global_basis.z, _drag_start_pos)
+	var mouse_pos := get_viewport().get_mouse_position()
+	var hit: Variant = plane.intersects_ray(camera.project_ray_origin(mouse_pos), camera.project_ray_normal(mouse_pos))
+	_drag_pointer_offset = _drag_start_pos - (hit as Vector3) if hit != null else Vector3.ZERO
 
 
 func _update_dragged_fan_card() -> void:
@@ -1028,22 +1518,16 @@ func _update_dragged_fan_card() -> void:
 		return
 
 	var hit_pos: Vector3 = hit as Vector3
-	var pull_vec: Vector3 = hit_pos - _drag_start_pos
-
-	var pull_distance: float = min(pull_vec.length() * fan_drag_pull_strength, fan_drag_max_pull)
-
-	if pull_vec.length() > 0.001:
-		pull_vec = pull_vec.normalized() * pull_distance
-	else:
-		pull_vec = Vector3.ZERO
 
 	var base: Dictionary = _deck_fan_base_transforms.get(_dragged_fan_card, {})
 	var base_rot: Vector3 = base.get("rotation", _dragged_fan_card.rotation_degrees)
 	var base_scale: Vector3 = base.get("scale", Vector3.ONE * deck_fan_card_scale)
 
-	_dragged_fan_card.global_position = _drag_start_pos + pull_vec
+	_dragged_fan_card.global_position = hit_pos + _drag_pointer_offset + camera.global_basis.z * 0.025
 	_dragged_fan_card.rotation_degrees = base_rot
 	_dragged_fan_card.scale = base_scale * fan_drag_scale
+	if is_instance_valid(_starting_hand_view):
+		_starting_hand_view.highlight_drop(mouse_pos, int(_dragged_fan_card.get_meta("deck_index", -1)))
 
 func _release_drag_fan_card() -> void:
 	if _dragged_fan_card == null:
@@ -1057,8 +1541,29 @@ func _release_drag_fan_card() -> void:
 
 	if not is_instance_valid(card):
 		return
+	_refresh_starting_hand_slots()
+	var deck_index := int(card.get_meta("deck_index", -1))
+	var starting_slot := DeckManager.get_starting_deck_indices().find(deck_index)
+	var pointer := get_viewport().get_mouse_position()
+	if is_instance_valid(_starting_hand_view) and _starting_hand_view.contains_pointer(pointer):
+		var target := _starting_hand_view.slot_at(pointer)
+		if target >= 0 and target < CollectionManager.get_starting_hand_slot_count():
+			if DeckManager.assign_starting_card(deck_index, target):
+				_play_fly_sfx()
+				_reflow_deck_fan()
+				return
+		_snap_fan_card_back(card)
+		return
 
 	var distance: float = card.global_position.distance_to(_drag_start_pos)
+	if starting_slot >= 0:
+		if distance >= 0.2:
+			DeckManager.remove_starting_card(starting_slot)
+			_play_fly_sfx()
+			_reflow_deck_fan()
+		else:
+			_snap_fan_card_back(card)
+		return
 
 	if distance >= fan_drag_remove_distance:
 		_remove_card_from_fan(card, card_id)
@@ -1077,11 +1582,26 @@ func _snap_fan_card_back(card: Card3D) -> void:
 	var base_scale: Vector3 = base["scale"]
 
 	var tween := create_tween().set_parallel(true)
+	_stop_deck_reflow(card)
+	_deck_reflow_tweens[card] = tween
 	tween.tween_property(card, "global_position", base_pos, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween.tween_property(card, "rotation_degrees", base_rot, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween.tween_property(card, "scale", base_scale, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
 	
+func _refresh_fan_instance_finishes() -> void:
+	var deck_data := DeckManager.get_deck_card_data()
+	for card: Card3D in _deck_fan_cards:
+		if not is_instance_valid(card):
+			continue
+		var index := int(card.get_meta("deck_index", -1))
+		if index < 0 or index >= deck_data.size():
+			continue
+		var data: Dictionary = deck_data[index]
+		if str(data.get("instance_id", "")) != str(card.card_data.get("instance_id", "")):
+			card.setup(data)
+
+
 func _refresh_collection_amount_labels() -> void:
 	for card in _base_positions.keys():
 		if not is_instance_valid(card):
@@ -1103,7 +1623,8 @@ func _refresh_collection_amount_labels() -> void:
 
 
 func _calculate_fan_transform(index: int, count: int) -> Dictionary:
-	var center_pos: Vector3 = camera.global_transform * deck_fan_offset_from_camera
+	var offset := deck_fan_offset_from_camera
+	var center_pos: Vector3 = camera.global_transform * offset
 
 	var angle_span: float = 0.0
 	if count > 1:
@@ -1122,12 +1643,19 @@ func _calculate_fan_transform(index: int, count: int) -> Dictionary:
 	)
 
 	var spread_x: float = (float(index) - float(count - 1) * 0.5) * deck_fan_min_x_spacing
+	var viewport_size := camera.get_viewport().get_visible_rect().size
+	var edge := camera.project_position(Vector2(viewport_size.x * 0.94, viewport_size.y * 0.5), absf(offset.z))
+	var available_half_width := absf((edge - center_pos).dot(camera.global_basis.x)) - 0.4
+	var natural_half_width := sin(deg_to_rad(angle_span * 0.5)) * deck_fan_radius + float(count - 1) * 0.5 * deck_fan_min_x_spacing
+	var width_scale := minf(1.0, available_half_width / maxf(natural_half_width, 0.001))
 
-	var center_index: float = float(count - 1) * 0.5
-	var distance_from_center: float = abs(float(index) - center_index)
+	# Anchor the depth stack to one card. A fractional center puts the two
+	# middle cards of an even fan on the same plane, so their faces z-fight.
+	var front_card_index: int = maxi(0, floori(float(count - 1) * 0.5))
+	var distance_from_center: float = abs(float(index - front_card_index))
 	var depth_offset: float = distance_from_center * deck_fan_depth_spacing
 	var local_target_pos: Vector3 = center_pos \
-		+ camera.global_basis.x * (arc_offset.x + spread_x) \
+		+ camera.global_basis.x * (arc_offset.x + spread_x) * maxf(width_scale, 0.1) \
 		+ camera.global_basis.y * arc_offset.y \
 		- camera.global_basis.z * depth_offset
 
@@ -1149,6 +1677,10 @@ func _reflow_deck_fan() -> void:
 	_deck_fan_cards = valid_cards
 
 	var count: int = _deck_fan_cards.size()
+	var selected := DeckManager.get_starting_deck_indices()
+	var assigned_count := selected.size() - selected.count(-1)
+	var fan_index := 0
+	_refresh_starting_hand_slots()
 
 	for i in range(count):
 		var card: Card3D = _deck_fan_cards[i]
@@ -1156,7 +1688,10 @@ func _reflow_deck_fan() -> void:
 		if card == _dragged_fan_card:
 			continue
 
-		var fan_transform: Dictionary = _calculate_fan_transform(i, count)
+		var starting_slot := selected.find(int(card.get_meta("deck_index", -1)))
+		var fan_transform: Dictionary = _starting_card_transform(starting_slot) if starting_slot >= 0 else _calculate_fan_transform(fan_index, count - assigned_count)
+		if starting_slot < 0:
+			fan_index += 1
 
 		_deck_fan_base_transforms[card] = fan_transform
 
@@ -1165,12 +1700,78 @@ func _reflow_deck_fan() -> void:
 		var target_scale: Vector3 = fan_transform["scale"]
 
 		var tween := create_tween().set_parallel(true)
+		_stop_deck_reflow(card)
+		_deck_reflow_tweens[card] = tween
 		tween.tween_property(card, "global_position", target_pos, deck_fan_reflow_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card, "rotation_degrees", target_rot, deck_fan_reflow_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		tween.tween_property(card, "scale", target_scale, deck_fan_reflow_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 func refresh_collection() -> void:
+	if not _can_refresh_collection():
+		_collection_refresh_pending = true
+		return
+	_collection_refresh_pending = false
 	_build_collection()
+	if _deck_fan_open:
+		_refresh_starting_hand_slots()
+
+
+func _can_refresh_collection() -> bool:
+	return not is_angel_dialog_open() and _detail_card == null and not _detail_tween_running and not _deck_fan_tween_running and _dragged_fan_card == null and not _slot_room_key_request_pending
+
+
+func _on_collection_changed(card_ids: Array[String]) -> void:
+	for card_id: String in card_ids:
+		if CardDatabase.get_card(card_id).get("rarity") == "secret":
+			_refresh_secret_cards.call_deferred()
+			break
+	if card_ids.has(CollectionManager.SLOT_ROOM_KEY_ID):
+		# The knife reward is discovered among the collection cards; receiving it
+		# must not open a reveal, move the camera, or interrupt an active detail.
+		_collection_refresh_pending = true
+
+
+func _stop_deck_reflow(card: Card3D) -> void:
+	var previous := _deck_reflow_tweens.get(card) as Tween
+	if previous != null:
+		previous.kill()
+	_deck_reflow_tweens.erase(card)
+
+
+func refresh_starting_hand_unlocks() -> void:
+	_refresh_starting_hand_slots()
+	# Cheats can run from paused settings while a detail card is open.
+	# Rebuild the collection once that view has safely returned.
+	_collection_refresh_pending = true
+
+
+func _show_starting_hand_slots() -> void:
+	_hide_starting_hand_slots()
+	_starting_hand_view = STARTING_HAND_VIEW.new() as StartingHandSlots
+	_starting_hand_view.name = "StartingHandSlots"
+	add_child(_starting_hand_view)
+	_starting_hand_view.setup(camera)
+
+
+func _hide_starting_hand_slots() -> void:
+	if is_instance_valid(_starting_hand_view):
+		_starting_hand_view.hide()
+		_starting_hand_view.queue_free()
+	_starting_hand_view = null
+
+
+func _refresh_starting_hand_slots() -> void:
+	if is_instance_valid(_starting_hand_view):
+		_starting_hand_view.refresh()
+
+
+func _starting_card_transform(slot: int) -> Dictionary:
+	var local_basis := global_basis.inverse() * _starting_hand_view.global_basis
+	return {
+		"position": _starting_hand_view.card_position(slot),
+		"rotation": local_basis.orthonormalized().get_euler() * (180.0 / PI),
+		"scale": Vector3.ONE * 0.53 / global_basis.get_scale(),
+	}
 
 func _hide_deck_button() -> void:
 	if _deck_button == null:
@@ -1191,12 +1792,12 @@ func _hide_deck_button() -> void:
 	_deck_button_tween.finished.connect(func():
 		if _deck_button != null:
 			_deck_button.visible = false
-			_deck_button.position = _deck_button_base_pos
-			_deck_button.scale = Vector3.ONE
+			_deck_button.transform = _deck_button_scene_transform
+			_deck_button_base_pos = _deck_button_scene_transform.origin
 	)
 	
 func _show_next_detail_card(direction: int) -> void:
-	if _detail_card == null:
+	if is_angel_dialog_open() or _detail_card == null or _slot_room_key_request_pending:
 		return
 	_play_card_hover_sfx()
 	# Falls gerade eine Karte vom letzten Wechsel noch "im Flug" zurück nach
@@ -1254,7 +1855,7 @@ func _show_next_detail_card(direction: int) -> void:
 	var old_base_scale: Vector3 = _base_scales[old_card]
 
 	var new_base_scale: Vector3 = _base_scales[new_card]
-	var new_detail_scale := new_base_scale * detail_scale
+	var new_detail_scale := _detail_target_scale(new_card, new_base_scale)
 
 	var move_dir := -float(direction)
 	var side_offset := camera.global_basis.x * 1.7 * move_dir
@@ -1341,15 +1942,16 @@ func _refresh_upgraded_card_everywhere(card_id: String) -> void:
 		if id != card_id:
 			continue
 
-		card.setup(upgraded_data)
+		card.setup(CardData.with_instance_metadata(upgraded_data, card.card_data))
 
 	# Detailkarte aktualisieren, falls genau diese offen ist
 	if _detail_card != null and is_instance_valid(_detail_card):
 		var detail_id := str(_detail_card.card_data.get("id", _detail_card.card_data.get("card_id", "")))
 		if detail_id == card_id:
-			_detail_card.setup(upgraded_data)
+			_detail_card.setup(CardData.with_instance_metadata(upgraded_data, _detail_card.card_data))
 
 	# Deck-Fan-Karten aktualisieren, falls der Fan offen ist
+	var deck_data := DeckManager.get_deck_card_data()
 	for fan_card in _deck_fan_cards:
 		if fan_card == null or not is_instance_valid(fan_card):
 			continue
@@ -1358,7 +1960,9 @@ func _refresh_upgraded_card_everywhere(card_id: String) -> void:
 		if fan_id != card_id:
 			continue
 
-		fan_card.setup(upgraded_data)
+		var index := int(fan_card.get_meta("deck_index", -1))
+		if index >= 0 and index < deck_data.size():
+			fan_card.setup(deck_data[index])
 
 	_refresh_collection_amount_labels()
 
@@ -1410,6 +2014,8 @@ func _set_deck_management_buttons_visible(value: bool) -> void:
 
 func _on_clear_deck_pressed() -> void:
 	get_viewport().set_input_as_handled()
+	if is_angel_dialog_open():
+		return
 
 	if not _deck_fan_open:
 		return
@@ -1437,6 +2043,7 @@ func _on_clear_deck_pressed() -> void:
 	for card: Card3D in visible_cards:
 		if card == null or not is_instance_valid(card):
 			continue
+		_stop_deck_reflow(card)
 
 		var tween := create_tween().set_parallel(true)
 		tween.set_ease(Tween.EASE_IN)
@@ -1468,6 +2075,7 @@ func _on_clear_deck_pressed() -> void:
 	_play_fly_sfx()
 
 	await get_tree().create_timer(0.24).timeout
+	_refresh_starting_hand_slots()
 
 	_deck_fan_tween_running = false
 	_deck_fan_open = true
@@ -1483,6 +2091,8 @@ func _on_clear_deck_pressed() -> void:
 
 func _on_random_deck_pressed() -> void:
 	get_viewport().set_input_as_handled()
+	if is_angel_dialog_open():
+		return
 
 	if not _deck_fan_open:
 		return
@@ -1510,6 +2120,7 @@ func _on_random_deck_pressed() -> void:
 	# ---------------------------------------------------------
 	for card: Card3D in _deck_fan_cards:
 		if card != null and is_instance_valid(card):
+			_stop_deck_reflow(card)
 			card.queue_free()
 
 	_deck_fan_cards.clear()
@@ -1517,6 +2128,7 @@ func _on_random_deck_pressed() -> void:
 
 	# ---------------------------------------------------------
 	# Pool aus allen tatsächlich besessenen Karten erstellen
+	_refresh_starting_hand_slots()
 	# ---------------------------------------------------------
 	var random_pool: Array[String] = []
 	var owned_cards: Dictionary = CollectionManager.get_owned_cards()
@@ -1535,7 +2147,7 @@ func _on_random_deck_pressed() -> void:
 
 		var data: Dictionary = CardDatabase.get_card(card_id)
 
-		if data.is_empty():
+		if not CardData.is_combat_card(data):
 			continue
 
 		# Jede besessene Kopie kommt einmal in den Pool.
@@ -1570,10 +2182,10 @@ func _on_random_deck_pressed() -> void:
 		empty_label.visible = true
 		return
 
-	empty_label.text = "Deck: %d / %d" % [
+	empty_label.text = Localization.format_text("Deck: %d / %d", [
 		new_deck.size(),
 		DeckManager.MAX_DECK_SIZE
-	]
+	])
 
 	empty_label.visible = true
 
@@ -1584,102 +2196,13 @@ func _on_random_deck_pressed() -> void:
 	await _rebuild_open_deck_fan()
 
 func _rebuild_open_deck_fan() -> void:
-	if not _deck_fan_open:
+	if not _deck_fan_open or _deck_fan_tween_running:
 		return
-
-	if _deck_fan_tween_running:
-		return
-	_hide_effect_overview()
-
-	var deck_ids: Array[String] = DeckManager.get_deck_cards()
-
-	for old_card: Card3D in _deck_fan_cards:
-		if old_card != null and is_instance_valid(old_card):
-			old_card.queue_free()
-
+	for card: Card3D in _deck_fan_cards:
+		_stop_deck_reflow(card)
+		if is_instance_valid(card):
+			card.hide()
+			card.queue_free()
 	_deck_fan_cards.clear()
 	_deck_fan_base_transforms.clear()
-
-	_set_deck_management_buttons_visible(true)
-
-	if deck_ids.is_empty():
-		empty_label.text = "Dein Deck ist leer"
-		empty_label.visible = true
-		return
-
-	_deck_fan_tween_running = true
-
-	var count: int = deck_ids.size()
-
-	for i: int in range(count):
-		var card_id: String = deck_ids[i]
-		var data: Dictionary = CardDatabase.get_card(card_id)
-
-		if data.is_empty():
-			continue
-
-		var card: Card3D = CARD_SCENE.instantiate() as Card3D
-		add_child(card)
-
-		var upgraded_data := CardUpgradeManager.apply_upgrades(
-			card_id,
-			data
-		)
-
-		card.setup(upgraded_data)
-
-		var fan_transform: Dictionary = _calculate_fan_transform(
-			i,
-			count
-		)
-
-		var target_pos: Vector3 = fan_transform["position"]
-		var target_rot: Vector3 = fan_transform["rotation"]
-		var target_scale: Vector3 = fan_transform["scale"]
-
-		card.global_position = target_pos + Vector3(
-			0,
-			-deck_fan_rise_height,
-			0
-		)
-
-		card.rotation_degrees = target_rot
-		card.scale = target_scale * 0.01
-
-		_deck_fan_base_transforms[card] = fan_transform
-		_deck_fan_cards.append(card)
-
-		_connect_fan_card_input(card, card_id)
-
-		var delay: float = float(i) * deck_fan_stagger
-
-		var tween := create_tween().set_parallel(true)
-		tween.set_ease(Tween.EASE_OUT)
-
-		tween.tween_property(
-			card,
-			"global_position",
-			target_pos,
-			deck_fan_duration
-		).set_delay(delay).set_trans(Tween.TRANS_BACK)
-
-		tween.tween_property(
-			card,
-			"scale",
-			target_scale,
-			deck_fan_duration
-		).set_delay(delay).set_trans(Tween.TRANS_BACK)
-
-	var last_delay := 0.0
-
-	if count > 0:
-		last_delay = float(count - 1) * deck_fan_stagger
-
-	await get_tree().create_timer(
-		last_delay + deck_fan_duration
-	).timeout
-
-	_deck_fan_tween_running = false
-	_deck_fan_open = true
-
-	_set_deck_management_buttons_visible(true)
+	await _open_deck_fan()

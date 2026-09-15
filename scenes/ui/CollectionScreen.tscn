@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cvxblkstddw2n"]
+[gd_scene load_steps=12 format=3 uid="uid://cvxblkstddw2n"]
 
 [ext_resource type="Script" uid="uid://bb62mpjyv4ak2" path="res://scripts/ui/CollectionScreen.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://bpcv0s5e6orfb" path="res://scenes/Table3DButton.tscn" id="2_eujja"]
@@ -7,6 +7,9 @@
 [ext_resource type="AudioStream" uid="uid://bb6frcxr0ib18" path="res://assets/sounds/SFX/cardFly.mp3" id="6_wu3m3"]
 [ext_resource type="Texture2D" uid="uid://ddgq6dfuyq1ow" path="res://assets/characters/angel.png" id="7_efdwr"]
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="8_kelpw"]
+[ext_resource type="PackedScene" uid="uid://bqetkqf5b5kk4" path="res://assets/environments/props/beer/energy.glb" id="9_bghdq"]
+[ext_resource type="Script" uid="uid://buklinv6mfo0y" path="res://scripts/table/LocalTableProp.gd" id="10_mh264"]
+[ext_resource type="AudioStream" uid="uid://bu4v4qlnmw3y6" path="res://assets/sounds/SFX/canKick.mp3" id="11_can_kick"]
 [ext_resource type="Script" uid="uid://oyqpnugunh4o" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
 
 [node name="CollectionScreen" type="Node3D"]
@@ -18,7 +21,6 @@ detail_mouse_tilt_strength = 60.0
 deck_button_scene = ExtResource("2_eujja")
 deck_button_rotation = Vector3(90, 0, 0)
 deck_overview_button_scene = ExtResource("2_eujja")
-deck_fan_offset_from_camera = Vector3(0, -0.545, -2.4)
 deck_fan_card_scale = 0.835
 deck_fan_max_angle_degrees = 47.655
 deck_fan_base_tilt = Vector3(-20, 0, 0)
@@ -90,7 +92,7 @@ transform = Transform3D(2.53, 0, 0, 0, 2.12479, -0.267615, 0, 0.208525, 2.7269, 
 
 [node name="CardHoverSFX" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_ke5g5")
-volume_db = -4.228
+volume_db = -14.828
 pitch_scale = 1.31
 bus = &"SFX"
 
@@ -109,3 +111,31 @@ hframes = 18
 script = ExtResource("8_kelpw")
 fps = 10.0
 TOTAL_FRAMES = 18
+
+[node name="decorations" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.65438)
+
+[node name="energy3" parent="decorations" instance=ExtResource("9_bghdq")]
+transform = Transform3D(0.545039, 0, 0.645723, 0.0706115, 0.839933, -0.0596015, -0.64185, 0.092403, 0.54177, -6.41872, 0.183896, -1.66727)
+script = ExtResource("10_mh264")
+throw_sound = ExtResource("11_can_kick")
+
+[node name="energy6" parent="decorations" instance=ExtResource("9_bghdq")]
+transform = Transform3D(-0.54389, 0.0193177, -0.646402, -0.644229, 0.0574435, 0.543778, 0.0563742, 0.842824, -0.022246, -6.185, 1.50233, -2.15587)
+script = ExtResource("10_mh264")
+throw_sound = ExtResource("11_can_kick")
+
+[node name="energy4" parent="decorations" instance=ExtResource("9_bghdq")]
+transform = Transform3D(0.545039, 0, 0.645723, 0.0706115, 0.839933, -0.0596015, -0.64185, 0.092403, 0.54177, -6.41872, 0.183896, -2.924)
+script = ExtResource("10_mh264")
+throw_sound = ExtResource("11_can_kick")
+
+[node name="energy7" parent="decorations" instance=ExtResource("9_bghdq")]
+transform = Transform3D(0.0934363, 0.0516256, 0.83823, 0.0706115, 0.839933, -0.0596015, -0.836845, 0.0766362, 0.0885618, 7.14504, 0.583073, -6.15318)
+script = ExtResource("10_mh264")
+throw_sound = ExtResource("11_can_kick")
+
+[node name="energy5" parent="decorations" instance=ExtResource("9_bghdq")]
+transform = Transform3D(0.768894, -0.0886988, -0.339058, 0.0706115, 0.839933, -0.0596015, 0.343281, 0.0259004, 0.771695, -5.77215, 0.183896, -2.05878)
+script = ExtResource("10_mh264")
+throw_sound = ExtResource("11_can_kick")

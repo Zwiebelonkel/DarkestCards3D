@@ -1,3 +1,3 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://fe80ws4iin1b"]
 
 [node name="PlayerSeat" type="Node3D"]

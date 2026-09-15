@@ -1,58 +1,7 @@
 extends Node3D
 class_name PackShopMachine
 
-const PACK_TYPES := {
-	"basic": {
-		"name": "BASIC PACK",
-		"cost": 5,
-		"card_count": 5,
-		"description": "Solider Einstieg mit zuverlässigen Karten.",
-		"scene": preload("res://assets/cards/pack/basic/pack.glb"),
-		"rarity_weights": {
-			"common": 65.0,
-			"uncommon": 25.0,
-			"rare": 8.0,
-			"epic": 1.7,
-			"legendary": 0.3,
-			"mythic": 0.0,
-			"exotic": 0.0
-		}
-	},
-
-	"ultra": {
-		"name": "ULTRA PACK",
-		"cost": 20,
-		"card_count": 7,
-		"description": "Stärkere Auswahl mit deutlich besseren Chancen.",
-		"scene": preload("res://assets/cards/pack/ultra/pack.glb"),
-		"rarity_weights": {
-			"common": 35.0,
-			"uncommon": 32.0,
-			"rare": 20.0,
-			"epic": 9.0,
-			"legendary": 3.0,
-			"mythic": 0.8,
-			"exotic": 0.2
-		}
-	},
-
-	"god": {
-		"name": "GOD PACK",
-		"cost": 35,
-		"card_count": 10,
-		"description": "Höchste Chancen auf seltene und spektakuläre Karten.",
-		"scene": preload("res://assets/cards/pack/god/pack.glb"),
-		"rarity_weights": {
-			"common": 10.0,
-			"uncommon": 20.0,
-			"rare": 28.0,
-			"epic": 24.0,
-			"legendary": 12.0,
-			"mythic": 5.0,
-			"exotic": 1.0
-		}
-	}
-}
+const PACK_TYPES := PackDefinition.PACK_TYPES
 
 @onready var pack_opening_screen: PackOpeningScreen = $PackOpeningScreen
 @export var pack_shop_viewport: SubViewport
@@ -103,6 +52,9 @@ func _connect_ui() -> void:
 
 
 func _on_pack_buy_pressed(pack_id: String) -> void:
+	if ui.locked:
+		return
+
 	if pack_opening_screen == null:
 		ui.show_message("Pack-Öffnung fehlt")
 		_play_error()
@@ -114,13 +66,25 @@ func _on_pack_buy_pressed(pack_id: String) -> void:
 		return
 
 	var data: Dictionary = PACK_TYPES[pack_id]
-
-	if pack_opening_screen.buy_pack(pack_id, data):
+	if not PackDefinition.is_unlocked(pack_id, GameCurrency.get_level()):
 		ui.refresh_balance()
-		ui.show_message(str(data.get("name", "PACK")) + " GEKAUFT · PACK AUFREISSEN")
-		ui.set_buy_locked(true)
+		ui.show_message(PackDefinition.get_unlock_message(pack_id))
+		_play_error()
+		return
+
+	var quantity := ui.get_purchase_quantity()
+	# Payment emits coins_changed synchronously. Keep the chosen amount stable
+	# until the entire purchase has either started or been rejected.
+	ui.set_buy_locked(true)
+	if pack_opening_screen.buy_pack(pack_id, data, quantity):
+		ui.refresh_balance()
+		if quantity > 1:
+			ui.show_message(Localization.format_text("%d PACKS GEKAUFT · NACHEINANDER AUFREISSEN", [quantity]))
+		else:
+			ui.show_message(Localization.format_text("%s GEKAUFT · PACK AUFREISSEN", [Localization.localized_arg(str(data.get("name", "Pack")))]))
 		_play_buy()
 	else:
+		ui.set_buy_locked(false)
 		ui.refresh_balance()
 		ui.show_message("Kauf fehlgeschlagen")
 		_play_error()

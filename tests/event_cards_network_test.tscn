@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/event_cards_network_test.gd" id="1"]
+
+[node name="EventCardsNetworkTest" type="Node"]
+script = ExtResource("1")

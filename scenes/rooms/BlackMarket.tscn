@@ -1,0 +1,324 @@
+[gd_scene load_steps=18 format=3 uid="uid://bf245el40ckwm"]
+
+[ext_resource type="PackedScene" uid="uid://cc38yiwfpqqq0" path="res://scenes/rooms/HospitalRoomShell.tscn" id="1_shell"]
+[ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="2_door"]
+[ext_resource type="Texture2D" uid="uid://qlmpdb8geucv" path="res://assets/characters/blackmarketDealer.png" id="4_5bpvq"]
+[ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="4_animation"]
+[ext_resource type="Texture2D" uid="uid://c2a3u52mdjhhq" path="res://assets/environments/props/table/table_metaltable(1).png" id="5_metal"]
+[ext_resource type="Script" uid="uid://m8otj3kd6adm" path="res://scripts/rooms/BlackMarketBoard.gd" id="6_board"]
+[ext_resource type="Script" path="res://scripts/rooms/DealerDialogue.gd" id="7_dialogue"]
+
+[sub_resource type="StandardMaterial3D" id="counter_enamel"]
+albedo_color = Color(0.21, 0.26, 0.2, 1)
+metallic = 0.16
+roughness = 0.87
+
+[sub_resource type="BoxMesh" id="unit_box"]
+
+[sub_resource type="StandardMaterial3D" id="iron"]
+albedo_color = Color(0.095, 0.11, 0.095, 1)
+metallic = 0.48
+roughness = 0.81
+
+[sub_resource type="StandardMaterial3D" id="countertop"]
+albedo_color = Color(0.56, 0.47, 0.32, 1)
+albedo_texture = ExtResource("5_metal")
+metallic = 0.25
+roughness = 0.76
+uv1_scale = Vector3(2, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="brass"]
+albedo_color = Color(0.51, 0.36, 0.16, 1)
+metallic = 0.63
+roughness = 0.63
+
+[sub_resource type="StandardMaterial3D" id="lamp_glow"]
+shading_mode = 0
+albedo_color = Color(1, 0.262745, 0.815686, 1)
+
+[sub_resource type="StandardMaterial3D" id="blackboard"]
+albedo_color = Color(0.023, 0.037, 0.027, 1)
+
+[sub_resource type="StandardMaterial3D" id="wood"]
+albedo_color = Color(0.24, 0.16, 0.095, 1)
+roughness = 0.97
+
+[sub_resource type="StandardMaterial3D" id="hospital_floor"]
+albedo_color = Color(0.13, 0.15, 0.12, 1)
+roughness = 0.98
+
+[sub_resource type="StandardMaterial3D" id="hospital_wall"]
+albedo_color = Color(0.28, 0.3, 0.25, 1)
+roughness = 0.94
+
+[node name="BlackMarket" type="Node3D"]
+
+[node name="DealerDialogue" type="Node3D" parent="."]
+script = ExtResource("7_dialogue")
+
+[node name="Shell" parent="." instance=ExtResource("1_shell")]
+transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, -0.925, 0, -2.21619, 0)
+
+[node name="CameraAnchor" type="Marker3D" parent="."]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 0, 0, 0)
+
+[node name="DoorApproach" type="Marker3D" parent="."]
+transform = Transform3D(7.54979e-08, 0, -1, 0, 1, 0, 1, 0, 7.54979e-08, 6.46851, 0, -4.06162)
+
+[node name="ReturnDoor" parent="." instance=ExtResource("2_door")]
+transform = Transform3D(0, 0, 1.825, 0, 1.825, 0, -1.825, 0, 0, 8.46851, -2.22292, -4.06162)
+hover_open_degrees = 25.0
+travel_open_degrees = 100.0
+
+[node name="Kiosk" type="Node3D" parent="."]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, -5.15, -2.21619, -1.49918)
+
+[node name="BackWall" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(11.5, 0, 0, 0, 5.3, 0, 0, 0, 0.16, 0, 2.65, -2.68)
+material_override = SubResource("counter_enamel")
+mesh = SubResource("unit_box")
+
+[node name="CounterBody" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(10.9, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0, 0.675, 0.55)
+material_override = SubResource("counter_enamel")
+mesh = SubResource("unit_box")
+
+[node name="CounterPlinth" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(11.05, 0, 0, 0, 0.19, 0, 0, 0, 1.41, 0, 0.095, 0.61)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="ServiceCounter" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(11.3, 0, 0, 0, 0.21, 0, 0, 0, 1.7, 0, 1.405, 0.61)
+material_override = SubResource("countertop")
+mesh = SubResource("unit_box")
+
+[node name="CounterEdge" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(11.3, 0, 0, 0, 0.085, 0, 0, 0, 0.055, 0, 1.43, 1.475)
+material_override = SubResource("brass")
+mesh = SubResource("unit_box")
+
+[node name="CounterFrontInset" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(10.5, 0, 0, 0, 0.85, 0, 0, 0, 0.035, 0, 0.74, 1.237)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="FrontPanelLeft" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(3.3, 0, 0, 0, 0.7, 0, 0, 0, 0.035, -3.55, 0.74, 1.265)
+material_override = SubResource("counter_enamel")
+mesh = SubResource("unit_box")
+
+[node name="FrontPanelCenter" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(3.45, 0, 0, 0, 0.7, 0, 0, 0, 0.035, 0, 0.74, 1.265)
+material_override = SubResource("counter_enamel")
+mesh = SubResource("unit_box")
+
+[node name="FrontPanelRight" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(3.3, 0, 0, 0, 0.7, 0, 0, 0, 0.035, 3.55, 0.74, 1.265)
+material_override = SubResource("counter_enamel")
+mesh = SubResource("unit_box")
+
+[node name="LeftPost" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(0.22, 0, 0, 0, 6.5, 0, 0, 0, 0.25, -5.58, 3.25, 0.35)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="RightPost" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(0.22, 0, 0, 0, 6.5, 0, 0, 0, 0.25, 5.58, 3.25, 0.35)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="Canopy" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(11.55, 0, 0, 0, 0.3, 0, 0, 0, 3.2, 0, 6.45, -0.85)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="CanopyFascia" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(11.55, 0, 0, 0, 0.42, 0, 0, 0, 0.16, 0, 6.14, 0.73)
+material_override = SubResource("counter_enamel")
+mesh = SubResource("unit_box")
+
+[node name="CanopyTrim" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(11.55, 0, 0, 0, 0.075, 0, 0, 0, 0.07, 0, 5.89, 0.82)
+material_override = SubResource("brass")
+mesh = SubResource("unit_box")
+
+[node name="UnderCanopyLamp" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(6.7, 0, 0, 0, 0.08, 0, 0, 0, 0.28, 0.45, 6.245, -1.25)
+material_override = SubResource("lamp_glow")
+mesh = SubResource("unit_box")
+
+[node name="CounterTray" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(1.15, 0, 0, 0, 0.08, 0, 0, 0, 0.72, -3.75, 1.555, 0.6)
+material_override = SubResource("brass")
+mesh = SubResource("unit_box")
+
+[node name="TrayInset" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(0.98, 0, 0, 0, 0.02, 0, 0, 0, 0.55, -3.75, 1.603, 0.6)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="CashBox" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(0.75, 0, 0, 0, 0.44, 0, 0, 0, 0.55, -4.8, 1.73, -0.05)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="CashBoxLatch" type="MeshInstance3D" parent="Kiosk"]
+transform = Transform3D(0.15, 0, 0, 0, 0.19, 0, 0, 0, 0.04, -4.8, 1.72, 0.23)
+material_override = SubResource("brass")
+mesh = SubResource("unit_box")
+
+[node name="Dealer" type="Sprite3D" parent="Kiosk"]
+transform = Transform3D(1.395, 0, 0, 0, 1.395, 0, 0, 0, 1.395, -3.75, 3.30579, -0.892243)
+pixel_size = 0.045
+billboard = 1
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("4_5bpvq")
+hframes = 19
+script = ExtResource("4_animation")
+fps = 10.0
+TOTAL_FRAMES = 19
+
+[node name="OfferBoard" type="Node3D" parent="."]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, -7.6, 1.8, -1.99918)
+script = ExtResource("6_board")
+
+[node name="Backing" type="MeshInstance3D" parent="OfferBoard"]
+transform = Transform3D(6.4, 0, 0, 0, 3.8, 0, 0, 0, 0.18, 0, 0, -0.075)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="BoardSurface" type="MeshInstance3D" parent="OfferBoard"]
+transform = Transform3D(6, 0, 0, 0, 3.4, 0, 0, 0, 0.045, 0, 0, 0)
+material_override = SubResource("blackboard")
+mesh = SubResource("unit_box")
+
+[node name="TopFrame" type="MeshInstance3D" parent="OfferBoard"]
+transform = Transform3D(6.36, 0, 0, 0, 0.17, 0, 0, 0, 0.13, 0, 1.785, 0.01)
+material_override = SubResource("brass")
+mesh = SubResource("unit_box")
+
+[node name="BottomFrame" type="MeshInstance3D" parent="OfferBoard"]
+transform = Transform3D(6.36, 0, 0, 0, 0.17, 0, 0, 0, 0.13, 0, -1.785, 0.01)
+material_override = SubResource("brass")
+mesh = SubResource("unit_box")
+
+[node name="LeftFrame" type="MeshInstance3D" parent="OfferBoard"]
+transform = Transform3D(0.17, 0, 0, 0, 3.4, 0, 0, 0, 0.13, -3.095, 0, 0.01)
+material_override = SubResource("brass")
+mesh = SubResource("unit_box")
+
+[node name="RightFrame" type="MeshInstance3D" parent="OfferBoard"]
+transform = Transform3D(0.17, 0, 0, 0, 3.4, 0, 0, 0, 0.13, 3.095, 0, 0.01)
+material_override = SubResource("brass")
+mesh = SubResource("unit_box")
+
+[node name="ChalkLedge" type="MeshInstance3D" parent="OfferBoard"]
+transform = Transform3D(6.36, 0, 0, 0, 0.085, 0, 0, 0, 0.39, 0, -1.895, 0.13)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="SideStock" type="Node3D" parent="."]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, -6.6, -2.21619, -7.3)
+
+[node name="ShelfBack" type="MeshInstance3D" parent="SideStock"]
+transform = Transform3D(2.65, 0, 0, 0, 3.6, 0, 0, 0, 0.12, 0, 1.8, -0.62)
+material_override = SubResource("counter_enamel")
+mesh = SubResource("unit_box")
+
+[node name="ShelfLeft" type="MeshInstance3D" parent="SideStock"]
+transform = Transform3D(0.09, 0, 0, 0, 3.6, 0, 0, 0, 1.15, -1.28, 1.8, -0.1)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="ShelfRight" type="MeshInstance3D" parent="SideStock"]
+transform = Transform3D(0.09, 0, 0, 0, 3.6, 0, 0, 0, 1.15, 1.28, 1.8, -0.1)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="ShelfBottom" type="MeshInstance3D" parent="SideStock"]
+transform = Transform3D(2.65, 0, 0, 0, 0.1, 0, 0, 0, 1.15, 0, 0.25, -0.1)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="ShelfMiddle" type="MeshInstance3D" parent="SideStock"]
+transform = Transform3D(2.65, 0, 0, 0, 0.1, 0, 0, 0, 1.15, 0, 1.8, -0.1)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="ShelfTop" type="MeshInstance3D" parent="SideStock"]
+transform = Transform3D(2.65, 0, 0, 0, 0.1, 0, 0, 0, 1.15, 0, 3.55, -0.1)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="StockBoxLow" type="MeshInstance3D" parent="SideStock"]
+transform = Transform3D(1.14, 0, 0, 0, 1.04, 0, 0, 0, 0.92, -0.48, 0.82, -0.11)
+material_override = SubResource("wood")
+mesh = SubResource("unit_box")
+
+[node name="StockBoxHigh" type="MeshInstance3D" parent="SideStock"]
+transform = Transform3D(1.4, 0, 0, 0, 1, 0, 0, 0, 0.85, 0.35, 2.35, -0.18)
+material_override = SubResource("wood")
+mesh = SubResource("unit_box")
+
+[node name="RoomLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 4.8, 0.2)
+light_color = Color(0.66, 0.72, 0.49, 1)
+light_energy = 1.45
+light_indirect_energy = 0.6
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 20.0
+omni_attenuation = 1.35
+
+[node name="KioskLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.9, 3.75, -0.3)
+light_color = Color(1, 0.301961, 0.894118, 1)
+light_energy = 3.2
+light_indirect_energy = 0.6
+light_specular = 0.25
+shadow_enabled = true
+omni_range = 10.0
+omni_attenuation = 1.2
+
+[node name="Connector" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.64725, -2.22292, -4.06162)
+
+[node name="Floor" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(2.6, 0, 0, 0, 0.12, 0, 0, 0, 3.266, 0, -0.06, 0)
+material_override = SubResource("hospital_floor")
+mesh = SubResource("unit_box")
+
+[node name="Ceiling" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(2.6, 0, 0, 0, 0.12, 0, 0, 0, 3.266, 0, 5.823, 0)
+material_override = SubResource("hospital_wall")
+mesh = SubResource("unit_box")
+
+[node name="SideNear" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(2.6, 0, 0, 0, 5.763, 0, 0, 0, 0.12, 0, 2.8815, -1.573)
+material_override = SubResource("hospital_wall")
+mesh = SubResource("unit_box")
+
+[node name="SideFar" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(2.6, 0, 0, 0, 5.763, 0, 0, 0, 0.12, 0, 2.8815, 1.573)
+material_override = SubResource("hospital_wall")
+mesh = SubResource("unit_box")
+
+[node name="HallLampHousing" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(1.3, 0, 0, 0, 0.18, 0, 0, 0, 0.5, 0, 5.63, 0)
+material_override = SubResource("iron")
+mesh = SubResource("unit_box")
+
+[node name="HallLampTube" type="MeshInstance3D" parent="Connector"]
+transform = Transform3D(1.08, 0, 0, 0, 0.06, 0, 0, 0, 0.27, 0, 5.52, 0)
+material_override = SubResource("lamp_glow")
+mesh = SubResource("unit_box")
+
+[node name="HallLight" type="OmniLight3D" parent="Connector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.95, 0)
+light_color = Color(1, 0.00392157, 0.909804, 1)
+light_energy = 1.7
+light_specular = 0.1
+shadow_enabled = true
+omni_range = 6.5

@@ -45,6 +45,7 @@ class RarityPreset:
 
 var card_data: Dictionary = {}
 var is_stack_decoration: bool = false
+var _localized_font_sizes: Dictionary = {}
 
 # HP-Werte).
 var max_hp: int = 0
@@ -55,6 +56,13 @@ var _last_stand_available: bool = false
 var _grave_return_available: bool = false
 var _skip_next_attack: bool = false
 var _disabled := false
+var event_block_turns: int = 0
+var _event_block_badge: Node3D
+var _event_block_label: Label3D
+
+# Transient match data travels with stolen cards in a battle deck. It is never
+# written back to CardDatabase, the collection, or a player's saved deck.
+const EVENT_MATCH_STATE_KEY := "_match_combat_state"
 
 var _card_material: StandardMaterial3D
 
@@ -90,6 +98,30 @@ signal attack_finished
 @export var select_lift: float = 0.08
 @export var select_duration: float = 0.15
 
+@export_group("Treffer-Blut")
+@export_range(0.1, 30.0, 0.1) var blood_fade_duration: float = 5.0
+@export_range(0.0, 1.0, 0.01) var blood_max_coverage: float = 0.58
+@export var blood_color: Color = Color(0.65, 0.015, 0.025, 0.92)
+
+const BLOOD_MIX_SHADER := preload("res://assets/shader/bloodMix.gdshader")
+const HOLO_SHADER := preload("res://assets/shader/holo.gdshader")
+const SPECIAL_AURA_SHADER := preload("res://assets/shader/special_card_aura.gdshader")
+const DEATH_DISSOLVE_SCRIPT := preload("res://scripts/card/CardDeathDissolve.gd")
+const DIORAMA_SCRIPT := preload("res://scripts/card/CardDiorama.gd")
+var _death_dissolve: RefCounted
+var _diorama_art: CardDiorama
+var _diorama_scene_path := ""
+var _special_aura: MeshInstance3D
+var _holo_body_base_material: Material
+var _holo_body_material: Material
+var _holo_body_pass: ShaderMaterial
+var _holo_image_pass: ShaderMaterial
+const BLOOD_NOISE := preload("res://assets/shader/card_blood_noise.tres")
+var _blood_materials: Array[ShaderMaterial] = []
+var _blood_targets: Array[MeshInstance3D] = []
+var _blood_intensity: float = 0.0
+var _blood_fade_speed: float = 0.0
+
 var _is_selected: bool = false
 var _select_base_position: Vector3 = Vector3.ZERO
 var _select_tween: Tween = null
@@ -121,6 +153,7 @@ static func _static_init() -> void:
 "legendary": RarityPreset.new(1.7, 1.7, 6.0, 0.55, 0.35, 2.4, 0.38, 12.0),
 "mythic": RarityPreset.new(3.2, 3.0, 9.0, 0.95, 0.65, 4.0, 0.85, 34.0),
 "exotic": RarityPreset.new(3.8, 3.8, 10.0, 1.0, 0.75, 4.8, 1.0, 45.0),
+"secret": RarityPreset.new(1.0, 0.35, 3.0, 0.0, 0.0, 0.0, 0.6, 6.0),
 	}
 
 
@@ -142,8 +175,12 @@ func _ready() -> void:
 		return
 
 	_connect_card_hover_area()
+	Localization.locale_changed.connect(_on_locale_changed)
+	_refresh_localized_text()
 
 func _process(delta: float) -> void:
+	# Static card art and cards thrown off the table must fade just as well.
+	_update_blood_fade(delta)
 	if not _animated_image:
 		return
 
@@ -160,6 +197,39 @@ func _process(delta: float) -> void:
 	_current_frame = (_current_frame + 1) % _frame_count
 	_update_card_frame()
 
+
+## Called only once death is confirmed, never from take_damage/died: effects
+## such as Last Stand may still save the card before the table starts its flight.
+func begin_death_dissolve() -> void:
+	if _death_dissolve != null:
+		return
+	_death_dissolve = DEATH_DISSOLVE_SCRIPT.new()
+	# Keep the exact currently displayed atlas frame for the whole flight.
+	_animated_image = false
+	var body := card_model.get_node_or_null("Cube") as MeshInstance3D
+	var icons: Array[Sprite3D] = [effect_icon_1, effect_icon_2]
+	_death_dissolve.begin(self, body, card_image, icons)
+	_set_effect_icon_areas_enabled(false)
+	for label in find_children("*", "Label3D", true, false):
+		(label as Label3D).hide()
+	for decoration in [card_outline, rarity_mesh, _special_aura, _event_block_badge]:
+		if is_instance_valid(decoration):
+			(decoration as Node3D).hide()
+	# Blood's gameplay-visible state remains intact while its extra render
+	# passes are detached by the helper, so they cannot cover dissolved holes.
+
+
+func set_death_dissolve_progress(progress: float) -> void:
+	begin_death_dissolve()
+	_death_dissolve.set_progress(progress)
+
+
+func get_death_dissolve_progress() -> float:
+	if _death_dissolve == null:
+		return 0.0
+	return _death_dissolve.get_progress()
+
+
 func _ensure_materials_resolved() -> void:
 	if _rarity_glow_material == null and rarity_mesh != null:
 		var shared_rarity_mat: ShaderMaterial = rarity_mesh.get_surface_override_material(0) as ShaderMaterial
@@ -170,13 +240,18 @@ func _ensure_materials_resolved() -> void:
 
 
 func setup(data: Dictionary) -> void:
-	card_data = data
+	# Network snapshots rebuild the same card's art. They must neither clean
+	# its current stain nor restart its timer. A different card starts clean.
+	var previous_identity := str(card_data.get("instance_id", "")) + ":" + str(card_data.get("id", card_data.get("name", "")))
+	var next_identity := str(data.get("instance_id", "")) + ":" + str(data.get("id", data.get("name", "")))
+	if previous_identity != next_identity or is_stack_decoration:
+		_clear_blood()
+	card_data = data.duplicate(true)
+	card_data.erase(EVENT_MATCH_STATE_KEY)
 
-	var card_name: String = str(data.get("name", "Unknown"))
 	var attack: int = int(data.get("attack", 0))
 	var defense: int = int(data.get("defense", 0))
 	var rarity: String = str(data.get("rarity", "common")).to_lower()
-	var description: String = str(data.get("description", ""))
 	var image_path: String = str(data.get("image", ""))
 	
 	_animated_image = bool(data.get("animated", false))
@@ -199,18 +274,156 @@ func setup(data: Dictionary) -> void:
 	_first_hit_shield_available = CardData.has_effect(data, "shield_first_hit")
 	_last_stand_available = CardData.has_effect(data, "last_stand")
 	_grave_return_available = CardData.has_effect(data, "grave_return")
+	_skip_next_attack = false
+	event_block_turns = 0
+	_clear_poison_state()
+	if has_meta("chick_survived_turns"):
+		remove_meta("chick_survived_turns")
+	if has_meta("last_survival_effect"):
+		remove_meta("last_survival_effect")
 
-	name_label.text = card_name
 	attack_label.text = str(attack)
 	_update_hp_label()
-	description_label.play(_wrap_text(description, 45))
+	_refresh_localized_text(true)
 	effects_label.visible = false
 	_apply_effect_icons()
-	rarity_label.text = rarity.to_upper()
+	var combat_card := CardData.is_combat_card(data)
+	attack_label.visible = combat_card
+	defense_label.visible = combat_card
+	$AttackTitle.visible = combat_card
+	$DefenseTitle.visible = combat_card
 
 	_ensure_materials_resolved()
 	_apply_rarity_style(rarity)
 	_apply_card_image(image_path)
+	_apply_holo_style()
+	_apply_special_aura()
+	var saved_combat_state: Variant = data.get(EVENT_MATCH_STATE_KEY, {})
+	if saved_combat_state is Dictionary and not saved_combat_state.is_empty():
+		_restore_combat_state(saved_combat_state)
+	else:
+		_update_event_block_badge()
+
+
+func _on_locale_changed() -> void:
+	if not is_inside_tree() or is_queued_for_deletion():
+		return
+	_refresh_localized_text()
+	_update_event_block_badge()
+
+
+## Only printed text changes. Calling setup here would heal damaged cards,
+## restore consumed effects and reset animated artwork during a live match.
+func _refresh_localized_text(animate_description: bool = false) -> void:
+	if not is_inside_tree() or is_queued_for_deletion() or not is_node_ready() or is_stack_decoration:
+		return
+	$AttackTitle.text = Localization.text("Attack")
+	$DefenseTitle.text = Localization.text("Defense")
+	$DescriptionTitle.text = Localization.text("Description")
+	_fit_localized_label($AttackTitle, 0.22)
+	_fit_localized_label($DefenseTitle, 0.22)
+	if card_data.is_empty():
+		return
+	name_label.text = Localization.text(str(card_data.get("name", "Unknown")))
+	_fit_localized_label(name_label, 0.70)
+	var description := Localization.text(str(card_data.get("description", "")))
+	description_label.play(_wrap_text(description, 45))
+	if not animate_description:
+		description_label.skip()
+	effects_label.text = _build_effects_summary()
+	var rarity := str(card_data.get("rarity", "common")).to_upper()
+	var category_label := rarity if CardData.is_combat_card(card_data) else "SONDERKARTE"
+	if card_data.get("permanent_upgrade", false) == true:
+		category_label = "PERMANENT"
+	rarity_label.text = Localization.text(category_label)
+
+
+func _fit_localized_label(label: Label3D, available_width: float) -> void:
+	# Keep the complete translated name inside the physical card. Start from
+	# the scene's original size so shorter names/languages grow back normally.
+	if not _localized_font_sizes.has(label):
+		_localized_font_sizes[label] = label.font_size
+	label.font_size = int(_localized_font_sizes[label])
+	var font: Font = label.font if label.font != null else ThemeDB.fallback_font
+	var pixel_width := available_width / maxf(label.pixel_size * absf(label.scale.x), 0.000001) - 2.0 * label.outline_size
+	while label.font_size > 1 and font.get_string_size(label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, label.font_size).x > pixel_width:
+		label.font_size -= 1
+
+
+## Local presentation only: called once by the table at a damage impact.
+func show_blood_hit(intensity: float = 1.0) -> void:
+	if is_stack_decoration or not is_node_ready() or intensity <= 0.0:
+		return
+	_ensure_blood_materials()
+	_blood_intensity = clampf(_blood_intensity + intensity, 0.0, 1.0)
+	_blood_fade_speed = _blood_intensity / maxf(blood_fade_duration, 0.1)
+	for i in _blood_targets.size():
+		_blood_targets[i].material_overlay = _blood_materials[i]
+	_update_blood_materials()
+
+
+func get_blood_intensity() -> float:
+	return _blood_intensity
+
+
+func _ensure_blood_materials() -> void:
+	if not _blood_materials.is_empty():
+		return
+	# Both overlays use card-local XY coordinates, so a stain continues from
+	# the printed card face onto its separate (possibly animated) artwork.
+	var noise_offset := Vector2(_rng.randf(), _rng.randf())
+	var body_mesh := card_model.get_node_or_null("Cube") as MeshInstance3D
+	var image_transform := global_transform.affine_inverse() * card_image.global_transform
+	var image_bounds: AABB = image_transform * card_image.get_aabb()
+	var image_rect := Vector4(image_bounds.position.x, image_bounds.position.y, image_bounds.end.x, image_bounds.end.y)
+	for mesh in [body_mesh, card_image]:
+		if mesh == null:
+			continue
+		var material := ShaderMaterial.new()
+		material.shader = BLOOD_MIX_SHADER
+		material.render_priority = 2
+		material.set_shader_parameter("noise", BLOOD_NOISE)
+		material.set_shader_parameter("noise_offset", noise_offset)
+		material.set_shader_parameter("noise_shading", 0.35)
+		material.set_shader_parameter("use_card_projection", true)
+		# The transparent artwork does not write depth. Exclude its rectangle
+		# on the body pass so the same stain never blends twice over the art.
+		material.set_shader_parameter("exclude_artwork", mesh == body_mesh)
+		material.set_shader_parameter("artwork_rect", image_rect)
+		material.set_shader_parameter("card_space_transform", global_transform.affine_inverse() * mesh.global_transform)
+		_blood_materials.append(material)
+		_blood_targets.append(mesh)
+
+
+func _update_blood_fade(delta: float) -> void:
+	if _blood_intensity <= 0.0:
+		return
+	if is_stack_decoration:
+		_clear_blood()
+		return
+	_blood_intensity = maxf(_blood_intensity - _blood_fade_speed * delta, 0.0)
+	if _blood_intensity <= 0.0:
+		_clear_blood()
+	else:
+		_update_blood_materials()
+
+
+func _update_blood_materials() -> void:
+	for material in _blood_materials:
+		# Shrinking the threshold removes the edges of each stain as its
+		# opacity fades. At zero the overlay is detached completely.
+		material.set_shader_parameter("intensity", lerpf(0.0, blood_max_coverage, sqrt(_blood_intensity)))
+		material.set_shader_parameter("opacity", _blood_intensity)
+		material.set_shader_parameter("color", blood_color)
+
+
+func _clear_blood() -> void:
+	_blood_intensity = 0.0
+	_blood_fade_speed = 0.0
+	for i in _blood_targets.size():
+		if is_instance_valid(_blood_targets[i]) and _blood_targets[i].material_overlay == _blood_materials[i]:
+			_blood_targets[i].material_overlay = null
+	_update_blood_materials()
 
 
 func _update_hp_label() -> void:
@@ -224,12 +437,12 @@ func _build_effects_summary() -> String:
 		if label != "":
 			effect_names.append(label)
 	if effect_names.is_empty():
-		return "Effects: -"
-	return "Effects: " + " • ".join(effect_names)
+		return Localization.text("Effects: -")
+	return Localization.text("Effects: ") + " • ".join(effect_names)
 
 
 func _format_effect_label(effect: Dictionary) -> String:
-	var label := str(effect.get("name", effect.get("type", ""))).replace("_", " ").capitalize()
+	var label := EffectPresentation.get_title(EffectPresentation.resolve_defaults(effect))
 	if effect.has("percent"):
 		label += " %d%%" % int(round(float(effect.get("percent", 0.0)) * 100.0))
 	elif effect.has("value"):
@@ -239,7 +452,7 @@ func _format_effect_label(effect: Dictionary) -> String:
 		else:
 			label += " +%d" % int(round(value))
 	elif effect.has("damage") and effect.has("turns"):
-		label += " %d/%dT" % [int(effect.get("damage", 0)), int(effect.get("turns", 0))]
+		label += Localization.format_text(" %d/%dT", [int(effect.get("damage", 0)), int(effect.get("turns", 0))])
 	return label
 
 
@@ -250,7 +463,9 @@ func heal(amount: int, allow_overheal: bool = false) -> void:
 	if allow_overheal:
 		current_hp += amount
 	else:
-		current_hp = min(current_hp + amount, max_hp)
+		# A normal heal can fill missing health but must never remove health
+		# already granted by an overheal or restored battle snapshot.
+		current_hp += mini(amount, maxi(max_hp - current_hp, 0))
 
 	_update_hp_label()
 
@@ -263,6 +478,8 @@ func consume_first_hit_shield() -> bool:
 
 
 func try_survive_death() -> bool:
+	if not is_dead():
+		return false
 	if has_meta("last_survival_effect"):
 		remove_meta("last_survival_effect")
 
@@ -282,6 +499,8 @@ func try_survive_death() -> bool:
 
 
 func apply_curse(value: int) -> void:
+	if value <= 0:
+		return
 	attack_value = int(max(attack_value - value, 0))
 	attack_label.text = str(attack_value)
 
@@ -297,9 +516,74 @@ func consume_stun() -> bool:
 	return true
 
 
+## Blocks attacks and counterattacks until the table has ticked this card at
+## the end of the requested number of its owner's turns. Reapplying refreshes
+## the duration without shortening an existing block.
+func apply_event_block(turns: int) -> void:
+	event_block_turns = maxi(event_block_turns, maxi(turns, 0))
+	_update_event_block_badge()
+
+
+func is_event_blocked() -> bool:
+	return event_block_turns > 0
+
+
+func tick_event_block() -> void:
+	event_block_turns = maxi(event_block_turns - 1, 0)
+	_update_event_block_badge()
+
+
+## Strength follows the current combat values, including damage and curses.
+## Scaling current and maximum HP preserves damage proportion and overheal.
+func apply_event_strength(multiplier: float) -> void:
+	if is_dead() or not is_finite(multiplier) or multiplier <= 1.0:
+		return
+	attack_value = maxi(ceili(float(attack_value) * multiplier), 0)
+	max_hp = maxi(ceili(float(max_hp) * multiplier), 1)
+	current_hp = maxi(ceili(float(current_hp) * multiplier), 1)
+	attack_label.text = str(attack_value)
+	_update_hp_label()
+
+
+func _update_event_block_badge() -> void:
+	if not is_node_ready() or is_stack_decoration:
+		return
+	if _event_block_badge == null and event_block_turns <= 0:
+		return
+	if _event_block_badge == null:
+		_event_block_badge = Node3D.new()
+		_event_block_badge.name = "EventBlockBadge"
+		_event_block_badge.position = Vector3(0.0, 0.24, 0.018)
+		add_child(_event_block_badge)
+		var background := MeshInstance3D.new()
+		var quad := QuadMesh.new()
+		quad.size = Vector2(0.72, 0.28)
+		background.mesh = quad
+		var material := StandardMaterial3D.new()
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		material.albedo_color = Color(0.015, 0.055, 0.08, 0.98)
+		background.material_override = material
+		_event_block_badge.add_child(background)
+		_event_block_label = Label3D.new()
+		_event_block_label.position.z = 0.003
+		_event_block_label.font = name_label.font
+		_event_block_label.font_size = 32
+		_event_block_label.pixel_size = 0.0035
+		_event_block_label.outline_size = 4
+		_event_block_label.modulate = Color(0.65, 0.96, 1.0)
+		_event_block_badge.add_child(_event_block_label)
+	_event_block_badge.visible = event_block_turns > 0
+	_event_block_label.text = Localization.format_text("BLOCK\n%d %s", [
+		event_block_turns, Localization.text("ZUG" if event_block_turns == 1 else "ZÜGE")
+	])
+
+
 # Fuegt dieser Karte Schaden zu und gibt true zurueck, wenn die Karte
 # dadurch stirbt (current_hp <= 0). HP wird nie unter 0 angezeigt.
 func take_damage(amount: int) -> bool:
+	if amount <= 0 or is_dead():
+		return is_dead()
 	current_hp = int(max(current_hp - amount, 0))
 	_update_hp_label()
 
@@ -317,8 +601,20 @@ func is_dead() -> bool:
 ## host can send it through Godot's RPC layer. Visual/transient state (tweens,
 ## materials and selection) deliberately stays local.
 func get_network_state() -> Dictionary:
-	return {
-		"card_data": card_data.duplicate(true),
+	var state := _get_combat_state()
+	state["card_data"] = card_data.duplicate(true)
+	return state
+
+
+## A stolen card stays the same battle instance when it is drawn again.
+func export_event_deck_card() -> Dictionary:
+	var data := card_data.duplicate(true)
+	data[EVENT_MATCH_STATE_KEY] = _get_combat_state()
+	return data
+
+
+func _get_combat_state() -> Dictionary:
+	var state := {
 		"max_hp": max_hp,
 		"current_hp": current_hp,
 		"attack_value": attack_value,
@@ -326,9 +622,15 @@ func get_network_state() -> Dictionary:
 		"last_stand_available": _last_stand_available,
 		"grave_return_available": _grave_return_available,
 		"skip_next_attack": _skip_next_attack,
+		"event_block_turns": event_block_turns,
 		"poison_damage": int(get_meta("poison_damage", 0)),
 		"poison_turns": int(get_meta("poison_turns", 0)),
 	}
+	# Growth belongs to this battle instance, so network snapshots and Steel
+	# preserve it without adding age to the catalog or permanent collection.
+	if str(card_data.get("id", "")) == "chick":
+		state["chick_survived_turns"] = clampi(int(get_meta("chick_survived_turns", 0)), 0, 10)
+	return state
 
 
 ## Restores a snapshot created by get_network_state(). Calling setup first
@@ -337,37 +639,71 @@ func get_network_state() -> Dictionary:
 func apply_network_state(state: Dictionary) -> void:
 	var data := state.get("card_data", {}) as Dictionary
 	setup(data.duplicate(true))
+	_restore_combat_state(state)
 
+
+func _restore_combat_state(state: Dictionary) -> void:
 	max_hp = maxi(int(state.get("max_hp", max_hp)), 1)
-	current_hp = clampi(int(state.get("current_hp", current_hp)), 0, max_hp)
+	# Lifesteal can intentionally exceed max_hp; snapshots and theft must
+	# preserve that health as well as damage already received.
+	current_hp = maxi(int(state.get("current_hp", current_hp)), 0)
 	attack_value = maxi(int(state.get("attack_value", attack_value)), 0)
 	_first_hit_shield_available = bool(state.get("first_hit_shield_available", _first_hit_shield_available))
 	_last_stand_available = bool(state.get("last_stand_available", _last_stand_available))
 	_grave_return_available = bool(state.get("grave_return_available", _grave_return_available))
 	_skip_next_attack = bool(state.get("skip_next_attack", _skip_next_attack))
+	event_block_turns = maxi(int(state.get("event_block_turns", 0)), 0)
+	if str(card_data.get("id", "")) == "chick":
+		set_meta("chick_survived_turns", clampi(int(state.get("chick_survived_turns", 0)), 0, 10))
+	elif has_meta("chick_survived_turns"):
+		remove_meta("chick_survived_turns")
 
 	attack_label.text = str(attack_value)
 	_update_hp_label()
+	_update_event_block_badge()
 
 	var poison_turns := maxi(int(state.get("poison_turns", 0)), 0)
 	if poison_turns > 0:
 		set_meta("poison_turns", poison_turns)
 		set_meta("poison_damage", maxi(int(state.get("poison_damage", 0)), 0))
 	else:
-		if has_meta("poison_turns"):
-			remove_meta("poison_turns")
-		if has_meta("poison_damage"):
-			remove_meta("poison_damage")
+		_clear_poison_state()
+
+
+func _clear_poison_state() -> void:
+	if has_meta("poison_turns"):
+		remove_meta("poison_turns")
+	if has_meta("poison_damage"):
+		remove_meta("poison_damage")
 
 
 func _apply_card_image(image_path: String) -> void:
-	if image_path == "":
-		return
-
-	var texture: Texture2D = load(image_path) as Texture2D
+	var texture: Texture2D
+	var room_path := str(card_data.get("artwork_scene", ""))
+	if not room_path.is_empty() and not is_stack_decoration:
+		if not is_instance_valid(_diorama_art) or _diorama_scene_path != room_path:
+			_clear_diorama_art()
+			var room_scene := load(room_path) as PackedScene
+			if room_scene != null:
+				_diorama_art = DIORAMA_SCRIPT.new() as CardDiorama
+				_diorama_art.name = "CardDiorama"
+				add_child(_diorama_art)
+				_diorama_art.configure(card_image, room_scene)
+				_diorama_scene_path = room_path
+		if is_instance_valid(_diorama_art):
+			texture = _diorama_art.get_texture()
+			_animated_image = false
+	else:
+		_clear_diorama_art()
+	if texture == null and not image_path.is_empty():
+		texture = load(image_path) as Texture2D
 	if texture == null:
-		push_warning("Kartenbild nicht gefunden: " + image_path)
+		card_image.hide()
+		_card_material = null
+		if not image_path.is_empty() or not room_path.is_empty() and not is_stack_decoration:
+			push_warning("Kartenbild nicht gefunden: " + (room_path if not room_path.is_empty() else image_path))
 		return
+	card_image.show()
 
 	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = texture
@@ -375,7 +711,7 @@ func _apply_card_image(image_path: String) -> void:
 	mat.roughness = 0.8
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR if is_instance_valid(_diorama_art) else BaseMaterial3D.TEXTURE_FILTER_NEAREST
 
 	_card_material = mat
 	card_image.material_override = _card_material
@@ -387,18 +723,29 @@ func _apply_card_image(image_path: String) -> void:
 		_card_material.uv1_offset = Vector3.ZERO
 
 
+func _clear_diorama_art() -> void:
+	if is_instance_valid(_diorama_art):
+		_diorama_art.queue_free()
+	_diorama_art = null
+	_diorama_scene_path = ""
+	if _holo_image_pass != null:
+		_holo_image_pass.set_shader_parameter("albedo_texture", null)
+
+
 func _apply_rarity_style(rarity: String) -> void:
 	var color: Color = _get_rarity_color(rarity)
 	var preset: RarityPreset = _rarity_presets.get(rarity, _rarity_presets["common"]) as RarityPreset
 
 	rarity_label.modulate = color
 
-	_apply_static_outline_color(card_outline, color)
+	_apply_static_outline_color(card_outline, Color(0.08, 0.10, 0.13) if rarity == "secret" else color)
 
 	if _rarity_glow_material == null:
 		return
 
 	_rarity_glow_material.set_shader_parameter("rarity_color", color)
+	_rarity_glow_material.set_shader_parameter("rainbow_mode", rarity == "secret" and not is_stack_decoration)
+	_rarity_glow_material.set_shader_parameter("rainbow_clock_offset", 0.0)
 	_rarity_glow_material.set_shader_parameter("intensity", preset.intensity)
 	_rarity_glow_material.set_shader_parameter("scroll_speed", preset.scroll_speed)
 	_rarity_glow_material.set_shader_parameter("band_density", preset.band_density)
@@ -407,6 +754,86 @@ func _apply_rarity_style(rarity: String) -> void:
 	_rarity_glow_material.set_shader_parameter("pulse_speed", preset.pulse_speed)
 	_rarity_glow_material.set_shader_parameter("base_glow", preset.base_glow)
 	_rarity_glow_material.set_shader_parameter("emission_boost", preset.emission_boost)
+
+
+func _apply_holo_style() -> void:
+	var body := card_model.get_node_or_null("Cube") as MeshInstance3D
+	var enabled := CardData.is_holo(card_data) and not is_stack_decoration
+	if not enabled:
+		if body != null and _holo_body_base_material != null:
+			body.set_surface_override_material(1, _holo_body_base_material)
+		if _card_material != null and _card_material.next_pass == _holo_image_pass:
+			_card_material.next_pass = null
+		return
+	if body != null and body.mesh != null and body.mesh.get_surface_count() > 1:
+		if _holo_body_material == null:
+			_holo_body_base_material = body.get_active_material(1)
+			if _holo_body_base_material != null:
+				_holo_body_material = _holo_body_base_material.duplicate(true)
+				var source := _holo_body_base_material as BaseMaterial3D
+				_holo_body_pass = _make_holo_pass(source.albedo_texture if source != null else null)
+				# Preserve the existing print/shine chain and leave back surface 0
+				# untouched, so face-down cards never disclose their finish.
+				_holo_body_pass.next_pass = _holo_body_material.next_pass
+				_holo_body_material.next_pass = _holo_body_pass
+		if _holo_body_material != null:
+			body.set_surface_override_material(1, _holo_body_material)
+	if _card_material != null:
+		if _holo_image_pass == null:
+			_holo_image_pass = _make_holo_pass(_card_material.albedo_texture)
+		_holo_image_pass.set_shader_parameter("albedo_texture", _card_material.albedo_texture)
+		_card_material.next_pass = _holo_image_pass
+		_update_holo_artwork_uv()
+
+
+func _apply_special_aura() -> void:
+	var enabled := str(card_data.get("category", "")).to_lower() == "special" and not is_stack_decoration
+	if not enabled:
+		if is_instance_valid(_special_aura):
+			_special_aura.hide()
+		return
+	if not is_instance_valid(_special_aura):
+		# One procedural veil per special, independent of Holo/shine/blood passes.
+		# Front-face culling keeps unrevealed pack cards and backs anonymous.
+		_special_aura = MeshInstance3D.new()
+		_special_aura.name = "SpecialAura"
+		var quad := QuadMesh.new()
+		quad.size = Vector2(0.972, 1.32)
+		_special_aura.mesh = quad
+		_special_aura.position.z = 0.018
+		_special_aura.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_special_aura.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+		var material := ShaderMaterial.new()
+		material.shader = SPECIAL_AURA_SHADER
+		material.render_priority = 1
+		_special_aura.material_override = material
+		add_child(_special_aura)
+	# Stable across setup/refresh, with different motion for different card types.
+	var identity := str(card_data.get("instance_id", "")) + ":" + str(card_data.get("id", card_data.get("card_id", "")))
+	var aura_material := _special_aura.material_override as ShaderMaterial
+	aura_material.set_shader_parameter("phase", float(absi(hash(identity)) % 10000) * 0.001)
+	_special_aura.show()
+
+
+func _make_holo_pass(texture: Texture2D) -> ShaderMaterial:
+	var material := ShaderMaterial.new()
+	material.shader = HOLO_SHADER
+	material.render_priority = 1
+	material.set_shader_parameter("albedo_texture", texture)
+	material.set_shader_parameter("overlay_opacity", 0.32)
+	material.set_shader_parameter("iridescence_intensity", 0.72)
+	material.set_shader_parameter("emission_strength", 0.3)
+	material.set_shader_parameter("flow_speed", 0.22)
+	return material
+
+
+func _update_holo_artwork_uv() -> void:
+	if _holo_image_pass == null or _card_material == null:
+		return
+	var uv_scale := _card_material.uv1_scale
+	var uv_offset := _card_material.uv1_offset
+	_holo_image_pass.set_shader_parameter("artwork_uv_scale", Vector2(uv_scale.x, uv_scale.y))
+	_holo_image_pass.set_shader_parameter("artwork_uv_offset", Vector2(uv_offset.x, uv_offset.y))
 
 # Wendet rekursiv ein einfaches, statisches StandardMaterial3D auf alle
 # MeshInstance3D-Kinder von root an. Bewusst KEIN Shader hier, da
@@ -448,6 +875,8 @@ func _get_rarity_color(rarity: String) -> Color:
 			return Color(0.18, 0.08, 0.45, 1)
 		"exotic":
 			return Color(1.0, 0.05, 0.05, 1)
+		"secret":
+			return RarityEffectsData.get_color("secret")
 		_:
 			return Color(0.45, 0.45, 0.45, 1)
 
@@ -514,7 +943,7 @@ func _restore_glow_rarity_color() -> void:
 	var color: Color = _get_rarity_color(rarity)
 	var preset: RarityPreset = _rarity_presets.get(rarity, _rarity_presets["common"]) as RarityPreset
 
-	_apply_static_outline_color(card_outline, color)
+	_apply_static_outline_color(card_outline, Color(0.08, 0.10, 0.13) if rarity == "secret" else color)
 
 	if _rarity_glow_material == null:
 		return
@@ -526,58 +955,71 @@ func _restore_glow_rarity_color() -> void:
 # --- Attack-Animation -----------------------------------------------------
 
 @export_group("Attack-Animation")
-@export var attack_lunge_ratio: float = 0.7
+@export var attack_card_footprint: Vector2 = Vector2(0.78, 1.08)
 @export var attack_out_duration: float = 0.18
 @export var attack_hit_duration: float = 0.08
 @export var attack_return_duration: float = 0.22
 @export var attack_overshoot_scale: float = 1.12
 
-# Laesst die Karte in Richtung target_global_pos vorfliegen ("ramming"),
-# kurz dort verharren/leicht hineinstossen, und dann zurueck an ihre
-# urspruengliche Position fliegen. Wartet auf das komplette Ende der
-# Animation, bevor zurueckgekehrt wird — der Aufrufer kann also einfach
-# `await card.play_attack_animation(target.global_position)` nutzen, um
-# den Schaden erst NACH der Animation anzuwenden.
+var _attack_impact_release_requested := true
+
+# Laesst die Karte bis zum ersten Kontakt mit der Zielkarte vorfliegen,
+# danach kurz hineinstossen ("ramming") und anschliessend zurueck an ihre
+# urspruengliche Position fliegen.
 #
 # WICHTIG: Fuer Treffer-Timing (Schaden/Blut/SFX) soll der Aufrufer NICHT
 # auf das Ende dieser Funktion warten, sondern auf das Signal
-# `attack_impact`, das genau am Scheitelpunkt (nach dem Rammstoss, vor
-# dem Rueckflug) gefeuert wird. Das Ende dieser Funktion markiert nur,
-# wann die Karte wieder komplett an ihrer Ausgangsposition ist.
-func play_attack_animation(target_global_pos: Vector3) -> void:
+# `attack_impact`, das genau beim ersten Kontakt (vor dem Rammstoss)
+# gefeuert wird. Das Ende dieser Funktion markiert nur, wann die Karte
+# wieder komplett an ihrer Ausgangsposition ist.
+func play_attack_animation(target_global_pos: Vector3, hold_at_impact: bool = false) -> void:
+	_attack_impact_release_requested = not hold_at_impact
 	var start_pos: Vector3 = global_position
 	var start_rot: Vector3 = rotation_degrees
 	var start_scale: Vector3 = scale
 
 	var direction: Vector3 = target_global_pos - start_pos
-	var lunge_pos: Vector3 = start_pos + direction * attack_lunge_ratio
+	# Der Footprint ist in Tisch-/Parent-Einheiten angegeben. Dadurch bleibt
+	# der Kontakt auch korrekt, wenn der komplette Spieltisch skaliert ist.
+	var contact_direction := direction
+	var parent_3d := get_parent() as Node3D
+	if parent_3d != null:
+		contact_direction = parent_3d.to_local(target_global_pos) - position
+	var contact_ratio := _get_attack_contact_ratio(contact_direction)
+	var contact_pos: Vector3 = start_pos + direction * contact_ratio
 
-	var out_tween: Tween = create_tween().set_parallel(true)
-	out_tween.tween_property(self, "global_position", lunge_pos, attack_out_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	out_tween.tween_property(self, "scale", start_scale * attack_overshoot_scale, attack_out_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	var out_tween: Tween = create_tween()
+	out_tween.tween_property(self, "global_position", contact_pos, attack_out_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	await out_tween.finished
 
 	if not is_instance_valid(self):
 		return
 
+	# Der Treffer wird beim ersten Beruehren ausgeloest. Die Karte ist hier
+	# noch nicht in das Ziel hineingefahren und hat ihre Ausgangsgroesse.
+	attack_impact.emit()
+
+	# Online wartet die Praesentation hier auf das autoritative Trefferpaket.
+	# So koennen Netzwerk-Latenzen Blut/SFX nicht in den Rueckflug verschieben.
+	while hold_at_impact and not _attack_impact_release_requested:
+		await get_tree().process_frame
+		if not is_instance_valid(self):
+			return
+
 	# Kurzer "Rammstoss": minimal weiter nach vorne und sofort wieder
 	# ein Stueck zurueck, fuer ein spuerbares Einschlag-Gefuehl statt
 	# nur eines glatten Hin- und Herfliegens.
-	var hit_pos: Vector3 = start_pos + direction * (attack_lunge_ratio + 0.08)
-	var hit_tween: Tween = create_tween()
+	var hit_ratio := minf(contact_ratio + 0.08, 1.0)
+	var hit_pos: Vector3 = start_pos + direction * hit_ratio
+	var hit_tween: Tween = create_tween().set_parallel(true)
 	hit_tween.tween_property(self, "global_position", hit_pos, attack_hit_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	hit_tween.tween_property(self, "scale", start_scale * attack_overshoot_scale, attack_hit_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 	await hit_tween.finished
 
 	if not is_instance_valid(self):
 		return
-
-	# --- Scheitelpunkt der Animation: HIER soll der Treffer "passieren" ---
-	# Aufrufer koennen auf dieses Signal warten, um Schaden, Blut-Effekte
-	# und Treffer-SFX exakt in diesem Moment auszuloesen, statt erst nach
-	# dem kompletten Rueckflug.
-	attack_impact.emit()
 
 	var return_tween: Tween = create_tween().set_parallel(true)
 	return_tween.tween_property(self, "global_position", start_pos, attack_return_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
@@ -588,6 +1030,30 @@ func play_attack_animation(target_global_pos: Vector3) -> void:
 
 	if is_instance_valid(self):
 		attack_finished.emit()
+
+
+func release_attack_after_impact() -> void:
+	_attack_impact_release_requested = true
+
+
+# Berechnet entlang der XZ-Angriffsrichtung den ersten Kontakt zweier
+# gleich grosser, achsenparalleler Karten-Footprints. attack_card_footprint
+# entspricht dabei bereits der Summe der beiden Half-Extents (Minkowski-AABB).
+func _get_attack_contact_ratio(direction: Vector3) -> float:
+	var remaining_ratio := INF
+	var footprint_x := maxf(attack_card_footprint.x, 0.001)
+	var footprint_z := maxf(attack_card_footprint.y, 0.001)
+
+	if absf(direction.x) > 0.0001:
+		remaining_ratio = minf(remaining_ratio, footprint_x / absf(direction.x))
+	if absf(direction.z) > 0.0001:
+		remaining_ratio = minf(remaining_ratio, footprint_z / absf(direction.z))
+
+	# Gleiche XZ-Position: Die Karten beruehren/ueberlappen sich bereits.
+	if is_inf(remaining_ratio):
+		return 0.0
+
+	return clampf(1.0 - remaining_ratio, 0.0, 1.0)
 
 
 func _wrap_text(text: String, max_chars_per_line: int = 45) -> String:
@@ -644,6 +1110,7 @@ func _update_card_frame() -> void:
 		float(row) / float(_frame_rows),
 		0.0
 	)
+	_update_holo_artwork_uv()
 
 func clear_selected_immediate() -> void:
 	if _select_tween != null:
@@ -755,7 +1222,7 @@ func _get_effect_icon_path(effect: Dictionary) -> String:
 	var file_name := effect_type
 
 	if effect_type == "armor":
-		var value := float(effect.get("value", 0.0))
+		var value := float(effect.get("value", 0.25))
 
 		if is_equal_approx(value, 0.25):
 			file_name = "armor_25"
@@ -768,6 +1235,9 @@ func _get_effect_icon_path(effect: Dictionary) -> String:
 
 	if ResourceLoader.exists(path):
 		return path
+	var vector_path := EFFECT_ICON_PATH + file_name + ".svg"
+	if ResourceLoader.exists(vector_path):
+		return vector_path
 
 	return EFFECT_PLACEHOLDER
 

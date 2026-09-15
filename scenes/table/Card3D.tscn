@@ -80,6 +80,10 @@ shadow_mesh = SubResource("ArrayMesh_iwnm4")
 render_priority = 0
 shader = ExtResource("5_biaf5")
 shader_parameter/rarity_color = Color(0.2, 0.6, 1, 1)
+shader_parameter/rainbow_mode = false
+shader_parameter/rainbow_speed = 0.1
+shader_parameter/rainbow_clock_offset = 0.0
+shader_parameter/rainbow_glow_strength = 2.2
 shader_parameter/thickness = 0.03
 shader_parameter/softness = 0.001
 shader_parameter/corner_radius = 0.059
@@ -106,6 +110,7 @@ size = Vector3(0.78, 1.08, 0.08)
 
 [node name="Card3D" type="Node3D"]
 script = ExtResource("1_card3d")
+blood_max_coverage = 0.73
 
 [node name="card" parent="." instance=ExtResource("4_card")]
 transform = Transform3D(0.24, 0, 0, 0, 0.24, 0, 0, 0, 0.24, 0, 0, -0.024626)

@@ -278,12 +278,24 @@ theme_override_constants/separation = 8
 [node name="CardListHeader" type="HBoxContainer" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox"]
 layout_mode = 2
 
-[node name="CardListTitle" type="Label" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox/CardListHeader"]
+[node name="CardListTitle" type="Button" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox/CardListHeader"]
+unique_name_in_owner = true
 layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.48, 0.54, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color = Color(0.952941, 0.905882, 0.894118, 1)
+theme_override_colors/font_pressed_color = Color(0.815686, 0.321569, 0.372549, 1)
 theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 19
+theme_override_styles/focus = SubResource("Style_empty")
+theme_override_styles/hover = SubResource("Style_empty")
+theme_override_styles/pressed = SubResource("Style_empty")
+theme_override_styles/normal = SubResource("Style_empty")
+toggle_mode = true
 text = "DEINE KARTEN"
+alignment = 0
 
 [node name="CardListSpacer" type="Control" parent="Panel/OuterMargin/MainVBox/BodyRow/CardListPanel/CardListMargin/CardListVBox/CardListHeader"]
 layout_mode = 2

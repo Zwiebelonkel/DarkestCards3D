@@ -1,0 +1,13 @@
+[gd_resource type="NoiseTexture2D" load_steps=2 format=3 uid="uid://jqxr4gwssqwy"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_stains"]
+seed = 7391
+frequency = 0.009
+fractal_octaves = 2
+fractal_gain = 0.55
+
+[resource]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("FastNoiseLite_stains")

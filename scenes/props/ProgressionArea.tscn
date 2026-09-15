@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cyvja75orwrfx"]
+
+[ext_resource type="Script" uid="uid://cqa8linmaltkq" path="res://scripts/rooms/ProgressionArea.gd" id="1_area"]
+[ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="2_door"]
+
+[node name="ProgressionArea" type="Node3D"]
+script = ExtResource("1_area")
+
+[node name="Door" parent="." instance=ExtResource("2_door")]
+interaction_enabled = false
+locked = true
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0.8)
+light_color = Color(0.76, 0.67, 0.43, 1)
+light_energy = 0.18
+omni_range = 4.0

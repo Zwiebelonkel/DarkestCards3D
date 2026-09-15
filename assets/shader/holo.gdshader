@@ -1,80 +1,99 @@
+/** MemeHoloFoil - 卡牌全息箔（带时间流动彩虹） */
 shader_type spatial;
-render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
+render_mode specular_schlick_ggx, blend_mix, depth_draw_opaque, cull_back;
 
-uniform sampler2D texture_albedo : source_color, filter_nearest;
+// ========== 基础材质参数 ==========
+/** 表面粗糙度，越低越像镜面镭射膜（推荐 0.02~0.08） */
+uniform float roughness : hint_range(0.0, 1.0) = 0.4;
 
-uniform float threshold : hint_range(0.0, 1.0) = 0.1;
-uniform float effect_alpha_mult : hint_range(0.0, 1.0) = 0.55;
-uniform float direction : hint_range(0.0, 1.0) = 0.5;
+/** 金属度，全息箔建议保持 1.0 */
+uniform float metallic : hint_range(0.0, 1.0) = 0.0;
 
-uniform float specular_amount : hint_range(0.0, 1.0) = 1.0;
-uniform float metallic_amount : hint_range(0.0, 1.0) = 0.75;
-uniform float roughness_amount : hint_range(0.0, 1.0) = 0.35;
-uniform float emission_energy : hint_range(0.0, 2.0) = 0.25;
+/** 高光强度 */
+uniform float specular : hint_range(0.0, 1.0) = 0.0;
 
-uniform float speed : hint_range(0.0, 5.0) = 0.45;
-uniform float foil_scale : hint_range(1.0, 40.0) = 14.0;
-uniform float rainbow_strength : hint_range(0.0, 2.0) = 1.1;
+// ========== 全息虹彩参数 ==========
+/** 彩虹颜色条带密度，数值越大颜色切换越频繁 */
+uniform float iridescence_scale : hint_range(0.5, 15.0) = 5.0;
 
-float hash(vec2 p) {
-	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-}
+/** 虹彩强度，0=无效果，1=完全彩虹 */
+uniform float iridescence_intensity : hint_range(0.0, 1.0) = 0.9;
 
-float noise2d(vec2 p) {
-	vec2 i = floor(p);
-	vec2 f = fract(p);
+/** 边缘菲涅尔强度，控制边缘高光与彩虹的锐利程度 */
+uniform float fresnel_power : hint_range(1.0, 8.0) = 2.8;
 
-	float a = hash(i);
-	float b = hash(i + vec2(1.0, 0.0));
-	float c = hash(i + vec2(0.0, 1.0));
-	float d = hash(i + vec2(1.0, 1.0));
+/** 自发光强度，让全息颜色在暗处也更醒目 */
+uniform float emission_strength : hint_range(0.0, 2.0) = 0.35;
 
-	vec2 u = f * f * (3.0 - 2.0 * f);
+// ========== 时间流动参数 ==========
+/** 彩虹流动速度，数值越大流动越快（建议 0.1~1.5） */
+uniform float flow_speed : hint_range(0.0, 5.0) = 0.0;
 
-	return mix(a, b, u.x) +
-		(c - a) * u.y * (1.0 - u.x) +
-		(d - b) * u.x * u.y;
-}
+/** 流动方向强度（影响 UV 与视角的混合权重） */
+uniform float flow_direction : hint_range(0.0, 2.0) = 1.0;
 
-vec3 rainbow(float t) {
-	return 0.5 + 0.5 * cos(6.28318 * (vec3(0.0, 0.33, 0.67) + t));
+// ========== 颜色与贴图 ==========
+/** 基础金属底色（默认偏银色） */
+uniform vec3 base_metal_color : source_color = vec3(0.82, 0.84, 0.9);
+
+/** 卡牌基础贴图（可选，不填则使用纯色底） */
+uniform sampler2D albedo_texture : source_color, hint_default_white;
+
+// A translucent extra pass keeps the original print and rarity shine intact.
+uniform float overlay_opacity : hint_range(0.0, 1.0) = 1.0;
+uniform vec2 artwork_uv_scale = vec2(1.0);
+uniform vec2 artwork_uv_offset = vec2(0.0);
+
+/** 全息遮罩贴图（白色=全息区域，黑色=无全息。不填则整张卡都全息） */
+uniform sampler2D holo_mask : source_color, hint_default_white;
+
+/** 遮罩强度，控制遮罩影响程度 */
+uniform float mask_strength : hint_range(0.0, 1.0) = 1.0;
+
+// HSV 转 RGB
+vec3 hsv2rgb(vec3 c) {
+	vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+	vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+	return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
 void fragment() {
-	vec2 uv = UV;
-	vec4 albedo_tex = texture(texture_albedo, uv);
+	// 采样基础贴图与遮罩
+	vec4 tex = texture(albedo_texture, UV * artwork_uv_scale + artwork_uv_offset);
+	float mask = texture(holo_mask, UV).r;
+	mask = mix(1.0, mask, mask_strength);
 
-	ALBEDO = albedo_tex.rgb;
-	ALPHA = albedo_tex.a;
+	// 视角与法线夹角
+	float NdotV = clamp(dot(NORMAL, VIEW), 0.0, 1.0);
 
-	float dark_mask = 1.0 - smoothstep(
-		threshold,
-		threshold + 0.15,
-		max(max(albedo_tex.r, albedo_tex.g), albedo_tex.b)
+	// 时间流动 + 视角 + UV 驱动的彩虹
+	float flow = TIME * flow_speed;
+	float hue = fract(
+		(1.0 - NdotV) * iridescence_scale * 0.7 +
+		UV.x * flow_direction +
+		UV.y * flow_direction * 0.6 +
+		flow
 	);
 
-	dark_mask *= step(0.3, albedo_tex.a);
+	vec3 rainbow = hsv2rgb(vec3(hue, 0.92, 1.0));
 
-	float n = noise2d(uv * foil_scale + TIME * speed);
-	float diagonal = uv.y * direction + uv.x * (1.0 - direction);
+	// Fresnel 边缘增强
+	float fresnel = pow(1.0 - NdotV, fresnel_power);
 
-	float bands = sin((diagonal + n * 0.25 + TIME * speed) * 20.0);
-	bands = pow(abs(bands), 3.0);
+	// 混合基础金属色与彩虹
+	vec3 holo_color = mix(base_metal_color, rainbow, iridescence_intensity);
+	holo_color = mix(holo_color, rainbow * 1.25, fresnel * 0.55);
 
-	float fresnel = pow(
-		1.0 - clamp(dot(normalize(NORMAL), normalize(VIEW)), 0.0, 1.0),
-		2.2
-	);
+	// 与卡牌贴图混合，并受遮罩控制
+	vec3 final_albedo = mix(tex.rgb, holo_color, mask * iridescence_intensity);
+	final_albedo = mix(final_albedo, holo_color, fresnel * mask * 0.4);
 
-	float foil = clamp((bands * 0.65 + n * 0.25 + fresnel * 0.8) * dark_mask, 0.0, 1.0);
+	ALBEDO = final_albedo;
+	METALLIC = metallic * mask;
+	ROUGHNESS = mix(0.6, roughness, mask);
+	SPECULAR = specular;
 
-	vec3 foil_col = rainbow(diagonal + n + TIME * speed * 0.15) * rainbow_strength;
-
-	ALBEDO = mix(ALBEDO, foil_col, foil * effect_alpha_mult);
-
-	METALLIC = metallic_amount * foil;
-	ROUGHNESS = mix(0.75, roughness_amount, foil);
-	SPECULAR = specular_amount * foil;
-
-	EMISSION = foil_col * foil * emission_energy;
+	// 自发光让流动的彩虹更醒目
+	EMISSION = holo_color * emission_strength * mask * (0.35 + fresnel * 0.65);
+	ALPHA = tex.a * overlay_opacity;
 }

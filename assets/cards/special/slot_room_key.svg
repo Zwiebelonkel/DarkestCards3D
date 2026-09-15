@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="340" viewBox="0 0 560 340" shape-rendering="crispEdges">
+  <!-- A four-pixel grid keeps the secret key readable on the small card face. -->
+  <g transform="scale(4)">
+    <path fill="#0b1015" d="M0 0h140v85H0z"/>
+    <path fill="#14191a" d="M25 21h90v43H25zM34 16h72v53H34zM43 13h54v59H43z"/>
+    <path fill="#1d211e" d="M33 27h73v28H33zM40 22h57v38H40zM49 19h39v44H49z"/>
+    <path fill="#28291f" d="M34 34h77v15H34zM39 28h60v28H39zM48 25h39v35H48z"/>
+
+    <!-- Stepped card border and a dim, closed doorway behind the key. -->
+    <path fill="#34362c" d="M8 5h124v1H8zM5 8h1v69H5zM134 8h1v69h-1zM8 79h124v1H8zM6 6h2v2H6zM132 6h2v2h-2zM6 77h2v2H6zM132 77h2v2h-2z"/>
+    <path fill="#83704a" d="M10 10h18v1H10zM112 10h18v1h-18zM10 74h18v1H10zM112 74h18v1h-18z"/>
+    <path fill="#403d2d" d="M56 14h29v56H56z"/>
+    <path fill="#11171a" d="M58 16h25v52H58z"/>
+    <path fill="#262b27" d="M60 18h1v47h-1zM80 18h1v47h-1zM61 18h19v1H61zM61 64h19v1H61zM61 27h19v1H61zM61 55h19v1H61z"/>
+
+    <!-- Sparse square flecks replace the old soft halo. -->
+    <path fill="#383b2b" d="M23 34h1v1h-1zM27 28h1v1h-1zM29 58h1v1h-1zM35 19h1v1h-1zM42 64h1v1h-1zM88 22h1v1h-1zM104 28h1v1h-1zM116 45h1v1h-1zM100 60h1v1h-1zM112 56h1v1h-1zM91 64h1v1h-1z"/>
+    <path fill="#51472e" d="M27 38h1v1h-1zM35 24h1v1h-1zM59 21h1v1h-1zM97 31h1v1h-1zM108 52h1v1h-1zM33 55h1v1h-1zM90 57h1v1h-1z"/>
+
+    <!-- The dark outline is also the cast shadow beneath the metal. -->
+    <path fill="#060b10" d="M40 26h14v2h6v4h4v6h2v4h48v2h2v12h-6v-3h-3v10h-9V53h-3v7h-9v-7H65v2h-3v4h-6v3H40v-2h-6v-4h-4v-6h-2V38h2v-6h4v-4h6z"/>
+    <path fill="#060b10" d="M38 22h14v2h6v4h4v6h2v4h48v2h2v12h-6v-3h-3v10h-9V49h-3v7h-9v-7H63v2h-3v4h-6v3H38v-2h-6v-4h-4v-6h-2V34h2v-6h4v-4h6z"/>
+
+    <!-- Shaft and two distinct teeth, lit along their top-left edges. -->
+    <path fill="#785030" d="M60 40h51v10h-2v-3h-6v10h-5V47h-7v7h-5V47H60z"/>
+    <path fill="#c18a46" d="M60 39h50v6h-9v10h-3V45H89v7h-3v-7H60z"/>
+    <path fill="#f1c575" d="M61 39h49v2H61zM86 45h2v5h-2zM98 45h2v8h-2z"/>
+    <path fill="#8e5d34" d="M66 43h18v2H66zM93 43h4v2h-4zM104 43h5v2h-5z"/>
+    <path fill="#ffe4a3" d="M65 39h13v1H65zM101 39h7v1h-7z"/>
+    <path fill="#ffe4a3" d="M61 38h3v7h-3z"/>
+    <path fill="#785030" d="M62 45h3v2h-3z"/>
+
+    <!-- Pixel-stepped gold bow, with a skull suspended in the opening. -->
+    <path fill="#785030" d="M38 24h14v2h6v4h4v6h2v10h-2v5h-4v4h-6v2H38v-2h-6v-4h-3v-6h-1V34h2v-5h4v-3h4z"/>
+    <path fill="#c18a46" d="M38 24h14v2h6v4h4v6h1v8h-2v6h-4v4h-6v2H38v-2h-6v-4h-3V35h2v-6h4v-3h3z"/>
+    <path fill="#f1c575" d="M38 24h14v2H38zM34 26h4v3h-4zM31 29h3v6h-3zM29 35h2v10h-2zM31 45h2v5h-2zM33 50h5v3h-5zM38 53h13v2H38zM52 26h5v2h-5zM57 29h3v5h-3z"/>
+    <path fill="#ffe4a3" d="M39 24h10v1H39zM34 27h2v2h-2zM31 30h1v5h-1zM29 36h1v7h-1z"/>
+    <path fill="#342b22" d="M39 29h12v2h5v4h3v10h-2v4h-5v3H39v-2h-5v-5h-2V35h3v-4h4z"/>
+    <path fill="#10171a" d="M39 30h12v2h5v4h2v8h-2v4h-5v3H39v-2h-4v-5h-2v-8h3v-4h3z"/>
+    <path fill="#785030" d="M40 32h10v2h3v4h1v7h-3v3h-2v3h-8v-3h-2v-3h-3v-9h2v-2h2z"/>
+    <path fill="#c18a46" d="M40 31h10v2h3v5h1v5h-3v3h-2v4h-8v-4h-2v-3h-3v-7h2v-3h2z"/>
+    <path fill="#f1c575" d="M40 31h10v2h-9v2h-3v5h-2v-4h2v-3h2zM41 45h7v2h-7z"/>
+    <path fill="#ffe4a3" d="M41 31h6v1h-6zM39 33h2v1h-2z"/>
+    <path fill="#10171a" d="M38 37h5v2h1v3h-5v-1h-1zM47 38h1v-1h4v4h-1v1h-5v-3h1zM44 42h2v1h1v2h-4v-2h1zM43 47h1v3h-1zM47 47h1v3h-1z"/>
+    <path fill="#785030" d="M39 42h4v1h-4zM47 42h4v1h-4zM49 34h3v2h-3z"/>
+
+    <!-- Hard-edged sparks and a tiny keyhole seal. -->
+    <path fill="#83704a" d="M22 25h2v3h3v2h-3v3h-2v-3h-3v-2h3zM115 57h1v2h2v1h-2v2h-1v-2h-2v-1h2z"/>
+    <path fill="#ffe4a3" d="M22 28h2v2h-2z"/>
+    <path fill="#51472e" d="M47 73h15v1H47zM78 73h15v1H78z"/>
+    <path fill="#c18a46" d="M68 70h4v1h1v3h-1v1h1v3h-6v-3h1v-1h-1v-3h1z"/>
+    <path fill="#f1c575" d="M68 70h3v1h-3z"/>
+  </g>
+</svg>

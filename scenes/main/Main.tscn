@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://hsfn8ypja21m"]
+[gd_scene load_steps=35 format=3 uid="uid://hsfn8ypja21m"]
 
 [ext_resource type="Script" uid="uid://bn3rv4pewgvkj" path="res://scripts/main/Main.gd" id="1_main"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_dc040"]
@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://b6rftkfr0rn73" path="res://assets/scratches2.png" id="3_tck0d"]
 [ext_resource type="PackedScene" uid="uid://cvxblkstddw2n" path="res://scenes/ui/CollectionScreen.tscn" id="4_collection"]
 [ext_resource type="PackedScene" uid="uid://b3bkwwo77our5" path="res://scenes/PackShopMachine.tscn" id="4_qkm1d"]
-[ext_resource type="PackedScene" uid="uid://u8x4h4ejwtkq" path="res://assets/environments/props/hospital/hospitalRoom.glb" id="6_1rhdn"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/ConnectedHospitalRoomShell.tscn" id="6_1rhdn"]
 [ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
 [ext_resource type="PackedScene" uid="uid://cbj0qaueir1wc" path="res://scenes/ui/PauseMenu.tscn" id="10_pause"]
@@ -18,6 +18,19 @@
 [ext_resource type="PackedScene" uid="uid://cy3btw2xuam5t" path="res://assets/environments/props/Neon/4/shop.glb" id="17_rikml"]
 [ext_resource type="PackedScene" uid="uid://b1y3kkh4xehbe" path="res://assets/environments/props/Neon/3/upgrade.glb" id="18_vc03v"]
 [ext_resource type="Script" uid="uid://buipggjtnvpx7" path="res://scripts/ui/ScreenCameraFocus.gd" id="19_focus"]
+[ext_resource type="PackedScene" uid="uid://ct7nuivac4a8a" path="res://assets/environments/props/usb/scene.gltf" id="19_vc03v"]
+[ext_resource type="PackedScene" uid="uid://bqetkqf5b5kk4" path="res://assets/environments/props/beer/energy.glb" id="20_grv7h"]
+[ext_resource type="PackedScene" uid="uid://coc6b78e8hjdw" path="res://assets/environments/props/knife/knife.glb" id="22_d8523"]
+[ext_resource type="Script" uid="uid://buklinv6mfo0y" path="res://scripts/table/LocalTableProp.gd" id="23_local_prop"]
+[ext_resource type="PackedScene" uid="uid://byptauqy0lmst" path="res://scenes/ui/LevelProgress.tscn" id="24_level_progress"]
+[ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="25_door"]
+[ext_resource type="PackedScene" uid="uid://40ujoatdq5fj" path="res://scenes/rooms/EmptyHospitalRoom.tscn" id="26_empty_room"]
+[ext_resource type="PackedScene" uid="uid://cyvja75orwrfx" path="res://scenes/props/ProgressionArea.tscn" id="27_progression_area"]
+[ext_resource type="PackedScene" uid="uid://c56rp7bjuokw6" path="res://scenes/rooms/Graveyard.tscn" id="28_graveyard"]
+[ext_resource type="PackedScene" uid="uid://q2tlqdpkrsrl" path="res://scenes/rooms/Basement.tscn" id="29_basement"]
+[ext_resource type="PackedScene" uid="uid://bf245el40ckwm" path="res://scenes/rooms/BlackMarket.tscn" id="30_black_market"]
+[ext_resource type="AudioStream" uid="uid://bu4v4qlnmw3y6" path="res://assets/sounds/SFX/canKick.mp3" id="31_can_kick"]
+[ext_resource type="AudioStream" uid="uid://djtgqglxv7gu0" path="res://assets/sounds/SFX/crateThrow.mp3" id="32_crate_throw"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u8lgh"]
 shader = ExtResource("3_jsdfw")
@@ -51,6 +64,13 @@ shader_parameter/viewport_size_override = Vector2(0, 0)
 
 [sub_resource type="Environment" id="Environment_dc040"]
 background_energy_multiplier = 0.0
+sdfgi_use_occlusion = true
+sdfgi_read_sky_light = false
+sdfgi_bounce_feedback = 0.18
+sdfgi_min_cell_size = 0.617383
+sdfgi_cascade0_distance = 39.5125
+sdfgi_max_distance = 632.2
+sdfgi_energy = 6.995
 glow_enabled = true
 glow_normalized = true
 glow_intensity = 8.0
@@ -63,6 +83,10 @@ volumetric_fog_albedo = Color(1, 1, 0.647059, 1)
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
 sway_angle_degrees = 7.015
+room_travel_duration = 2.4
+slot_room_music_attenuation_db = -7.0
+slot_room_music_cutoff_hz = 950.0
+wakeup_blur_duration = 3.4
 debug_interaction_clicks = false
 
 [node name="CameraPivot" type="Node3D" parent="."]
@@ -73,6 +97,8 @@ debug_interaction_clicks = false
 transform = Transform3D(1, 0, 0, 0, 0.978148, 0.207912, 0, -0.207912, 0.978148, 0, 2.05, -0.0595816)
 current = true
 fov = 58.0
+
+[node name="LevelProgress" parent="CameraPivot/CameraTilt/Camera3D" instance=ExtResource("24_level_progress")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D"]
 
@@ -123,16 +149,7 @@ transform = Transform3D(-0.72, -4.39431e-10, -6.29429e-08, 0, 0.719982, -0.00502
 camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
 
 [node name="UpgradeMachine" parent="ScenePivot" instance=ExtResource("6_ko0rf")]
-transform = Transform3D(-1.18895e-07, 0, 2.72, 0, 2.72, 0, -2.72, 0, -1.18895e-07, 4.84266, -1.97875, 0)
-
-[node name="EmptySide" type="Node3D" parent="ScenePivot"]
-transform = Transform3D(-3.14722e-08, 0, -0.72, 0, 0.72, 0, 0.72, 0, -3.14722e-08, 6.2, 0, 0)
-
-[node name="EmptyLabel" type="Label3D" parent="ScenePivot/EmptySide"]
-transform = Transform3D(0.018, 0, 0, 0, 0.018, 0, 0, 0, 0.018, 0, 0.55, 0)
-text = "FREIE SEITE"
-font_size = 38
-outline_size = 8
+transform = Transform3D(-1.18895e-07, 0, 2.72, 0, 2.72, 0, -2.72, 0, -1.18895e-07, 6.89309, -1.97875, -0.30149)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="ScenePivot"]
 transform = Transform3D(1, 0, 0, 0, -0.249552, 0.968361, 0, -0.968361, -0.249552, 0, 3.07559, -3.46703)
@@ -198,7 +215,6 @@ text = "Game Table"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
-text = "A/D drehen"
 
 [node name="PauseMenu" parent="." instance=ExtResource("10_pause")]
 
@@ -207,6 +223,54 @@ environment = SubResource("Environment_dc040")
 
 [node name="hospitalRoom" parent="." instance=ExtResource("6_1rhdn")]
 transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.925, 0.179363, -2.21619, 0.438384)
+
+[node name="HubDoor" parent="." instance=ExtResource("25_door")]
+transform = Transform3D(-7.97733e-08, 0, 1.825, 0, 1.825, 0, -1.825, 0, -7.97733e-08, 8.64787, -2.22292, 4.5)
+hover_open_degrees = 25.0
+travel_open_degrees = 100.0
+
+[node name="SpotLight3D" type="SpotLight3D" parent="HubDoor"]
+transform = Transform3D(0.547945, 2.36241e-08, 2.78976e-08, -2.36241e-08, -0.0902767, 0.540457, 2.78976e-08, -0.540457, -0.0902767, 0, 3.95159, -0.804162)
+light_color = Color(0.996814, 0.00130689, 0.000717341, 1)
+light_energy = 11.087
+spot_range = 8.479
+script = ExtResource("7_ostsq")
+
+[node name="EmptyRoom" parent="." instance=ExtResource("26_empty_room")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.1164, 0, 8.56162)
+
+[node name="ProgressionAreas" type="Node3D" parent="."]
+
+[node name="BlackMarket" parent="ProgressionAreas" instance=ExtResource("27_progression_area")]
+transform = Transform3D(0, 0, -1.825, 0, 1.825, 0, 1.825, 0, 0, -8.28915, -2.22292, -4.1)
+area_id = "black_market"
+display_name = "Black Market"
+accent_color = Color(0.83, 0.64, 0.34, 1)
+room_index = 4
+shop_pool = "black_market"
+
+[node name="Graveyard" parent="ProgressionAreas" instance=ExtResource("27_progression_area")]
+transform = Transform3D(-1.825, 0, 0, 0, 1.825, 0, 0, 0, -1.825, -4.3, -2.22292, 11.7094)
+area_id = "graveyard"
+display_name = "Graveyard"
+accent_color = Color(0.55, 0.75, 0.64, 1)
+room_index = 2
+
+[node name="Basement" parent="ProgressionAreas" instance=ExtResource("27_progression_area")]
+transform = Transform3D(0, 0, 1.825, 0, 1.825, 0, -1.825, 0, 0, 8.64787, -2.22292, -4.1)
+area_id = "basement"
+display_name = "Basement"
+accent_color = Color(0.61, 0.67, 0.84, 1)
+room_index = 3
+
+[node name="GraveyardRoom" parent="." instance=ExtResource("28_graveyard")]
+transform = Transform3D(-1.825, 0, -1.59547e-07, 0, 1.825, 0, 1.59547e-07, 0, -1.825, -4.3, -2.22292, 31.6594)
+
+[node name="BasementRoom" parent="." instance=ExtResource("29_basement")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.1164, -9, -0.03838)
+
+[node name="BlackMarketRoom" parent="." instance=ExtResource("30_black_market")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.1164, 0, -0.03838)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.58534, 0)
@@ -225,6 +289,7 @@ bus = &"Music"
 
 [node name="Atmo" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_p5fgu")
+volume_db = -12.854
 autoplay = true
 bus = &"SFX"
 
@@ -232,13 +297,45 @@ bus = &"SFX"
 transform = Transform3D(1.19, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.7732, -6.89788)
 
 [node name="collection" parent="." instance=ExtResource("16_u8lgh")]
-transform = Transform3D(-2.325, -2.63488e-07, 2.42467e-14, 3.63857e-08, -0.180858, -1.7356, 3.49175e-07, -1.7356, 0.180858, 0, 1.68811, 11.7201)
+transform = Transform3D(-2.325, -2.63488e-07, 2.42467e-14, 3.63857e-08, -0.180858, -1.7356, 3.49175e-07, -1.7356, 0.180858, 0, 4.35192, 11.7201)
 
 [node name="shop" parent="." instance=ExtResource("17_rikml")]
 transform = Transform3D(-2.18557e-08, 0.5, -2.18557e-08, 0, -2.18557e-08, -0.5, -0.5, -2.18557e-08, 9.55343e-16, -5.06037, 2.97948, 0.0526822)
 
 [node name="upgrade" parent="." instance=ExtResource("18_vc03v")]
-transform = Transform3D(-1.35505e-08, -0.31, 1.35505e-08, 0, -1.35505e-08, -0.31, 0.31, -1.35505e-08, 5.92313e-16, 3.78919, 2.86287, 0.17673)
+transform = Transform3D(-1.35505e-08, -0.31, 1.35505e-08, 0, -1.35505e-08, -0.31, 0.31, -1.35505e-08, 5.92313e-16, 5.79479, 3.18862, -0.0386122)
+
+[node name="decortaions" type="Node3D" parent="."]
+visible = false
+
+[node name="usb" parent="decortaions" instance=ExtResource("19_vc03v")]
+transform = Transform3D(0.114863, 0, 0.0964703, 0, 0.15, 0, -0.0964703, 0, 0.114863, -2.45288, 0.433606, -2.29018)
+script = ExtResource("23_local_prop")
+throw_sound = ExtResource("32_crate_throw")
+
+[node name="energy" parent="decortaions" instance=ExtResource("20_grv7h")]
+transform = Transform3D(0.197971, -0.11708, 5.11771e-09, 0, -1.00536e-08, -0.23, 0.11708, 0.197971, -8.65357e-09, 2.54866, 0.494345, -3.18487)
+script = ExtResource("23_local_prop")
+throw_sound = ExtResource("31_can_kick")
+
+[node name="energy4" parent="decortaions" instance=ExtResource("20_grv7h")]
+transform = Transform3D(0.207042, 0, 0.100168, 0, 0.23, 0, -0.100168, 0, 0.207042, -2.44372, 0.629932, -3.22017)
+script = ExtResource("23_local_prop")
+throw_sound = ExtResource("31_can_kick")
+
+[node name="energy2" parent="decortaions" instance=ExtResource("20_grv7h")]
+transform = Transform3D(0.229075, 0, 0.0206016, 0, 0.23, 0, -0.0206016, 0, 0.229075, 2.52984, 0.629932, -1.61617)
+script = ExtResource("23_local_prop")
+throw_sound = ExtResource("31_can_kick")
+
+[node name="energy3" parent="decortaions" instance=ExtResource("20_grv7h")]
+transform = Transform3D(0.148354, 0, 0.175759, 0, 0.23, 0, -0.175759, 0, 0.148354, 2.28107, 0.629932, -1.66727)
+script = ExtResource("23_local_prop")
+throw_sound = ExtResource("31_can_kick")
+
+[node name="knife" parent="decortaions" instance=ExtResource("22_d8523")]
+transform = Transform3D(-0.12282, -0.174671, -0.025104, -0.0513653, 0.00612494, 0.208684, -0.168825, 0.125209, -0.0452293, 2.71879, 0.721674, -3.65632)
+script = ExtResource("23_local_prop")
 
 [editable path="ScenePivot/PackShopMachine"]
 [editable path="ScenePivot/UpgradeMachine"]

@@ -137,12 +137,29 @@ const RARITY_DATA := {
 		"slow_motion_duration": 2.30,
 		"sound_key": "reveal_exotic",
 	},
+	"secret": {
+		"color": Color("#CDEBFF"),
+		"particle_amount": 360,
+		"particle_speed": 2.80,
+		"particle_glow_energy": 18.0,
+		"particle_glow_scale": 4.20,
+		"screen_flash_strength": 0.55,
+		"screen_flicker_strength": 0.05,
+		"screen_flicker_speed": 2.0,
+		"aberration_strength": 0.020,
+		"distortion_strength": 0.025,
+		"distortion_speed": 2.0,
+		"camera_shake_strength": 0.45,
+		"slow_motion_scale": 0.18,
+		"slow_motion_duration": 2.60,
+		"sound_key": "reveal_secret",
+	},
 }
 
 const DEFAULT_RARITY := "common"
 
 # Ab dieser Rarity (Index in RARITY_ORDER) wird Slow-Motion ausgeloest.
-const RARITY_ORDER := ["common", "uncommon", "rare", "epic", "legendary", "mythic", "exotic"]
+const RARITY_ORDER := ["common", "uncommon", "rare", "epic", "legendary", "mythic", "exotic", "secret"]
 const SLOW_MOTION_MIN_INDEX := 3 # "epic"
 
 

@@ -11,6 +11,8 @@ class_name ScreenCameraFocus
 @export_range(0.0, 4.0, 0.1) var pointer_motion_epsilon := 0.5
 
 var _screens: Dictionary = {}
+var _screen_rooms: Dictionary = {}
+var _active_room := -1
 var _hovered_screen: Area3D = null
 var _active_side := -1
 var _interaction_allowed := false
@@ -25,6 +27,7 @@ var _pointer_miss_time := 0.0
 var _pointer_moved_since_hit := false
 var _last_pointer_position := Vector2.ZERO
 var _has_pointer_position := false
+var _hover_suspended := false
 
 
 func _ready() -> void:
@@ -51,11 +54,12 @@ func _process(delta: float) -> void:
 	_update_pointer_hover(delta)
 
 
-func register_screen(screen_area: Area3D, side_index: int) -> void:
+func register_screen(screen_area: Area3D, side_index: int, room_index: int = -1) -> void:
 	if screen_area == null:
 		return
 
 	_screens[screen_area] = side_index
+	_screen_rooms[screen_area] = room_index
 
 	var entered_callback := Callable(self, "_on_screen_mouse_entered").bind(screen_area)
 	if not screen_area.mouse_entered.is_connected(entered_callback):
@@ -66,8 +70,10 @@ func register_screen(screen_area: Area3D, side_index: int) -> void:
 		screen_area.mouse_exited.connect(exited_callback)
 
 
-func set_context(active_side: int, interaction_allowed: bool) -> void:
-	var context_changed := _active_side != active_side or _interaction_allowed != interaction_allowed
+func set_context(active_side: int, interaction_allowed: bool, room_index: int = -1) -> void:
+	var context_changed := _active_side != active_side or _interaction_allowed != interaction_allowed or (room_index >= 0 and _active_room != room_index)
+	if room_index >= 0:
+		_active_room = room_index
 	_active_side = active_side
 	_interaction_allowed = interaction_allowed
 
@@ -77,6 +83,12 @@ func set_context(active_side: int, interaction_allowed: bool) -> void:
 
 	if context_changed:
 		_refresh_focus_target()
+
+
+func set_hover_suspended(suspended: bool) -> void:
+	# Keep the current framing while a camera-relative card detail covers the
+	# wall. Room, pause and turn context changes still release the camera.
+	_hover_suspended = suspended
 
 
 func restore_immediately() -> void:
@@ -99,7 +111,9 @@ func is_focused() -> bool:
 
 
 func _on_screen_mouse_entered(screen_area: Area3D) -> void:
-	if not _interaction_allowed:
+	if not _interaction_allowed or _hover_suspended:
+		return
+	if not _is_screen_available_for_active_side(screen_area):
 		return
 
 	_hovered_screen = screen_area
@@ -130,6 +144,8 @@ func _update_pointer_hover(delta: float) -> void:
 
 
 func _update_pointer_hover_at(pointer_position: Vector2, delta: float) -> void:
+	if _hover_suspended:
+		return
 	var pointer_moved := false
 	if _has_pointer_position:
 		pointer_moved = pointer_position.distance_to(_last_pointer_position) > pointer_motion_epsilon
@@ -197,6 +213,9 @@ func _is_screen_available_for_active_side(screen_area: Area3D) -> bool:
 		return false
 	if int(_screens[screen_area]) != _active_side:
 		return false
+	var room_index := int(_screen_rooms.get(screen_area, -1))
+	if room_index >= 0 and room_index != _active_room:
+		return false
 	if not screen_area.input_ray_pickable:
 		return false
 	return screen_area.is_visible_in_tree()
@@ -257,13 +276,16 @@ func _calculate_focus_position(screen_area: Area3D) -> Vector3:
 	var forward := -camera.transform.basis.z.normalized()
 	var to_screen := screen_position - _base_position
 	var current_distance := to_screen.dot(forward)
-	if current_distance <= focus_screen_distance:
+	# Wide physical stations need room for the whole work surface, while the
+	# shop screens keep their existing close reading distance.
+	var target_distance := maxf(float(screen_area.get_meta("focus_distance", focus_screen_distance)), 0.5)
+	if current_distance <= target_distance:
 		return _base_position
 
 	# Move onto the screen's center axis. Both machines then reach the same
 	# readable distance and remain fully framed despite their different room
 	# positions. Main only enables this after its initial camera tween settles.
-	var travel := current_distance - focus_screen_distance
+	var travel := current_distance - target_distance
 	if max_focus_travel > 0.0:
 		travel = minf(travel, max_focus_travel)
 	var centering_offset := to_screen - forward * current_distance

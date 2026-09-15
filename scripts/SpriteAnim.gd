@@ -16,19 +16,22 @@ func play_sheet(
 	sheet: Texture2D,
 	frame_count: int,
 	animation_fps: float,
-	should_loop: bool = true
+	should_loop: bool = true,
+	preserve_frame: bool = false
 ) -> void:
 	if sheet == null:
 		return
 
+	var previous_frame := frame
+	var previous_frame_timer := _frame_timer
 	texture = sheet
 	TOTAL_FRAMES = maxi(frame_count, 1)
 	fps = maxf(animation_fps, 0.0)
 	loop = should_loop
 	hframes = TOTAL_FRAMES
 	vframes = 1
-	frame = 0
-	_frame_timer = 0.0
+	frame = clampi(previous_frame, 0, TOTAL_FRAMES - 1) if preserve_frame else 0
+	_frame_timer = previous_frame_timer if preserve_frame else 0.0
 	set_process(fps > 0.0)
 
 func _process(delta: float) -> void:

@@ -1,80 +1,7 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=12 format=3 uid="uid://dwihrexic354d"]
 
-[ext_resource type="Script" path="res://scripts/multiplayer/Matchmaking.gd" id="1_matchmaking"]
+[ext_resource type="Script" uid="uid://dcmfiek1ugvw6" path="res://scripts/multiplayer/Matchmaking.gd" id="1_matchmaking"]
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_font"]
-
-[sub_resource type="StyleBoxFlat" id="PanelStyle"]
-bg_color = Color(0.025, 0.018, 0.03, 0.985)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.64, 0.055, 0.095, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.65)
-shadow_size = 12
-
-[sub_resource type="StyleBoxFlat" id="SectionStyle"]
-bg_color = Color(0.055, 0.04, 0.06, 0.92)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.32, 0.12, 0.15, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 10.0
-content_margin_top = 8.0
-content_margin_right = 10.0
-content_margin_bottom = 8.0
-
-[sub_resource type="StyleBoxFlat" id="StatusStyle"]
-bg_color = Color(0.09, 0.025, 0.035, 0.7)
-border_width_left = 3
-border_color = Color(0.72, 0.08, 0.12, 1)
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-
-[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
-bg_color = Color(0.105, 0.07, 0.09, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.42, 0.13, 0.17, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="ButtonHover"]
-bg_color = Color(0.42, 0.045, 0.075, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.88, 0.16, 0.2, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
-bg_color = Color(0.68, 0.045, 0.075, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 0.24, 0.28, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="ButtonDisabled"]
 bg_color = Color(0.075, 0.065, 0.07, 0.72)
@@ -100,6 +27,58 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+bg_color = Color(0.42, 0.045, 0.075, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.88, 0.16, 0.2, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
+bg_color = Color(0.105, 0.07, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.13, 0.17, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
+bg_color = Color(0.68, 0.045, 0.075, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.24, 0.28, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="SectionStyle"]
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+bg_color = Color(0.055, 0.04, 0.06, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.32, 0.12, 0.15, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [sub_resource type="Theme" id="LobbyTheme"]
 default_font = ExtResource("2_font")
 default_font_size = 17
@@ -117,6 +96,27 @@ ItemList/colors/font_color = Color(0.86, 0.82, 0.83, 1)
 ItemList/colors/font_hovered_color = Color(1, 1, 1, 1)
 ItemList/colors/font_selected_color = Color(1, 1, 1, 1)
 ItemList/styles/panel = SubResource("SectionStyle")
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.025, 0.018, 0.03, 0.985)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.64, 0.055, 0.095, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StatusStyle"]
+bg_color = Color(0.09, 0.025, 0.035, 0.7)
+border_width_left = 3
+border_color = Color(0.72, 0.08, 0.12, 1)
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
 
 [node name="MatchmakingScreen" type="Control"]
 process_mode = 3
@@ -138,7 +138,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 color = Color(0, 0, 0, 0.78)
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
@@ -206,8 +205,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.78, 0.79, 1)
 theme_override_font_sizes/font_size = 15
 text = "Steam-Verbindung wird geprüft …"
-autowrap_mode = 2
 vertical_alignment = 1
+autowrap_mode = 2
 
 [node name="Content" type="HSplitContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn"]
 custom_minimum_size = Vector2(0, 420)
@@ -244,10 +243,10 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 270)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_selected_color = Color(1, 0.92, 0.93, 1)
 theme_override_colors/guide_color = Color(0.2, 0.12, 0.14, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_selected_color = Color(1, 0.92, 0.93, 1)
 theme_override_constants/line_separation = 8
+theme_override_font_sizes/font_size = 16
 theme_override_styles/panel = SubResource("SectionStyle")
 allow_reselect = true
 same_column_width = true
@@ -256,8 +255,29 @@ same_column_width = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.52, 0.47, 0.48, 1)
 theme_override_font_sizes/font_size = 13
-text = "Lobby auswählen und beitreten – oder selbst hosten."
+text = "2 Spieler + 2 Zuschauer · Zuschauer brauchen kein Deck."
 autowrap_mode = 2
+
+[node name="RoleRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="RoleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn/RoleRow"]
+layout_mode = 2
+text = "BEITRETEN ALS"
+
+[node name="RoleSelector" type="OptionButton" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn/RoleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Spieler kämpfen mit ihrem Deck. Zuschauer verfolgen den Tisch von oben. Ein Beitritt ist nur vor Matchstart möglich."
+selected = 0
+item_count = 2
+popup/item_0/text = "SPIELER"
+popup/item_0/id = 0
+popup/item_1/text = "ZUSCHAUER (VON OBEN)"
+popup/item_1/id = 1
 
 [node name="BrowserActions" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn"]
 layout_mode = 2
@@ -268,6 +288,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 size_flags_horizontal = 3
+tooltip_text = "Erstellt eine Lobby. Der Host belegt immer einen Spielerplatz."
 text = "LOBBY HOSTEN"
 
 [node name="RefreshButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/BrowserColumn/BrowserActions"]
@@ -324,7 +345,7 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.62, 0.63, 1)
 theme_override_font_sizes/font_size = 14
-text = "SPIELER"
+text = "2 SPIELER + 2 ZUSCHAUER"
 
 [node name="MemberListLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainColumn/Content/LobbySection/LobbyMargin/LobbyColumn"]
 unique_name_in_owner = true
@@ -370,5 +391,5 @@ text = "ZURÜCK"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.42, 0.38, 0.39, 1)
 theme_override_font_sizes/font_size = 12
-text = "ESC: ZURÜCK  ·  HOST STARTET, SOBALD EIN GEGENSPIELER VERBUNDEN IST"
+text = "ESC: ZURÜCK  ·  ZUSCHAUER TRETEN VOR MATCHSTART BEI  ·  HOST STARTET DEN KAMPF"
 horizontal_alignment = 1

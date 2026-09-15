@@ -33,6 +33,7 @@ size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 script = ExtResource("1_script")
+viewport_fps = 8.0
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -87,19 +88,27 @@ stretch = true
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(113, 180)
+size = Vector2i(2, 2)
 render_target_update_mode = 4
 
 [node name="World" type="Node3D" parent="Margin/Content/PreviewPanel/PreviewMargin/ViewportContainer/SubViewport"]
 
 [node name="Camera3D" type="Camera3D" parent="Margin/Content/PreviewPanel/PreviewMargin/ViewportContainer/SubViewport/World"]
-fov = 35.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.04687)
 
 [node name="ModelRoot" type="Node3D" parent="Margin/Content/PreviewPanel/PreviewMargin/ViewportContainer/SubViewport/World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.621486, -6.48836)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Margin/Content/PreviewPanel/PreviewMargin/ViewportContainer/SubViewport/World"]
 light_color = Color(1, 0.92549, 0.854902, 1)
 light_energy = 1.4
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Margin/Content/PreviewPanel/PreviewMargin/ViewportContainer/SubViewport/World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.94341, -0.303758)
+light_energy = 16.0
+light_size = 0.812
+light_specular = 1.184
+omni_range = 4096.0
 
 [node name="MetaRow" type="HBoxContainer" parent="Margin/Content"]
 custom_minimum_size = Vector2(0, 22)

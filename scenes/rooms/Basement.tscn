@@ -1,0 +1,2617 @@
+[gd_scene load_steps=90 format=3 uid="uid://q2tlqdpkrsrl"]
+
+[ext_resource type="PackedScene" uid="uid://cc38yiwfpqqq0" path="res://scenes/rooms/HospitalRoomShell.tscn" id="1_shell"]
+[ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="2_door"]
+[ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="3_font"]
+[ext_resource type="Script" uid="uid://5sfeis1ctcqp" path="res://scripts/rooms/BasementCrate.gd" id="4_crate"]
+[ext_resource type="Script" uid="uid://c5dpe7oohd6mi" path="res://scripts/rooms/BasementDiscovery.gd" id="5_discovery"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/BasementCatEncounter.tscn" id="6_cat"]
+[ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_3sn4p"]
+
+[sub_resource type="StandardMaterial3D" id="DarkIron"]
+albedo_color = Color(0.075, 0.085, 0.083, 1)
+metallic = 0.6
+roughness = 0.65
+
+[sub_resource type="BoxMesh" id="ReturnLampHousing"]
+material = SubResource("DarkIron")
+size = Vector3(0.28, 0.2, 0.62)
+
+[sub_resource type="StandardMaterial3D" id="ReturnLampGlass"]
+albedo_color = Color(0.92, 0.82, 0.58, 1)
+roughness = 0.35
+emission_enabled = true
+emission = Color(0.92, 0.78, 0.48, 1)
+emission_energy_multiplier = 0.45
+
+[sub_resource type="BoxMesh" id="ReturnLampDiffuser"]
+material = SubResource("ReturnLampGlass")
+size = Vector3(0.2, 0.09, 0.49)
+
+[sub_resource type="StandardMaterial3D" id="Concrete"]
+albedo_color = Color(0.13, 0.15, 0.12, 1)
+roughness = 0.98
+
+[sub_resource type="BoxMesh" id="Mesh_21"]
+material = SubResource("Concrete")
+size = Vector3(2.05, 0.22, 2.4)
+
+[sub_resource type="StandardMaterial3D" id="WornPetrolPaint"]
+albedo_color = Color(0.11, 0.205, 0.19, 1)
+metallic = 0.45
+roughness = 0.72
+
+[sub_resource type="CylinderMesh" id="Mesh_22"]
+material = SubResource("WornPetrolPaint")
+top_radius = 0.88
+bottom_radius = 0.88
+height = 1.98
+radial_segments = 20
+rings = 1
+
+[sub_resource type="SphereMesh" id="Mesh_23"]
+material = SubResource("WornPetrolPaint")
+radius = 0.87
+height = 1.74
+radial_segments = 16
+rings = 8
+
+[sub_resource type="TorusMesh" id="Mesh_24"]
+material = SubResource("DarkIron")
+inner_radius = 0.865
+outer_radius = 0.915
+rings = 24
+ring_segments = 8
+
+[sub_resource type="BoxMesh" id="Mesh_25"]
+material = SubResource("DarkIron")
+size = Vector3(1.9, 0.3, 0.16)
+
+[sub_resource type="StandardMaterial3D" id="TarnishedBrass"]
+albedo_color = Color(0.44, 0.285, 0.1, 1)
+metallic = 0.65
+roughness = 0.45
+
+[sub_resource type="CylinderMesh" id="Mesh_26"]
+material = SubResource("TarnishedBrass")
+top_radius = 0.19
+bottom_radius = 0.19
+height = 0.085
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="GaugeFace"]
+albedo_color = Color(0.69, 0.66, 0.51, 1)
+roughness = 0.78
+
+[sub_resource type="CylinderMesh" id="Mesh_27"]
+material = SubResource("GaugeFace")
+top_radius = 0.162
+bottom_radius = 0.162
+height = 0.009
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="ValveRed"]
+albedo_color = Color(0.37, 0.075, 0.045, 1)
+metallic = 0.4
+roughness = 0.65
+
+[sub_resource type="BoxMesh" id="Mesh_28"]
+material = SubResource("ValveRed")
+size = Vector3(0.011, 0.11, 0.017)
+
+[sub_resource type="BoxMesh" id="Mesh_29"]
+material = SubResource("DarkIron")
+size = Vector3(0.12, 0.52, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="WarmLampGlass"]
+albedo_color = Color(0.96, 0.64, 0.27, 1)
+roughness = 0.2
+emission_enabled = true
+emission = Color(1, 0.52, 0.18, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="BoxMesh" id="Mesh_30"]
+material = SubResource("WarmLampGlass")
+size = Vector3(0.012, 0.033, 0.53)
+
+[sub_resource type="StandardMaterial3D" id="PipeSteel"]
+albedo_color = Color(0.25, 0.285, 0.27, 1)
+metallic = 0.7
+roughness = 0.43
+
+[sub_resource type="CylinderMesh" id="Mesh_31"]
+material = SubResource("PipeSteel")
+top_radius = 0.045
+bottom_radius = 0.045
+height = 0.4
+radial_segments = 20
+rings = 1
+
+[sub_resource type="TorusMesh" id="Mesh_32"]
+material = SubResource("ValveRed")
+inner_radius = 0.19
+outer_radius = 0.235
+rings = 24
+ring_segments = 8
+
+[sub_resource type="BoxMesh" id="Mesh_33"]
+material = SubResource("ValveRed")
+size = Vector3(0.027, 0.4, 0.035)
+
+[sub_resource type="BoxMesh" id="Mesh_34"]
+material = SubResource("ValveRed")
+size = Vector3(0.027, 0.035, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="OxidizedIron"]
+albedo_color = Color(0.23, 0.12, 0.065, 1)
+metallic = 0.45
+roughness = 0.86
+
+[sub_resource type="CylinderMesh" id="Mesh_35"]
+material = SubResource("OxidizedIron")
+top_radius = 0.52
+bottom_radius = 0.52
+height = 1.7
+radial_segments = 20
+rings = 1
+
+[sub_resource type="TorusMesh" id="Mesh_36"]
+material = SubResource("DarkIron")
+inner_radius = 0.51
+outer_radius = 0.55
+rings = 24
+ring_segments = 8
+
+[sub_resource type="BoxMesh" id="Mesh_37"]
+material = SubResource("DarkIron")
+size = Vector3(0.075, 2.65, 0.075)
+
+[sub_resource type="StandardMaterial3D" id="OldTimber"]
+albedo_color = Color(0.205, 0.145, 0.08, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_38"]
+material = SubResource("OldTimber")
+size = Vector3(1.38, 0.085, 2.78)
+
+[sub_resource type="BoxMesh" id="Mesh_39"]
+material = SubResource("OxidizedIron")
+size = Vector3(0.07, 0.13, 2.8)
+
+[sub_resource type="BoxMesh" id="Mesh_40"]
+material = SubResource("OldTimber")
+size = Vector3(0.9, 0.64, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="TimberEdges"]
+albedo_color = Color(0.29, 0.215, 0.125, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_41"]
+material = SubResource("TimberEdges")
+size = Vector3(0.065, 0.68, 0.065)
+
+[sub_resource type="BoxMesh" id="Mesh_42"]
+material = SubResource("TimberEdges")
+size = Vector3(0.925, 0.055, 0.035)
+
+[sub_resource type="BoxMesh" id="Mesh_43"]
+material = SubResource("DarkIron")
+size = Vector3(0.045, 0.68, 0.85)
+
+[sub_resource type="BoxMesh" id="Mesh_44"]
+material = SubResource("OldTimber")
+size = Vector3(1.12, 0.92, 0.96)
+
+[sub_resource type="BoxMesh" id="Mesh_45"]
+material = SubResource("TimberEdges")
+size = Vector3(0.065, 0.96, 0.065)
+
+[sub_resource type="BoxMesh" id="Mesh_46"]
+material = SubResource("TimberEdges")
+size = Vector3(1.145, 0.055, 0.035)
+
+[sub_resource type="BoxMesh" id="Mesh_47"]
+material = SubResource("DarkIron")
+size = Vector3(0.045, 0.96, 1.01)
+
+[sub_resource type="BoxMesh" id="Mesh_48"]
+material = SubResource("OldTimber")
+size = Vector3(0.87, 0.61, 0.8)
+
+[sub_resource type="BoxMesh" id="Mesh_49"]
+material = SubResource("TimberEdges")
+size = Vector3(0.065, 0.65, 0.065)
+
+[sub_resource type="BoxMesh" id="Mesh_50"]
+material = SubResource("TimberEdges")
+size = Vector3(0.895, 0.055, 0.035)
+
+[sub_resource type="BoxMesh" id="Mesh_51"]
+material = SubResource("DarkIron")
+size = Vector3(0.045, 0.65, 0.85)
+
+[sub_resource type="CylinderMesh" id="Mesh_52"]
+material = SubResource("WornPetrolPaint")
+top_radius = 0.4
+bottom_radius = 0.4
+height = 1.15
+radial_segments = 20
+rings = 1
+
+[sub_resource type="TorusMesh" id="Mesh_53"]
+material = SubResource("DarkIron")
+inner_radius = 0.395
+outer_radius = 0.423
+rings = 24
+ring_segments = 8
+
+[sub_resource type="BoxMesh" id="Mesh_54"]
+material = SubResource("WornPetrolPaint")
+size = Vector3(2.5, 1.85, 0.48)
+
+[sub_resource type="BoxMesh" id="Mesh_55"]
+material = SubResource("DarkIron")
+size = Vector3(2.27, 1.58, 0.07)
+
+[sub_resource type="StandardMaterial3D" id="ControlLight"]
+albedo_color = Color(0.29, 0.58, 0.19, 1)
+roughness = 0.2
+emission_enabled = true
+emission = Color(0.34, 0.82, 0.13, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="Mesh_56"]
+material = SubResource("ControlLight")
+top_radius = 0.068
+bottom_radius = 0.068
+height = 0.04
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_57"]
+material = SubResource("TarnishedBrass")
+size = Vector3(0.22, 0.28, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="DeepBlack"]
+albedo_color = Color(0.012, 0.018, 0.016, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_58"]
+material = SubResource("DeepBlack")
+size = Vector3(0.045, 0.2, 0.11)
+
+[sub_resource type="CylinderMesh" id="Mesh_59"]
+material = SubResource("WarmLampGlass")
+top_radius = 0.068
+bottom_radius = 0.068
+height = 0.04
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_60"]
+material = SubResource("DeepBlack")
+size = Vector3(1.62, 0.025, 0.02)
+
+[sub_resource type="CylinderMesh" id="Mesh_61"]
+material = SubResource("PipeSteel")
+top_radius = 0.065
+bottom_radius = 0.065
+height = 2.4
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_62"]
+material = SubResource("OxidizedIron")
+size = Vector3(0.32, 0.4, 0.21)
+
+[sub_resource type="BoxMesh" id="Mesh_63"]
+material = SubResource("DarkIron")
+size = Vector3(3.2, 0.025, 0.42)
+
+[sub_resource type="BoxMesh" id="Mesh_64"]
+material = SubResource("DeepBlack")
+size = Vector3(0.05, 0.005, 0.34)
+
+[sub_resource type="StandardMaterial3D" id="DampPatches"]
+albedo_color = Color(0.065, 0.095, 0.08, 1)
+metallic = 0.25
+roughness = 0.13
+
+[sub_resource type="CylinderMesh" id="Mesh_65"]
+material = SubResource("DampPatches")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.006
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_66"]
+material = SubResource("DarkIron")
+size = Vector3(13.5, 0.004, 0.014)
+
+[sub_resource type="CylinderMesh" id="Mesh_81"]
+material = SubResource("PipeSteel")
+top_radius = 0.13
+bottom_radius = 0.13
+height = 21.3
+radial_segments = 20
+rings = 1
+
+[sub_resource type="TorusMesh" id="Mesh_82"]
+material = SubResource("DarkIron")
+inner_radius = 0.13
+outer_radius = 0.17
+rings = 24
+ring_segments = 8
+
+[sub_resource type="BoxMesh" id="Mesh_83"]
+material = SubResource("DarkIron")
+size = Vector3(0.06, 2.32, 0.06)
+
+[sub_resource type="CylinderMesh" id="Mesh_84"]
+material = SubResource("OxidizedIron")
+top_radius = 0.17
+bottom_radius = 0.17
+height = 21.3
+radial_segments = 20
+rings = 1
+
+[sub_resource type="TorusMesh" id="Mesh_85"]
+material = SubResource("DarkIron")
+inner_radius = 0.17
+outer_radius = 0.21
+rings = 24
+ring_segments = 8
+
+[sub_resource type="CylinderMesh" id="Mesh_86"]
+material = SubResource("PipeSteel")
+top_radius = 0.15
+bottom_radius = 0.15
+height = 3.02
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_87"]
+material = SubResource("PipeSteel")
+top_radius = 0.15
+bottom_radius = 0.15
+height = 3.1
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_88"]
+material = SubResource("OxidizedIron")
+top_radius = 0.12
+bottom_radius = 0.12
+height = 20.8
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_89"]
+material = SubResource("DarkIron")
+size = Vector3(16.6, 0.2, 0.18)
+
+[sub_resource type="BoxMesh" id="Mesh_90"]
+material = SubResource("Concrete")
+size = Vector3(0.8, 0.16, 3.265)
+
+[sub_resource type="StandardMaterial3D" id="HospitalConnectorWall"]
+albedo_color = Color(0.28, 0.3, 0.25, 1)
+roughness = 0.94
+
+[sub_resource type="BoxMesh" id="Mesh_91"]
+material = SubResource("HospitalConnectorWall")
+size = Vector3(0.9, 0.18, 3.265)
+
+[sub_resource type="BoxMesh" id="Mesh_92"]
+material = SubResource("HospitalConnectorWall")
+size = Vector3(0.8, 6.003, 0.12)
+
+[sub_resource type="BoxMesh" id="Mesh_93"]
+material = SubResource("Concrete")
+size = Vector3(0.325, 0.31, 3.265)
+
+[sub_resource type="BoxMesh" id="Mesh_94"]
+material = SubResource("HospitalConnectorWall")
+size = Vector3(0.325, 6.363, 0.12)
+
+[sub_resource type="BoxMesh" id="Mesh_95"]
+material = SubResource("HospitalConnectorWall")
+size = Vector3(13.9135, 0.18, 3.265)
+
+[sub_resource type="BoxMesh" id="Mesh_96"]
+material = SubResource("PipeSteel")
+size = Vector3(13.7535, 0.07, 0.075)
+
+[sub_resource type="BoxMesh" id="Mesh_97"]
+material = SubResource("DarkIron")
+size = Vector3(0.36, 0.12, 0.55)
+
+[sub_resource type="BoxMesh" id="Mesh_98"]
+material = SubResource("WarmLampGlass")
+size = Vector3(0.25, 0.07, 0.43)
+
+[node name="Basement" type="Node3D"]
+script = ExtResource("5_discovery")
+
+[node name="BasementCatEncounter" parent="." instance=ExtResource("6_cat")]
+
+[node name="Shell" parent="." instance=ExtResource("1_shell")]
+transform = Transform3D(-0.695, 0, 0, 0, 0.695, 0, 0, 0, -0.925, 0, -2.21619, 0)
+
+[node name="CameraAnchor" type="Marker3D" parent="."]
+
+[node name="DoorApproach" type="Marker3D" parent="."]
+transform = Transform3D(-3.61999e-06, 0, -1, 0, 1, 0, 1, 0, -3.61999e-06, -6.46851, 0, -4.06162)
+
+[node name="ReturnDoor" parent="." instance=ExtResource("2_door")]
+transform = Transform3D(0, 0, -1.825, 0, 1.825, 0, 1.825, 0, 0, -8.46851, -2.22292, -4.06162)
+hover_open_degrees = 25.0
+travel_open_degrees = 100.0
+interaction_enabled = false
+
+[node name="ReturnDoorLampHousing" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.02, 4.43, -4.06162)
+mesh = SubResource("ReturnLampHousing")
+
+[node name="Diffuser" type="MeshInstance3D" parent="ReturnDoorLampHousing"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06, -0.105, 0)
+mesh = SubResource("ReturnLampDiffuser")
+
+[node name="ReturnDoorLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.95, 2.7, -4.06162)
+light_color = Color(0.96, 0.82, 0.57, 1)
+light_energy = 2.7
+light_indirect_energy = 0.4
+light_volumetric_fog_energy = 0.05
+light_specular = 0.1
+shadow_enabled = true
+omni_range = 5.8
+omni_attenuation = 1.3
+
+[node name="BoilerEquipment" type="Node3D" parent="."]
+transform = Transform3D(-4.52499e-06, 0, -1.25, 0, 1.25, 0, 1.25, 0, -4.52499e-06, -4.5625, -2.22292, -1)
+
+[node name="MainBoiler" type="Node3D" parent="BoilerEquipment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 0, -3.65)
+
+[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
+mesh = SubResource("Mesh_21")
+
+[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, 0)
+mesh = SubResource("Mesh_22")
+
+[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 0.28, 0, 0, 0, 1, 0, 2.17, 0)
+mesh = SubResource("Mesh_23")
+
+[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+mesh = SubResource("Mesh_24")
+
+[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0)
+mesh = SubResource("Mesh_24")
+
+[node name="SupportFoot-0.57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, -0.57)
+mesh = SubResource("Mesh_25")
+
+[node name="SupportFoot0.57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0.57)
+mesh = SubResource("Mesh_25")
+
+[node name="GaugeRim" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.895, 1.75, 0.12)
+mesh = SubResource("Mesh_26")
+
+[node name="GaugeDial" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.944, 1.75, 0.12)
+mesh = SubResource("Mesh_27")
+
+[node name="GaugeNeedle" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 0.852525, -0.522687, 0, 0.522687, 0.852525, 0.952, 1.77, 0.12)
+mesh = SubResource("Mesh_28")
+
+[node name="PressureDigits" type="Label3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 0.962, 1.68, 0.12)
+pixel_size = 0.003
+modulate = Color(0.06, 0.055, 0.04, 1)
+text = "2.8"
+font = ExtResource("3_font")
+font_size = 20
+outline_size = 0
+
+[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 0.79, 0)
+mesh = SubResource("Mesh_29")
+
+[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.64, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.7, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.76, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.82, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.88, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.94, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1, 1.26, -0.45)
+mesh = SubResource("Mesh_31")
+
+[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_32")
+
+[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_33")
+
+[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_34")
+
+[node name="MainBoiler2" type="Node3D" parent="BoilerEquipment"]
+transform = Transform3D(-1.455, 0, -2.19699e-07, 0, 1.455, 0, 2.19699e-07, 0, -1.455, 7.51106, 0, -3.65005)
+
+[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
+mesh = SubResource("Mesh_21")
+
+[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, 0)
+mesh = SubResource("Mesh_22")
+
+[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 0.28, 0, 0, 0, 1, 0, 2.17, 0)
+mesh = SubResource("Mesh_23")
+
+[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+mesh = SubResource("Mesh_24")
+
+[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0)
+mesh = SubResource("Mesh_24")
+
+[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, -0.57)
+mesh = SubResource("Mesh_25")
+
+[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0.57)
+mesh = SubResource("Mesh_25")
+
+[node name="GaugeRim" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.895, 1.75, 0.12)
+mesh = SubResource("Mesh_26")
+
+[node name="GaugeDial" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.944, 1.75, 0.12)
+mesh = SubResource("Mesh_27")
+
+[node name="GaugeNeedle" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 0.852525, -0.522687, 0, 0.522687, 0.852525, 0.952, 1.77, 0.12)
+mesh = SubResource("Mesh_28")
+
+[node name="PressureDigits" type="Label3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 0.962, 1.68, 0.12)
+pixel_size = 0.003
+modulate = Color(0.06, 0.055, 0.04, 1)
+text = "2.8"
+font = ExtResource("3_font")
+font_size = 20
+outline_size = 0
+
+[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 0.79, 0)
+mesh = SubResource("Mesh_29")
+
+[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.64, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.7, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.76, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.82, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.88, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.94, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1, 1.26, -0.45)
+mesh = SubResource("Mesh_31")
+
+[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_32")
+
+[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_33")
+
+[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_34")
+
+[node name="MainBoiler3" type="Node3D" parent="BoilerEquipment"]
+transform = Transform3D(-1.455, 0, -2.19699e-07, 0, 1.455, 0, 2.19699e-07, 0, -1.455, 7.51108, 0, -0.315108)
+
+[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
+mesh = SubResource("Mesh_21")
+
+[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, 0)
+mesh = SubResource("Mesh_22")
+
+[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 0.28, 0, 0, 0, 1, 0, 2.17, 0)
+mesh = SubResource("Mesh_23")
+
+[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+mesh = SubResource("Mesh_24")
+
+[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0)
+mesh = SubResource("Mesh_24")
+
+[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, -0.57)
+mesh = SubResource("Mesh_25")
+
+[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0.57)
+mesh = SubResource("Mesh_25")
+
+[node name="GaugeRim" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.895, 1.75, 0.12)
+mesh = SubResource("Mesh_26")
+
+[node name="GaugeDial" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.944, 1.75, 0.12)
+mesh = SubResource("Mesh_27")
+
+[node name="GaugeNeedle" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 0.852525, -0.522687, 0, 0.522687, 0.852525, 0.952, 1.77, 0.12)
+mesh = SubResource("Mesh_28")
+
+[node name="PressureDigits" type="Label3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 0.962, 1.68, 0.12)
+pixel_size = 0.003
+modulate = Color(0.06, 0.055, 0.04, 1)
+text = "2.8"
+font = ExtResource("3_font")
+font_size = 20
+outline_size = 0
+
+[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 0.79, 0)
+mesh = SubResource("Mesh_29")
+
+[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.64, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.7, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.76, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.82, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.88, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.94, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1, 1.26, -0.45)
+mesh = SubResource("Mesh_31")
+
+[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_32")
+
+[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_33")
+
+[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_34")
+
+[node name="MainBoiler4" type="Node3D" parent="BoilerEquipment"]
+transform = Transform3D(-1.455, 0, -2.19699e-07, 0, 1.455, 0, 2.19699e-07, 0, -1.455, 7.51105, 0, -7.22156)
+
+[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
+mesh = SubResource("Mesh_21")
+
+[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, 0)
+mesh = SubResource("Mesh_22")
+
+[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 0.28, 0, 0, 0, 1, 0, 2.17, 0)
+mesh = SubResource("Mesh_23")
+
+[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+mesh = SubResource("Mesh_24")
+
+[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0)
+mesh = SubResource("Mesh_24")
+
+[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, -0.57)
+mesh = SubResource("Mesh_25")
+
+[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0.57)
+mesh = SubResource("Mesh_25")
+
+[node name="GaugeRim" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.895, 1.75, 0.12)
+mesh = SubResource("Mesh_26")
+
+[node name="GaugeDial" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.944, 1.75, 0.12)
+mesh = SubResource("Mesh_27")
+
+[node name="GaugeNeedle" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 0.852525, -0.522687, 0, 0.522687, 0.852525, 0.952, 1.77, 0.12)
+mesh = SubResource("Mesh_28")
+
+[node name="PressureDigits" type="Label3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 0.962, 1.68, 0.12)
+pixel_size = 0.003
+modulate = Color(0.06, 0.055, 0.04, 1)
+text = "2.8"
+font = ExtResource("3_font")
+font_size = 20
+outline_size = 0
+
+[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 0.79, 0)
+mesh = SubResource("Mesh_29")
+
+[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.64, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.7, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.76, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.82, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.88, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.94, 0)
+mesh = SubResource("Mesh_30")
+
+[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1, 1.26, -0.45)
+mesh = SubResource("Mesh_31")
+
+[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_32")
+
+[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_33")
+
+[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
+mesh = SubResource("Mesh_34")
+
+[node name="BoilerWallSign" type="Label3D" parent="BoilerEquipment"]
+transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, -6.79, 2.64, -3.65)
+visible = false
+modulate = Color(0.83, 0.78, 0.62, 1)
+text = "BOILER 02"
+font = ExtResource("3_font")
+font_size = 36
+outline_size = 0
+
+[node name="AuxiliaryTank" type="MeshInstance3D" parent="BoilerEquipment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.65, 1, -7)
+mesh = SubResource("Mesh_35")
+
+[node name="AuxiliaryBand0" type="MeshInstance3D" parent="BoilerEquipment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.65, 0.28, -7)
+mesh = SubResource("Mesh_36")
+
+[node name="AuxiliaryBand1" type="MeshInstance3D" parent="BoilerEquipment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.65, 1.78, -7)
+mesh = SubResource("Mesh_36")
+
+[node name="Storage" type="Node3D" parent="."]
+transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 0, -2.22292, 0)
+
+[node name="Rack0" type="Node3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 0, -1.6)
+
+[node name="Upright-0.62_-1.3" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.62, 1.33, -1.3)
+mesh = SubResource("Mesh_37")
+
+[node name="Upright-0.62_1.3" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.62, 1.33, 1.3)
+mesh = SubResource("Mesh_37")
+
+[node name="Upright0.62_-1.3" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62, 1.33, -1.3)
+mesh = SubResource("Mesh_37")
+
+[node name="Upright0.62_1.3" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62, 1.33, 1.3)
+mesh = SubResource("Mesh_37")
+
+[node name="Shelf0" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = SubResource("Mesh_38")
+
+[node name="ShelfLip0" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68, 0.27, 0)
+mesh = SubResource("Mesh_39")
+
+[node name="Crate0_0" type="Node3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, -0.76)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Crate0_1" type="Node3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0.28)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack0/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Shelf1" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+mesh = SubResource("Mesh_38")
+
+[node name="ShelfLip1" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68, 1.22, 0)
+mesh = SubResource("Mesh_39")
+
+[node name="Crate1_0" type="Node3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57, -0.76)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Crate1_1" type="Node3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57, 0.28)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack0/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Shelf2" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.18, 0)
+mesh = SubResource("Mesh_38")
+
+[node name="ShelfLip2" type="MeshInstance3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68, 2.2, 0)
+mesh = SubResource("Mesh_39")
+
+[node name="Crate2_0" type="Node3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, -0.76)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Crate2_1" type="Node3D" parent="Storage/Rack0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0.28)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack0/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Rack1" type="Node3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 0, -5.7)
+
+[node name="Upright-0.62_-1.3" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.62, 1.33, -1.3)
+mesh = SubResource("Mesh_37")
+
+[node name="Upright-0.62_1.3" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.62, 1.33, 1.3)
+mesh = SubResource("Mesh_37")
+
+[node name="Upright0.62_-1.3" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62, 1.33, -1.3)
+mesh = SubResource("Mesh_37")
+
+[node name="Upright0.62_1.3" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62, 1.33, 1.3)
+mesh = SubResource("Mesh_37")
+
+[node name="Shelf0" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = SubResource("Mesh_38")
+
+[node name="ShelfLip0" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68, 0.27, 0)
+mesh = SubResource("Mesh_39")
+
+[node name="Crate0_0" type="Node3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, -0.76)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Crate0_1" type="Node3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0.28)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack1/Crate0_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Shelf1" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+mesh = SubResource("Mesh_38")
+
+[node name="ShelfLip1" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68, 1.22, 0)
+mesh = SubResource("Mesh_39")
+
+[node name="Crate1_0" type="Node3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57, -0.76)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Crate1_1" type="Node3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57, 0.28)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack1/Crate1_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Shelf2" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.18, 0)
+mesh = SubResource("Mesh_38")
+
+[node name="ShelfLip2" type="MeshInstance3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68, 2.2, 0)
+mesh = SubResource("Mesh_39")
+
+[node name="Crate2_0" type="Node3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, -0.76)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Crate2_1" type="Node3D" parent="Storage/Rack1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0.28)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+mesh = SubResource("Mesh_40")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, -0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 0, 0.41)
+mesh = SubResource("Mesh_41")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.425)
+mesh = SubResource("Mesh_42")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/Rack1/Crate2_1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.261, 0, 0)
+mesh = SubResource("Mesh_43")
+
+[node name="StoresSign" type="Label3D" parent="Storage"]
+transform = Transform3D(-3.61999e-06, 0, -1, 0, 1, 0, 1, 0, -3.61999e-06, 6.8, 2.48, -4)
+pixel_size = 0.0045
+modulate = Color(0.83, 0.78, 0.62, 1)
+text = "STORES / 03"
+font = ExtResource("3_font")
+font_size = 40
+outline_size = 0
+
+[node name="FloorCrate" type="Node3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, 0.46, 3.4)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/FloorCrate"]
+mesh = SubResource("Mesh_44")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54, 0, -0.49)
+mesh = SubResource("Mesh_45")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54, 0, 0.49)
+mesh = SubResource("Mesh_45")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.54, 0, -0.49)
+mesh = SubResource("Mesh_45")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.54, 0, 0.49)
+mesh = SubResource("Mesh_45")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.39, -0.505)
+mesh = SubResource("Mesh_46")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.39, 0.505)
+mesh = SubResource("Mesh_46")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39, -0.505)
+mesh = SubResource("Mesh_46")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39, 0.505)
+mesh = SubResource("Mesh_46")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3248, 0, 0)
+mesh = SubResource("Mesh_47")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/FloorCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3248, 0, 0)
+mesh = SubResource("Mesh_47")
+
+[node name="StackedCrate" type="Node3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.85, 0.325, 4.65)
+script = ExtResource("4_crate")
+
+[node name="TimberBody" type="MeshInstance3D" parent="Storage/StackedCrate"]
+mesh = SubResource("Mesh_48")
+
+[node name="Corner_-1_-1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.415, 0, -0.41)
+mesh = SubResource("Mesh_49")
+
+[node name="Corner_-1_1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.415, 0, 0.41)
+mesh = SubResource("Mesh_49")
+
+[node name="Corner_1_-1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.415, 0, -0.41)
+mesh = SubResource("Mesh_49")
+
+[node name="Corner_1_1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.415, 0, 0.41)
+mesh = SubResource("Mesh_49")
+
+[node name="Batten_-1_-1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.235, -0.425)
+mesh = SubResource("Mesh_50")
+
+[node name="Batten_-1_1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.235, 0.425)
+mesh = SubResource("Mesh_50")
+
+[node name="Batten_1_-1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.235, -0.425)
+mesh = SubResource("Mesh_50")
+
+[node name="Batten_1_1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.235, 0.425)
+mesh = SubResource("Mesh_50")
+
+[node name="Binding_-1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2523, 0, 0)
+mesh = SubResource("Mesh_51")
+
+[node name="Binding_1" type="MeshInstance3D" parent="Storage/StackedCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2523, 0, 0)
+mesh = SubResource("Mesh_51")
+
+[node name="OilDrum0" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 0.58, -8.5)
+mesh = SubResource("Mesh_52")
+
+[node name="DrumBand0_0" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 0.12, -8.5)
+mesh = SubResource("Mesh_53")
+
+[node name="DrumBand0_1" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 0.4, -8.5)
+mesh = SubResource("Mesh_53")
+
+[node name="DrumBand0_2" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 0.85, -8.5)
+mesh = SubResource("Mesh_53")
+
+[node name="DrumBand0_3" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 1.12, -8.5)
+mesh = SubResource("Mesh_53")
+
+[node name="OilDrum1" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 0.58, -8.3)
+mesh = SubResource("Mesh_52")
+
+[node name="DrumBand1_0" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 0.12, -8.3)
+mesh = SubResource("Mesh_53")
+
+[node name="DrumBand1_1" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 0.4, -8.3)
+mesh = SubResource("Mesh_53")
+
+[node name="DrumBand1_2" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 0.85, -8.3)
+mesh = SubResource("Mesh_53")
+
+[node name="DrumBand1_3" type="MeshInstance3D" parent="Storage"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 1.12, -8.3)
+mesh = SubResource("Mesh_53")
+
+[node name="PumpStation" type="Node3D" parent="."]
+transform = Transform3D(-4.52499e-06, 0, 1.25, 0, 1.25, 0, -1.25, 0, -4.52499e-06, 4.1, -2.22292, 3.2)
+
+[node name="ControlCabinet" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -9.62)
+mesh = SubResource("Mesh_54")
+
+[node name="ControlDoor" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, -9.33)
+mesh = SubResource("Mesh_55")
+
+[node name="PumpCaption" type="Label3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.43, -9.31)
+visible = false
+pixel_size = 0.0045
+modulate = Color(0.83, 0.78, 0.62, 1)
+text = "PUMP CONTROL / 03"
+font = ExtResource("3_font")
+font_size = 40
+outline_size = 0
+
+[node name="StatusLamp0" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -0.7, 1.73, -9.265)
+mesh = SubResource("Mesh_56")
+
+[node name="ToggleBase0" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 1.2, -9.25)
+mesh = SubResource("Mesh_57")
+
+[node name="ToggleLever0" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, -0.7, 1.2, -9.19)
+mesh = SubResource("Mesh_58")
+
+[node name="StatusLamp1" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 1.73, -9.265)
+mesh = SubResource("Mesh_56")
+
+[node name="ToggleBase1" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -9.25)
+mesh = SubResource("Mesh_57")
+
+[node name="ToggleLever1" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, 0, 1.2, -9.19)
+mesh = SubResource("Mesh_58")
+
+[node name="StatusLamp2" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 0.7, 1.73, -9.265)
+mesh = SubResource("Mesh_59")
+
+[node name="ToggleBase2" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 1.2, -9.25)
+mesh = SubResource("Mesh_57")
+
+[node name="ToggleLever2" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, 0.7, 1.2, -9.19)
+mesh = SubResource("Mesh_58")
+
+[node name="CabinetVent0" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.59, -9.28)
+mesh = SubResource("Mesh_60")
+
+[node name="CabinetVent1" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.648, -9.28)
+mesh = SubResource("Mesh_60")
+
+[node name="CabinetVent2" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.706, -9.28)
+mesh = SubResource("Mesh_60")
+
+[node name="CabinetVent3" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.764, -9.28)
+mesh = SubResource("Mesh_60")
+
+[node name="CabinetVent4" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.822, -9.28)
+mesh = SubResource("Mesh_60")
+
+[node name="CabinetVent5" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, -9.28)
+mesh = SubResource("Mesh_60")
+
+[node name="CabinetVent6" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.938, -9.28)
+mesh = SubResource("Mesh_60")
+
+[node name="RearConduit0" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 1.45, -9.81)
+mesh = SubResource("Mesh_61")
+
+[node name="RearJunctionBox0" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 2.46, -9.65)
+mesh = SubResource("Mesh_62")
+
+[node name="RearConduit1" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1.45, -9.81)
+mesh = SubResource("Mesh_61")
+
+[node name="RearJunctionBox1" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 2.46, -9.65)
+mesh = SubResource("Mesh_62")
+
+[node name="FloorDetails" type="Node3D" parent="."]
+transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 0, -2.22292, 0)
+
+[node name="DrainFrame" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.013, -8.1)
+mesh = SubResource("Mesh_63")
+
+[node name="DrainSlot0" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.49, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot1" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.366, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot2" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.242, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot3" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.118, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot4" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.994, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot5" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.87, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot6" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.746, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot7" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.622, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot8" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.498, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot9" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.374, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot10" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot11" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.126, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot12" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.002, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot13" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.122, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot14" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.246, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot15" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.37, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot16" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.494, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot17" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.618, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot18" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.742, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot19" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.866, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot20" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.99, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot21" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.114, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot22" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.238, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot23" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.362, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DrainSlot24" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.486, 0.029, -8.1)
+mesh = SubResource("Mesh_64")
+
+[node name="DampPatch0" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.46, -1.4, 0.007, -7.8)
+mesh = SubResource("Mesh_65")
+
+[node name="DampPatch1" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(0.529497, 0, 0.272595, 0, 1, 0, -0.545191, 0, 0.264749, 1.1, 0.007, -7.6)
+mesh = SubResource("Mesh_65")
+
+[node name="DampPatch2" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(-0.0224837, 0, 0.359847, 0, 1, 0, -0.769672, 0, -0.0105118, -5, 0.007, -1)
+mesh = SubResource("Mesh_65")
+
+[node name="DampPatch3" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(-0.48668, 0, 0.195884, 0, 1, 0, -0.445806, 0, -0.213844, 3.7, 0.007, -6.3)
+mesh = SubResource("Mesh_65")
+
+[node name="DampPatch4" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(-0.848551, 0, -0.0233497, 0, 1, 0, 0.0496181, 0, -0.399318, 2.1, 0.007, 3.8)
+mesh = SubResource("Mesh_65")
+
+[node name="DampPatch5" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(-0.405259, 0, -0.302721, 0, 1, 0, 0.469218, 0, -0.261457, -0.7, 0.007, -8.2)
+mesh = SubResource("Mesh_65")
+
+[node name="FloorSeam0" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, 5.8)
+mesh = SubResource("Mesh_66")
+
+[node name="FloorSeam1" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, 1)
+mesh = SubResource("Mesh_66")
+
+[node name="FloorSeam2" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, -3.8)
+mesh = SubResource("Mesh_66")
+
+[node name="FloorSeam3" type="MeshInstance3D" parent="FloorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, -8.6)
+mesh = SubResource("Mesh_66")
+
+[node name="UtilityPipes" type="Node3D" parent="."]
+
+[node name="CeilingMain0" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -2.3, 3.6, 0)
+mesh = SubResource("Mesh_81")
+
+[node name="Clamp0_0" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -2.3, 3.6, -9)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger0_0" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 4.9, -9)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp0_1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -2.3, 3.6, -5)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger0_1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 4.9, -5)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp0_2" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -2.3, 3.6, 0)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger0_2" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 4.9, 0)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp0_3" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -2.3, 3.6, 5)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger0_3" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 4.9, 5)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp0_4" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -2.3, 3.6, 9)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger0_4" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 4.9, 9)
+mesh = SubResource("Mesh_83")
+
+[node name="CeilingMain1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -1.85, 3.6, 0)
+mesh = SubResource("Mesh_81")
+
+[node name="Clamp1_0" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -1.85, 3.6, -9)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger1_0" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.85, 4.9, -9)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp1_1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -1.85, 3.6, -5)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger1_1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.85, 4.9, -5)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp1_2" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -1.85, 3.6, 0)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger1_2" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.85, 4.9, 0)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp1_3" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -1.85, 3.6, 5)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger1_3" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.85, 4.9, 5)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp1_4" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -1.85, 3.6, 9)
+mesh = SubResource("Mesh_82")
+
+[node name="Hanger1_4" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.85, 4.9, 9)
+mesh = SubResource("Mesh_83")
+
+[node name="CeilingMain2" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 2.5, 3.6, 0)
+mesh = SubResource("Mesh_84")
+
+[node name="Clamp2_0" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 2.5, 3.6, -9)
+mesh = SubResource("Mesh_85")
+
+[node name="Hanger2_0" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.9, -9)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp2_1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 2.5, 3.6, -5)
+mesh = SubResource("Mesh_85")
+
+[node name="Hanger2_1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.9, -5)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp2_2" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 2.5, 3.6, 0)
+mesh = SubResource("Mesh_85")
+
+[node name="Hanger2_2" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.9, 0)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp2_3" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 2.5, 3.6, 5)
+mesh = SubResource("Mesh_85")
+
+[node name="Hanger2_3" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.9, 5)
+mesh = SubResource("Mesh_83")
+
+[node name="Clamp2_4" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 2.5, 3.6, 9)
+mesh = SubResource("Mesh_85")
+
+[node name="Hanger2_4" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.9, 9)
+mesh = SubResource("Mesh_83")
+
+[node name="BoilerRiser" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 2.1, -8.1)
+mesh = SubResource("Mesh_86")
+
+[node name="BoilerSupply" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -0.6, 3.6, -9.6)
+mesh = SubResource("Mesh_87")
+
+[node name="ServiceMain-1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -8.13, 4.8, 0)
+mesh = SubResource("Mesh_88")
+
+[node name="ServiceMain1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 8.13, 2.4, 0)
+mesh = SubResource("Mesh_88")
+
+[node name="ServiceBeam0" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.17, -8)
+mesh = SubResource("Mesh_89")
+
+[node name="ServiceBeam1" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.17, -2.5)
+mesh = SubResource("Mesh_89")
+
+[node name="ServiceBeam2" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.17, 4)
+mesh = SubResource("Mesh_89")
+
+[node name="ServiceBeam3" type="MeshInstance3D" parent="UtilityPipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.17, 9)
+mesh = SubResource("Mesh_89")
+
+[node name="StairConnector" type="Node3D" parent="."]
+
+[node name="UpperLanding" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.0685, 6.69708, -4.06162)
+mesh = SubResource("Mesh_90")
+
+[node name="UpperLandingCeiling" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.0685, 12.6301, -4.06162)
+mesh = SubResource("Mesh_91")
+
+[node name="UpperLandingWall-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.0685, 9.65858, -5.63412)
+mesh = SubResource("Mesh_92")
+
+[node name="UpperLandingWall1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.0685, 9.65858, -2.48912)
+mesh = SubResource("Mesh_92")
+
+[node name="LowerLanding" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.86851, -2.30292, -4.06162)
+mesh = SubResource("Mesh_90")
+
+[node name="LowerLandingCeiling" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.86851, 3.63008, -4.06162)
+mesh = SubResource("Mesh_91")
+
+[node name="LowerLandingWall-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.86851, 0.65858, -5.63412)
+mesh = SubResource("Mesh_92")
+
+[node name="LowerLandingWall1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.86851, 0.65858, -2.48912)
+mesh = SubResource("Mesh_92")
+
+[node name="Step00" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.506, 6.34083, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall00_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.506, 9.57733, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall00_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.506, 9.57733, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step01" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.181, 6.05958, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall01_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.181, 9.29608, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall01_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.181, 9.29608, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step02" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.856, 5.77833, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall02_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.856, 9.01483, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall02_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.856, 9.01483, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step03" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.531, 5.49708, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall03_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.531, 8.73358, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall03_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.531, 8.73358, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step04" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.206, 5.21583, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall04_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.206, 8.45233, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall04_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.206, 8.45233, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step05" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.881, 4.93458, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall05_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.881, 8.17108, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall05_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.881, 8.17108, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step06" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.556, 4.65333, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall06_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.556, 7.88983, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall06_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.556, 7.88983, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step07" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.231, 4.37208, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall07_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.231, 7.60858, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall07_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.231, 7.60858, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step08" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.906, 4.09083, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall08_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.906, 7.32733, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall08_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.906, 7.32733, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step09" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.581, 3.80958, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall09_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.581, 7.04608, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall09_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.581, 7.04608, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step10" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.256, 3.52833, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall10_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.256, 6.76483, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall10_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.256, 6.76483, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step11" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.931, 3.24708, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall11_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.931, 6.48358, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall11_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.931, 6.48358, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step12" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.606, 2.96583, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall12_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.606, 6.20233, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall12_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.606, 6.20233, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step13" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.281, 2.68458, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall13_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.281, 5.92108, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall13_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.281, 5.92108, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step14" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.956, 2.40333, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall14_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.956, 5.63983, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall14_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.956, 5.63983, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step15" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.631, 2.12208, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall15_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.631, 5.35858, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall15_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.631, 5.35858, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step16" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.306, 1.84083, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall16_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.306, 5.07733, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall16_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.306, 5.07733, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step17" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.981, 1.55958, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall17_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.981, 4.79608, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall17_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.981, 4.79608, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step18" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.656, 1.27833, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall18_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.656, 4.51483, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall18_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.656, 4.51483, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step19" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.331, 0.99708, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall19_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.331, 4.23358, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall19_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.331, 4.23358, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step20" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.006, 0.71583, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall20_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.006, 3.95233, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall20_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.006, 3.95233, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step21" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.681, 0.43458, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall21_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.681, 3.67108, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall21_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.681, 3.67108, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step22" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.356, 0.15333, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall22_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.356, 3.38983, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall22_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.356, 3.38983, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step23" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.031, -0.12792, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall23_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.031, 3.10858, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall23_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.031, 3.10858, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step24" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.706, -0.40917, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall24_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.706, 2.82733, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall24_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.706, 2.82733, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step25" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.381, -0.69042, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall25_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.381, 2.54608, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall25_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.381, 2.54608, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step26" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.056, -0.97167, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall26_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.056, 2.26483, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall26_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.056, 2.26483, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step27" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.731, -1.25292, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall27_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.731, 1.98358, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall27_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.731, 1.98358, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step28" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.406, -1.53417, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall28_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.406, 1.70233, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall28_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.406, 1.70233, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step29" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.081, -1.81542, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall29_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.081, 1.42108, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall29_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.081, 1.42108, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step30" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.75601, -2.09667, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall30_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.75601, 1.13983, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall30_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.75601, 1.13983, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="Step31" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.43101, -2.37792, -4.06162)
+mesh = SubResource("Mesh_93")
+
+[node name="StairWall31_-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.43101, 0.85858, -5.63412)
+mesh = SubResource("Mesh_94")
+
+[node name="StairWall31_1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.43101, 0.85858, -2.48912)
+mesh = SubResource("Mesh_94")
+
+[node name="SlopedCeiling" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(0.756167, 0.654378, 0, -0.654378, 0.756167, 0, 0, 0, 1, -14.4685, 8.13008, -4.06162)
+mesh = SubResource("Mesh_95")
+
+[node name="Handrail-1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(0.756167, 0.654378, 0, -0.654378, 0.756167, 0, 0, 0, 1, -14.4685, 3.52708, -5.39412)
+mesh = SubResource("Mesh_96")
+
+[node name="Handrail1" type="MeshInstance3D" parent="StairConnector"]
+transform = Transform3D(0.756167, 0.654378, 0, -0.654378, 0.756167, 0, 0, 0, 1, -14.4685, 3.52708, -2.72912)
+mesh = SubResource("Mesh_96")
+
+[node name="Lighting" type="Node3D" parent="."]
+
+[node name="HospitalUtilityLight" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.8, 0)
+light_color = Color(0.88, 0.73, 0.48, 1)
+light_energy = 3.2
+light_indirect_energy = 0.7
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 23.0
+omni_attenuation = 1.25
+script = ExtResource("7_3sn4p")
+
+[node name="BoilerGlow" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -6.6)
+light_color = Color(1, 0.36, 0.13, 1)
+light_energy = 1.25
+light_indirect_energy = 0.7
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 8.0
+omni_attenuation = 1.25
+
+[node name="StorageLight" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 2.5, -2.5)
+light_color = Color(0.56, 0.71, 0.69, 1)
+light_energy = 1.6
+light_indirect_energy = 0.7
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 11.0
+omni_attenuation = 1.25
+
+[node name="PumpLight" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9, 2.3, 3.2)
+light_color = Color(0.47, 0.61, 0.63, 1)
+light_energy = 1.4
+light_indirect_energy = 0.7
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 9.0
+omni_attenuation = 1.25
+
+[node name="StairLightMount0" type="MeshInstance3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9005, 10.9101, -4.06162)
+mesh = SubResource("Mesh_97")
+
+[node name="StairLightGlass0" type="MeshInstance3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9005, 10.8201, -4.06162)
+mesh = SubResource("Mesh_98")
+
+[node name="StairLamp0" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9005, 10.5601, -4.06162)
+light_color = Color(0.89, 0.72, 0.45, 1)
+light_energy = 1.8
+light_indirect_energy = 0.7
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 7.0
+omni_attenuation = 1.25
+
+[node name="StairLightMount1" type="MeshInstance3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4685, 7.94008, -4.06162)
+mesh = SubResource("Mesh_97")
+
+[node name="StairLightGlass1" type="MeshInstance3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4685, 7.85008, -4.06162)
+mesh = SubResource("Mesh_98")
+
+[node name="StairLamp1" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4685, 7.59008, -4.06162)
+light_color = Color(0.89, 0.72, 0.45, 1)
+light_energy = 1.8
+light_indirect_energy = 0.7
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 7.0
+omni_attenuation = 1.25
+
+[node name="StairLightMount2" type="MeshInstance3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.0365, 4.97008, -4.06162)
+mesh = SubResource("Mesh_97")
+
+[node name="StairLightGlass2" type="MeshInstance3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.0365, 4.88008, -4.06162)
+mesh = SubResource("Mesh_98")
+
+[node name="StairLamp2" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.0365, 4.62008, -4.06162)
+light_color = Color(0.89, 0.72, 0.45, 1)
+light_energy = 1.8
+light_indirect_energy = 0.7
+light_specular = 0.2
+shadow_enabled = true
+omni_range = 7.0
+omni_attenuation = 1.25

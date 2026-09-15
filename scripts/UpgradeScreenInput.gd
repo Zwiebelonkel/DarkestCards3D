@@ -5,7 +5,6 @@ class_name UpgradeScreenInput
 @export var screen_area: Area3D
 @export var upgrade_viewport: SubViewport
 @export var screen_size := Vector2(1.0, 0.65)
-@export var input_y_offset := 0.06
 @export var debug_screen_input := true
 
 
@@ -30,6 +29,9 @@ func _on_screen_input_event(
 	_normal: Vector3,
 	_shape_idx: int
 ) -> void:
+	if not event is InputEventMouse:
+		return
+
 	if debug_screen_input and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
 		print("[InteractionDebug] ", name, ": ScreenArea input_event angekommen. event=", event, " world_position=", position)
 
@@ -42,7 +44,7 @@ func _on_screen_input_event(
 
 	var uv := Vector2(
 		0.5 - (local_pos.x / screen_size.x),
-		0.5 - (local_pos.y / screen_size.y) + input_y_offset
+		0.5 - (local_pos.y / screen_size.y)
 	)
 
 	if uv.x < 0.0 or uv.x > 1.0:
@@ -66,5 +68,6 @@ func _on_screen_input_event(
 	if debug_screen_input and event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
 		print("[InteractionDebug] ", name, ": leite Klick an SubViewport weiter. uv=", uv, " viewport_position=", viewport_event.position)
 
-	upgrade_viewport.push_input(viewport_event)
+	# The position is already expressed in this SubViewport's pixels.
+	upgrade_viewport.push_input(viewport_event, true)
 	get_viewport().set_input_as_handled()

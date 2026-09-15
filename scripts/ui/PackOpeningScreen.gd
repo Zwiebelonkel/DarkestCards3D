@@ -2,10 +2,14 @@ extends Node3D
 class_name PackOpeningScreen
 signal pack_opening_started
 signal pack_ready_for_next_purchase
+signal pack_batch_progress(current_pack: int, total_packs: int)
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
+const NEW_CARD_LABEL := preload("res://scripts/card/NewCardLabel.gd")
 const EFFECT_OVERVIEW_SCENE := preload("res://scenes/CardEffectOverview.tscn")
 const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
+const FOIL_SCRIPT := preload("res://scripts/packs/PackFoil.gd")
+const FOIL_AUDIO_SCRIPT := preload("res://scripts/packs/FoilAudio.gd")
 
 @export var card_count := 5
 
@@ -13,25 +17,20 @@ const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
 
 @export_group("Pack Opening")
 @export var pack_body_open_position := Vector3(0, -0.18, 0)
-@export var pack_top_fly_position := Vector3(0, 3.5, -2.6)
-@export var pack_top_fly_rotation := Vector3(-180, 35, 90)
+@export var pack_top_throw_velocity := Vector3(2.8, 3.0, 0.6)
+@export var pack_top_throw_gravity := 10.0
+@export var pack_top_throw_duration := 1.1
 
 @export_group("Pack Top Drag")
 @export var drag_open_distance: float = 260.0
-@export var drag_top_max_offset := Vector3(1.65, 0.0, 0.0)
-@export var drag_top_rotation := Vector3(0.0, 0.0, -28.0)
-@export var drag_release_snap_time: float = 0.18
-@export var base_shake_strength: float = 0.045
-@export var base_shake_rotation_strength: float = 4.0
+@export_range(0.08, 0.6, 0.01) var drag_release_snap_time: float = 0.24
+@export var base_shake_strength: float = 0.012
+@export var base_shake_rotation_strength: float = 1.0
 
 @export_group("Rip Physik")
-@export var rip_fold_rotation_max: float = 55.0
-@export var rip_resistance_curve: float = 2.4
-@export var rip_bow_offset_max := Vector3.ZERO
-@export var rip_snap_threshold: float = 0.82
-@export var rip_snap_overshoot_rotation := Vector3(-12.0, 10.0, -55.0)
-@export var rip_snap_overshoot_time: float = 0.09
-@export_range(0.0, 1.0) var rip_rigid_influence: float = 0.0
+@export_range(1.0, 2.5, 0.05) var rip_resistance_curve: float = 1.3
+@export_range(5.0, 30.0, 0.5) var rip_follow_speed: float = 16.0
+@export_range(0.0, 24.0, 1.0) var rip_grab_slack_pixels: float = 7.0
 
 @export_group("Cards In Pack")
 @export var stack_base_position := Vector3(0, 0.62, -0.55)
@@ -89,6 +88,7 @@ signal pack_cards_collected(card_ids: Array[String])
 var _waiting_for_collect_click := false
 var _collecting_cards := false
 var _pending_collection_card_ids: Array[String] = []
+var _pending_collection_instances: Array[Dictionary] = []
 
 @onready var pack: Node3D = $pack
 @onready var pack_mesh: MeshInstance3D = $pack/base
@@ -107,8 +107,22 @@ var _pack_top_start_position := Vector3.ZERO
 var _pack_top_start_rotation := Vector3.ZERO
 var _pack_start_position := Vector3.ZERO
 var _pack_start_rotation := Vector3.ZERO
-var _rip_has_snapped := false
-var _bend_material: ShaderMaterial = null
+var _foil: RefCounted
+var _foil_audio: Node
+var _foil_rest_bounds := AABB()
+var _foil_lift := 0.0
+var _foil_lift_target := 0.0
+var _foil_motion_speed := 0.0
+var _pull_target_progress := 0.0
+var _drag_start_progress := 0.0
+var _drag_screen_axis := Vector2.RIGHT
+var _drag_screen_distance := 260.0
+var _last_drag_mouse_pos := Vector2.ZERO
+var _last_drag_time_usec := 0
+var _pack_transitioning := false
+var _pack_generation := 0
+var _pack_motion_tween: Tween
+var _foil_flight_tween: Tween
 var _rarity_audio_player: AudioStreamPlayer
 
 var _pack_effect_shake_strength := 0.0
@@ -141,6 +155,10 @@ var _active_camera_tween: Tween = null
 var selected_pack_id := "basic"
 var selected_pack_data: Dictionary = {}
 var _pack_bought := false
+var _purchase_in_progress := false
+var _pack_batch_total := 0
+var _pack_batch_current := 0
+var _pack_reservation := 0
 
 
 func _ready() -> void:
@@ -163,16 +181,12 @@ func _ready() -> void:
 	_pack_top_home_rotation = pack_top.rotation_degrees
 	_pack_top_home_scale = pack_top.scale
 
-	_setup_bend_mesh()
-
-	if pack_top_area:
-		pack_top_area.input_ray_pickable = true
-		pack_top_area.monitoring = true
-		pack_top_area.monitorable = true
-
-		pack_top_area.mouse_entered.connect(func(): _hovering_pack = true)
-		pack_top_area.mouse_exited.connect(func(): _hovering_pack = false)
-		pack_top_area.input_event.connect(_on_pack_top_input)
+	_foil = FOIL_SCRIPT.new()
+	_foil_audio = FOIL_AUDIO_SCRIPT.new()
+	add_child(_foil_audio)
+	_setup_foil()
+	_ensure_pack_top_area()
+	get_window().focus_exited.connect(_on_pack_focus_lost)
 
 	if screen_flash_camera == null:
 		screen_flash_camera = get_viewport().get_camera_3d()
@@ -186,69 +200,83 @@ func _ready() -> void:
 	info_label.text = "Pack am Automaten auswählen"
 
 
-## Erzeugt/holt das ShaderMaterial fuer den Bend-Mesh und initialisiert
-## den bend_amount-Parameter auf 0 (komplett flach, am Body anliegend).
-## bend_mesh bleibt standardmaessig unsichtbar - du schaltest selbst
-## zwischen dem alten starren pack_top und diesem neuen Bend-Mesh um.
-func _setup_bend_mesh() -> void:
-	if pack_top == null:
+func _exit_tree() -> void:
+	if _pack_reservation != 0:
+		GameCurrency.refund_queued_packs(_pack_reservation)
+		_pack_reservation = 0
+
+
+func _setup_foil() -> void:
+	if _foil == null or not is_instance_valid(pack_top):
 		return
+	_foil.configure(pack_top)
+	_foil_rest_bounds = _foil.get_local_bounds()
+	_reset_foil_state()
 
-	var shader := load("res://assets/shader/bendVertex.gdshader") as Shader
 
-	_bend_material = ShaderMaterial.new()
-	_bend_material.shader = shader
+func _reset_foil_state() -> void:
+	_dragging_pack_top = false
+	_drag_progress = 0.0
+	_drag_start_progress = 0.0
+	_pull_target_progress = 0.0
+	_foil_lift = 0.0
+	_foil_lift_target = 0.0
+	_foil_motion_speed = 0.0
+	if _foil != null:
+		_foil.reset()
+	if _foil_audio != null:
+		_foil_audio.stop()
 
-	_bend_material.set_shader_parameter("bend_amount", 0.0)
 
-	# Anker + Laenge aus der Mesh-AABB. Laut Blender-Screenshot sitzt der
-	# Origin an der Spitze des Keils -> aabb.position.x sollte nahe 0
-	# liegen und als Anker passen. Falls es seitenverkehrt biegt (Top
-	# rollt vom Body weg statt zur Spitze hin): auf aabb.end.x umstellen.
-	var anchor_x := 0.0
-	var mesh_length := 1.0
-	if pack_top.mesh:
-		var aabb := pack_top.mesh.get_aabb()
-		anchor_x = aabb.position.x + aabb.size.x
-		mesh_length = max(aabb.size.x, 0.001)
-	_bend_material.set_shader_parameter("anchor_x", anchor_x)
-	_bend_material.set_shader_parameter("mesh_length", mesh_length)
+func _update_foil_grab_shape() -> void:
+	if _foil == null or not is_instance_valid(pack_top_area):
+		return
+	var collision := pack_top_area.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if collision == null or not collision.shape is BoxShape3D:
+		return
+	# Follow the deformed strip, so a released curled edge can be grabbed again.
+	var bounds: AABB = _foil.get_deformed_bounds()
+	collision.position = bounds.get_center()
+	(collision.shape as BoxShape3D).size = bounds.size.max(Vector3(0.12, 0.16, 0.16)) + Vector3(0.08, 0.06, 0.08)
 
-	var tex := load("res://assets/cards/pack/basic/pack_cover1 - Kopie.png") as Texture2D
-	_bend_material.set_shader_parameter("albedo_texture", tex)
 
-	pack_top.material_override = _bend_material
-
-func _apply_rip_physics(amount: float) -> void:
-	var eased := _rip_resistance(amount)
-
-	# Das Objekt selbst bleibt an seiner ursprünglichen Stelle.
-	pack_top.position = _pack_top_start_position
-	pack_top.rotation_degrees = _pack_top_start_rotation
-
-	# Nur die Vertices werden durch den Shader eingerollt.
-	if _bend_material:
-		_bend_material.set_shader_parameter("bend_amount", eased)
-
-	_apply_base_shake(eased)
-
-	if not _rip_has_snapped and amount >= rip_snap_threshold:
-		_rip_has_snapped = true
-		_play_rip_snap_overshoot()
-	
 func _process(delta: float) -> void:
 	_update_camera_shake(delta)
 	_update_pack_effect_shake(delta)
-
+	if _pack_transitioning or not _pack_bought:
+		return
 	if _opened:
+		# The torn foil keeps fluttering during its release flight.
+		if pack_top.visible and _foil != null:
+			_foil.update_foil(1.0, 0.25, 0.45, delta)
 		return
+	if _dragging_pack_top and not pack_top_area.input_ray_pickable:
+		_pull_target_progress = _drag_progress
+		_release_pack_top_drag()
 
+	var previous_progress := _drag_progress
 	if _dragging_pack_top:
-		_apply_rip_physics(_drag_progress)
-		return
+		var response := 1.0 - exp(-rip_follow_speed * delta)
+		_drag_progress = maxf(_drag_progress, lerpf(_drag_progress, _pull_target_progress, response))
+		if _pull_target_progress >= 1.0 and _drag_progress >= 0.988:
+			_drag_progress = 1.0
+	_foil_lift = lerpf(_foil_lift, _foil_lift_target, 1.0 - exp(-delta / maxf(drag_release_snap_time * 0.3, 0.01)))
+	var tear_speed := (_drag_progress - previous_progress) / maxf(delta, 0.001)
+	_foil_motion_speed = lerpf(_foil_motion_speed, 0.0, 1.0 - exp(-delta * 10.0))
+	if _foil != null:
+		_foil.update_foil(_drag_progress, _foil_lift, maxf(tear_speed, _foil_motion_speed), delta)
+		_update_foil_grab_shape()
+	if _foil_audio != null:
+		_foil_audio.set_motion(clampf(tear_speed * 0.65 + _foil_motion_speed * 0.16, 0.0, 1.0) if _dragging_pack_top else 0.0, _foil_lift if _dragging_pack_top else 0.0)
 
-	pack.rotation.y += sin(Time.get_ticks_msec() * 0.002) * delta * 0.45
-	pack.rotation.x = sin(Time.get_ticks_msec() * 0.0015) * 0.08
+	var pull_force := clampf(tear_speed * 0.3 + _foil_motion_speed * 0.12, 0.0, 1.0)
+	_apply_base_shake(pull_force if _dragging_pack_top else 0.0)
+	if _drag_progress >= 1.0:
+		_open_pack_from_drag()
+	elif _drag_progress <= 0.0 and not _dragging_pack_top:
+		var time := Time.get_ticks_msec() * 0.001
+		pack.rotation = _pack_home_rotation * (PI / 180.0) + Vector3(sin(time * 1.5) * 0.04, sin(time * 1.1) * 0.055, 0.0)
+
 
 
 func _input(event: InputEvent) -> void:
@@ -290,38 +318,22 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventMouseMotion:
-		var drag_delta: Vector2 = event.position - _drag_start_mouse_pos
-
-		# Maus nach rechts ziehen = Pack aufreissen
-		var amount: float = clamp(drag_delta.x / drag_open_distance, 0.0, 1.0)
-		_drag_progress = amount
-
-		_apply_rip_physics(amount)
-
-		if amount >= 1.0:
-			info_label.text = "Loslassen zum Öffnen"
-		elif amount >= rip_snap_threshold:
-			info_label.text = "Fast durch..."
-		else:
-			info_label.text = "Nach rechts ziehen..."
+		_update_pack_top_drag(event.position)
+		get_viewport().set_input_as_handled()
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-		_dragging_pack_top = false
-
-		if _drag_progress >= 1.0:
-			_open_pack_from_drag()
-		else:
-			_reset_pack_top_drag()
+		_release_pack_top_drag()
+		get_viewport().set_input_as_handled()
 
 
 func _on_pack_top_input(
-	_camera: Node,
+	camera: Node,
 	event: InputEvent,
 	_position: Vector3,
 	_normal: Vector3,
 	_shape_idx: int
 ) -> void:
-	if _opened:
+	if _opened or _pack_transitioning:
 		return
 		
 	if not _pack_bought:
@@ -329,119 +341,147 @@ func _on_pack_top_input(
 		return
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		_dragging_pack_top = true
-		_drag_start_mouse_pos = event.position
-		_drag_progress = 0.0
-		_rip_has_snapped = false
-		_pack_start_position = pack.position
-		_pack_start_rotation = pack.rotation_degrees
-		_pack_top_start_position = pack_top.position
-		_pack_top_start_rotation = pack_top.rotation_degrees
-		info_label.text = "Pack nach rechts aufreissen..."
+		_begin_pack_top_drag(event.position, camera as Camera3D)
+		get_viewport().set_input_as_handled()
 
 
-## Wandelt den linearen Drag-Fortschritt (0..1) in eine "zaehe, dann
-## nachgebende" Kurve um. Am Anfang bewegt sich kaum etwas (die Folie leistet
-## Widerstand), dann beschleunigt es sichtbar Richtung Schnapp-Punkt.
-func _rip_resistance(amount: float) -> float:
-	return pow(amount, rip_resistance_curve)
+func _begin_pack_top_drag(mouse_position: Vector2, camera: Camera3D = null) -> void:
+	if _opened or not _pack_bought or _pack_transitioning or _dragging_pack_top:
+		return
+	if camera == null:
+		camera = get_viewport().get_camera_3d()
+	_drag_screen_axis = Vector2.RIGHT
+	var viewport_size := get_viewport().get_visible_rect().size
+	_drag_screen_distance = drag_open_distance * clampf(viewport_size.y / 720.0, 0.6, 2.0)
+	if camera != null:
+		var left := _foil_rest_bounds.get_center()
+		left.x = _foil_rest_bounds.position.x
+		var right := left
+		right.x = _foil_rest_bounds.end.x
+		var projected_width := camera.unproject_position(pack_top.to_global(right)) - camera.unproject_position(pack_top.to_global(left))
+		if projected_width.length() > 12.0:
+			_drag_screen_axis = projected_width.normalized()
+			_drag_screen_distance = clampf(projected_width.length() * 1.45, _drag_screen_distance * 0.65, viewport_size.x * 0.65)
+	_dragging_pack_top = true
+	_drag_start_mouse_pos = mouse_position
+	_last_drag_mouse_pos = mouse_position
+	_last_drag_time_usec = Time.get_ticks_usec()
+	_drag_start_progress = _drag_progress
+	_pull_target_progress = _drag_progress
+	_foil_lift_target = 0.45
+	_pack_start_position = pack.position
+	_pack_start_rotation = pack.rotation_degrees
+	_pack_top_start_position = pack_top.position
+	_pack_top_start_rotation = pack_top.rotation_degrees
+	info_label.text = "Peel the foil to the right" if _drag_screen_axis.x >= 0.0 else "Peel the foil to the left"
 
 
-func _play_rip_snap_overshoot() -> void:
-	var snap_tween := create_tween()
-	var target_rot := _pack_top_start_rotation + drag_top_rotation * rip_rigid_influence + rip_snap_overshoot_rotation * 0.3
-	snap_tween.tween_property(pack_top, "rotation_degrees", target_rot, rip_snap_overshoot_time) \
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+func _update_pack_top_drag(mouse_position: Vector2) -> void:
+	if not _dragging_pack_top or _opened:
+		return
+	var drag_delta := mouse_position - _drag_start_mouse_pos
+	var pull_distance := maxf(drag_delta.dot(_drag_screen_axis) - rip_grab_slack_pixels, 0.0)
+	var remaining := maxf(1.0 - _drag_start_progress, 0.001)
+	var pull := clampf(pull_distance / maxf(_drag_screen_distance * remaining, 1.0), 0.0, 1.0)
+	# A torn seam cannot reseal when the cursor moves backwards.
+	_pull_target_progress = maxf(_drag_progress, _drag_start_progress + remaining * pow(pull, rip_resistance_curve))
+	var up_axis := Vector2(_drag_screen_axis.y, -_drag_screen_axis.x)
+	if up_axis.y > 0.0:
+		up_axis = -up_axis
+	_foil_lift_target = clampf(0.45 + drag_delta.dot(up_axis) / maxf(_drag_screen_distance, 1.0) * 1.8, 0.08, 1.0)
+	var now := Time.get_ticks_usec()
+	var elapsed := maxf(float(now - _last_drag_time_usec) / 1000000.0, 1.0 / 240.0)
+	_foil_motion_speed = clampf(mouse_position.distance_to(_last_drag_mouse_pos) / maxf(_drag_screen_distance * elapsed, 1.0), 0.0, 3.0)
+	_last_drag_mouse_pos = mouse_position
+	_last_drag_time_usec = now
+	if _pull_target_progress >= 0.9:
+		info_label.text = "Noch ein Stück – die Naht gibt nach"
 
-	if _bend_material:
-		var bend_snap_tween := create_tween()
-		bend_snap_tween.tween_method(
-			func(v: float): _bend_material.set_shader_parameter("bend_amount", v),
-			_bend_material.get_shader_parameter("bend_amount"),
-			-1.15,
-			rip_snap_overshoot_time
-		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		bend_snap_tween.tween_method(
-			func(v: float): _bend_material.set_shader_parameter("bend_amount", v),
-			-1.15,
-			1.0,
-			rip_snap_overshoot_time
-		).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
-	var jolt_tween := create_tween()
-	var jolt_offset := _pack_start_position + Vector3(-0.025, 0.015, 0.0)
-	jolt_tween.tween_property(pack, "position", jolt_offset, rip_snap_overshoot_time * 0.6) \
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	jolt_tween.tween_property(pack, "position", _pack_start_position, rip_snap_overshoot_time * 0.6) \
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+func _release_pack_top_drag() -> void:
+	if not _dragging_pack_top:
+		return
+	_dragging_pack_top = false
+	_foil_lift_target = 0.0
+	_foil_motion_speed = 0.0
+	if _foil_audio != null:
+		_foil_audio.set_motion(0.0, 0.0)
+	if _pull_target_progress >= 1.0:
+		_drag_progress = 1.0
+		_open_pack_from_drag()
+	else:
+		_pull_target_progress = _drag_progress
+		info_label.text = "Folie wieder greifen und weiter abziehen" if _drag_progress > 0.0 else "Folienrand greifen und seitlich abziehen"
 
-	_trigger_camera_shake(0.08, 0.12)
-	
-func _reset_pack_top_drag() -> void:
-	_rip_has_snapped = false
 
-	var tween := create_tween().set_parallel(true)
-
-	tween.tween_property(pack_top, "position", _pack_top_start_position, drag_release_snap_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(pack_top, "rotation_degrees", _pack_top_start_rotation, drag_release_snap_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-	tween.tween_property(pack, "position", _pack_start_position, drag_release_snap_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(pack, "rotation_degrees", _pack_start_rotation, drag_release_snap_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-	if _bend_material:
-		tween.tween_method(
-			func(v: float): _bend_material.set_shader_parameter("bend_amount", v),
-			_bend_material.get_shader_parameter("bend_amount"),
-			0.0,
-			drag_release_snap_time
-		).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-
-	_drag_progress = 0.0
-	info_label.text = "Pack nach rechts aufreissen"
+func _on_pack_focus_lost() -> void:
+	# Losing focus releases the grip without completing a delayed mouse pull.
+	_pull_target_progress = _drag_progress
+	_release_pack_top_drag()
+	if _foil_audio != null:
+		_foil_audio.stop()
 
 func _open_pack_from_drag() -> void:
+	if _opened or not _pack_bought or _pack_transitioning or _drag_progress < 1.0:
+		return
 	_opened = true
 	_hovering_pack = false
 	_dragging_pack_top = false
 	info_label.text = "Pack wird geöffnet..."
 
-	if pack_top_area:
-		pack_top_area.monitoring = false
-
-	# Der Deckel fliegt jetzt aus seiner "geknickten" Haltung weiter, statt
-	# erst zur Neutralstellung zurueckzuspringen - wirkt wie abgerissene Folie.
-	var top_tween := create_tween().set_parallel(true)
-	top_tween.tween_property(pack_top, "position", pack_top_fly_position, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	top_tween.tween_property(pack_top, "rotation_degrees", pack_top_fly_rotation, 0.45).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	top_tween.tween_property(pack_top, "scale", Vector3.ZERO, 0.35)
-
-	var body_tween := create_tween().set_parallel(true)
-	body_tween.tween_property(pack, "position", pack_body_open_position, 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	body_tween.tween_property(pack, "rotation_degrees", Vector3.ZERO, 0.25)
-
-	_trigger_camera_shake(0.18, 0.22)
+	_set_foil_input_enabled(false)
+	if _foil_audio != null:
+		_foil_audio.play_tear()
+	var generation := _pack_generation
+	var released_top := pack_top
+	var start_position := pack_top.position
+	var start_rotation := pack_top.rotation_degrees
+	_foil_flight_tween = create_tween()
+	# Keep the sheet's size and curled shape; it tumbles under gravity rather
+	# than shrinking into a disappearing rigid lid.
+	_foil_flight_tween.tween_method(func(time: float):
+		if generation != _pack_generation or not is_instance_valid(released_top):
+			return
+		released_top.position = start_position + pack_top_throw_velocity * time + Vector3.DOWN * pack_top_throw_gravity * 0.5 * time * time
+		released_top.rotation_degrees = start_rotation + Vector3(45.0, -30.0, -105.0) * time
+	, 0.0, pack_top_throw_duration, pack_top_throw_duration)
+	_foil_flight_tween.tween_callback(func():
+		if generation == _pack_generation and is_instance_valid(released_top):
+			released_top.hide()
+	)
+	_pack_motion_tween = create_tween().set_parallel(true)
+	_pack_motion_tween.tween_property(pack, "position", _pack_home_position + pack_body_open_position, 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_pack_motion_tween.tween_property(pack, "rotation_degrees", _pack_home_rotation, 0.25)
+	_trigger_camera_shake(0.05, 0.14)
 
 	await get_tree().create_timer(0.45).timeout
 
-	pack_top.visible = false
+	if generation != _pack_generation or not _pack_bought or not _opened:
+		return
+	_pack_effect_base_position = pack.position
 	_spawn_cards_inside_pack()
 
 
 func _spawn_cards_inside_pack() -> void:
+	var generation := _pack_generation
 	_clear_old_cards()
 
-	var cards := CardDatabase.get_all_cards()
-	if cards.is_empty():
+	if CardDatabase.cards.is_empty():
 		info_label.text = "Keine Karten gefunden"
 		return
 
-	cards.shuffle()
-
+	var rolled_card_ids: Array[String] = []
 	for i in range(card_count):
-		var data: Dictionary = CardDatabase.get_random_card_for_current_pack()
+		var data: Dictionary = CardDatabase.get_random_card_for_current_pack(rolled_card_ids)
+		if data.is_empty():
+			continue
+		rolled_card_ids.append(str(data.get("id", "")))
+		var instance := CollectionManager.roll_card_instance(str(data.get("id", "")))
+		data = CardData.with_instance_metadata(data, instance)
 
 		var card := CARD_SCENE.instantiate() as Card3D
 		cards_root.add_child(card)
+		card.set_meta("collection_instance", instance)
 		card.setup(data)
 
 		var final_pos := _get_stack_position(i)
@@ -460,6 +500,8 @@ func _spawn_cards_inside_pack() -> void:
 		tween.tween_property(card, "rotation_degrees", stack_face_down_rotation, 0.32 + i * 0.045)
 
 	await get_tree().create_timer(0.7).timeout
+	if generation != _pack_generation:
+		return
 
 	_connect_top_card()
 	info_label.text = "Oberste Karte anklicken"
@@ -520,6 +562,8 @@ func _on_top_card_input(
 
 
 func _reveal_top_card(card: Card3D) -> void:
+	if not is_instance_valid(card) or not _card_stack.has(card):
+		return
 	_disconnect_top_card()
 
 	var card_id := str(card.card_data.get("id", ""))
@@ -528,9 +572,13 @@ func _reveal_top_card(card: Card3D) -> void:
 	var rarity_data := RarityEffectsData.get_data(rarity_id)
 
 	if card_id != "":
+		# Acquisitions are saved when collecting the pack. Pending IDs also
+		# count as seen so only the first revealed copy gets the NEW label.
+		card.set_meta("new_discovery", not CollectionManager.has_discovered_card(card_id) and not _pending_collection_card_ids.has(card_id))
 		_pending_collection_card_ids.append(card_id)
+		_pending_collection_instances.append((card.get_meta("collection_instance", {}) as Dictionary).duplicate(true))
 
-	info_label.text = card_name + " gezogen"
+	info_label.text = Localization.format_text("Drew %s", [Localization.localized_arg(card_name)])
 	_play_card_draw_sound(card)
 
 	_card_stack.erase(card)
@@ -832,7 +880,8 @@ func _apply_slow_motion(scale: float, duration: float) -> void:
 
 
 func _play_rarity_sound(rarity_id: String) -> void:
-	var path := RARITY_SOUND_PATH % rarity_id
+	var sound_key := str(RarityEffectsData.get_data(rarity_id).get("sound_key", "reveal_" + rarity_id))
+	var path := RARITY_SOUND_PATH % sound_key.trim_prefix("reveal_")
 
 	if not ResourceLoader.exists(path):
 		push_warning("Kein Reveal-Sound gefunden: %s" % path)
@@ -874,6 +923,12 @@ func _animate_revealed_card(card: Card3D, final_pos: Vector3, rarity_data: Dicti
 	card.rotation_degrees = revealed_rotation
 
 	_revealed_rest_positions[card] = final_pos
+	if not _collecting_cards and _revealed_cards.has(card) and card.get_meta("new_discovery", false) and not card.has_node("NewLabel"):
+		# A billboard would be visible through the flip while the back faces us.
+		# Attach it only once the new card has finished turning face-up.
+		var label := NEW_CARD_LABEL.new()
+		label.name = "NewLabel"
+		card.add_child(label)
 
 
 func _connect_revealed_hover(card: Card3D) -> void:
@@ -1011,7 +1066,7 @@ func _apply_base_shake(amount: float) -> void:
 	var shake_y := cos(t * 2.1) * base_shake_strength * 0.45 * shake_power
 	var shake_z := sin(t * 2.8) * base_shake_strength * 0.35 * shake_power
 
-	pack.position = _pack_start_position + Vector3(shake_x, shake_y, shake_z)
+	pack.position = _pack_start_position + Vector3(shake_x - amount * 0.025, shake_y, shake_z)
 
 	pack.rotation_degrees = _pack_start_rotation + Vector3(
 		sin(t * 2.4) * base_shake_rotation_strength * shake_power,
@@ -1035,8 +1090,8 @@ func _collect_revealed_cards() -> void:
 	if cards_fly_target:
 		target_pos = cards_fly_target.global_position
 
-	for card_id in _pending_collection_card_ids:
-		CollectionManager.add_card(card_id)
+	for instance in _pending_collection_instances:
+		CollectionManager.add_card_instance(instance)
 
 	if collection_screen and collection_screen.has_method("refresh_collection"):
 		collection_screen.refresh_collection()
@@ -1051,6 +1106,9 @@ func _collect_revealed_cards() -> void:
 			continue
 
 		_disconnect_revealed_hover(card)
+		var new_label := card.get_node_or_null("NewLabel") as Sprite3D
+		if new_label != null:
+			new_label.hide()
 
 		var delay := i * 0.045
 
@@ -1062,7 +1120,7 @@ func _collect_revealed_cards() -> void:
 		tween.tween_property(card, "rotation_degrees", card.rotation_degrees + Vector3(0, 180, 25), cards_fly_duration) \
 			.set_delay(delay)
 
-		tween.tween_property(card, "scale", Vector3.ZERO, cards_vanish_duration) \
+		tween.tween_property(card, "scale", Vector3.ONE * 0.001, cards_vanish_duration) \
 			.set_delay(delay + cards_fly_duration - 0.08) \
 			.set_trans(Tween.TRANS_BACK) \
 			.set_ease(Tween.EASE_IN)
@@ -1076,6 +1134,7 @@ func _collect_revealed_cards() -> void:
 	_revealed_cards.clear()
 	_revealed_rest_positions.clear()
 	_pending_collection_card_ids.clear()
+	_pending_collection_instances.clear()
 	_top_revealed_card = null
 
 	await _reset_pack_for_next_opening()
@@ -1083,30 +1142,30 @@ func _collect_revealed_cards() -> void:
 
 
 func _reset_pack_for_next_opening() -> void:
+	_invalidate_pack_motion()
+	var generation := _pack_generation
+	_pack_transitioning = true
+	_set_foil_input_enabled(false)
 	var hidden_pos := _pack_home_position + pack_hidden_offset
+	_pack_motion_tween = create_tween().set_parallel(true)
 
-	if pack_top_area:
-		pack_top_area.monitoring = false
-		pack_top_area.monitorable = false
-		pack_top_area.input_ray_pickable = false
-
-	var disappear_tween := create_tween().set_parallel(true)
-
-	disappear_tween.tween_property(
+	_pack_motion_tween.tween_property(
 		pack,
 		"position",
 		hidden_pos,
 		pack_disappear_duration
 	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 
-	disappear_tween.tween_property(
+	_pack_motion_tween.tween_property(
 		pack,
 		"scale",
 		_pack_home_scale * 0.15,
 		pack_disappear_duration
 	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 
-	await disappear_tween.finished
+	await _pack_motion_tween.finished
+	if generation != _pack_generation:
+		return
 
 	pack.visible = false
 	pack_top.visible = false
@@ -1120,13 +1179,29 @@ func _reset_pack_for_next_opening() -> void:
 	pack_top.scale = _pack_top_home_scale
 
 	_opened = false
-	_dragging_pack_top = false
-	_drag_progress = 0.0
+	_reset_foil_state()
 	_waiting_for_collect_click = false
-	_rip_has_snapped = false
 	_pack_bought = false
+	_pack_transitioning = false
+	_hovering_pack = false
+	_pack_effect_base_position = _pack_home_position
+	_pack_start_position = _pack_home_position
+	_pack_start_rotation = _pack_home_rotation
 
-	info_label.text = "Neues Pack kaufen"
+	if _pack_batch_current < _pack_batch_total:
+		if GameCurrency.consume_queued_pack(_pack_reservation):
+			_pack_batch_current += 1
+			_present_purchased_pack()
+			return
+		# A failed save must not hand out a pack that is still marked refundable.
+		# Retain any failed refund in the wallet for recovery on the next load.
+		GameCurrency.refund_queued_packs(_pack_reservation)
+		info_label.text = "Öffnung unterbrochen – übrige Packs werden erstattet"
+	else:
+		info_label.text = "Neues Pack kaufen"
+	_pack_batch_total = 0
+	_pack_batch_current = 0
+	_pack_reservation = 0
 	pack_ready_for_next_purchase.emit()
 	
 func _refresh_upgrade_ui() -> void:
@@ -1158,8 +1233,6 @@ func _trigger_pack_effect_shake(strength: float, duration: float) -> void:
 
 func _update_pack_effect_shake(delta: float) -> void:
 	if _pack_effect_shake_time_left <= 0.0:
-		pack.position = _pack_effect_base_position
-		cards_root.position = _cards_effect_base_position
 		return
 
 	_pack_effect_shake_time_left -= delta
@@ -1194,37 +1267,75 @@ func _play_card_hover_sfx() -> void:
 	
 	card_hover_sfx.play()
 
-func buy_pack(pack_id: String, pack_data: Dictionary) -> bool:
-	if _opened or _dragging_pack_top or _collecting_cards:
+func buy_pack(pack_id: String, pack_data: Dictionary, quantity: int = 1) -> bool:
+	if _purchase_in_progress or _pack_bought or _pack_transitioning or _opened or _dragging_pack_top or _collecting_cards:
+		return false
+	if quantity < 1:
+		return false
+	if quantity > 1 and GameCurrency.get_level() < 2:
+		info_label.text = "Mehrere Packs sind ab Level 2 verfügbar"
+		return false
+	# Check the catalog here as well as in the shop: direct callers cannot
+	# bypass progression by omitting or changing the supplied pack metadata.
+	if not PackDefinition.is_unlocked(pack_id, GameCurrency.get_level()):
+		info_label.text = PackDefinition.get_unlock_message(pack_id)
+		return false
+	# A Secret-only exhausted catalog cannot guarantee a complete paid pack.
+	# Keep its rarity gate intact and reject before any reservation or debit.
+	if not CardDatabase.has_regular_pack_rewards():
+		info_label.text = "Keine Karten verfügbar"
 		return false
 
-	var cost := int(pack_data.get("cost", 0))
-
-	if not GameCurrency.spend_coins(cost):
+	var unit_price := PackDefinition.get_price(pack_id, pack_data)
+	if not is_finite(unit_price) or unit_price <= 0.0 or unit_price > GameCurrency.coins:
 		info_label.text = "Nicht genug Soul Coins"
+		return false
+	var cost_cents := roundi(unit_price * GameCurrency.CENTS_PER_COIN)
+	# Wallet signals are synchronous. Lock before payment to reject a second
+	# purchase submitted by a balance listener during the original transaction.
+	_purchase_in_progress = true
+	var reservation := GameCurrency.begin_pack_purchase(cost_cents, quantity)
+	if reservation == 0:
+		_purchase_in_progress = false
+		info_label.text = "Kauf nicht möglich – Guthaben und Speicher prüfen"
 		return false
 
 	selected_pack_id = pack_id
-	selected_pack_data = pack_data
-	CardDatabase.set_pack_rarity_weights(
-		pack_data.get("rarity_weights", {})
-	)
-	card_count = int(pack_data.get("card_count", card_count))
+	selected_pack_data = pack_data.duplicate(true)
+	_pack_batch_total = quantity
+	_pack_batch_current = 1
+	_pack_reservation = reservation
 	_pack_bought = true
 	pack_opening_started.emit()
+	_present_purchased_pack()
+	_purchase_in_progress = false
+	return true
 
-	info_label.text = str(pack_data.get("name", "Pack")) + " gekauft - Oberteil nach rechts ziehen"
-	var pack_scene := pack_data.get("scene", null) as PackedScene
+
+func _present_purchased_pack() -> void:
+	CardDatabase.set_pack_rarity_weights(
+		selected_pack_data.get("rarity_weights", {})
+	)
+	card_count = int(selected_pack_data.get("card_count", card_count))
+	_pack_bought = true
+	var progress := " (%d/%d)" % [_pack_batch_current, _pack_batch_total] if _pack_batch_total > 1 else ""
+	info_label.text = Localization.format_text("%s%s — Grab the top foil and peel", [Localization.localized_arg(str(selected_pack_data.get("name", "Pack"))), progress])
+	var pack_scene := selected_pack_data.get("scene", null) as PackedScene
 	_set_pack_model(pack_scene)
 	_show_bought_pack()
-
-	return true
+	pack_batch_progress.emit(_pack_batch_current, _pack_batch_total)
 	
 func _hide_pack_until_bought() -> void:
 	pack.visible = false
 	pack_top.visible = false
+	_set_foil_input_enabled(false)
 
 func _show_bought_pack() -> void:
+	_invalidate_pack_motion()
+	var generation := _pack_generation
+	_reset_foil_state()
+	_pack_transitioning = true
+	_set_foil_input_enabled(false)
 	pack.visible = true
 	pack_top.visible = true
 
@@ -1232,40 +1343,45 @@ func _show_bought_pack() -> void:
 
 	pack.position = start_pos
 	pack.rotation_degrees = _pack_home_rotation
-	pack.scale = Vector3.ZERO
+	# Keep transforms invertible while ray-picking and camera projection run.
+	pack.scale = _pack_home_scale * 0.001
 
 	pack_top.position = _pack_top_home_position
 	pack_top.rotation_degrees = _pack_top_home_rotation
 	pack_top.scale = _pack_top_home_scale
 
-	if pack_top_area:
-		pack_top_area.monitoring = true
-		pack_top_area.monitorable = true
-		pack_top_area.input_ray_pickable = true
+	_pack_motion_tween = create_tween().set_parallel(true)
 
-	var tween := create_tween().set_parallel(true)
-
-	tween.tween_property(
+	_pack_motion_tween.tween_property(
 		pack,
 		"position",
 		_pack_home_position,
-		0.45
+		pack_appear_duration
 	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-	tween.tween_property(
+	_pack_motion_tween.tween_property(
 		pack,
 		"scale",
 		_pack_home_scale,
-		0.45
+		pack_appear_duration
 	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_pack_motion_tween.chain().tween_callback(func() -> void:
+		if generation != _pack_generation:
+			return
+		_pack_start_position = _pack_home_position
+		_pack_start_rotation = _pack_home_rotation
+		_pack_effect_base_position = _pack_home_position
+		_pack_transitioning = false
+		_set_foil_input_enabled(true)
+	)
 
 
 func _set_pack_model(pack_scene: PackedScene) -> void:
 	if pack_scene == null:
 		return
 
+	_invalidate_pack_motion()
 	var old_pack := pack
-	var old_transform := pack.transform
 	var old_index := pack.get_index()
 
 	remove_child(old_pack)
@@ -1275,7 +1391,9 @@ func _set_pack_model(pack_scene: PackedScene) -> void:
 	pack.name = "pack"
 	add_child(pack)
 	move_child(pack, old_index)
-	pack.transform = old_transform
+	pack.position = _pack_home_position
+	pack.rotation_degrees = _pack_home_rotation
+	pack.scale = _pack_home_scale
 
 	pack_mesh = pack.get_node_or_null("base") as MeshInstance3D
 	pack_top = pack.get_node_or_null("top") as MeshInstance3D
@@ -1287,16 +1405,11 @@ func _set_pack_model(pack_scene: PackedScene) -> void:
 		pack.add_child(rarity_particle_spawn)
 		rarity_particle_spawn.position = rarity_particle_spawn_offset
 
-	_ensure_pack_top_area()
-	_setup_bend_mesh()
-
-	_pack_home_position = pack.position
-	_pack_home_rotation = pack.rotation_degrees
-	_pack_home_scale = pack.scale
-
 	_pack_top_home_position = pack_top.position
 	_pack_top_home_rotation = pack_top.rotation_degrees
 	_pack_top_home_scale = pack_top.scale
+	_setup_foil()
+	_ensure_pack_top_area()
 	
 func _ensure_pack_top_area() -> void:
 	if pack_top == null:
@@ -1310,17 +1423,15 @@ func _ensure_pack_top_area() -> void:
 		pack_top_area.name = "PackTopArea"
 		pack_top.add_child(pack_top_area)
 
-		var collision := CollisionShape3D.new()
-		var shape := BoxShape3D.new()
-		shape.size = Vector3(2.06586, 0.235229, 4.01843)
-
-		collision.shape = shape
-		collision.position = Vector3(-1.0485, 0.055725, 0.0370484)
+	var collision := pack_top_area.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if collision == null:
+		collision = CollisionShape3D.new()
+		collision.name = "CollisionShape3D"
 		pack_top_area.add_child(collision)
-
-	pack_top_area.input_ray_pickable = true
-	pack_top_area.monitoring = true
-	pack_top_area.monitorable = true
+	# The hitbox follows this pack's foil without editing a shared imported shape.
+	collision.shape = BoxShape3D.new()
+	_update_foil_grab_shape()
+	_set_foil_input_enabled(_pack_bought and not _pack_transitioning and not _opened)
 
 	if not pack_top_area.input_event.is_connected(_on_pack_top_input):
 		pack_top_area.input_event.connect(_on_pack_top_input)
@@ -1330,6 +1441,29 @@ func _ensure_pack_top_area() -> void:
 
 	if not pack_top_area.mouse_exited.is_connected(_on_pack_mouse_exited):
 		pack_top_area.mouse_exited.connect(_on_pack_mouse_exited)
+
+
+func _set_foil_input_enabled(enabled: bool) -> void:
+	if not is_instance_valid(pack_top_area):
+		return
+	pack_top_area.input_ray_pickable = enabled
+	pack_top_area.set_meta("keep_input_ray_pickable_disabled", not enabled)
+	pack_top_area.set_deferred("monitoring", enabled)
+	pack_top_area.set_deferred("monitorable", enabled)
+
+
+func _invalidate_pack_motion() -> void:
+	_pack_generation += 1
+	if _pack_motion_tween != null and _pack_motion_tween.is_valid():
+		_pack_motion_tween.kill()
+	if _foil_flight_tween != null and _foil_flight_tween.is_valid():
+		_foil_flight_tween.kill()
+	_pack_effect_shake_strength = 0.0
+	_pack_effect_shake_time_left = 0.0
+	if is_instance_valid(cards_root):
+		cards_root.position = _cards_effect_base_position
+	if _foil_audio != null:
+		_foil_audio.stop()
 		
 func _on_pack_mouse_entered() -> void:
 	_hovering_pack = true
@@ -1355,8 +1489,8 @@ func _play_card_draw_sound(card: Card3D) -> void:
 	var player := AudioStreamPlayer3D.new()
 	player.bus = "SFX"
 	player.stream = load(sound_path)
-	player.global_position = card.global_position
 	add_child(player)
+	player.global_position = card.global_position
 
 	player.play()
 	player.finished.connect(player.queue_free)

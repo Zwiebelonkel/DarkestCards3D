@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6on255g4ec7u"]
+
+[ext_resource type="Script" uid="uid://jx0umy5py6dh" path="res://scripts/ui/Journal3D.gd" id="1"]
+
+[node name="Journal3D" type="Node3D"]
+script = ExtResource("1")

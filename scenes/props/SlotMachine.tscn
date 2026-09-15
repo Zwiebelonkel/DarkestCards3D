@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://bu2rbglf7l317"]
+
+[ext_resource type="Script" uid="uid://bg4e6o220t0nf" path="res://scripts/props/SlotMachine.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cjcmm45x07ypb" path="res://assets/environments/props/slotMachine/slots.glb" id="2_model"]
+
+[node name="SlotMachine" type="Node3D"]
+script = ExtResource("1_script")
+spin_duration = 2.4
+
+[node name="Model" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.352817, 0)
+
+[node name="slots" parent="Model" instance=ExtResource("2_model")]
+
+[node name="MachineLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 1.25)
+light_color = Color(1, 0.87, 0.63, 1)
+light_energy = 1.1
+light_specular = 0.35
+omni_range = 3.0

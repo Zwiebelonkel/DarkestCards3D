@@ -2,6 +2,7 @@ extends Control
 class_name UpgradeUI
 
 signal card_selected(card_id: String)
+signal deck_filter_toggled(deck_only: bool)
 signal attack_pressed
 signal health_pressed
 signal effect_pressed
@@ -21,6 +22,7 @@ const COLOR_MUTED := Color("a88e91")
 
 @onready var balance_label: Label = %BalanceLabel
 @onready var card_count_label: Label = %CardCountLabel
+@onready var card_filter_button: Button = %CardListTitle
 @onready var card_list: VBoxContainer = %CardList
 @onready var selected_name_label: Label = %SelectedNameLabel
 @onready var selected_rarity_label: Label = %SelectedRarityLabel
@@ -38,11 +40,13 @@ const COLOR_MUTED := Color("a88e91")
 @onready var message_label: Label = %MessageLabel
 
 var selected_card_id := ""
+var deck_only := false
 var card_buttons: Dictionary = {}
 var effect_slot_buttons: Array[Button] = []
 var effect_entries: Array[Dictionary] = []
 var selected_effect_entry_index := -1
 var message_tween: Tween = null
+var _message_source := ""
 
 var attack_cost := 5
 var health_cost := 5
@@ -51,7 +55,10 @@ var effect_cost := 12
 
 func _ready() -> void:
 	add_to_group("upgrade_ui")
+	Localization.locale_changed.connect(_refresh_localized_text)
 	effect_slot_buttons = [effect_slot_1, effect_slot_2]
+	card_filter_button.toggled.connect(_on_deck_filter_toggled)
+	_refresh_filter_hint()
 
 	attack_button.pressed.connect(func(): attack_pressed.emit())
 	health_button.pressed.connect(func(): health_pressed.emit())
@@ -76,14 +83,32 @@ func _ready() -> void:
 	show_message("")
 
 
+func _on_deck_filter_toggled(enabled: bool) -> void:
+	deck_only = enabled
+	_refresh_filter_hint()
+	deck_filter_toggled.emit(enabled)
+
+
+func _refresh_filter_hint() -> void:
+	card_filter_button.tooltip_text = Localization.text("COLLECTION" if deck_only else "DECK ANSEHEN")
+
+
 func configure_costs(new_attack_cost: int, new_health_cost: int, new_effect_cost: int) -> void:
 	attack_cost = max(new_attack_cost, 0)
 	health_cost = max(new_health_cost, 0)
 	effect_cost = max(new_effect_cost, 0)
 
-	attack_button.text = "ANGRIFF +1\n%d SOUL COINS" % attack_cost
-	health_button.text = "LEBEN +1\n%d SOUL COINS" % health_cost
-	effect_button.text = "EFFEKT WÜRFELN\n%d SOUL COINS" % effect_cost
+	_refresh_cost_labels()
+	_update_upgrade_button_state()
+
+
+func _refresh_cost_labels() -> void:
+	var next_attack_cost := CardUpgradeManager.get_stat_upgrade_cost(selected_card_id, attack_cost)
+	var next_health_cost := CardUpgradeManager.get_stat_upgrade_cost(selected_card_id, health_cost)
+	var next_effect_cost := CardUpgradeManager.get_effect_roll_cost(selected_card_id, effect_cost)
+	attack_button.text = Localization.format_text("ANGRIFF +1\n%s SOUL COINS", [GameCurrency.format_coins(next_attack_cost, true)])
+	health_button.text = Localization.format_text("LEBEN +1\n%s SOUL COINS", [GameCurrency.format_coins(next_health_cost, true)])
+	effect_button.text = Localization.format_text("EFFEKT WÜRFELN\n%s SOUL COINS", [GameCurrency.format_coins(next_effect_cost, true)])
 
 
 func set_cards(card_ids: Array, owned_counts: Dictionary = {}) -> void:
@@ -99,7 +124,7 @@ func set_cards(card_ids: Array, owned_counts: Dictionary = {}) -> void:
 	for card_id_raw in card_ids:
 		var card_id := str(card_id_raw)
 		var data := CardDatabase.get_card(card_id)
-		if data.is_empty():
+		if not CardData.is_combat_card(data):
 			continue
 
 		var rarity := str(data.get("rarity", "common"))
@@ -136,7 +161,7 @@ func set_cards(card_ids: Array, owned_counts: Dictionary = {}) -> void:
 		card_list.add_child(button)
 		card_buttons[card_id] = button
 
-	card_count_label.text = "%d KARTENTYPEN" % entries.size()
+	card_count_label.text = Localization.format_text("%d KARTENTYPEN", [entries.size()])
 
 	if previous_selection != "" and card_buttons.has(previous_selection):
 		set_selected_card(previous_selection)
@@ -147,7 +172,7 @@ func set_cards(card_ids: Array, owned_counts: Dictionary = {}) -> void:
 
 func set_selected_card(card_id: String) -> void:
 	var data := CardDatabase.get_card(card_id)
-	if data.is_empty():
+	if not CardData.is_combat_card(data):
 		selected_card_id = ""
 		_show_empty_selection()
 		return
@@ -160,26 +185,28 @@ func set_selected_card(card_id: String) -> void:
 	var attack_bonus := CardUpgradeManager.get_attack_bonus(card_id)
 	var health_bonus := CardUpgradeManager.get_health_bonus(card_id)
 
-	selected_name_label.text = str(upgraded.get("name", card_id)).to_upper()
+	selected_name_label.text = Localization.text(str(upgraded.get("name", card_id))).to_upper()
 	selected_rarity_label.text = _format_rarity(rarity)
 	selected_rarity_label.add_theme_color_override("font_color", _get_rarity_color(rarity))
 	attack_value_label.text = str(int(upgraded.get("attack", 0)))
-	attack_bonus_label.text = "+%d BONUS" % attack_bonus
+	attack_bonus_label.text = Localization.format_text("+%d BONUS", [attack_bonus])
 	health_value_label.text = str(int(upgraded.get("defense", 0)))
-	health_bonus_label.text = "+%d BONUS" % health_bonus
+	health_bonus_label.text = Localization.format_text("+%d BONUS", [health_bonus])
 
 	if card_buttons.has(card_id):
 		_update_card_button_content(card_id, card_buttons[card_id] as Button)
 
 	_refresh_effect_slots(card_id)
+	_refresh_cost_labels()
 	_update_upgrade_button_state()
 
 
 func refresh_balance() -> void:
-	balance_label.text = "%d SOUL COINS" % GameCurrency.coins
+	balance_label.text = Localization.format_text("%s SOUL COINS", [GameCurrency.format_coins()])
 
 
 func show_message(text: String) -> void:
+	_message_source = text
 	if message_tween != null:
 		message_tween.kill()
 		message_tween = null
@@ -189,7 +216,7 @@ func show_message(text: String) -> void:
 		message_label.modulate.a = 0.0
 		return
 
-	message_label.text = text.to_upper()
+	message_label.text = Localization.text(text).to_upper()
 	message_label.modulate.a = 1.0
 
 	message_tween = create_tween()
@@ -207,6 +234,7 @@ func _show_empty_selection() -> void:
 	health_value_label.text = "—"
 	health_bonus_label.text = "+0 BONUS"
 	_refresh_effect_slots("")
+	_refresh_cost_labels()
 	_sync_card_button_selection()
 	_set_upgrade_buttons_disabled(true)
 
@@ -219,13 +247,13 @@ func _set_upgrade_buttons_disabled(disabled: bool) -> void:
 
 
 func _update_upgrade_button_state() -> void:
-	if selected_card_id.is_empty():
+	if selected_card_id.is_empty() or CollectionManager.get_amount(selected_card_id) <= 0:
 		_set_upgrade_buttons_disabled(true)
 		return
 
-	attack_button.disabled = false
-	health_button.disabled = false
-	effect_button.disabled = CardUpgradeManager.get_free_effect_slots(selected_card_id) <= 0
+	attack_button.disabled = not GameCurrency.has_coins(CardUpgradeManager.get_stat_upgrade_cost(selected_card_id, attack_cost))
+	health_button.disabled = not GameCurrency.has_coins(CardUpgradeManager.get_stat_upgrade_cost(selected_card_id, health_cost))
+	effect_button.disabled = CardUpgradeManager.get_free_effect_slots(selected_card_id) <= 0 or not GameCurrency.has_coins(CardUpgradeManager.get_effect_roll_cost(selected_card_id, effect_cost))
 	remove_effect_button.disabled = not _has_valid_effect_selection()
 
 
@@ -251,20 +279,20 @@ func _update_card_button_content(card_id: String, button: Button) -> void:
 	var rarity := str(data.get("rarity", "common"))
 	var attack_bonus := CardUpgradeManager.get_attack_bonus(card_id)
 	var health_bonus := CardUpgradeManager.get_health_bonus(card_id)
-	var card_name := str(data.get("name", card_id)).to_upper()
+	var card_name := Localization.text(str(data.get("name", card_id))).to_upper()
 
-	button.text = "%s   x%d\n%s  |  +%d ATK  +%d LP" % [
+	button.text = Localization.format_text("%s   x%d\n%s  |  +%d ATK  +%d LP", [
 		card_name,
 		amount,
 		_format_rarity(rarity),
 		attack_bonus,
 		health_bonus
-	]
-	button.tooltip_text = "%s · %s · %d im Besitz" % [
-		str(data.get("name", card_id)),
+	])
+	button.tooltip_text = Localization.format_text("%s · %s · %d im Besitz", [
+		Localization.localized_arg(str(data.get("name", card_id))),
 		_format_rarity(rarity),
 		amount
-	]
+	])
 
 
 func _style_card_button(button: Button, rarity: String) -> void:
@@ -314,7 +342,7 @@ func _refresh_effect_slots(card_id: String) -> void:
 	if not card_id.is_empty():
 		effect_entries = CardUpgradeManager.get_effect_entries(card_id)
 
-	effects_count_label.text = "%d / %d BELEGT" % [effect_entries.size(), MAX_EFFECT_SLOTS]
+	effects_count_label.text = Localization.format_text("%d / %d BELEGT", [effect_entries.size(), MAX_EFFECT_SLOTS])
 
 	for slot_index in range(MAX_EFFECT_SLOTS):
 		var button := effect_slot_buttons[slot_index]
@@ -340,12 +368,12 @@ func _refresh_effect_slots(card_id: String) -> void:
 		var effect_name := _format_effect_name(effect)
 
 		button.disabled = false
-		button.text = "%s\n%s" % [source_label, effect_name]
+		button.text = "%s\n%s" % [Localization.text(source_label), effect_name]
 		button.icon = _load_effect_icon(effect)
-		button.tooltip_text = "%s\n%s\nAuswählen, um den Effekt zu entfernen." % [
+		button.tooltip_text = Localization.format_text("%s\n%s\nAuswählen, um den Effekt zu entfernen.", [
 			effect_name,
-			str(effect.get("description", ""))
-		]
+			EffectPresentation.get_description(EffectPresentation.resolve_defaults(effect))
+		])
 
 
 func _on_effect_slot_pressed(entry_index: int) -> void:
@@ -408,76 +436,29 @@ func _load_effect_icon(effect: Dictionary) -> Texture2D:
 	var path := EFFECT_ICON_PATH + file_name + ".png"
 	if ResourceLoader.exists(path):
 		return load(path) as Texture2D
+	var vector_path := EFFECT_ICON_PATH + file_name + ".svg"
+	if ResourceLoader.exists(vector_path):
+		return load(vector_path) as Texture2D
 	return EFFECT_PLACEHOLDER
 
 
 func _format_effect_name(effect: Dictionary) -> String:
-	var effect_type := str(effect.get("type", "")).to_lower()
-	var translated_names := {
-		"armor": "PANZERUNG",
-		"regeneration": "REGENERATION",
-		"poison": "GIFT",
-		"lifesteal": "LEBENSRAUB",
-		"thorns": "DORNEN",
-		"cleave": "RUNDUMSCHLAG",
-		"double_strike": "DOPPELSCHLAG",
-		"stun": "BETÄUBUNG",
-		"chain_attack": "KETTENANGRIFF",
-		"triple_strike": "DREIFACHSCHLAG",
-		"last_stand": "LETZTES GEFECHT",
-		"execute": "HINRICHTUNG",
-		"shield_first_hit": "ERSTSCHLAGSCHILD",
-		"swarm_power": "SCHWARMKRAFT",
-		"grave_return": "GRABESRÜCKKEHR",
-		"deck_burn": "DECKBRAND",
-		"draw_on_kill": "KARTE BEI KILL",
-		"curse": "FLUCH",
-		"swap_stats": "WERTE TAUSCHEN",
-		"random_damage": "ZUFALLSSCHADEN",
-		"bodyguard": "LEIBWACHE",
-		"neighbor_heal": "NACHBARHEILUNG"
-	}
-
-	var label := str(translated_names.get(
-		effect_type,
-		str(effect.get("name", effect_type)).replace("_", " ").to_upper()
-	))
-
+	var label := EffectPresentation.get_title(EffectPresentation.resolve_defaults(effect)).to_upper()
+	var value_text := ""
 	if effect.has("percent"):
-		label += " %d%%" % int(round(float(effect.get("percent", 0.0)) * 100.0))
+		value_text = "%d%%" % int(round(float(effect["percent"]) * 100.0))
 	elif effect.has("value"):
-		var value := float(effect.get("value", 0.0))
-		if value > 0.0 and value <= 1.0:
-			label += " %d%%" % int(round(value * 100.0))
-		else:
-			label += " +%d" % int(round(value))
+		var value := float(effect["value"])
+		value_text = "%d%%" % int(round(value * 100.0)) if value > 0.0 and value <= 1.0 else "+%d" % int(round(value))
 	elif effect.has("damage") and effect.has("turns"):
-		label += " %d/%d R" % [
-			int(effect.get("damage", 0)),
-			int(effect.get("turns", 0))
-		]
-
+		value_text = EffectPresentation.get_value_badge(effect)
+	if not value_text.is_empty() and not label.ends_with(value_text):
+		label += " " + value_text
 	return label
 
 
 func _format_rarity(rarity: String) -> String:
-	match rarity.to_lower():
-		"common":
-			return "GEWÖHNLICH"
-		"uncommon":
-			return "UNGEWÖHNLICH"
-		"rare":
-			return "SELTEN"
-		"epic":
-			return "EPISCH"
-		"legendary":
-			return "LEGENDÄR"
-		"mythic":
-			return "MYTHISCH"
-		"exotic":
-			return "EXOTISCH"
-		_:
-			return rarity.replace("_", " ").to_upper()
+	return Localization.rarity_name(rarity, true)
 
 
 func _get_rarity_color(rarity: String) -> Color:
@@ -487,8 +468,31 @@ func _get_rarity_color(rarity: String) -> Color:
 func _on_upgrades_changed(card_id: String) -> void:
 	refresh_balance()
 	if selected_card_id == card_id:
-		call_deferred("set_selected_card", card_id)
+		_refresh_selected_after_upgrade.call_deferred(card_id)
 
 
-func _on_coins_changed(_coins: int) -> void:
+func _refresh_selected_after_upgrade(card_id: String) -> void:
+	# A later selection must keep its own card and price while this refresh waits.
+	if selected_card_id == card_id:
+		set_selected_card(card_id)
+
+
+func _on_coins_changed(_coins: float) -> void:
 	refresh_balance()
+	_update_upgrade_button_state()
+
+func _refresh_localized_text() -> void:
+	refresh_balance()
+	_refresh_filter_hint()
+	for card_id in card_buttons:
+		_update_card_button_content(str(card_id), card_buttons[card_id])
+	if not selected_card_id.is_empty():
+		var previous_effect := selected_effect_entry_index
+		set_selected_card(selected_card_id)
+		if previous_effect >= 0 and previous_effect < effect_entries.size():
+			effect_slot_buttons[previous_effect].button_pressed = true
+			_on_effect_slot_pressed(previous_effect)
+	else:
+		_show_empty_selection()
+	if message_label.modulate.a > 0.0 and not _message_source.is_empty():
+		message_label.text = Localization.text(_message_source).to_upper()

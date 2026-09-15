@@ -17,7 +17,6 @@ enum PresetType {
 @export var shader_path := "res://fx/crt_postfx.gdshader"
 @export var force_layer_127 := true
 @export var ignore_mouse := true
-@export var update_viewport_size_each_frame := true
 
 @export_group("Preset")
 @export var apply_preset: PresetType = PresetType.PUPPETCOMBO:
@@ -67,12 +66,6 @@ func _ready() -> void:
 	_setup_screen_rect()
 	_setup_shader_material()
 	_apply_preset_values(apply_preset)
-	_update_viewport_size_uniform()
-
-
-func _process(_delta: float) -> void:
-	if update_viewport_size_each_frame:
-		_update_viewport_size_uniform()
 
 
 func _setup_screen_rect() -> void:
@@ -127,26 +120,6 @@ func _setup_shader_material() -> void:
 			push_warning("CrtPostFX: Shader konnte nicht geladen werden: " + shader_path)
 
 
-func _update_viewport_size_uniform() -> void:
-	if shader_material == null:
-		return
-
-	var final_size := Vector2(600.0, 338.0)
-
-	if screen_rect != null:
-		final_size = screen_rect.size
-
-	if final_size.x <= 1.0 or final_size.y <= 1.0:
-		final_size = get_viewport().get_visible_rect().size
-
-	if final_size.x <= 1.0:
-		final_size.x = 600.0
-	if final_size.y <= 1.0:
-		final_size.y = 338.0
-
-	shader_material.set_shader_parameter("viewport_size", final_size)
-
-
 func _push_all_uniforms() -> void:
 	if shader_material == null:
 		return
@@ -165,7 +138,6 @@ func _push_all_uniforms() -> void:
 	shader_material.set_shader_parameter("phosphor_glow", phosphor_glow)
 	shader_material.set_shader_parameter("vignette_strength", vignette_strength)
 	shader_material.set_shader_parameter("tint_color", tint_color)
-	_update_viewport_size_uniform()
 
 
 func _set_uniform(param_name: String, value: Variant) -> void:

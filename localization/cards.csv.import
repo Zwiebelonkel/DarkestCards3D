@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bxkx7u8meexx6"
+
+[deps]
+
+files=["res://localization/cards.en.translation", "res://localization/cards.de.translation", "res://localization/cards.es.translation", "res://localization/cards.fr.translation", "res://localization/cards.pl.translation"]
+
+source_file="res://localization/cards.csv"
+dest_files=["res://localization/cards.en.translation", "res://localization/cards.de.translation", "res://localization/cards.es.translation", "res://localization/cards.fr.translation", "res://localization/cards.pl.translation"]
+
+[params]
+
+compress=true
+delimiter=0

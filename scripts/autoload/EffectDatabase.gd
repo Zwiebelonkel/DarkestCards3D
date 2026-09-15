@@ -35,7 +35,11 @@ func load_effects() -> void:
 	for entry in parsed:
 		if typeof(entry) != TYPE_DICTIONARY:
 			continue
-		var effect: Dictionary = entry
+		var effect := CardData.normalize_effect(entry)
+		# Aliases migrate saved cards, but never create a second catalog/roll
+		# entry beside the canonical effect authored in effects.json.
+		if str(entry.get("type", "")) != str(effect.get("type", "")):
+			continue
 		var effect_type := str(effect.get("type", "")).strip_edges()
 		if effect_type == "":
 			continue
@@ -45,25 +49,33 @@ func load_effects() -> void:
 		(effects_by_type[effect_type] as Array).append(effect)
 
 func get_effect(type: String) -> Dictionary:
+	if str(CardData.normalize_effect({"type": type}).get("type", "")) != type:
+		return {}
 	var variants: Array = effects_by_type.get(type, [])
-	return {} if variants.is_empty() else (variants[0] as Dictionary).duplicate(true)
+	return {} if variants.is_empty() else CardData.normalize_effect(variants[0])
 
 func get_all_effects() -> Array[Dictionary]:
-	return effects.duplicate(true)
+	return CardData._normalize_effects(effects)
+
+func get_rollable_effects() -> Array[Dictionary]:
+	# Lava remains catalogued for innate cards, presentation and combat.
+	# Every random path, including its fallback, uses this separate pool.
+	return CardData.filter_instance_effects(effects)
 
 func get_random_effect_weighted() -> Dictionary:
-	if effects.is_empty():
+	var pool := get_rollable_effects()
+	if pool.is_empty():
 		return {}
 	var total := 0.0
-	for effect in effects:
+	for effect in pool:
 		total += float(RARITY_WEIGHTS.get(str(effect.get("rarity", "common")), 1.0))
 	var roll := randf() * total
 	var current := 0.0
-	for effect in effects:
+	for effect in pool:
 		current += float(RARITY_WEIGHTS.get(str(effect.get("rarity", "common")), 1.0))
 		if roll <= current:
 			return (effect as Dictionary).duplicate(true)
-	return (effects.pick_random() as Dictionary).duplicate(true)
+	return (pool.back() as Dictionary).duplicate(true)
 
 func roll_effects(max_count: int = MAX_EFFECTS_PER_CARD) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []

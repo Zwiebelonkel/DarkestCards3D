@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://butiqqu627kfg"
+
+[deps]
+
+files=["res://localization/effects.en.translation", "res://localization/effects.de.translation", "res://localization/effects.es.translation", "res://localization/effects.fr.translation", "res://localization/effects.pl.translation"]
+
+source_file="res://localization/effects.csv"
+dest_files=["res://localization/effects.en.translation", "res://localization/effects.de.translation", "res://localization/effects.es.translation", "res://localization/effects.fr.translation", "res://localization/effects.pl.translation"]
+
+[params]
+
+compress=true
+delimiter=0

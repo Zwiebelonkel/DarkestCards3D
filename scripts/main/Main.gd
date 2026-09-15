@@ -1,18 +1,25 @@
 extends Node3D
 class_name MainScene
 
+signal room_changed(room_index: int)
+
 const SIDE_COUNT := 4
+const WAKEUP_BLUR_START := 5.0
+const WAKEUP_BLUR_END := 0.265
+const DIAGNOSTICS := preload("res://scripts/autoload/SessionDiagnostics.gd")
+const UPGRADE_COLLECTION_SCENE := preload("res://scenes/props/UpgradeWallCollection.tscn")
+const FUSION_WORKBENCH_SCENE := preload("res://scenes/props/FusionWorkbench.tscn")
+const JOURNAL_SCENE := preload("res://scenes/props/Journal3D.tscn")
+const TURN_ARROWS_SCRIPT := preload("res://scripts/ui/TurnArrows.gd")
+const ROOM_AMBIENCE := {
+	2: preload("res://assets/sounds/atmoGraveyard.mp3"),
+	3: preload("res://assets/sounds/atmoBasement.mp3"),
+}
 const SIDE_NAMES := [
 	"Game Table",
 	"Pack Shop",
 	"Collection",
 	"Upgrade Shop",
-]
-const SIDE_HINTS := [
-	"Tisch-Seite: Kartenkampf spielen",
-	"Pack-Seite: Packs kaufen und öffnen",
-	"Collection-Seite: Sammlung ansehen",
-	"Upgrade-Seite: Karten verbessern",
 ]
 
 @export_group("Rotation")
@@ -33,6 +40,18 @@ const SIDE_HINTS := [
 @export var input_action_left := "left"
 @export var input_action_right := "right"
 
+@export_group("Room Travel")
+@export_range(0.1, 10.0, 0.1) var room_travel_duration := 3.2
+@export_range(0.1, 5.0, 0.1) var door_key_look_duration := 1.4
+
+@export_group("Room Music")
+# All rooms outside the hub share the slot room's music treatment.
+@export_range(-30.0, 0.0, 0.5) var slot_room_music_attenuation_db := -12.0
+@export_range(200.0, 8000.0, 50.0) var slot_room_music_cutoff_hz := 1100.0
+
+@export_group("Aufwachen")
+@export_range(0.1, 15.0, 0.1) var wakeup_blur_duration := 5.0
+
 @export_group("Debug")
 @export var debug_interaction_clicks := true
 @export var debug_interaction_ray_length := 100.0
@@ -42,7 +61,52 @@ const SIDE_HINTS := [
 @onready var side_label: Label = %SideLabel
 @onready var hint_label: Label = %HintLabel
 @onready var camera_tilt: Node3D = $CameraPivot/CameraTilt
+@onready var main_camera: Camera3D = $CameraPivot/CameraTilt/Camera3D
+@onready var level_progress: Node3D = $CameraPivot/CameraTilt/Camera3D/LevelProgress
+@onready var table_lobby: Control = $ScenePivot/GameTable/OnlineCanvas/MatchmakingScreen
 @onready var screen_camera_focus: ScreenCameraFocus = $ScreenCameraFocus
+@onready var music: AudioStreamPlayer = $Music
+@onready var atmo: AudioStreamPlayer = $Atmo
+@onready var pause_menu: PauseMenu = $PauseMenu
+@onready var hub_door: HospitalDoor = $HubDoor
+@onready var empty_room: Node3D = $EmptyRoom
+@onready var return_door: HospitalDoor = $EmptyRoom/ReturnDoor
+@onready var room_camera_anchor: Marker3D = $EmptyRoom/CameraAnchor
+@onready var slot_machine: SoulSlotMachine = $EmptyRoom/SlotMachine
+@onready var graveyard_jester: GraveyardJester = $GraveyardRoom
+@onready var black_market_board: BlackMarketBoard = $BlackMarketRoom/OfferBoard
+@onready var dealer_dialogue: DealerDialogue = $BlackMarketRoom/DealerDialogue
+@onready var basement_cat: BasementCatEncounter = $BasementRoom/BasementCatEncounter
+@onready var dirty_lens: ColorRect = $CameraPivot/CameraTilt/Camera3D/CanvasLayer/DirtyLensRect
+
+var _wakeup_blur_material: ShaderMaterial
+var _wakeup_blur_tween: Tween
+var upgrade_collection: UpgradeWallCollection
+var fusion_workbench: FusionWorkbench
+var journal: Journal3D
+var turn_arrows: TurnArrows
+var progression_areas: Array[ProgressionArea] = []
+var connected_rooms: Dictionary = {}
+
+var _active_room := 0
+var _room_transition_active := false
+var _room_travel_tween: Tween = null
+var _room_music_tween: Tween = null
+var _room_music_bus: StringName = &""
+var _room_music_source_bus: StringName = &"Music"
+var _room_music_filter: AudioEffectLowPassFilter = null
+var _room_music_mix := 0.0
+var _room_ambience_players: Dictionary = {}
+var _room_ambience_tween: Tween
+var _room_ambience_volume_db := 0.0
+var _door_key_tween: Tween = null
+var _door_key_view_active := false
+var _hub_camera_base_transform := Transform3D.IDENTITY
+var _hub_camera_base_fov := 58.0
+var _hub_return_pivot_transform := Transform3D.IDENTITY
+var _hub_return_step_index := 0
+var _hub_return_active_side := 0
+var _hub_settle_origin_y := 0.0
 
 var _active_side := 0
 var _base_x_rotation := 0.0
@@ -80,23 +144,139 @@ var _phase_ease_kind: EaseKind = EaseKind.CUBIC_OUT
 # Die "Wahrheit": auf welchen Y-Winkel ist die aktuell gewählte Seite fest verankert.
 # Wird NUR in _begin_turn verändert, niemals aus camera_pivot zurückgelesen.
 var _settle_target_y := 0.0
+var _settle_origin_y := 0.0
+var _settle_step_index := 0
+
+# Node3D normalisiert Euler-Winkel beim Zurücklesen. Besonders beim schnellen
+# Unterbrechen rund um +/-180 Grad kann derselbe Basiswinkel dadurch in einer
+# anderen Euler-Darstellung erscheinen. Die Animation behält deshalb ihren
+# eigenen, kontinuierlichen visuellen Winkel und liest Zwischenstände nie aus
+# CameraPivot zurück.
+var _visual_pivot_rotation := Vector3.ZERO
+
+# GameTable und Main teilen sich dieselbe Camera3D. Der Child-Node ist vor Main
+# ready und startet beim Aufbau des Hub-Menüs einen (inhaltlich leeren)
+# Global-Transform-Tween. Wird in diesen ersten Frames gedreht, schreibt dieser
+# Tween gegen den Pivot und hinterlässt eine lokale Gegenrotation in der Kamera.
+var _hub_camera_base_basis := Basis.IDENTITY
 
 var _pending_direction := 0
 var _pack_opening_blocks_screen_focus := false
+var _loss_cinematic_active := false
+var _cinematic_input_block_frame := -1
+var _loss_music_tween: Tween = null
+var _loss_music_restore_db := 0.0
+var _loss_music_restore_pending := false
 
 
 func _ready() -> void:
+	_setup_localized_neon_signs()
+	_setup_room_music()
+	_setup_room_ambience()
+	_start_wakeup_blur()
 	_base_x_rotation = camera_pivot.rotation.x
-	_settle_target_y = camera_pivot.rotation.y
+	_settle_origin_y = camera_pivot.rotation.y
+	_settle_target_y = _settle_origin_y
+	_settle_step_index = 0
+	_visual_pivot_rotation = Vector3(
+		_base_x_rotation,
+		_settle_target_y,
+		0.0
+	)
+	camera_pivot.rotation = _visual_pivot_rotation
+	if main_camera != null:
+		_hub_camera_base_basis = main_camera.transform.basis
+		_hub_camera_base_transform = main_camera.transform
+		_hub_camera_base_fov = main_camera.fov
+	_hub_settle_origin_y = _settle_origin_y
+	_setup_upgrade_collection()
+	_setup_fusion_workbench()
+	_setup_journal()
+	_setup_progression_areas()
+	black_market_board.camera = main_camera
+	black_market_board.card_purchased.connect(_on_fusion_completed)
+	dealer_dialogue.camera = main_camera
+	dealer_dialogue.context_available = _dealer_context_is_safe
+	dealer_dialogue.modal_changed.connect(_on_dealer_modal_changed)
+	basement_cat.camera = main_camera
+	basement_cat.modal_changed.connect(_on_basement_cat_modal_changed)
+	_setup_turn_arrows()
+	_claim_shared_camera_for_hub_rotation(true)
 	_setup_screen_camera_focus()
+	graveyard_jester.camera = main_camera
+	graveyard_jester.modal_changed.connect(_on_jester_modal_changed)
 	_connect_pack_opening_focus_state()
+	_connect_loss_exit_cinematic()
 	_disable_embedded_scene_controls()
 	_connect_pack_collection_refresh()
+	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
+	if collection != null:
+		collection.slot_room_key_requested.connect(_on_slot_room_key_requested)
+		collection.angel_dialog_changed.connect(_on_angel_dialog_changed)
+		pause_menu.visibility_changed.connect(func() -> void:
+			collection.suspend_deck_input(pause_menu.visible or _is_journal_active())
+		)
 	_update_active_scene_interaction()
 	_update_labels()
+	Localization.locale_changed.connect(_update_labels)
 	_update_screen_camera_focus_context()
+	hub_door.activated.connect(_on_room_door_activated)
+	return_door.activated.connect(_on_room_door_activated)
+	_update_room_door_interaction()
+	# Loading the hub also leaves the previous basement scene behind.
+	GameCurrency.mark_basement_cat_left()
+	if CollectionManager.get_meta("slot_room_key_focus_requested", false):
+		CollectionManager.remove_meta("slot_room_key_focus_requested")
+		_on_slot_room_key_requested.call_deferred(true)
+
+
+func _setup_localized_neon_signs() -> void:
+	for entry in [["collection", "COLLECTION"], ["shop", "SHOP"], ["upgrade", "UPGRADE"]]:
+		LocalizedModelText.attach_neon(get_node_or_null(entry[0]) as Node3D, entry[1])
+
+
+func _start_wakeup_blur(duration: float = -1.0) -> void:
+	# Set the first value before Main can render, without changing the scene's
+	# shared lens material or the separate main-menu lens.
+	if _wakeup_blur_tween != null and _wakeup_blur_tween.is_valid():
+		_wakeup_blur_tween.kill()
+	if _wakeup_blur_material == null:
+		_wakeup_blur_material = dirty_lens.material.duplicate() as ShaderMaterial
+		dirty_lens.material = _wakeup_blur_material
+	_wakeup_blur_material.set_shader_parameter("blur_strength", WAKEUP_BLUR_START)
+	_wakeup_blur_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+	_wakeup_blur_tween.tween_property(
+		_wakeup_blur_material, "shader_parameter/blur_strength", WAKEUP_BLUR_END,
+		maxf(wakeup_blur_duration if duration < 0.0 else duration, 0.01)
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _exit_tree() -> void:
+	_cleanup_room_music()
+	if _room_ambience_tween != null:
+		_room_ambience_tween.kill()
+	if _door_key_tween != null and _door_key_tween.is_valid():
+		_door_key_tween.kill()
+	if _wakeup_blur_tween != null and _wakeup_blur_tween.is_valid():
+		_wakeup_blur_tween.kill()
+
 
 func _input(event: InputEvent) -> void:
+	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	if (
+		(game_table != null and game_table.try_skip_offline_exit(event))
+		or Engine.get_process_frames() <= _cinematic_input_block_frame
+	):
+		get_viewport().set_input_as_handled()
+		return
+	if _is_progression_area_open() or _is_angel_busy() or _is_basement_cat_busy():
+		return
+	if event.is_action_pressed("journal") and not event.is_echo():
+		_toggle_journal()
+		get_viewport().set_input_as_handled()
+		return
+	if _is_journal_active():
+		return
 	_debug_interaction_click(event)
 	if event is InputEventKey \
 	and event.pressed \
@@ -155,26 +335,90 @@ func _debug_interaction_click(event: InputEvent) -> void:
 	)
 
 func _process(delta: float) -> void:
+	if _is_journal_active() and not _journal_context_is_safe():
+		journal.close_journal(true)
+	level_progress.set_enabled(
+		not _loss_cinematic_active
+		and not _room_transition_active
+		and not _pack_opening_blocks_screen_focus
+		and not _is_upgrade_collection_detail_open()
+		and not _is_fusion_workbench_busy()
+		and not _is_jester_busy()
+		and not _is_dealer_busy()
+		and not _is_angel_busy()
+		and not _is_basement_cat_busy()
+		and not _is_journal_active()
+		and not _is_progression_area_open()
+		and not (pause_menu != null and pause_menu.visible)
+		and not table_lobby.visible
+	)
+	_update_room_door_interaction()
+	if _room_transition_active or _is_journal_active() or _is_progression_area_open():
+		return
 	_read_input()
 
 	if _pending_direction != 0:
 		var dir := _pending_direction
 		_pending_direction = 0
-		_begin_turn(dir)
+		_request_turn(dir)
 
 	_advance_phase(delta)
-	_update_mouse_tilt(delta)
+	if not _loss_cinematic_active and not _is_angel_busy() and not _is_dealer_busy() and not _is_basement_cat_busy():
+		_update_mouse_tilt(delta)
 	_update_screen_camera_focus_context()
 
 
 func _read_input() -> void:
-	if _is_table_match_active():
+	if not _can_turn():
 		return
 
 	if Input.is_action_just_pressed(input_action_left):
 		_pending_direction = -1
 	elif Input.is_action_just_pressed(input_action_right):
 		_pending_direction = 1
+
+
+func _setup_turn_arrows() -> void:
+	turn_arrows = TURN_ARROWS_SCRIPT.new()
+	turn_arrows.name = "TurnArrows"
+	add_child(turn_arrows)
+	turn_arrows.configure(_can_turn.bind(false))
+	turn_arrows.turn_requested.connect(func(direction: int): _request_turn(direction, false))
+	pause_menu.visibility_changed.connect(turn_arrows.refresh)
+
+
+func _can_turn(allow_interrupt: bool = true) -> bool:
+	if Engine.get_process_frames() <= _cinematic_input_block_frame:
+		return false
+	if not is_inside_tree() or get_tree().paused or _loss_cinematic_active or _room_transition_active:
+		return false
+	if not allow_interrupt and _phase != Phase.IDLE:
+		return false
+	if pause_menu.visible or pause_menu.settings_menu.visible or table_lobby.visible or _pack_opening_blocks_screen_focus:
+		return false
+	if _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy() or _is_journal_active() or _is_progression_area_open():
+		return false
+	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	if game_table != null and game_table.is_match_active():
+		return false
+	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
+	if collection != null and (
+		collection._detail_card != null or collection._detail_tween_running
+		or collection._deck_fan_open or collection._deck_fan_tween_running
+		or collection._dragged_fan_card != null or collection._slot_room_key_request_pending
+	):
+		return false
+	return true
+
+
+func _request_turn(direction: int, allow_interrupt: bool = true) -> bool:
+	if direction == 0 or not _can_turn(allow_interrupt):
+		return false
+	_pending_direction = 0
+	_begin_turn(direction)
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+	return true
 
 
 func _advance_phase(delta: float) -> void:
@@ -187,10 +431,12 @@ func _advance_phase(delta: float) -> void:
 		t = clampf(_elapsed / _phase_duration, 0.0, 1.0)
 
 	var eased_t := _ease(t, _phase_ease_kind)
-	camera_pivot.rotation = _phase_start.lerp(_phase_end, eased_t)
+	_visual_pivot_rotation = _phase_start.lerp(_phase_end, eased_t)
+	camera_pivot.rotation = _visual_pivot_rotation
 
 	if t >= 1.0:
-		camera_pivot.rotation = _phase_end
+		_visual_pivot_rotation = _phase_end
+		camera_pivot.rotation = _visual_pivot_rotation
 		_advance_to_next_phase()
 
 
@@ -202,21 +448,35 @@ func _advance_to_next_phase() -> void:
 			# _settle_target_y - die geschützte, logische Wahrheit.
 			_phase = Phase.SETTLE
 			_elapsed = 0.0
-			_phase_start = camera_pivot.rotation
+			_phase_start = _visual_pivot_rotation
 			_phase_end = Vector3(_base_x_rotation, _settle_target_y, 0.0)
 			_phase_duration = settle_duration
 			_phase_ease_kind = EaseKind.BACK_OUT
 		Phase.SETTLE:
 			_phase = Phase.IDLE
 			_elapsed = 0.0
-			# Sicherheitsnetz: am Ende von SETTLE garantiert exakt auf der
-			# Zielseite stehen, keine Restabweichung durch Float-Rundung.
-			camera_pivot.rotation = Vector3(_base_x_rotation, _settle_target_y, 0.0)
+			_snap_camera_pivot_to_cardinal_target()
 		Phase.IDLE:
 			pass
 
 
 func _begin_turn(direction: int) -> void:
+	if not _can_turn():
+		return
+	var turn_direction := signi(direction)
+	if turn_direction == 0:
+		return
+	if _door_key_view_active:
+		_door_key_view_active = false
+		hub_door.set_travel_open(false)
+
+	# Falls GameTable nach einem Szenenaufbau oder Cinematic noch seinen
+	# Rückkehr-Tween auf der gemeinsam genutzten Kamera besitzt, übernimmt der
+	# Hub ihn vor der ersten Drehung. Sonst kann der Global-Tween eine lokale
+	# Gegenrotation genau in dem Moment einfrieren, in dem der Pivot passiert.
+	if _phase == Phase.IDLE:
+		_claim_shared_camera_for_hub_rotation(false)
+
 	# Ein eventuell aktiver Bildschirmfokus fährt zurück, bevor sich die
 	# übergeordnete Kamerabasis dreht. Position/FOV bleiben so unabhängig
 	# von der Seitenanimation.
@@ -226,8 +486,12 @@ func _begin_turn(direction: int) -> void:
 	# KERNFIX: der neue Zielwinkel wird von _settle_target_y aus berechnet -
 	# der letzten GÜLTIGEN Seite - niemals von camera_pivot.rotation.y (das
 	# wäre die fehlerhafte, visuelle Zwischenposition gewesen).
-	var step := deg_to_rad(rotation_step_degrees) * float(direction)
-	var new_target_y := _settle_target_y - step
+	var step := deg_to_rad(rotation_step_degrees)
+	_settle_step_index -= turn_direction
+	var new_target_y := (
+		_settle_origin_y
+		+ step * float(_settle_step_index)
+	)
 	_settle_target_y = new_target_y
 
 	# Die Kamera rotiert visuell in die Gegenrichtung der logischen Seitenfolge:
@@ -235,12 +499,12 @@ func _begin_turn(direction: int) -> void:
 	# Szene (Upgrade Shop). Deshalb muss der aktive Seitenindex gegenläufig
 	# zur Eingaberichtung laufen, sonst werden PackShop/Upgrade vertauscht
 	# aktiviert und der sichtbare Screen bleibt nicht-pickable.
-	_active_side = posmod(_active_side - direction, SIDE_COUNT)
+	_active_side = posmod(_active_side - turn_direction, SIDE_COUNT)
 	_update_active_scene_interaction()
 	_update_labels()
 
-	var sway_y := new_target_y + deg_to_rad(sway_angle_degrees) * float(direction) * -1.0
-	var roll := deg_to_rad(roll_angle_degrees) * float(direction) * -1.0
+	var sway_y := new_target_y + deg_to_rad(sway_angle_degrees) * float(turn_direction) * -1.0
+	var roll := deg_to_rad(roll_angle_degrees) * float(turn_direction) * -1.0
 	var dip := _base_x_rotation + deg_to_rad(pitch_dip_degrees)
 
 	# Der visuelle Startpunkt der Animation ist die aktuelle Kamera-Rotation -
@@ -248,10 +512,52 @@ func _begin_turn(direction: int) -> void:
 	# und beeinflusst NICHT, welche Seite am Ende erreicht wird.
 	_phase = Phase.OVERSHOOT
 	_elapsed = 0.0
-	_phase_start = camera_pivot.rotation
+	_phase_start = _visual_pivot_rotation
 	_phase_end = Vector3(dip, sway_y, roll)
 	_phase_duration = rotation_duration
 	_phase_ease_kind = EaseKind.CUBIC_OUT
+	_update_room_door_interaction()
+
+
+func _snap_camera_pivot_to_cardinal_target() -> void:
+	# Neu aus dem ganzzahligen Schrittindex berechnen, nicht aus einem bereits
+	# interpolierten Float. Damit endet jede akzeptierte Eingabe exakt auf ihrem
+	# 90-Grad-Rasterpunkt, auch nach vielen oder unterbrochenen Drehungen.
+	_settle_target_y = (
+		_settle_origin_y
+		+ deg_to_rad(rotation_step_degrees) * float(_settle_step_index)
+	)
+	_visual_pivot_rotation = Vector3(
+		_base_x_rotation,
+		_settle_target_y,
+		0.0
+	)
+	camera_pivot.rotation = _visual_pivot_rotation
+
+
+func _claim_shared_camera_for_hub_rotation(force_startup_claim: bool) -> void:
+	if main_camera == null or not is_instance_valid(main_camera):
+		return
+
+	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	var may_claim := force_startup_claim
+	if game_table != null and game_table.table_camera == main_camera:
+		# Im Parent-_ready ist dies garantiert der redundante Start-Menü-Tween.
+		# Später darf Main nur im inaktiven Tisch-Menü übernehmen; Match- und
+		# Cinematic-Kamerafahrten bleiben vollständig Eigentum von GameTable.
+		may_claim = force_startup_claim or not game_table.is_match_active()
+		if may_claim and game_table._camera_tween != null:
+			if game_table._camera_tween.is_valid():
+				game_table._camera_tween.kill()
+			game_table._camera_tween = null
+	if not may_claim:
+		return
+
+	# Nur die lokale Basis neutralisieren. Position und FOV gehören weiterhin
+	# ScreenCameraFocus, sodass dessen weiche Rückfahrt beim Drehen erhalten bleibt.
+	var camera_transform := main_camera.transform
+	camera_transform.basis = _hub_camera_base_basis
+	main_camera.transform = camera_transform
 
 
 func _ease(t: float, kind: EaseKind) -> float:
@@ -270,9 +576,726 @@ func _ease(t: float, kind: EaseKind) -> float:
 			return t
 
 
+func _can_travel_between_rooms() -> bool:
+	if _room_transition_active or _phase != Phase.IDLE or _loss_cinematic_active or get_tree().paused or _is_progression_area_open():
+		return false
+	if _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy() or _is_journal_active():
+		return false
+	if _pack_opening_blocks_screen_focus or pause_menu.visible or table_lobby.visible:
+		return false
+	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	if game_table != null and game_table.is_match_active():
+		return false
+	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
+	if collection != null and (
+		collection._detail_card != null or collection._detail_tween_running
+		or collection._deck_fan_open or collection._deck_fan_tween_running
+	):
+		return false
+	return true
+
+
+func _update_room_door_interaction() -> void:
+	var allowed := _can_travel_between_rooms()
+	hub_door.set_locked(not CollectionManager.is_slot_room_unlocked())
+	hub_door.set_interaction_enabled(allowed and _active_room == 0)
+	return_door.set_interaction_enabled(allowed and _active_room == 1)
+	for area in progression_areas:
+		area.set_interaction_enabled(allowed and _active_room == 0 and not _door_key_view_active)
+	for room_index: int in connected_rooms:
+		var room_return := connected_rooms[room_index].get_node("ReturnDoor") as HospitalDoor
+		room_return.set_interaction_enabled(allowed and _active_room == room_index)
+		if connected_rooms[room_index] is BasementDiscovery:
+			(connected_rooms[room_index] as BasementDiscovery).set_interaction_enabled(allowed and _active_room == room_index)
+	slot_machine.set_interaction_enabled(allowed and _active_room == 1 and _active_side == 0 and not get_tree().paused)
+	_update_upgrade_collection_interaction()
+	_update_fusion_workbench_interaction()
+	_update_jester_interaction()
+	_update_angel_interaction()
+	_update_black_market_interaction()
+	_update_basement_cat_context()
+
+
+func _setup_upgrade_collection() -> void:
+	upgrade_collection = UPGRADE_COLLECTION_SCENE.instantiate() as UpgradeWallCollection
+	upgrade_collection.name = "UpgradeCollection"
+	upgrade_collection.camera = main_camera
+	empty_room.add_child(upgrade_collection)
+	upgrade_collection.set_interaction_enabled(false)
+	upgrade_collection.detail_open_changed.connect(_on_upgrade_collection_detail_changed)
+	pause_menu.visibility_changed.connect(_on_upgrade_collection_pause_changed)
+
+
+func _setup_journal() -> void:
+	journal = JOURNAL_SCENE.instantiate() as Journal3D
+	journal.name = "Journal"
+	add_child(journal)
+	journal.closed.connect(_on_journal_closed)
+	journal.close_requested.connect(_on_journal_close_requested)
+	var game_table := scene_pivot.get_node("GameTable") as GameTable
+	game_table.journal_interrupted.connect(_interrupt_journal)
+
+
+func _setup_progression_areas() -> void:
+	connected_rooms = {2: $GraveyardRoom, 3: $BasementRoom, 4: $BlackMarketRoom}
+	# Apply the same gates immediately when pausing; _process then stops.
+	pause_menu.visibility_changed.connect(_update_room_door_interaction)
+	for child in $ProgressionAreas.get_children():
+		if child is ProgressionArea:
+			progression_areas.append(child)
+			child.screen_open_changed.connect(_on_progression_area_screen_changed)
+			child.travel_requested.connect(_on_room_door_activated)
+	for room_index: int in connected_rooms:
+		var room_return := connected_rooms[room_index].get_node("ReturnDoor") as HospitalDoor
+		room_return.activated.connect(_on_room_door_activated)
+		room_return.set_interaction_enabled(false)
+
+
+func _is_progression_area_open() -> bool:
+	for area in progression_areas:
+		if area.is_open():
+			return true
+	return false
+
+
+func _on_progression_area_screen_changed(_opened: bool) -> void:
+	_pending_direction = 0
+	if _is_progression_area_open() and screen_camera_focus != null:
+		screen_camera_focus.set_context(_active_side, false)
+		screen_camera_focus.restore_immediately()
+	_set_journal_input_blocked(_is_journal_active() or _is_progression_area_open())
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+
+
+func _is_journal_active() -> bool:
+	return is_instance_valid(journal) and journal.is_active()
+
+
+func _journal_context_is_safe() -> bool:
+	if _room_transition_active or _phase != Phase.IDLE or _loss_cinematic_active or _is_progression_area_open():
+		return false
+	if pause_menu.visible or get_tree().paused or table_lobby.visible or _pack_opening_blocks_screen_focus:
+		return false
+	if _is_fusion_workbench_busy() or _is_upgrade_collection_detail_open() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy():
+		return false
+	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
+	if collection != null and (
+		collection._detail_card != null or collection._detail_tween_running
+		or collection._deck_fan_open or collection._deck_fan_tween_running
+		or collection._dragged_fan_card != null or collection._slot_room_key_request_pending
+	):
+		return false
+	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	return game_table != null and game_table.is_journal_available()
+
+
+func _can_open_journal() -> bool:
+	return not _is_journal_active() and _journal_context_is_safe()
+
+
+func _toggle_journal() -> void:
+	if _is_journal_active():
+		journal.close_journal()
+		return
+	if not _can_open_journal():
+		return
+	_pending_direction = 0
+	if screen_camera_focus != null:
+		# A focused shop returns before the book records its resting pose. The
+		# battle camera owns a different pose and must never be reset to the hub.
+		var had_screen_focus := screen_camera_focus.is_focused() or screen_camera_focus._camera_tween != null
+		screen_camera_focus.set_context(_active_side, false)
+		if had_screen_focus:
+			screen_camera_focus.restore_immediately()
+	if journal.open_journal(main_camera):
+		_set_journal_input_blocked(true)
+	else:
+		_update_screen_camera_focus_context()
+
+
+func _set_journal_input_blocked(blocked: bool) -> void:
+	blocked = blocked or _is_progression_area_open()
+	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	if game_table != null:
+		game_table.set_journal_input_blocked(blocked)
+	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
+	if collection != null:
+		collection.suspend_deck_input(blocked or pause_menu.visible)
+	_update_active_scene_interaction()
+	_update_room_door_interaction()
+	_update_screen_camera_focus_context()
+
+
+func _on_journal_closed() -> void:
+	_set_journal_input_blocked(false)
+
+
+func _on_journal_close_requested() -> void:
+	if _is_journal_active():
+		journal.close_journal()
+
+
+func _interrupt_journal() -> void:
+	if _is_journal_active():
+		journal.close_journal(true)
+
+
+func _is_upgrade_collection_detail_open() -> bool:
+	return is_instance_valid(upgrade_collection) and upgrade_collection.is_detail_open()
+
+
+func _setup_fusion_workbench() -> void:
+	fusion_workbench = FUSION_WORKBENCH_SCENE.instantiate() as FusionWorkbench
+	fusion_workbench.name = "FusionWorkbench"
+	fusion_workbench.camera = main_camera
+	empty_room.add_child(fusion_workbench)
+	fusion_workbench.set_interaction_enabled(false)
+	fusion_workbench.fusion_completed.connect(_on_fusion_completed)
+
+
+func _on_fusion_completed(_result: Dictionary) -> void:
+	_refresh_collection_screen.call_deferred()
+
+
+func _is_fusion_workbench_busy() -> bool:
+	return is_instance_valid(fusion_workbench) and fusion_workbench.is_busy()
+
+
+func _is_jester_busy() -> bool:
+	return is_instance_valid(graveyard_jester) and graveyard_jester.is_busy()
+
+
+func _is_basement_cat_busy() -> bool:
+	return is_instance_valid(basement_cat) and basement_cat.is_busy()
+
+
+func _update_basement_cat_context() -> void:
+	if not is_instance_valid(basement_cat):
+		return
+	basement_cat.set_suspended(pause_menu.visible or get_tree().paused)
+	# The encounter's own busy state locks doors and turns, but must not
+	# disable its choice or interrupt the cat's walk on the following frame.
+	basement_cat.set_context(
+		_active_room == 3 and _active_side == 3 and _phase == Phase.IDLE
+		and not _room_transition_active and not _loss_cinematic_active
+		and not _door_key_view_active and not pause_menu.visible
+		and not pause_menu.settings_menu.visible and not get_tree().paused
+		and not table_lobby.visible and not _pack_opening_blocks_screen_focus
+		and not _is_table_match_active() and not _is_journal_active()
+		and not _is_progression_area_open()
+	)
+
+
+func _on_basement_cat_modal_changed(opened: bool) -> void:
+	_pending_direction = 0
+	if opened:
+		level_progress.set_enabled(false)
+		screen_camera_focus.set_context(_active_side, false)
+		screen_camera_focus.restore_immediately()
+		camera_tilt.rotation = Vector3.ZERO
+	_update_room_door_interaction()
+	_update_screen_camera_focus_context()
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+
+
+func _is_angel_busy() -> bool:
+	if not is_instance_valid(scene_pivot):
+		return false
+	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
+	return collection != null and collection.is_angel_dialog_open()
+
+
+func _angel_context_is_safe() -> bool:
+	# Keep the current dialog enabled while its own modal state locks the hub.
+	return (
+		_active_room == 0 and _active_side == 2
+		and _phase == Phase.IDLE and not _room_transition_active
+		and not _loss_cinematic_active and not _door_key_view_active
+		and not pause_menu.visible and not pause_menu.settings_menu.visible
+		and not table_lobby.visible and not get_tree().paused
+		and not _pack_opening_blocks_screen_focus and not _is_table_match_active()
+		and not _is_journal_active() and not _is_progression_area_open()
+	)
+
+
+func _update_angel_interaction() -> void:
+	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
+	if collection != null:
+		collection.set_angel_context_enabled(_angel_context_is_safe())
+
+
+func _on_angel_dialog_changed(opened: bool) -> void:
+	_pending_direction = 0
+	if opened:
+		level_progress.set_enabled(false)
+	_update_screen_camera_focus_context()
+	_update_room_door_interaction()
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+
+
+func _jester_context_is_safe() -> bool:
+	# An open dialog holds its camera and remains interactive. Its own busy
+	# state only locks the room, book and turn controls, not the dialog itself.
+	return (
+		is_instance_valid(graveyard_jester)
+		and _active_room == 2 and _active_side == graveyard_jester.view_side
+		and _phase == Phase.IDLE and not _room_transition_active
+		and not _loss_cinematic_active and not _door_key_view_active
+		and not pause_menu.visible and not pause_menu.settings_menu.visible
+		and not table_lobby.visible and not get_tree().paused
+		and not _pack_opening_blocks_screen_focus and not _is_table_match_active()
+		and not _is_journal_active() and not _is_progression_area_open()
+	)
+
+
+func _update_jester_interaction() -> void:
+	if is_instance_valid(graveyard_jester):
+		graveyard_jester.set_interaction_enabled(_jester_context_is_safe())
+
+
+func _black_market_context_is_safe() -> bool:
+	return (
+		is_instance_valid(black_market_board)
+		and _active_room == 4 and _active_side == black_market_board.view_side
+		and _can_travel_between_rooms() and not _door_key_view_active
+		and not pause_menu.settings_menu.visible
+	)
+
+
+func _update_black_market_interaction() -> void:
+	if is_instance_valid(black_market_board):
+		black_market_board.set_interaction_enabled(_black_market_context_is_safe())
+	if is_instance_valid(dealer_dialogue):
+		dealer_dialogue.set_interaction_enabled(_dealer_context_is_safe())
+
+
+func _is_dealer_busy() -> bool:
+	return is_instance_valid(dealer_dialogue) and dealer_dialogue.is_busy()
+
+
+func _dealer_context_is_safe() -> bool:
+	# Its own modal locks shopping and navigation without dismissing itself.
+	return (
+		is_instance_valid(black_market_board)
+		and _active_room == 4 and _active_side == black_market_board.view_side
+		and _phase == Phase.IDLE and not _room_transition_active
+		and not _loss_cinematic_active and not _door_key_view_active
+		and not pause_menu.visible and not pause_menu.settings_menu.visible
+		and not table_lobby.visible and not get_tree().paused
+		and not _pack_opening_blocks_screen_focus and not _is_table_match_active()
+		and not _is_journal_active() and not _is_progression_area_open()
+	)
+
+
+func _on_dealer_modal_changed(opened: bool) -> void:
+	_pending_direction = 0
+	if opened:
+		level_progress.set_enabled(false)
+	_update_screen_camera_focus_context()
+	_update_room_door_interaction()
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+
+
+func _on_jester_modal_changed(_opened: bool) -> void:
+	_pending_direction = 0
+	_update_screen_camera_focus_context()
+	_update_room_door_interaction()
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+
+
+func _update_fusion_workbench_interaction() -> void:
+	if not is_instance_valid(fusion_workbench):
+		return
+	fusion_workbench.set_interaction_enabled(
+		_active_room == 1 and _active_side == fusion_workbench.view_side
+		and _phase == Phase.IDLE and not _room_transition_active
+		and not _loss_cinematic_active and not pause_menu.visible
+		and not table_lobby.visible and not get_tree().paused
+		and not _is_table_match_active() and not _is_upgrade_collection_detail_open()
+		and not _is_journal_active()
+	)
+
+
+func _update_upgrade_collection_interaction() -> void:
+	if not is_instance_valid(upgrade_collection):
+		return
+	upgrade_collection.set_interaction_enabled(
+		_active_room == 1 and _active_side == upgrade_collection.view_side
+		and _phase == Phase.IDLE and not _room_transition_active
+		and not _loss_cinematic_active and not pause_menu.visible
+		and not table_lobby.visible and not get_tree().paused
+		and not _is_journal_active()
+	)
+
+
+func _on_upgrade_collection_pause_changed() -> void:
+	if pause_menu.visible:
+		_interrupt_journal()
+		for area in progression_areas:
+			area.close()
+	if pause_menu.visible and is_instance_valid(upgrade_collection):
+		upgrade_collection.close_detail(true)
+	_update_upgrade_collection_interaction()
+	_update_fusion_workbench_interaction()
+	_update_jester_interaction()
+	_update_angel_interaction()
+	_update_black_market_interaction()
+	_update_screen_camera_focus_context()
+	if pause_menu.visible and _active_room in [1, 2, 4] and screen_camera_focus != null:
+		# PauseMenu pauses the tree after this signal, so finish the return now.
+		screen_camera_focus.restore_immediately()
+
+
+func _on_upgrade_collection_detail_changed(_opened: bool) -> void:
+	_update_labels()
+	_update_screen_camera_focus_context()
+
+
+func _on_slot_room_key_requested(wait_for_wakeup: bool = false) -> void:
+	var collection := scene_pivot.get_node("Collection") as CollectionScreen
+	if _active_room != 0 or not _can_travel_between_rooms() or CollectionManager.get_amount(CollectionManager.SLOT_ROOM_KEY_ID) == 0:
+		collection.finish_slot_room_key_request()
+		return
+	_room_transition_active = true
+	_pending_direction = 0
+	_door_key_view_active = true
+	pause_menu.set_cinematic_locked(true)
+	screen_camera_focus.set_context(_active_side, false)
+	screen_camera_focus.restore_immediately()
+	_claim_shared_camera_for_hub_rotation(false)
+	camera_tilt.rotation = Vector3.ZERO
+	_update_active_scene_interaction()
+	_update_room_door_interaction()
+	if wait_for_wakeup and _wakeup_blur_tween != null and _wakeup_blur_tween.is_running():
+		await _wakeup_blur_tween.finished
+	# Keep the normal turning center and lens, aiming toward the real doorway.
+	# The next A/D turn starts at this visible angle and returns to the usual grid.
+	var direction := hub_door.doorway_area.global_position - main_camera.global_position
+	var target_y := atan2(-direction.x, -direction.z)
+	var start_rotation := camera_pivot.rotation
+	target_y = start_rotation.y + wrapf(target_y - start_rotation.y, -PI, PI)
+	var target_rotation := Vector3(_base_x_rotation, target_y, 0.0)
+	_door_key_tween = create_tween()
+	_door_key_tween.tween_property(camera_pivot, "rotation", target_rotation, door_key_look_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await _door_key_tween.finished
+	_visual_pivot_rotation = target_rotation
+	_settle_step_index = roundi((target_y - _settle_origin_y) / deg_to_rad(rotation_step_degrees))
+	_settle_target_y = _settle_origin_y + deg_to_rad(rotation_step_degrees) * _settle_step_index
+	_active_side = posmod(_settle_step_index, SIDE_COUNT)
+	# Grant access only after the player is looking, so the opening is visible.
+	if CollectionManager.unlock_slot_room():
+		hub_door.set_locked(false)
+		hub_door.set_travel_open(true)
+		_door_key_tween = create_tween()
+		_door_key_tween.tween_interval(hub_door.travel_duration + 0.35)
+		await _door_key_tween.finished
+	_door_key_tween = null
+	_room_transition_active = false
+	collection.finish_slot_room_key_request()
+	pause_menu.set_cinematic_locked(false)
+	_update_labels()
+	_update_active_scene_interaction()
+	_update_screen_camera_focus_context()
+	_update_room_door_interaction()
+
+
+func _on_room_door_activated(door: HospitalDoor) -> void:
+	if not _can_travel_between_rooms():
+		return
+	var source_door := door
+	var destination_door: HospitalDoor
+	var destination_anchor: Marker3D
+	var destination_room := 0
+	var entering_room := _active_room == 0
+	if entering_room:
+		if door == hub_door:
+			if not CollectionManager.is_slot_room_unlocked():
+				return
+			destination_room = 1
+			destination_door = return_door
+			destination_anchor = room_camera_anchor
+		else:
+			for area in progression_areas:
+				if area.door == door and connected_rooms.has(area.room_index) and CollectionManager.has_area_access(area.area_id):
+					destination_room = area.room_index
+					var room := connected_rooms[destination_room] as Node3D
+					destination_door = room.get_node("ReturnDoor") as HospitalDoor
+					destination_anchor = room.get_node("CameraAnchor") as Marker3D
+					break
+			if destination_room == 0:
+				return
+	else:
+		if _active_room == 1:
+			if door != return_door:
+				return
+			destination_door = hub_door
+		else:
+			if not connected_rooms.has(_active_room) or door != connected_rooms[_active_room].get_node("ReturnDoor"):
+				return
+			for area in progression_areas:
+				if area.room_index == _active_room:
+					destination_door = area.door
+					break
+			if destination_door == null:
+				return
+	var source_room := _active_room
+	_transition_room_music(destination_room != 0)
+	_transition_room_ambience(destination_room)
+	var visible_camera_pose := main_camera.global_transform
+	var visible_camera_fov := main_camera.fov
+	if entering_room:
+		_hub_return_pivot_transform = camera_pivot.global_transform
+		if _door_key_view_active:
+			_hub_return_pivot_transform.basis = Basis.from_euler(Vector3(_base_x_rotation, _settle_target_y, 0.0))
+		_hub_return_step_index = _settle_step_index
+		_hub_return_active_side = _active_side
+	_door_key_view_active = false
+
+	_room_transition_active = true
+	_pending_direction = 0
+	# Keep the hub visible through the doorway during the return flight.
+	scene_pivot.show()
+	# The camera rig owns the entire flight. Cancel the two existing camera
+	# controllers, then preserve the visible pose while neutralizing mouse tilt.
+	screen_camera_focus.set_context(_active_side, false)
+	screen_camera_focus.restore_immediately()
+	_claim_shared_camera_for_hub_rotation(false)
+	camera_tilt.rotation = Vector3.ZERO
+	main_camera.transform = _hub_camera_base_transform
+	main_camera.fov = visible_camera_fov
+	var camera_to_pivot := _hub_camera_base_transform.affine_inverse()
+	camera_pivot.global_transform = visible_camera_pose * camera_to_pivot
+	pause_menu.set_cinematic_locked(true)
+	_update_active_scene_interaction()
+	_update_room_door_interaction()
+	source_door.set_travel_open(true)
+	destination_door.set_return_passage_open(not entering_room)
+	destination_door.set_travel_open(true)
+
+	var destination_pivot := destination_anchor.global_transform if entering_room else _hub_return_pivot_transform
+	# Room instances may be scaled; the shared camera always keeps its lens
+	# offset and unit scale, just like in the original slot room.
+	destination_pivot.basis = destination_pivot.basis.orthonormalized()
+	var destination_camera := destination_pivot * _hub_camera_base_transform
+	var travel_direction := (destination_door.global_position - source_door.global_position).normalized()
+	var through_basis := Basis.looking_at(travel_direction, Vector3.UP)
+	var source_eye := source_door.global_position
+	source_eye.y = lerpf(visible_camera_pose.origin.y, destination_camera.origin.y, 0.5)
+	var destination_eye := destination_door.global_position
+	destination_eye.y = source_eye.y
+	# Approach the opening before crossing either threshold. The last leg
+	# settles at the room's normal turning center, with the same camera lens.
+	var camera_poses: Array[Transform3D] = [
+		visible_camera_pose,
+		Transform3D(through_basis, source_eye - travel_direction * 1.6),
+		Transform3D(through_basis, source_eye + travel_direction * 0.35),
+		Transform3D(through_basis, destination_eye + travel_direction * 1.6),
+		destination_camera,
+	]
+	if (destination_room if entering_room else _active_room) != 1:
+		# Each threshold retains its own floor height. The basement's middle
+		# leg follows the stairs, while both doors are crossed horizontally.
+		travel_direction.y = 0.0
+		travel_direction = travel_direction.normalized()
+		through_basis = Basis.looking_at(travel_direction, Vector3.UP)
+		source_eye.y = visible_camera_pose.origin.y
+		destination_eye.y = destination_camera.origin.y
+		var corridor_start := source_eye + travel_direction * 0.8
+		var corridor_end := destination_eye - travel_direction * 0.8
+		var corridor_basis := Basis.looking_at(corridor_end - corridor_start, Vector3.UP)
+		camera_poses = [
+			visible_camera_pose,
+			Transform3D(through_basis, source_eye - travel_direction * 1.6),
+			Transform3D(corridor_basis, corridor_start),
+			Transform3D(corridor_basis, corridor_end),
+			Transform3D(through_basis, destination_eye + travel_direction * 1.6),
+			destination_camera,
+		]
+	var total_distance := 0.0
+	for index in range(1, camera_poses.size()):
+		total_distance += camera_poses[index - 1].origin.distance_to(camera_poses[index].origin)
+	_room_travel_tween = create_tween()
+	for index in range(1, camera_poses.size()):
+		var start_pose := camera_poses[index - 1] * camera_to_pivot
+		var end_pose := camera_poses[index] * camera_to_pivot
+		var distance := camera_poses[index - 1].origin.distance_to(camera_poses[index].origin)
+		var duration := room_travel_duration * distance / maxf(total_distance, 0.001)
+		var leg := _room_travel_tween.tween_method(
+			_apply_room_travel_pose.bind(start_pose, end_pose), 0.0, 1.0, maxf(duration, 0.01)
+		)
+		if index == 1:
+			leg.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+			_room_travel_tween.parallel().tween_property(
+				main_camera, "fov", _hub_camera_base_fov, maxf(duration, 0.01)
+			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		elif index == camera_poses.size() - 1:
+			leg.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await _room_travel_tween.finished
+	_room_travel_tween = null
+	camera_pivot.global_transform = destination_pivot
+	_active_room = destination_room
+	if source_room == 3 and destination_room != 3:
+		GameCurrency.mark_basement_cat_left()
+	if _room_music_tween != null:
+		_room_music_tween.kill()
+		_room_music_tween = null
+	_apply_room_music_mix(1.0 if _active_room != 0 else 0.0)
+	_finish_room_ambience(_active_room)
+	scene_pivot.visible = _active_room != 1
+	_settle_origin_y = camera_pivot.rotation.y if entering_room else _hub_settle_origin_y
+	_settle_step_index = 0 if entering_room else _hub_return_step_index
+	_active_side = 0 if entering_room else _hub_return_active_side
+	_snap_camera_pivot_to_cardinal_target()
+	_room_transition_active = false
+	source_door.set_travel_open(false)
+	destination_door.set_travel_open(false)
+	destination_door.set_return_passage_open(false)
+	pause_menu.set_cinematic_locked(false)
+	_update_labels()
+	_update_active_scene_interaction()
+	_update_screen_camera_focus_context()
+	_update_room_door_interaction()
+	room_changed.emit(_active_room)
+
+
+func _apply_room_travel_pose(weight: float, start: Transform3D, target: Transform3D) -> void:
+	camera_pivot.global_transform = start.interpolate_with(target, weight)
+
+
+func _setup_room_ambience() -> void:
+	_room_ambience_volume_db = atmo.volume_db
+	_room_ambience_players[0] = atmo
+	for room_index in ROOM_AMBIENCE:
+		var player := AudioStreamPlayer.new()
+		player.name = "GraveyardAtmo" if room_index == 2 else "BasementAtmo"
+		var stream := ROOM_AMBIENCE[room_index].duplicate() as AudioStreamMP3
+		stream.loop = true
+		player.stream = stream
+		player.bus = atmo.bus
+		player.volume_db = -80.0
+		add_child(player)
+		_room_ambience_players[room_index] = player
+	_finish_room_ambience(_active_room)
+
+
+func _transition_room_ambience(destination_room: int) -> void:
+	if _room_ambience_tween != null:
+		_room_ambience_tween.kill()
+	var target_room := destination_room if _room_ambience_players.has(destination_room) else 0
+	_room_ambience_tween = create_tween().set_parallel(true)
+	_room_ambience_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for room_index in _room_ambience_players:
+		var player := _room_ambience_players[room_index] as AudioStreamPlayer
+		var active: bool = room_index == target_room
+		if active and not player.playing:
+			player.play()
+		# Fade amplitudes so the ambience remains audible through the passage.
+		_room_ambience_tween.tween_method(
+			_apply_room_ambience_gain.bind(player), db_to_linear(player.volume_db),
+			db_to_linear(_room_ambience_volume_db) if active else 0.0,
+			maxf(room_travel_duration, 0.01)
+		)
+
+
+func _apply_room_ambience_gain(gain: float, player: AudioStreamPlayer) -> void:
+	player.volume_db = linear_to_db(maxf(gain, 0.0001))
+
+
+func _finish_room_ambience(room: int) -> void:
+	if _room_ambience_tween != null:
+		_room_ambience_tween.kill()
+		_room_ambience_tween = null
+	var target_room := room if _room_ambience_players.has(room) else 0
+	for room_index in _room_ambience_players:
+		var player := _room_ambience_players[room_index] as AudioStreamPlayer
+		if room_index == target_room:
+			player.volume_db = _room_ambience_volume_db
+			if not player.playing:
+				player.play()
+		else:
+			player.stop()
+			player.volume_db = -80.0
+
+
+func _setup_room_music() -> void:
+	if music == null:
+		return
+	_room_music_source_bus = music.bus
+	# This scene owns its filter. Music settings and cinematic player fades
+	# remain independent, and the main menu cannot inherit a muffled bus.
+	_room_music_bus = StringName("RoomMusic_%d" % get_instance_id())
+	AudioServer.add_bus()
+	var bus_index := AudioServer.bus_count - 1
+	AudioServer.set_bus_name(bus_index, _room_music_bus)
+	AudioServer.set_bus_send(bus_index, _room_music_source_bus)
+	_room_music_filter = AudioEffectLowPassFilter.new()
+	_room_music_filter.db = AudioEffectFilter.FILTER_24DB
+	_room_music_filter.resonance = 0.5
+	AudioServer.add_bus_effect(bus_index, _room_music_filter)
+	music.bus = _room_music_bus
+	_apply_room_music_mix(1.0 if _active_room != 0 else 0.0)
+
+
+func _transition_room_music(outside_hub: bool) -> void:
+	if _room_music_tween != null:
+		_room_music_tween.kill()
+	_room_music_tween = create_tween()
+	_room_music_tween.tween_method(
+		_apply_room_music_mix, _room_music_mix,
+		1.0 if outside_hub else 0.0, maxf(room_travel_duration, 0.01)
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _apply_room_music_mix(weight: float) -> void:
+	_room_music_mix = clampf(weight, 0.0, 1.0)
+	var bus_index := AudioServer.get_bus_index(_room_music_bus)
+	if bus_index < 0 or _room_music_filter == null:
+		return
+	AudioServer.set_bus_volume_db(bus_index, slot_room_music_attenuation_db * _room_music_mix)
+	# A logarithmic sweep makes the perceived treble change gradual.
+	_room_music_filter.cutoff_hz = exp(lerpf(log(20000.0), log(slot_room_music_cutoff_hz), _room_music_mix))
+	AudioServer.set_bus_effect_enabled(bus_index, 0, _room_music_mix > 0.0)
+
+
+func _cleanup_room_music() -> void:
+	if _room_music_tween != null:
+		_room_music_tween.kill()
+		_room_music_tween = null
+	if is_instance_valid(music):
+		music.bus = _room_music_source_bus
+	var bus_index := AudioServer.get_bus_index(_room_music_bus)
+	if bus_index >= 0:
+		AudioServer.remove_bus(bus_index)
+	_room_music_bus = &""
+	_room_music_filter = null
+
+
 func _update_labels() -> void:
-	side_label.text = SIDE_NAMES[_active_side]
-	hint_label.text = SIDE_HINTS[_active_side] + "  |  A/D drehen"
+	if not is_inside_tree() or is_queued_for_deletion():
+		return
+	if _active_room == 2 or _active_room == 3:
+		side_label.text = ""
+		hint_label.text = ""
+		return
+	if _active_room == 1:
+		if is_instance_valid(fusion_workbench) and _active_side == fusion_workbench.view_side:
+			side_label.text = Localization.text("Kartenschmiede")
+			hint_label.text = ""
+			return
+		if is_instance_valid(upgrade_collection) and _active_side == upgrade_collection.view_side:
+			side_label.text = Localization.text("Upgrade-Sammlung")
+			hint_label.text = Localization.text("Esc: Detail schließen" if _is_upgrade_collection_detail_open() else "Karte anklicken: Details ansehen")
+			return
+		side_label.text = Localization.text("Soul Slots")
+		hint_label.text = Localization.text("+/− Einsatz wählen  |  BET bestätigen  |  SPIN spielen")
+		return
+	side_label.text = Localization.text(SIDE_NAMES[_active_side])
+	hint_label.text = ""
 
 
 func _disable_embedded_scene_controls() -> void:
@@ -289,7 +1312,7 @@ func _update_active_scene_interaction() -> void:
 	]
 
 	for side_index in range(interactive_roots.size()):
-		var active := side_index == _active_side
+		var active := _active_room == 0 and not _room_transition_active and not _door_key_view_active and not _is_journal_active() and not _is_progression_area_open() and side_index == _active_side
 		for root_name in interactive_roots[side_index]:
 			var root := scene_pivot.get_node_or_null(str(root_name))
 			if root != null:
@@ -304,28 +1327,51 @@ func _setup_screen_camera_focus() -> void:
 	var upgrade_screen := scene_pivot.get_node_or_null("UpgradeMachine/ScreenArea") as Area3D
 
 	if pack_screen != null:
-		screen_camera_focus.register_screen(pack_screen, 1)
+		screen_camera_focus.register_screen(pack_screen, 1, 0)
 	else:
 		push_warning("ScreenCameraFocus: PackShop-ScreenArea fehlt.")
 
 	if upgrade_screen != null:
-		screen_camera_focus.register_screen(upgrade_screen, 3)
+		screen_camera_focus.register_screen(upgrade_screen, 3, 0)
 	else:
 		push_warning("ScreenCameraFocus: Upgrade-ScreenArea fehlt.")
+	if is_instance_valid(upgrade_collection) and is_instance_valid(upgrade_collection.focus_area):
+		screen_camera_focus.register_screen(upgrade_collection.focus_area, upgrade_collection.view_side, 1)
+	if is_instance_valid(fusion_workbench) and is_instance_valid(fusion_workbench.focus_area):
+		screen_camera_focus.register_screen(fusion_workbench.focus_area, fusion_workbench.view_side, 1)
+	if is_instance_valid(graveyard_jester) and is_instance_valid(graveyard_jester.focus_area):
+		screen_camera_focus.register_screen(graveyard_jester.focus_area, graveyard_jester.view_side, 2)
+	if is_instance_valid(black_market_board) and is_instance_valid(black_market_board.focus_area):
+		screen_camera_focus.register_screen(black_market_board.focus_area, black_market_board.view_side, 4)
 
 
 func _update_screen_camera_focus_context() -> void:
 	if screen_camera_focus == null:
 		return
 
-	var screen_side_active := _active_side == 1 or _active_side == 3
+	var hub_screen_active := _active_room == 0 and (_active_side == 1 or _active_side == 3)
+	var wall_screen_active := (
+		_active_room == 1 and is_instance_valid(upgrade_collection)
+		and _active_side == upgrade_collection.view_side
+	)
+	var forge_screen_active := (
+		_active_room == 1 and is_instance_valid(fusion_workbench)
+		and _active_side == fusion_workbench.view_side
+	)
 	var focus_allowed := (
-		_phase == Phase.IDLE
-		and screen_side_active
+		(hub_screen_active or wall_screen_active or forge_screen_active or _jester_context_is_safe() or _black_market_context_is_safe() or _dealer_context_is_safe())
+		and not _is_progression_area_open()
+		and not _room_transition_active
+		and not _door_key_view_active
+		and not _loss_cinematic_active
+		and not pause_menu.visible
+		and _phase == Phase.IDLE
 		and not _is_table_match_active()
 		and not _pack_opening_blocks_screen_focus
+		and not _is_journal_active()
 	)
-	screen_camera_focus.set_context(_active_side, focus_allowed)
+	screen_camera_focus.set_hover_suspended(_is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or (is_instance_valid(turn_arrows) and turn_arrows.is_pointer_over_arrow()))
+	screen_camera_focus.set_context(_active_side, focus_allowed, _active_room)
 
 
 func _connect_pack_opening_focus_state() -> void:
@@ -341,6 +1387,7 @@ func _connect_pack_opening_focus_state() -> void:
 
 
 func _on_pack_opening_started() -> void:
+	_interrupt_journal()
 	_pack_opening_blocks_screen_focus = true
 	_update_screen_camera_focus_context()
 
@@ -348,6 +1395,115 @@ func _on_pack_opening_started() -> void:
 func _on_pack_opening_finished() -> void:
 	_pack_opening_blocks_screen_focus = false
 	_update_screen_camera_focus_context()
+
+
+func _connect_loss_exit_cinematic() -> void:
+	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	if game_table == null:
+		push_warning("Loss-Cinematic: GameTable fehlt.")
+		return
+
+	if not game_table.loss_exit_started.is_connected(_on_loss_exit_started):
+		game_table.loss_exit_started.connect(_on_loss_exit_started)
+	if not game_table.loss_shot_fired.is_connected(_on_loss_shot_fired):
+		game_table.loss_shot_fired.connect(_on_loss_shot_fired)
+	if not game_table.loss_reveal_started.is_connected(_on_loss_reveal_started):
+		game_table.loss_reveal_started.connect(_on_loss_reveal_started)
+	if not game_table.player_wakeup_started.is_connected(_on_player_wakeup_started):
+		game_table.player_wakeup_started.connect(_on_player_wakeup_started)
+	if not game_table.loss_exit_skipped.is_connected(_on_loss_exit_skipped):
+		game_table.loss_exit_skipped.connect(_on_loss_exit_skipped)
+	if not game_table.loss_exit_finished.is_connected(_on_loss_exit_finished):
+		game_table.loss_exit_finished.connect(_on_loss_exit_finished)
+
+
+func _on_loss_exit_started(music_fade_duration: float) -> void:
+	_interrupt_journal()
+	_loss_cinematic_active = true
+	_pending_direction = 0
+	if screen_camera_focus != null:
+		screen_camera_focus.set_context(_active_side, false)
+	if pause_menu != null:
+		pause_menu.set_cinematic_locked(true)
+	if main_camera != null:
+		# Mouse-Tilt neutralisieren, ohne die sichtbare Kamerapose beim Klick
+		# springen zu lassen. So startet und endet die Cinematic auf einer
+		# stabilen lokalen Basis.
+		var preserved_camera_transform := main_camera.global_transform
+		camera_tilt.rotation = Vector3.ZERO
+		main_camera.global_transform = preserved_camera_transform
+
+	if music == null:
+		return
+	if _loss_music_tween != null:
+		_loss_music_tween.kill()
+
+	_loss_music_restore_db = music.volume_db
+	_loss_music_restore_pending = true
+	_loss_music_tween = create_tween()
+	_loss_music_tween.tween_property(
+		music,
+		"volume_db",
+		-80.0,
+		maxf(music_fade_duration, 0.01)
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+
+func _on_loss_shot_fired() -> void:
+	if music == null:
+		return
+	if _loss_music_tween != null:
+		_loss_music_tween.kill()
+		_loss_music_tween = null
+	music.volume_db = -80.0
+
+
+func _on_player_wakeup_started() -> void:
+	_start_wakeup_blur(wakeup_blur_duration * 0.5)
+
+
+func _on_loss_reveal_started(duration: float) -> void:
+	if music == null or not _loss_music_restore_pending:
+		return
+	if _loss_music_tween != null:
+		_loss_music_tween.kill()
+
+	music.volume_db = -80.0
+	_loss_music_tween = create_tween()
+	_loss_music_tween.tween_property(
+		music,
+		"volume_db",
+		_loss_music_restore_db,
+		maxf(duration, 0.01)
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+func _on_loss_exit_skipped() -> void:
+	# A skip key can also be a turn/journal/pause key. Keep its input frame local
+	# to the cinematic, including actions polled by _process instead of _input.
+	_cinematic_input_block_frame = Engine.get_process_frames() + 1
+	_pending_direction = 0
+	if _wakeup_blur_tween != null:
+		_wakeup_blur_tween.kill()
+		_wakeup_blur_tween = null
+	if _wakeup_blur_material != null:
+		_wakeup_blur_material.set_shader_parameter("blur_strength", WAKEUP_BLUR_END)
+
+
+func _on_loss_exit_finished() -> void:
+	DIAGNOSTICS.record("main.cinematic.restore_begin", {"in_tree": is_inside_tree()})
+	if _loss_music_tween != null:
+		_loss_music_tween.kill()
+		_loss_music_tween = null
+	if music != null and _loss_music_restore_pending:
+		music.volume_db = _loss_music_restore_db
+
+	_loss_music_restore_pending = false
+	_loss_cinematic_active = false
+	if pause_menu != null:
+		pause_menu.set_cinematic_locked(false)
+	_update_screen_camera_focus_context()
+	DIAGNOSTICS.record("main.cinematic.restore_finished", {"in_tree": is_inside_tree()})
 
 
 func _set_scene_interaction_enabled(node: Node, enabled: bool) -> void:
@@ -384,7 +1540,7 @@ func _disable_embedded_scene_controls_recursive(node: Node) -> void:
 		_disable_embedded_scene_controls_recursive(child)
 
 func _is_table_match_active() -> bool:
-	if _active_side != 0:
+	if _active_room != 0 or _active_side != 0:
 		return false
 
 	var game_table := scene_pivot.get_node_or_null("GameTable")

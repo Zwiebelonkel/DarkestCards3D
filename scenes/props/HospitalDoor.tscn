@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://b5it3dha7wsec"]
+
+[ext_resource type="Script" uid="uid://tknw7b0t7cw0" path="res://scripts/props/HospitalDoor.gd" id="1_door"]
+[ext_resource type="PackedScene" uid="uid://d3fr0t8j4yw4l" path="res://assets/environments/props/door/hospitalDoor.glb" id="2_model"]
+
+[sub_resource type="BoxShape3D" id="BoxShape_doorway"]
+size = Vector3(1.65748, 3.15792, 0.32)
+
+[node name="HospitalDoor" type="Node3D"]
+script = ExtResource("1_door")
+
+[node name="Model" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0498576, -0.00735364, 0.0182825)
+
+[node name="hospitalDoor" parent="Model" instance=ExtResource("2_model")]
+
+[node name="Hinge" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.828943, 0, 0.06155)
+
+[node name="DoorwayArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00020327, 1.57896, 0)
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DoorwayArea"]
+shape = SubResource("BoxShape_doorway")

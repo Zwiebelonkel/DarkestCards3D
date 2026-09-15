@@ -53,6 +53,7 @@ func _ready() -> void:
 	_set_mouse_passthrough(self)
 	modulate.a = 0.0
 	hide()
+	Localization.locale_changed.connect(_on_locale_changed)
 
 
 func show_for_card(card: Card3D) -> void:
@@ -84,7 +85,7 @@ func hide_overview(card: Card3D = null) -> void:
 
 func _populate(card: Card3D, effects: Array[Dictionary]) -> void:
 	var card_name := str(card.card_data.get("name", card.card_data.get("id", "CARD"))).strip_edges()
-	_card_name_label.text = card_name.to_upper()
+	_card_name_label.text = Localization.text(card_name).to_upper()
 	var card_rarity := str(card.card_data.get("rarity", "common"))
 	_card_name_label.add_theme_color_override(
 		"font_color",
@@ -92,7 +93,7 @@ func _populate(card: Card3D, effects: Array[Dictionary]) -> void:
 	)
 
 	var visible_count := mini(effects.size(), MAX_VISIBLE_EFFECTS)
-	_count_label.text = "%d %s" % [visible_count, "EFFEKT" if visible_count == 1 else "EFFEKTE"]
+	_count_label.text = Localization.format_text("%d effect" if visible_count == 1 else "%d effects", [visible_count]).to_upper()
 
 	for index in range(MAX_VISIBLE_EFFECTS):
 		if index >= visible_count:
@@ -104,6 +105,14 @@ func _populate(card: Card3D, effects: Array[Dictionary]) -> void:
 		_row_panels[index].visible = true
 
 	call_deferred("_fit_height_to_content")
+
+
+func _on_locale_changed() -> void:
+	if not is_inside_tree() or is_queued_for_deletion() or not is_instance_valid(_active_card):
+		return
+	# Refresh the existing panel; do not restart fades or invalidate a pending
+	# hover-out delay by changing the active card or request serial.
+	_populate(_active_card, CardData.get_active_effects(_active_card.card_data))
 
 
 func _fit_height_to_content() -> void:

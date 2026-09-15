@@ -11,6 +11,7 @@ const MAIN_MENU_SCENE := "res://scenes/main/MainMenu.tscn"
 
 var _is_open := false
 var _tree_paused_by_menu := false
+var _cinematic_locked := false
 
 
 func _ready() -> void:
@@ -24,6 +25,10 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _cinematic_locked:
+		if event.is_action_pressed("ui_cancel"):
+			get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		if settings_menu.visible:
@@ -35,6 +40,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func open() -> void:
+	if _cinematic_locked or _is_open:
+		return
 	_is_open = true
 	visible = true
 	panel.visible = true
@@ -56,6 +63,12 @@ func close() -> void:
 	_tree_paused_by_menu = false
 
 
+func set_cinematic_locked(value: bool) -> void:
+	_cinematic_locked = value
+	if _cinematic_locked and _is_open:
+		close()
+
+
 func _open_settings() -> void:
 	panel.visible = false
 	settings_menu.open()
@@ -68,6 +81,8 @@ func _on_settings_closed() -> void:
 
 
 func _go_to_main_menu() -> void:
+	if _cinematic_locked:
+		return
 	get_tree().paused = false
 	_tree_paused_by_menu = false
 	if NetworkManager.has_active_session():
