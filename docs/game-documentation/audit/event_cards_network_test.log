@@ -1,0 +1,53 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS event test starts a loopback ENet authority
+PASS event test starts a separate guest transport
+PASS host and guest event peers connect
+PASS real online match start deals and synchronizes three guest events before releasing turn one
+PASS host deals exactly three opening events to each fighter from the 24-card shared pile
+PASS opening hand synchronization completes the real ENet ACK barrier
+PASS opening events are available on the first host turn without a next-turn notice
+PASS guest receives exactly its random opening hand and no host event identities
+PASS requesting the opening snapshot again neither rerolls nor duplicates starting events
+PASS public opening snapshot exposes equal hand counts without private cards
+PASS production sender authorization recognizes the actual guest peer
+PASS default broadcast-safe snapshot omits private event identities
+PASS public snapshot carries both hand counts
+PASS public state never serializes shuffled event order or whole hands
+PASS recipient snapshot includes only that fighter's event hand
+PASS recipient snapshot deep-copies authoritative hand data
+PASS unknown snapshot recipient receives no private cards
+PASS connected spectator receives no fighter hand
+PASS recipient snapshot delivers the guest hand through production ENet RPC
+PASS guest turn and combat-card coordinates are mirrored together
+PASS guest receives its event identities without learning the host hand
+PASS stale-turn event request cannot spend a card or change stats
+PASS foreign event UID, out-of-range target and empty slot are rejected over ENet
+PASS guest cannot play an event during the host turn
+PASS event requests cannot interrupt an attack or synchronization barrier
+PASS valid guest event is resolved on the authority and mirrored back to its own card
+PASS strength leaves opponent stats and the player's pending attack turn intact
+PASS event consumption and the once-per-turn flag remain authoritative
+PASS both peers keep input locked while the event is being revealed
+PASS host and guest begin the same public reveal before its lock expires
+PASS a duplicate event snapshot neither replays nor extends the reveal
+PASS duplicate snapshots cannot acknowledge or unlock an unfinished reveal
+PASS guest event snapshot ACK releases the real host barrier before timeout
+PASS the event barrier releases only after the guest reveal has finished
+PASS replayed requests and a second distinct event cannot double-spend the turn
+PASS guest Block targets the opposing host card and keeps mirrored block duration
+PASS networked block has a visible remaining-turn badge
+PASS Block presentation completes its real ENet ACK barrier
+PASS production authorization excludes a connected spectator
+PASS spectator cannot spend a known fighter event UID
+PASS spectator event and pass commands cannot change decks or advance the turn
+PASS spectator snapshot removes any previous private hand data
+PASS fully blocked guest can pass through an authorized RPC and synchronized turn barrier
+PASS passing ticks the blocked owner's card once on both peers
+PASS replayed pass cannot skip another turn or tick block twice
+EVENT_CARDS_NETWORK_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

@@ -1,12 +1,29 @@
 # Secret rarity and difficulty rewards
 
-Secret is the eighth rarity, above Exotic. The three Secret cards are
-`usb_stick`, `cigarettes` and `moewenmilch`, each with a live 3D room as artwork.
+Secret is the eighth rarity, above Exotic. `usb_stick`, `cigarettes` and
+`moewenmilch` each have a live 3D room as artwork. `dman` uses a normal static
+image, with 20 attack and 20 defense and no innate effects.
 `developer` and `missing_texture` use Exotic again. Existing copies retain
 their instance IDs, Holo state and upgrades; display and deck data resolve
 the current rarity from the catalog.
 
 ## Acquisition
+
+The slot-machine room has a physical text panel beside the return door, on
+the door-facing wall (side 2). Click its field, enter `dman`, then press Enter
+to discover DMAN once per save slot. Case and surrounding spaces are ignored.
+Escape or an outside click releases keyboard focus; typing does not trigger
+room turns or journal shortcuts. The shared camera focuses the wall panel.
+The card and permanent discovery history are saved atomically before the
+same physical Secret reveal used by the three prop discoveries plays.
+Re-entering the code, reloading or losing the card cannot repeat the reward.
+DMAN is excluded from packs and the Jester reward pool. Its artwork currently
+uses `assets/cards/images/dman_placeholder.svg` until the supplied image arrives.
+
+The panel is authored in `scenes/props/SecretWallInput.tscn`, including its
+mesh, viewport, focus marker and editable controls. A shared VCR font theme,
+muted green text, command prompt and blinking caret provide a restrained
+terminal appearance.
 
 Throwing matching table props discovers each card once per save slot, after
 50 USB throws, 80 cigarette throws or 150 can throws. Counts persist between
@@ -61,6 +78,9 @@ path redirected to `res://test-user/`, never against player saves.
 - `secret_reward_test.tscn`: authored rarity/pack exclusions, exact synthetic
   weights, deterministic interval boundaries, relative luck, exhausted pools
   and unique unlocks.
+- `dman_secret_test.tscn`: wall projection, keyboard focus and shortcuts,
+  saved single award, profile isolation, failed saves and the shared reveal
+  using ordinary image artwork; rendered captures include the wall and card.
 - `difficulty_rewards_test.tscn`: all outcomes, fractional payouts, boosts,
   save/reload, actual AI lifecycle, duplicate awards and online roles.
 - `secret_visual_test.tscn` with Forward+: actual cards and rim images,

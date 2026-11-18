@@ -1,5 +1,160 @@
 # Feature checks
 
+`multiplayer_character_creation_test.tscn` checks the first Multiplayer click,
+cancel/Escape retry, explicit Apply (including defaults), direct lobby
+continuation, saved confirmation, slot/restart persistence and pause cleanup.
+Run with isolated settings and marker `MULTIPLAYER_CHARACTER_CREATION_TESTS: PASS`.
+
+Rearrange is covered by `event_cards_test.tscn`: real two-click targeting,
+cancel, invalid targets, preserved combat state, new-slot input, replacement
+after death, and AI play. `event_cards_network_test.tscn` verifies both fighters,
+stale requests, node identity, mirrored positions and duplicate snapshots.
+The visual suite saves `event-cards-rearrange{,-first}.png`.
+
+`poison_syringe_test.tscn` verifies the one-second needle entry, separate
+plunger stroke and upward exit, actual poison application, multi-hit deduplication,
+shield/zero-damage exclusions, periodic ticks, immediate confirmed-death cleanup,
+survival saves, target/match cleanup and mirrored
+fighter/spectator impacts. Use the isolated fixture and `POISON_SYRINGE_TESTS: PASS`.
+The off-desktop `tools/poison_syringe/visual.tscn` runner captures the four phases
+and four detail angles; see [poison-syringe.md](../docs/poison-syringe.md).
+
+`random_damage_coin_test.tscn` checks the original model's two faces, metallic
+material without emission, per-strike reveal-before-attack timing, damage matching,
+multi-hit attacks, normal counters, cancelled matches, repeated attacks after
+cleanup, and host-selected faces on mirrored fighter/spectator presentations.
+Use the isolated match-feature fixture with `RANDOM_DAMAGE_COIN_TESTS: PASS`.
+`tools/random_damage_coin/visual.tscn` captures both faces, side views, flight and
+dissolve on the real table; pass `--output=<absolute-directory>` through the owned
+render job. See [random-damage-coin.md](../docs/random-damage-coin.md).
+
+`piss_event_test.tscn` checks the targetless legendary event, actual hand click,
+AI play, both rows' hidden values and effects, hover and damage-number concealment,
+replacement cards, live state changes, blocked passes, two complete affected
+turns, refresh, spectators, tabletop trajectory and cleanup. Its rendered run
+saves `piss-event-{before,legendary-card,stream-hidden,restored}.png` and a small
+30-frame performance sample. Run it with the isolated match-feature runner and
+success marker `PISS_EVENT_TESTS: PASS`. `event_cards_network_test.tscn` also
+checks Piss from either fighter over ENet, mirrored durations, spectator views,
+duplicate snapshots and stale requests. See [event-cards.md](../docs/event-cards.md).
+
+`eternal_suffering_test.tscn` covers Credit Card's innate-only sacrifice,
+escalating persistent damage, neighbor cleansing and Draw on Death on both
+sides. `eternal_suffering_network_test.tscn` checks the suffering state and
+private death rewards across two real local ENet peers. The rendered local
+suite saves `eternal-suffering-active.png` and `eternal-suffering-cleansed.png`.
+See [eternal-suffering.md](../docs/eternal-suffering.md).
+
+`card_combat_indicators_test.tscn` verifies shrinking/fading consumed one-use
+seals, live hover updates, colored poison/stun/curse indicators, their lifecycle,
+network snapshots, stolen-card redraws, and production poison hits/ticks. Its
+rendered run saves `battle-indicators-{before,consuming,after}.png`.
+See [card-combat-indicators.md](../docs/card-combat-indicators.md).
+
+```powershell
+./tests/run_match_feature_tests.ps1 -Godot 'C:/path/to/godot.exe' -TestScene 'res://tests/card_combat_indicators_test.tscn' -SuccessMarker 'CARD_COMBAT_INDICATORS_TESTS: PASS' -ImportAssets
+```
+
+`character_customization_test.tscn` checks dynamic face/hat/mouth discovery,
+no-mouth defaults and legacy saves, all composites and shared eye/mouth colors,
+saving, responsive main-menu controls, the static local microphone avatar with
+voice-level shake, multiplayer
+portraits and the production roster RPC across host, guest and spectator ENet
+peers. Run with isolated saves using `run_match_feature_tests.ps1`,
+`-ImportAssets`, `-TestScene res://tests/character_customization_test.tscn` and
+`-SuccessMarker 'CHARACTER_CUSTOMIZATION_TESTS: PASS'`. Add `-Visual` for captures.
+`run_character_catalogue_export_test.ps1 -Godot <engine.exe>` separately tests
+folder discovery from an actual exported PCK. See `docs/character-customization.md`.
+
+`multiplayer_character_exit_test.tscn` checks the actual winner/loser cinematic
+for host and guest, plus disconnected exits: keep the opponent through the
+shot, restore standard Satan while hidden below the scene or behind blackout,
+reject late avatar reapplication, and restore the chosen look in the next match.
+Use the isolated runner with success marker `MULTIPLAYER_CHARACTER_EXIT_TESTS: PASS`.
+
+`crucifix_return_test.tscn` checks the one-time Satan sequence on returning
+from the graveyard after the Jester trade, the separate Holy Water flag,
+all five languages, camera/audio restoration and failed-save retry. The
+existing `holy_water_return_test.tscn` exercises the original return dialogue.
+`basement_item_return_test.tscn` reuses the Crucifix checks for a basement
+return ending at the pack shop. All three verify the inward-facing arrival,
+idle stability, subsequent A/D turns and a later return without a dialogue.
+
+`boiler_puzzle_test.tscn` checks the numbered 3.4 / 5.1 / 5.8 / 1.8 solution,
+first cocaine use, actual valve release and tray input, atomic failed-save
+recovery, the Jester Eye → Crucifix exchange, Story Cards grouping and reload.
+Marker: `BOILER_PUZZLE_TESTS: PASS`. See [boiler-puzzle.md](../docs/boiler-puzzle.md).
+
+`satan_playtime_test.tscn` covers the global 150-minute timer, persistence,
+slot independence, deferred hub encounter, Steam name, continuous laughter,
+input locks and camera/pause restoration. Use isolated saves; marker:
+`SATAN_PLAYTIME_TESTS: PASS`. See [satan-playtime.md](../docs/satan-playtime.md).
+
+`npc_prisoner_animation_test.tscn` checks delayed table appearances after real
+key use and turning toward Satan, rising/fading, departures on the actual
+victory shot, left/right movement, the Jester/Prisoner handoff and skip cleanup.
+Marker: `NPC_PRISONER_ANIMATION_TESTS: PASS`. See
+[npc-rescue.md](../docs/npc-rescue.md).
+
+`npc_rescue_test.tscn` checks hidden/free NPCs, key activation, the Jester →
+Prisoner sequence, blocked services, persistence and the Angel's first-station
+camera/dialog. See [npc-rescue.md](../docs/npc-rescue.md).
+
+`npc_rescue_intro_test.tscn` covers each rescued NPC's one-time first-station
+greeting, face approach, exact camera return, input locks, persistence,
+translations and interrupted visits. Marker: `NPC_RESCUE_INTRO_TESTS: PASS`.
+
+`prisoner_trade_test.tscn` checks the near-prisoner Klopapier exchange, real tray
+input, atomic consumption/reward, context gates and Holy Water's Story Cards
+group. See [prisoner-dialogue.md](../docs/prisoner-dialogue.md).
+
+`weed_reward_test.tscn` checks the story-level-seven weed drop, the admin drop
+button, real hover/pickup, 60-second camera/audio effect with five-second fades,
+emissive Hint1, persistence and cleanup. `pump_puzzle_backend_test.tscn` checks
+all switch combinations, the first-trip gate and atomic Klopapier acquisition;
+the pump and key-tray suites also cover the real reward reveal and collection.
+Prepare isolated
+saves with `tools/weed/prepare_validation.ps1` and run through Godot MCP. See
+[weed-reward.md](../docs/weed-reward.md).
+
+`achievement_manager_test.tscn` checks the ten Steam achievements, all eight
+rarity acquisition triggers, persistence and failed Steam store retries with a
+fake backend. The Satan stream/jumpscare suites also exercise their actual
+achievement hooks. See [steam-achievements.md](../docs/steam-achievements.md).
+
+`bed_seating_test.tscn` checks both authored jackpot-room beds: yellow hover,
+walk/turn/sit, facing the opposite bed, Escape return, exact camera restoration,
+approach clearance, repeat input and Pause. Use an isolated project; marker:
+`BED_SEATING_TESTS: PASS`. See [bed-seating.md](../docs/bed-seating.md).
+
+The Jester station/focus suites exercise explicit Sacrifice / Do not sacrifice
+buttons and the card's synchronized slide-in. Text/outside clicks leave the
+choice open. See [jester-offering.md](../docs/jester-offering.md).
+
+`collection_escape_test.tscn` checks Escape and outside-click closing for card
+details and empty/populated deck views, including entry/return animations,
+held gestures, repeated Escape and precedence over Pause and MenuNavigation.
+Use an isolated project with redirected saves. Marker: `COLLECTION_ESCAPE_TESTS: PASS`.
+
+`card_detail_rotation_test.tscn` checks left-button drag rotation in both card
+detail views, back-face regrabbing, full turns, release outside, pause/focus
+cancellation, card switching and an overlapping real Add to Deck button.
+Run with isolated saves; see [card-detail-rotation.md](../docs/card-detail-rotation.md).
+
+Pack finish checks and render fixtures are documented in
+[pack-surfaces.md](../docs/pack-surfaces.md). `pack_surface_test.tscn` checks all
+three heightmaps, laminate profiles and shop previews; `pack_surface_context.tscn`
+captures a purchase in the actual hub. Run with isolated saves. The existing
+`pack_foil_test.tscn` covers the full purchase/peel/reward/reset regression.
+
+`basement_pump_control_test.tscn` checks real basement door travel, cabinet
+hover/camera focus, all five independent switches and their yellow/up and
+green/down lamps, rapid clicks, journal/pause/turn locks, session state and
+unchanged save files. Run with `run_match_feature_tests.ps1`,
+`-TestScene 'res://tests/basement_pump_control_test.tscn'`,
+`-SuccessMarker 'BASEMENT_PUMP_CONTROL_TESTS: PASS'` and `-ImportAssets`.
+The visual run also captures the initial mixed, all-up and all-down positions.
+
 The [basement cat encounter](../docs/basement-cat.md) has a dedicated atomic
 save/reward backend runner and `basement_cat_test.tscn` for actual door, D-key,
 hover and click input. The integration suite verifies both choices, pauses,
@@ -118,6 +273,12 @@ thorns survival effects, poison, and duplicate remote effects. The visual run
 saves `blood-clean.png`, `blood-hit.png`, `blood-fading.png`, and `blood-faded.png`.
 Card3D's `Treffer-Blut` inspector group controls fade duration (5 seconds by
 default), maximum coverage, and color.
+
+`blood_decal_test.tscn` checks hit and kill stain placement against the imported
+tabletop in both GameTable and Main, including animated card heights, all four
+mesh corners, inherited table scaling, random rotation, and fade cleanup.
+Run with the isolated match test runner and marker `BLOOD_DECAL_TESTS: PASS`.
+Rendered runs also save `blood-decal-GameTable.png` and `blood-decal-Main.png`.
 
 Spectators join before the host starts the match. Completed matches award
 100/50/25 XP plus 10/5/2 Soul Coins for win/draw/loss. Level-up bonuses are added

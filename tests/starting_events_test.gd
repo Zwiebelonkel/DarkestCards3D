@@ -57,7 +57,7 @@ func _run() -> void:
 	table._deal_starting_event_hands()
 	check(_event_state() == dealt_state and table._rng.state == rng_state, "duplicate initial-deal call cannot refill a partially played hand or consume RNG")
 	table._start_match()
-	check(_is_three_each() and table._event_deck.size() == 18 and table._event_discard.is_empty() and not table._event_played_this_turn, "a second real match resets used events and deals exactly three new cards to each hand")
+	check(_is_three_each() and table._event_deck.size() == EventDeck.DECK_SIZE - 6 and table._event_discard.is_empty() and not table._event_played_this_turn, "a second real match resets used events and deals exactly three new cards to each hand")
 	_check_helper_authority()
 	await _check_online_start()
 	_check_snapshot_privacy()
@@ -140,7 +140,7 @@ func _event_state() -> Dictionary:
 
 func _check_deal(label: String) -> void:
 	check(_is_three_each() and table._starting_events_dealt, label + " receives exactly three events per player")
-	check(table._event_deck.size() == 18 and table._event_discard.is_empty(), label + " deals six from the shared 24-card pile, leaving eighteen")
+	check(table._event_deck.size() == EventDeck.DECK_SIZE - 6 and table._event_discard.is_empty(), label + " deals six from the shared 31-card pile, leaving twenty-five")
 	var dealt := table._player_event_hand + table._enemy_event_hand
 	var uids := {}
 	var valid := true
@@ -208,7 +208,7 @@ func _check_helper_authority() -> void:
 	table._online_mode = false
 	table._clear_event_match()
 	table._initialize_event_deck()
-	check(table._event_deck.size() == 24 and table._player_event_hand.is_empty() and table._enemy_event_hand.is_empty() and not table._starting_events_dealt, "plain event-pile initialization remains separate from starting-hand dealing")
+	check(table._event_deck.size() == EventDeck.DECK_SIZE and table._player_event_hand.is_empty() and table._enemy_event_hand.is_empty() and not table._starting_events_dealt, "plain event-pile initialization remains separate from starting-hand dealing")
 	for spectator: bool in [false, true]:
 		table._online_mode = true
 		table._online_is_host = false
@@ -220,7 +220,7 @@ func _check_helper_authority() -> void:
 	table._online_mode = false
 	table._online_is_spectator = false
 	table._deal_starting_event_hands()
-	check(_is_three_each() and table._event_deck.size() == 18 and table._starting_events_dealt, "authorized offline helper deals normally after rejected remote-role calls")
+	check(_is_three_each() and table._event_deck.size() == EventDeck.DECK_SIZE - 6 and table._starting_events_dealt, "authorized offline helper deals normally after rejected remote-role calls")
 
 
 func _check_online_start() -> void:
@@ -252,7 +252,7 @@ func _check_snapshot_privacy() -> void:
 	NetworkManager._connected_peer_ids.assign([2, 3])
 	NetworkManager._participants = {1:{"role":"player"}, 2:{"role":"player"}, 3:{"role":"spectator"}}
 	var public_state := table._build_online_snapshot()
-	check(int(public_state.get("player_event_hand_count", -1)) == 3 and int(public_state.get("enemy_event_hand_count", -1)) == 3 and int(public_state.get("event_deck_count", -1)) == 18 and not public_state.has("own_event_hand"), "public snapshot advertises three cards per hand and eighteen in the pile without private identities")
+	check(int(public_state.get("player_event_hand_count", -1)) == 3 and int(public_state.get("enemy_event_hand_count", -1)) == 3 and int(public_state.get("event_deck_count", -1)) == EventDeck.DECK_SIZE - 6 and not public_state.has("own_event_hand"), "public snapshot advertises three cards per hand and twenty-five in the pile without private identities")
 	var guest_state := table._build_online_snapshot(0, 2)
 	check(guest_state.get("own_event_hand", []) == table._enemy_event_hand and guest_state.get("own_event_hand", []).size() == 3, "guest snapshot contains exactly its own three starting event identities")
 	var no_host_leak := true

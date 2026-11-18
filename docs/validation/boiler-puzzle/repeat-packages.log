@@ -1,0 +1,20 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 122 Karten
+PASS story seven drops the initial package
+PASS use history survives while the pending package is consumed
+PASS losses and draws cannot respawn the package
+PASS a normal victory respawns weed after consumption
+PASS pending repeat and prior trip are saved independently
+PASS another story victory drops an already staged package anew
+PASS the repeated drop settles
+PASS the pump puzzle can still be solved after repeated victories
+PASS solving the pump puzzle removes a staged weed package
+PASS normal and story victories cannot drop weed after puzzle completion
+PASS the solved gate survives currency reload
+PASS failed victory persistence cannot queue a repeat
+STORY_PACKAGE_REPEAT: PASS (12 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

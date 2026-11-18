@@ -30,6 +30,27 @@ Sie bleiben mit einer Kennzeichnung sichtbar und können nicht ausgewählt werde
 Exotische Karten haben keine weitere Fusionsstufe. Nicht zufällig erhältliche
 Geheimniskarten sind auch als Ergebnis ausgeschlossen.
 
+## Auto Fuse
+
+**Auto Fuse** verarbeitet mit einem Klick alle zulässigen Exemplare aus der
+Sammlung, unabhängig von der angezeigten Seite, dem Seltenheitsfilter und einer
+manuellen Auswahl. Deck-Exemplare und geschützte Karten bleiben erhalten.
+Freie Holo-Exemplare können wie bei der manuellen Fusion verwendet werden.
+
+Der Durchlauf beginnt bei gewöhnlichen Karten und verwendet neue Ergebnisse
+bei der nächsten Seltenheitsstufe weiter. Er endet, sobald keine vollständige
+Gruppe mehr möglich ist; exotisch ist die Obergrenze. Die vorhandenen
+Fusions-Upgrades gelten für jeden Schritt (fünf, vier oder drei Eingabekarten).
+Unvollständige Gruppen bleiben in der Sammlung.
+
+Der gesamte Durchlauf wird gemeinsam gespeichert und aktualisiert die Sammlung
+sofort. Bei einem Speicherfehler bleiben alle ursprünglichen Karten erhalten.
+Eine kurze Schmiedeanimation endet automatisch; danach zeigt die Werkbank die
+aktuelle Sammlung und die Anzahl abgeschlossener Fusionen. Ohne mögliche Gruppe
+ist der Button deaktiviert.
+
+## Speicherung und Darstellung
+
 Kartenverbrauch und Belohnung werden gemeinsam gespeichert, bevor die
 Schmiedeanimation startet. Bei einem Speicherfehler bleiben die Eingaben erhalten;
 beim Verlassen der Szene nach dem Speichern bleibt die Belohnung in der Sammlung.

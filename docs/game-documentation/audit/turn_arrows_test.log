@@ -1,0 +1,116 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS hub starts turnable with no arrow away from edges
+PASS arrows draw below both original camera filters
+PASS only the nearby left edge arrow appears
+PASS hover alone never rotates
+PASS mouse down alone does not turn
+PASS held arrow does not chase a dragged pointer
+PASS releasing outside the original button cancels rotation
+PASS arrow mouse press cannot reach underlying world input
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS left arrow uses the A direction
+PASS rotation hides both arrows until the camera settles
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS right arrow uses the D direction
+PASS camera settles on its cardinal target
+PASS only the nearby right edge arrow appears
+PASS navigation preserves filter material identities
+PASS live setting hides arrows without disabling keyboard turning
+PASS live setting restores arrow without reopening Main
+PASS A/D preserves mid-animation turn interruption
+PASS camera settles on its cardinal target
+PASS shared mouse/keyboard guard blocks _room_transition_active
+PASS shared mouse/keyboard guard blocks _loss_cinematic_active
+PASS shared mouse/keyboard guard blocks _pack_opening_blocks_screen_focus
+PASS shared mouse/keyboard guard blocks _detail_tween_running
+PASS shared mouse/keyboard guard blocks _deck_fan_open
+PASS shared mouse/keyboard guard blocks _deck_fan_tween_running
+PASS shared mouse/keyboard guard blocks _slot_room_key_request_pending
+PASS shared mouse/keyboard guard blocks _busy
+PASS visible lobby blocks both turn inputs
+PASS battle/result blocks rotation even away from table side
+PASS battle/result blocks rotation even away from table side
+PASS offline pause hides arrows while their presentation still processes
+PASS setting changes cannot reveal arrows over paused settings
+PASS actual settings screen blocks rotation
+PASS journal opening immediately blocks arrows and keyboard
+PASS upgrade detail transition blocks arrows
+PASS all temporary locks release without rebuilding arrows
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 0, direction -1, step 0
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 0, direction -1, step 1
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 0, direction -1, step 2
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 0, direction -1, step 3
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 0, direction 1, step 0
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 0, direction 1, step 1
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 0, direction 1, step 2
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 0, direction 1, step 3
+PASS camera settles on its cardinal target
+PASS real room flight blocks turning
+PASS room flight finishes
+PASS arrow fixture reaches the actual slot room
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 1, direction -1, step 0
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 1, direction -1, step 1
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 1, direction -1, step 2
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 1, direction -1, step 3
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 1, direction 1, step 0
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 1, direction 1, step 1
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 1, direction 1, step 2
+PASS camera settles on its cardinal target
+PASS requested edge arrow is visible before click
+PASS complete arrow click is consumed before world interaction
+PASS arrow reaches next cardinal side in room 1, direction 1, step 3
+PASS camera settles on its cardinal target
+PASS arrow remains inside top edge
+PASS arrow adapts to narrow viewport and stays inside bottom/right edges
+PASS leaving the viewport hides both arrows
+TURN_ARROWS_TESTS: PASS (110 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

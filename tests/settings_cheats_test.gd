@@ -31,6 +31,7 @@ func _run() -> void:
 		get_tree().quit(1)
 		return
 	SettingsManager.set_fullscreen(false)
+	PlaytimeManager.encounter_completed = true
 	GameCurrency.reset_progression(false)
 	GameCurrency.coins = 20.37
 	GameCurrency.xp = 40
@@ -54,6 +55,7 @@ func _run() -> void:
 		preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		add_child(preview)
 	main = (load("res://scenes/main/Main.tscn") as PackedScene).instantiate() as MainScene
+	main.greeting_enabled = false
 	main.process_mode = Node.PROCESS_MODE_PAUSABLE
 	main.mouse_tilt_strength = 0
 	main.rotation_duration = 0.02
@@ -75,6 +77,16 @@ func _run() -> void:
 	check(get_tree().paused and settings.visible and not settings.cheats_actions.visible, "Paused settings contain a collapsed Cheats section")
 	await click(settings.cheats_toggle)
 	check(settings.cheats_actions.visible, "Real mouse click opens the cheat actions")
+	PlaytimeManager.elapsed_seconds = PlaytimeManager.LIMIT_SECONDS + 20.0
+	PlaytimeManager.complete_encounter()
+	await click(settings.cheat_brain_timer_button)
+	check(PlaytimeManager.elapsed_seconds < 2.0 and not PlaytimeManager.encounter_completed and not PlaytimeManager.is_encounter_pending(), "Brain Timer button resets the timer and Satan encounter while paused")
+	check(get_tree().paused and settings.visible and settings.cheat_status.text == Localization.text("Brain Timer und Satan-Szene zurückgesetzt."), "reset reports success without leaving the paused settings")
+	var restored_timer = load("res://scripts/autoload/PlaytimeManager.gd").new()
+	add_child(restored_timer)
+	check(restored_timer.elapsed_seconds < 2.0 and not restored_timer.encounter_completed, "the cheat reset persists across reload despite a completed backup")
+	restored_timer.queue_free()
+	PlaytimeManager.set_process(false)
 	check(settings.cheat_rarity_check_boxes.size() == 8, "Cheats expose all eight drop rarities including Secret")
 	var common_toggle := settings.cheat_rarity_check_boxes["common"] as CheckBox
 	check(common_toggle.button_pressed, "Drop rarities start enabled")
@@ -146,6 +158,30 @@ func _run() -> void:
 	check(GameCurrency.has_pending_slot_spin(), "Coin cheat keeps an ongoing slot payout reserved")
 	GameCurrency.complete_slot_spin()
 	check(GameCurrency.get_coin_cents() == before_pending - 100 + 5000 + 1000, "Slot payout and cheated coins are both credited exactly once")
+	GameCurrency.reset_progression()
+	for story_step in range(1, 21):
+		settings.cheat_story_level_button.pressed.emit()
+		check(GameCurrency.story_completed_level == story_step, "Story cheat completes exactly one level: %d" % story_step)
+		if story_step == 7:
+			check(GameCurrency.weed_reward_unlocked, "Story cheat unlocks weed at story seven")
+	check(GameCurrency.cocaine_reward_unlocked and settings.cheat_weed_button.text == Localization.text("Kokain-Paket fallen lassen"), "Story twenty unlocks cocaine and updates the package cheat")
+	GameCurrency.load_currency()
+	check(GameCurrency.story_completed_level == 20, "Cheated story progress survives reload")
+	GameCurrency.reset_progression(false)
+	main.pause_menu.open()
+	main.pause_menu._open_settings()
+	await settle()
+	await click(settings.cheat_characters_button)
+	for npc_id in GameCurrency.RESCUE_NPC_IDS:
+		check(GameCurrency.is_npc_rescued(npc_id), "Character cheat frees " + npc_id)
+		check(GameCurrency.is_npc_rescue_intro_pending(npc_id), "Character cheat retains introduction for " + npc_id)
+	check(CollectionManager.has_area_access("black_market") and CollectionManager.has_area_access("graveyard"), "Character cheat opens character areas")
+	check(GameCurrency.story_completed_level == 0, "Character cheat preserves story level")
+	GameCurrency.complete_npc_rescue_intro("angel")
+	check(GameCurrency.cheat_unlock_all_characters(), "Character cheat can be repeated")
+	GameCurrency.load_currency()
+	check(not GameCurrency.is_npc_rescue_intro_pending("angel"), "Repeated cheat preserves completed dialogue after reload")
+	check(GameCurrency.is_npc_rescue_intro_pending("prisoner"), "Unseen dialogue survives reload")
 	main.queue_free()
 	await settle()
 	print("SETTINGS_CHEATS_TESTS: %s (%d checks)" % ["PASS" if failures == 0 else "FAIL", checks])

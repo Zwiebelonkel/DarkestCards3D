@@ -1,0 +1,82 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 122 Karten
+PASS no Crucifix discovery means no return sequence
+PASS the eye alone cannot start the cross conversation
+PASS trading the eye acquires the Crucifix
+PASS training cannot consume the return sequence
+PASS a failed save preserves the pending sequence
+PASS retry durably claims the Crucifix return sequence
+PASS the Crucifix return is one-time
+PASS the Crucifix return does not consume the separate Holy Water sequence
+PASS the Holy Water sequence can happen first
+PASS fixture trades the eye before returning home
+PASS the cross conversation triggers after the eye was consumed, independently of Holy Water
+PASS a fresh profile has independent sequence state
+PASS no scene without the story item
+PASS acquisition outside does not start the scene
+PASS real return opens Satan dialogue after the swing
+PASS movement stays locked throughout the conversation
+PASS camera zooms in slightly
+PASS music is paused during the sequence
+PASS camera points at Satan
+PASS camera approaches Satan's face only a small distance
+PASS the return conversation has four sentences
+PASS the Crucifix uses its own dialogue instead of the Holy Water lines
+PASS the dialogue talks about the cross without mentioning the eye
+PASS Satan laughs only in the fourth dialogue part
+PASS ordered sentence 1
+PASS live language refresh de part 1
+PASS live language refresh en part 1
+PASS translated en part 1
+PASS live language refresh es part 1
+PASS translated es part 1
+PASS live language refresh fr part 1
+PASS translated fr part 1
+PASS live language refresh pl part 1
+PASS translated pl part 1
+PASS Satan laughs only in the fourth dialogue part
+PASS ordered sentence 2
+PASS live language refresh de part 2
+PASS live language refresh en part 2
+PASS translated en part 2
+PASS live language refresh es part 2
+PASS translated es part 2
+PASS live language refresh fr part 2
+PASS translated fr part 2
+PASS live language refresh pl part 2
+PASS translated pl part 2
+PASS Satan laughs only in the fourth dialogue part
+PASS ordered sentence 3
+PASS live language refresh de part 3
+PASS live language refresh en part 3
+PASS translated en part 3
+PASS live language refresh es part 3
+PASS translated es part 3
+PASS live language refresh fr part 3
+PASS translated fr part 3
+PASS live language refresh pl part 3
+PASS translated pl part 3
+PASS Satan laughs only in the fourth dialogue part
+PASS ordered sentence 4
+PASS live language refresh de part 4
+PASS live language refresh en part 4
+PASS translated en part 4
+PASS live language refresh es part 4
+PASS translated es part 4
+PASS live language refresh fr part 4
+PASS translated fr part 4
+PASS live language refresh pl part 4
+PASS translated pl part 4
+PASS slow return completes and releases movement
+PASS original player pose and lens restored
+PASS music resumes after the return swing
+PASS Satan stops laughing after the dialogue
+PASS the return sequence preserves the item, other cards and money
+PASS saved one-time flag survives reload
+PASS second return does not replay
+CRUCIFIX_RETURN_TESTS: 74 checks, 0 failures
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

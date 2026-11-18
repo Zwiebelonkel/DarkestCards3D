@@ -3,7 +3,7 @@ class_name EventDeck
 
 ## Events belong to a match, never to the collectible combat-card database.
 ## The host deals the opening hands and owns subsequent effect-driven draws.
-const DECK_SIZE := 24
+const DECK_SIZE := 31
 const STARTING_HAND_SIZE := 3
 
 const CARD_DEFINITIONS: Array[Dictionary] = [
@@ -36,6 +36,22 @@ const CARD_DEFINITIONS: Array[Dictionary] = [
 		"id": "strength_200", "name": "Stärke ×2", "category": "event", "rarity": "epic", "target": "ally",
 		"description": "Wähle eine eigene Karte auf dem Tisch. Verdopple ihren Angriff und ihre Lebenspunkte.",
 		"multiplier": 2.0, "copies": 2,
+	},
+	{
+		# Keep the collectible Piss Bucket's existing "piss" ID separate.
+		"id": "piss_event", "name": "Piss", "category": "event", "rarity": "legendary", "target": "none",
+		"description": "Ein Piss-Strahl trifft den Tisch. Der Gegner sieht für seine nächsten 2 Züge keine Werte oder Effekte aller Tischkarten, auch nachgezogener Karten.",
+		"hidden_turns": 2, "copies": 1,
+	},
+	{
+		"id": "heal_event", "name": "Heal", "category": "event", "rarity": "rare", "target": "ally",
+		"description": "Wähle eine verletzte eigene Karte auf dem Tisch. Stelle ihre Lebenspunkte vollständig wieder her.",
+		"copies": 3,
+	},
+	{
+		"id": "rearrange_event", "name": "Rearrange", "category": "event", "rarity": "uncommon", "target": "ally",
+		"description": "Wähle nacheinander zwei eigene Karten auf dem Tisch. Tausche ihre Plätze. Alle Werte und Zustände bleiben erhalten.",
+		"copies": 3,
 	},
 ]
 

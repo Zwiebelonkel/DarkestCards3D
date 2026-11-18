@@ -1,0 +1,54 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS NEW animation uses every 64 x 64 frame of the supplied sprite sheet
+PASS NEW sprite faces the camera on both axes and keeps its pixel artwork readable
+PASS animation starts on its first frame
+PASS half a 12 FPS frame does not advance the animation
+PASS one twelfth of a second advances one sprite frame
+PASS a delayed render advances all elapsed animation frames
+PASS animation wraps and continues after a complete sprite-sheet loop
+PASS 2-card fixture pack can be purchased
+PASS purchased pack entrance completes
+PASS pack produces the expected card stack
+PASS unrevealed cards do not expose a NEW badge
+PASS rolling an unseen type does not record acquisition
+PASS first discovery is marked at reveal without a badge on the face-down card
+PASS the badge stays hidden during the initial face-down lift
+PASS first discovery receives its NEW badge after the reveal animation
+PASS badge appears only once the card is face up
+PASS badge is attached to the upper-left card corner at its intended size
+PASS a revealed card badge animates during ordinary scene processing
+PASS repeated reveal callbacks cannot duplicate the badge or pending reward
+PASS the second copy in the same uncollected pack is already known for NEW detection
+PASS only the first copy of a newly drawn type receives a badge
+PASS reveal labels do not award cards or persist discovery before collection
+PASS the badge disappears immediately when collection starts
+PASS first pack collection finishes
+PASS collection frees its badge and records both rewards plus permanent discovery
+PASS 1-card fixture pack can be purchased
+PASS purchased pack entrance completes
+PASS pack produces the expected card stack
+PASS unrevealed cards do not expose a NEW badge
+PASS a type owned before this pack never receives a NEW badge
+PASS collection animation returns the screen to its purchase state
+PASS pack reset clears the pending discoveries and all label nodes
+PASS fixture retains discovery after the last copy is gone and the save reloads
+PASS 1-card fixture pack can be purchased
+PASS purchased pack entrance completes
+PASS pack produces the expected card stack
+PASS unrevealed cards do not expose a NEW badge
+PASS redrawing a previously consumed type does not claim a new discovery
+PASS collection animation returns the screen to its purchase state
+PASS pack reset clears the pending discoveries and all label nodes
+PASS 1-card fixture pack can be purchased
+PASS purchased pack entrance completes
+PASS pack produces the expected card stack
+PASS unrevealed cards do not expose a NEW badge
+PASS fresh profile independently recognizes its first discovery
+PASS collection animation returns the screen to its purchase state
+PASS pack reset clears the pending discoveries and all label nodes
+PASS collecting during the flip cannot create a late or orphaned NEW badge
+PACK_NEW_LABEL_TESTS: PASS (48 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

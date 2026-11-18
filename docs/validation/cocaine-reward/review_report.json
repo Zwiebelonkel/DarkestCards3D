@@ -1,0 +1,107 @@
+{
+	"active": {
+		"draw_calls": 44,
+		"mean_frame_ms": 15.5673,
+		"objects": 61,
+		"p95_frame_ms": 16.99
+	},
+	"audio_driver": "Dummy",
+	"baseline": {
+		"draw_calls": 44,
+		"mean_frame_ms": 15.5658,
+		"objects": 61,
+		"p95_frame_ms": 16.798
+	},
+	"capture_diagnostics": {
+		"active": {
+			"camera_pose": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.978148, -0.207912), Z: (0.0, 0.207912, 0.978148), O: (0.0, 2.05, -0.059582)]",
+			"mean_luminance": 0.134641087916845,
+			"nonblack_ratio": 0.794166666666667,
+			"utc": "2026-11-16T19:25:10"
+		},
+		"admin-menu": {
+			"camera_pose": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.978148, -0.207912), Z: (0.0, 0.207912, 0.978148), O: (0.0, 2.05, -0.059582)]",
+			"mean_luminance": 0.0154261344225406,
+			"nonblack_ratio": 0.169444444444444,
+			"utc": "2026-11-16T19:25:13"
+		},
+		"back": {
+			"camera_pose": "[X: (-1.0, 0.0, 0.0), Y: (0.0, 0.878063, 0.478545), Z: (-0.0, 0.478545, -0.878063), O: (0.0, 0.6, -1.0)]",
+			"mean_luminance": 0.238184687214821,
+			"nonblack_ratio": 1.0,
+			"utc": "2026-11-16T19:25:18"
+		},
+		"drop": {
+			"camera_pose": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.978148, -0.207912), Z: (0.0, 0.207912, 0.978148), O: (0.0, 2.05, -0.059582)]",
+			"mean_luminance": 0.167235328098917,
+			"nonblack_ratio": 0.963333333333333,
+			"utc": "2026-11-16T19:25:09"
+		},
+		"fade-in": {
+			"camera_pose": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.978148, -0.207912), Z: (0.0, 0.207912, 0.978148), O: (0.0, 2.05, -0.059582)]",
+			"mean_luminance": 0.168851053104775,
+			"nonblack_ratio": 0.959444444444444,
+			"utc": "2026-11-16T19:25:10"
+		},
+		"fade-out": {
+			"camera_pose": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.978148, -0.207912), Z: (0.0, 0.207912, 0.978148), O: (0.0, 2.05, -0.059582)]",
+			"mean_luminance": 0.152315852813928,
+			"nonblack_ratio": 0.892222222222222,
+			"utc": "2026-11-16T19:25:11"
+		},
+		"front": {
+			"camera_pose": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.878063, -0.478545), Z: (0.0, 0.478545, 0.878063), O: (0.0, 0.6, 1.0)]",
+			"mean_luminance": 0.244560441423071,
+			"nonblack_ratio": 1.0,
+			"utc": "2026-11-16T19:25:18"
+		},
+		"hint2-hospital": {
+			"camera_pose": "[X: (-0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, 0.0), Z: (0.978148, 0.207912, -0.0), O: (19.05682, 2.05, 8.56162)]",
+			"mean_luminance": 0.0359900382720074,
+			"nonblack_ratio": 0.781666666666667,
+			"utc": "2026-11-16T19:25:11"
+		},
+		"hover": {
+			"camera_pose": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.978148, -0.207912), Z: (0.0, 0.207912, 0.978148), O: (0.0, 2.05, -0.059582)]",
+			"mean_luminance": 0.175450456542906,
+			"nonblack_ratio": 0.960833333333333,
+			"utc": "2026-11-16T19:25:09"
+		},
+		"landed": {
+			"camera_pose": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.978148, -0.207912), Z: (0.0, 0.207912, 0.978148), O: (0.0, 2.05, -0.059582)]",
+			"mean_luminance": 0.168907699351181,
+			"nonblack_ratio": 0.963611111111111,
+			"utc": "2026-11-16T19:25:09"
+		},
+		"left": {
+			"camera_pose": "[X: (-0.0, 0.0, 1.0), Y: (0.478545, 0.878063, 0.0), Z: (-0.878063, 0.478545, -0.0), O: (-1.0, 0.6, 0.0)]",
+			"mean_luminance": 0.243688680974894,
+			"nonblack_ratio": 1.0,
+			"utc": "2026-11-16T19:25:18"
+		},
+		"right": {
+			"camera_pose": "[X: (-0.0, 0.0, -1.0), Y: (-0.478545, 0.878063, 0.0), Z: (0.878063, 0.478545, -0.0), O: (1.0, 0.6, 0.0)]",
+			"mean_luminance": 0.238612335600572,
+			"nonblack_ratio": 1.0,
+			"utc": "2026-11-16T19:25:18"
+		}
+	},
+	"captures": [
+		"res://test-user/cocaine/drop.png",
+		"res://test-user/cocaine/landed.png",
+		"res://test-user/cocaine/hover.png",
+		"res://test-user/cocaine/fade-in.png",
+		"res://test-user/cocaine/active.png",
+		"res://test-user/cocaine/hint2-hospital.png",
+		"res://test-user/cocaine/fade-out.png",
+		"res://test-user/cocaine/admin-menu.png",
+		"res://test-user/cocaine/front.png",
+		"res://test-user/cocaine/back.png",
+		"res://test-user/cocaine/left.png",
+		"res://test-user/cocaine/right.png"
+	],
+	"checks": 52,
+	"failures": 0,
+	"hospital_scene_modified_unix": 1794856928,
+	"main_scene_modified_unix": 1794856928
+}

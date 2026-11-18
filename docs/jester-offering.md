@@ -8,21 +8,35 @@ room so another room's surface cannot steal the hover.
 The Jester gently bobs 0.06 units above and below his placed height over a
 2.8-second cycle, while the station's camera focus and click areas stay fixed.
 
-Clicking the Jester opens the authored four-line dialog. While its text appears,
-the Jester uses Satan's loss-laugh audio on the SFX bus with its pitch variation
-shifted six semitones higher. The voice stops when the text finishes, is skipped,
-or the dialog closes.
+Clicking the Jester swipes the dialog panel up from the bottom of the screen and
+opens the authored dialog as four individual, localized sentences. Only the
+first sentence is placed in the text field and typewrites initially. A click
+while a sentence is still typing reveals only that current sentence. Once it is
+complete, the next click clears the field and starts the next sentence; this
+repeats through sentence four. Only a further click after the fourth completed
+sentence swipes the panel back down and closes the conversation. The Jester uses
+Satan's loss-laugh audio on the SFX bus with its pitch variation shifted six
+semitones higher while text appears. The voice stops when the current sentence
+finishes, is skipped, or the dialog closes.
 Each completed sentence plays `sentenceEnd.mp3` once. Text reveal and the laugh
 pause until that cue finishes. Skipping unfinished text plays one ending cue;
 closing the conversation stops both sounds.
 A left click anywhere, inside or outside the panel, reveals unfinished dialog
-text; once it is fully visible, a left click closes the conversation. The NPC
-dialogs have no buttons.
+text or advances exactly one completed Jester sentence; it cannot reveal later
+sentences or close before the fourth sentence has been read. The NPC dialogs
+have no buttons.
 Clicking either named grave previews one owned copy of its requested card.
-For an eligible offering, clicking inside the text panel confirms consumption of
-that exact instance; clicking outside cancels. A localized line in the preview
-explains both actions. When no eligible copy is available, any left click closes
-the explanation without offering a card.
+The card flies up from below the viewport alongside the dialog panel, using the
+same 0.24-second cubic easing. It arrives at the existing review position and
+keeps its size, orientation and exact instance identity. Confirmation remains
+disabled until the entry finishes, so its flight cannot conflict with sacrifice.
+The offering dialog contains two localized buttons: **Opfern** (Sacrifice) and
+**Nicht opfern** (Do not sacrifice). Only Sacrifice commits the reviewed exact
+copy; Do not sacrifice closes without changing collection or save data.
+Clicking text or outside the panel does neither and cannot reach the world
+behind the modal. When no eligible copy is available, Sacrifice is disabled;
+Do not sacrifice and Escape can still close the explanation. The buttons are
+hidden during ordinary conversation, sacrifice animation and reward receipts.
 An available normal copy is preferred over Holo; deck and starting-hand instances are protected, with
 an explanation when the card first needs to be removed from the deck.
 
@@ -47,7 +61,7 @@ room changes, scene reloads and interrupted cosmetic reveal animations.
 
 Dialog and card preview hold the camera and block turning, travel and the
 journal. Escape closes the interaction; pausing also closes the presentation
-and restores the camera. Names, dialog, offering states and the click hint use the
+and restores the camera. Names, dialog, offering states and both buttons use the
 five existing localization languages. This adds no room-discovery hints to the
 journal or global HUD.
 
@@ -56,11 +70,18 @@ production save paths redirected to `res://test-user/`:
 
 - `jester_offering_test.tscn`: ownership, exact copies, protected decks, Holo,
   saved progress, one-time reward, reentrancy, rollback and slot isolation.
-- `jester_station_test.tscn`: NPC dialog, inside/outside click controls and local
-  station presentation.
+- `jester_station_test.tscn`: NPC dialog, explicit buttons, ignored text/outside
+  clicks, disabled choices, exact-copy guards and synchronized card entry.
 - `jester_focus_test.tscn`: real Main door travel, camera hover, named-grave
-  clicks, offering confirmation through the text panel, localized screenshots,
+  clicks, real button input, five-language screenshots, card/dialog entry,
   pause and return.
 
 Run the focus scene with Forward+ to capture the actual NPC, dialogue,
 offering preview and Secret reward.
+
+Validated 2026-11-15: 86 station checks, 76 rendered Main/focus checks and
+49 offering/backend checks passed. No script or shader errors. Station/focus
+jobs emitted ObjectDB cleanup warnings at shutdown. Captures of entry and all
+five localized button layouts are in `docs/validation/jester-sacrifice-buttons/`.
+The fixture now waits for the existing panel swipe to finish before asserting
+closed state or reopening, instead of assuming an instantaneous close.

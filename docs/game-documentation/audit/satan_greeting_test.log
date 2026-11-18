@@ -1,0 +1,44 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: fresh slot starts its greeting before the first frame
+PASS: every scene light and the music stay off during the greeting
+PASS: only Satan's eyes render against true darkness
+PASS: camera starts right in front of Satan's eyes
+PASS: intro blocks navigation, travel and journal
+PASS: progress, keys and pause remain locked
+PASS: table and Satan hover are blocked
+PASS: gameplay keys cannot interrupt the intro
+PASS: offline greeting uses Abschaum with typewriter text
+PASS: voice uses exactly the dealer's deep pitch
+PASS: camera moves gradually toward the player's original pose
+PASS: line 0 ends silently while music stays stopped
+PASS: line 1 ends silently while music stays stopped
+PASS: line 2 ends silently while music stays stopped
+PASS: line 3 ends silently while music stays stopped
+PASS: line 4 ends silently while music stays stopped
+PASS: finishing text early waits for the camera and does not save prematurely
+PASS: both completed tracks release the greeting and persist completion
+PASS: camera pose, render mask and environment are restored exactly
+PASS: lights, music and scare.mp3 start together
+PASS: HUD layers restore their previous visibility
+PASS: the reveal sound survives disposal of the greeting node
+PASS: player input becomes available after the final reveal
+PASS: completion survives profile reload
+PASS: returning to the same slot starts normal music without replaying the greeting or scare
+PASS: a second save slot has its own unseen greeting
+PASS: switching back preserves the first slot's completion
+PASS: a reset or fresh profile starts its own greeting
+PASS: Steam name is inserted literally without markup or format interpretation
+PASS: destroying an unfinished greeting never marks it complete
+PASS: all sentences advance and finish automatically
+PASS: online entry bypasses the intro without consuming it
+PASS: offline entry still greets after bypassing for a lobby
+PASS: an incoming Steam lobby restores music without playing the scare or marking the intro seen
+PASS: pre-existing saves migrate as already greeted
+ERROR: Could not save currency and level progress: File not found
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: failed persistence rolls back the greeting flag
+SATAN_GREETING_TESTS: PASS (36 checks, 0 failures)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

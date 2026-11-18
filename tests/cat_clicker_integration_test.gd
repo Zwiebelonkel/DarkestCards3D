@@ -1,7 +1,7 @@
 extends "res://tests/basement_cat_test.gd"
 ## Actual doorway travel and shared LevelProgress views of one saved helper.
 
-const CLICK_TEXTURE := "res://assets/characters/catClick.png"
+const CLICK_TEXTURE := "res://assets/characters/cat/catClick.png"
 
 
 func _run() -> void:
@@ -14,6 +14,7 @@ func _run() -> void:
 	DeckManager.clear_profile_state()
 	CardUpgradeManager.clear_profile_state()
 	CollectionManager.add_card("basement_key")
+	check(CollectionManager.use_access_key("basement_key"), "helper fixture explicitly activates basement access")
 	CollectionManager.add_card("clicker")
 	SettingsManager.set_fullscreen(false)
 	Localization.set_locale("en")
@@ -74,12 +75,21 @@ func _check_shared_clicker() -> void:
 	await _settle(0.15)
 	check(GameCurrency.get_coin_cents() == before + 2, "rendering the same third frame does not pay repeatedly")
 	var duplicate := (load("res://scenes/ui/LevelProgress.tscn") as PackedScene).instantiate() as LevelProgress
+	check(not duplicate._can_display(), "a visor outside the scene tree safely rejects display checks before initialization")
 	main.main_camera.add_child(duplicate)
 	duplicate.set_enabled(false)
 	duplicate.hide()
 	check((duplicate.get_node("Hinge/CoinButton/CatClick") as Sprite3D).frame == sprite.frame, "a newly created visor immediately mirrors the shared cat frame")
 	GameCurrency.advance_cat_clicker(1.0)
 	check(GameCurrency.get_coin_cents() == before + 4 and (duplicate.get_node("Hinge/CoinButton/CatClick") as Sprite3D).frame == sprite.frame, "two visor instances share one animation clock and cannot double the automatic payout")
+	duplicate.set_enabled(true)
+	main.main_camera.remove_child(duplicate)
+	check(not duplicate._can_display(), "a detached visor safely rejects display checks during scene changes")
+	GameCurrency.advance_cat_clicker(1.0)
+	check(GameCurrency.get_coin_cents() == before + 6 and duplicate._coin_press_tween == null, "a cat click received after detaching cannot animate the removed visor or interrupt the shared payout")
+	main.main_camera.add_child(duplicate)
+	duplicate.show()
+	check(duplicate._can_display(), "reattaching the visor restores its display eligibility")
 	duplicate.queue_free()
 	await _settle()
 	progress.set_enabled(false)
@@ -137,6 +147,7 @@ func _check_return_and_reload() -> void:
 func _check_locked_then_unlocked() -> void:
 	CollectionManager.clear_profile_state()
 	CollectionManager.add_card("basement_key")
+	check(CollectionManager.use_access_key("basement_key"), "locked-Clicker fixture still explicitly activates basement access")
 	_reset_currency()
 	await _spawn_main()
 	await _enter_basement()

@@ -1,0 +1,42 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS dealer fixture explicitly activates Black Market access
+PASS dealer cannot be opened from the hub
+PASS real travel enables the dealer in the Black Market
+PASS dialog uses the authored dealer sprite
+PASS actual dealer hit box is visible and unobstructed
+PASS dealer hover preserves the current frame and its elapsed time
+PASS leaving the dealer restores idle without restarting the loop
+PASS dealer hover animation continues advancing
+PASS actual dealer pointer click opens a typewriter sentence
+PASS dealer dialog clears the hover hint
+PASS dealer speaks using the existing voice sound
+PASS every dealer voice pitch stays below the other characters
+PASS conversation locks turning, travel and journal
+PASS conversation disables shopping and progression clicks
+PASS direct shop callbacks cannot buy through the dialog
+PASS keyboard and arrow callbacks cannot escape the modal
+PASS first dialog click reveals the whole line and stops the voice
+FAIL second dialog click restores shopping and navigation
+PASS conversations preserve cards and coins
+FAIL private random dialog selection covers all lines without immediate repeats
+PASS dealer sentence is translated in de
+PASS natural sentence completion silences voice in de
+FAIL dealer sentence is translated in en
+PASS natural sentence completion silences voice in en
+FAIL dealer sentence is translated in es
+PASS natural sentence completion silences voice in es
+FAIL dealer sentence is translated in fr
+PASS natural sentence completion silences voice in fr
+FAIL dealer sentence is translated in pl
+PASS natural sentence completion silences voice in pl
+FAIL Escape closes only the dialog
+FAIL pause immediately closes dialog and stops voice
+FAIL other market facing cannot activate the dealer
+FAIL returning to the kiosk restores dealer and board
+FAIL offer-board hover still focuses the shared camera
+FAIL leaving the market disables remote dealer interaction
+DEALER_DIALOGUE_TESTS: FAIL (36 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

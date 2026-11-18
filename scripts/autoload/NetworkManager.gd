@@ -16,8 +16,8 @@ signal voice_packet_received(
 	payload: PackedByteArray
 )
 
-const APP_ID := 480
-const PROTOCOL_VERSION := 6
+const APP_ID := 5412220
+const PROTOCOL_VERSION := 13
 const MAX_PLAYERS := 2
 const MAX_SPECTATORS := 2
 const MAX_LOBBY_MEMBERS := MAX_PLAYERS + MAX_SPECTATORS
@@ -229,7 +229,7 @@ func request_lobbies() -> bool:
 		_report("Verlasse zuerst die aktuelle Lobby.")
 		return false
 
-	# App 480 is shared by many test projects; filters are mandatory and apply
+	# App 5412220 is shared by many test projects; filters are mandatory and apply
 	# only to this one request.
 	Steam.addRequestLobbyListStringFilter(LOBBY_GAME_KEY, LOBBY_GAME_VALUE, Steam.LOBBY_COMPARISON_EQUAL)
 	Steam.addRequestLobbyListStringFilter(LOBBY_PROTOCOL_KEY, str(PROTOCOL_VERSION), Steam.LOBBY_COMPARISON_EQUAL)
@@ -1019,6 +1019,12 @@ func _publish_participants() -> void:
 	if steam_ready and current_lobby_id > 0:
 		Steam.setLobbyData(current_lobby_id, "players", str(get_fighter_peer_ids().size()))
 		Steam.setLobbyData(current_lobby_id, "spectators", str(get_spectator_peer_ids().size()))
+	var roster := _build_public_roster()
+	for peer_id in get_connected_participant_peer_ids():
+		_rpc_receive_roster.rpc_id(peer_id, roster)
+
+
+func _build_public_roster() -> Dictionary:
 	var roster: Dictionary = {}
 	for peer_id in get_participant_peer_ids():
 		var participant: Dictionary = _participants[peer_id]
@@ -1026,9 +1032,9 @@ func _publish_participants() -> void:
 			"role": participant["role"],
 			"name": participant.get("name", "Steam-Spieler"),
 			"steam_id": participant.get("steam_id", 0),
+			"appearance": CharacterAppearance.sanitize(participant.get("appearance")),
 		}
-	for peer_id in get_connected_participant_peer_ids():
-		_rpc_receive_roster.rpc_id(peer_id, roster)
+	return roster
 
 
 func _reject_participant(peer_id: int, reason: String) -> void:
@@ -1117,23 +1123,29 @@ func _refresh_local_player_data() -> void:
 		"role": _requested_role,
 		"steam_id": steam_id,
 		"name": persona_name.substr(0, 48),
+		"appearance": SettingsManager.get_character_appearance(),
 		"deck": deck,
 		"starting_deck_indices": DeckManager.get_starting_deck_indices(),
 		"starting_hand_slots": CollectionManager.get_starting_hand_slot_count(),
 	}
 
 
+func get_local_persona_name() -> String:
+	return Steam.getPersonaName().strip_edges() if steam_ready else ""
+
+
 func _sanitize_remote_player_data(payload: Dictionary, actual_steam_id: int) -> Dictionary:
 	if int(payload.get("version", -1)) != PROTOCOL_VERSION:
 		return {}
 	var preferences := _sanitize_remote_deck_payload(payload)
-	var actual_name := Steam.getFriendPersonaName(actual_steam_id).strip_edges()
+	var actual_name := Steam.getFriendPersonaName(actual_steam_id).strip_edges() if steam_ready and actual_steam_id > 0 else ""
 	if actual_name.is_empty():
 		actual_name = str(payload.get("name", "Steam-Spieler")).strip_edges().substr(0, 48)
 	preferences.merge({
 		"version": PROTOCOL_VERSION,
 		"steam_id": actual_steam_id,
 		"name": actual_name,
+		"appearance": CharacterAppearance.sanitize(payload.get("appearance")),
 	})
 	return preferences
 
@@ -1191,8 +1203,7 @@ func _sanitize_remote_card(raw_card: Dictionary) -> Dictionary:
 	result["defense"] = clampi(int(raw_card.get("defense", base_defense)), 1, base_defense + MAX_STAT_BONUS)
 
 	var sanitized_effects: Array[Dictionary] = []
-	var innate_lava: Dictionary = CardData.get_effect(base_card, "lava") if card_id == "piss" else {}
-	var has_lava := false
+	var included_innate := {}
 	var raw_effects: Variant = raw_card.get("active_effects", raw_card.get("effects", []))
 	if raw_effects is Array:
 		for raw_effect: Variant in CardData._normalize_effects(raw_effects):
@@ -1203,12 +1214,14 @@ func _sanitize_remote_card(raw_card: Dictionary) -> Dictionary:
 				if effect.is_empty():
 					continue
 				if CardData.is_innate_only_effect(str(effect.get("type", ""))):
-					# Keep at most the canonical innate Lava, only when the peer
-					# actually includes it: the machine may have removed it.
-					if innate_lava.is_empty() or has_lava:
+					# Only the matching authored card can carry an innate effect.
+					# An intentionally removed innate effect remains removed.
+					var effect_type := str(effect.get("type", ""))
+					var innate := CardData.get_effect(base_card, effect_type)
+					if innate.is_empty() or included_innate.has(effect_type):
 						continue
-					effect = innate_lava.duplicate(true)
-					has_lava = true
+					effect = innate.duplicate(true)
+					included_innate[effect_type] = true
 				sanitized_effects.append(effect)
 	result["effects"] = sanitized_effects
 	result["active_effects"] = sanitized_effects.duplicate(true)

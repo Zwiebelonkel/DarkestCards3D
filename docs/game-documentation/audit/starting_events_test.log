@@ -1,0 +1,60 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS the shared starting event hand rule is three
+PASS easy starts through the real offline match path with both combat hands
+PASS easy offline receives exactly three events per player
+PASS easy offline deals six from the shared 24-card pile, leaving eighteen
+PASS easy offline deals six distinct match identities with no copy remaining in the pile
+PASS easy offline does not treat its received events as collectible discoveries or new cards
+PASS easy offline hand presentation leaves collection state and save bytes unchanged
+PASS normal starts through the real offline match path with both combat hands
+PASS normal offline receives exactly three events per player
+PASS normal offline deals six from the shared 24-card pile, leaving eighteen
+PASS normal offline deals six distinct match identities with no copy remaining in the pile
+PASS normal offline does not treat its received events as collectible discoveries or new cards
+PASS normal offline hand presentation leaves collection state and save bytes unchanged
+PASS hard starts through the real offline match path with both combat hands
+PASS hard offline receives exactly three events per player
+PASS hard offline deals six from the shared 24-card pile, leaving eighteen
+PASS hard offline deals six distinct match identities with no copy remaining in the pile
+PASS hard offline does not treat its received events as collectible discoveries or new cards
+PASS hard offline hand presentation leaves collection state and save bytes unchanged
+PASS insane starts through the real offline match path with both combat hands
+PASS insane offline receives exactly three events per player
+PASS insane offline deals six from the shared 24-card pile, leaving eighteen
+PASS insane offline deals six distinct match identities with no copy remaining in the pile
+PASS insane offline does not treat its received events as collectible discoveries or new cards
+PASS insane offline hand presentation leaves collection state and save bytes unchanged
+PASS a randomly dealt event is playable before the first attack of the first turn
+PASS starting with three cards still permits only one event per turn
+PASS duplicate initial-deal call cannot refill a partially played hand or consume RNG
+PASS a second real match resets used events and deals exactly three new cards to each hand
+PASS plain event-pile initialization remains separate from starting-hand dealing
+PASS online client cannot deal a local starting hand or consume its guard/RNG
+PASS spectator cannot deal a local starting hand or consume its guard/RNG
+PASS authorized offline helper deals normally after rejected remote-role calls
+PASS real online authority startup deals both valid combat decks
+PASS online authority receives exactly three events per player
+PASS online authority deals six from the shared 24-card pile, leaving eighteen
+PASS online authority deals six distinct match identities with no copy remaining in the pile
+PASS online authority does not treat its received events as collectible discoveries or new cards
+PASS online authority hand presentation leaves collection state and save bytes unchanged
+PASS online authority cannot double-deal starting events
+PASS public snapshot advertises three cards per hand and eighteen in the pile without private identities
+PASS guest snapshot contains exactly its own three starting event identities
+PASS guest snapshot exposes neither the host's starting events nor hidden pile order
+PASS spectator receives counts but none of the six starting event identities
+PASS unknown recipient receives no starting hand
+PASS starting events preserve owned inventory, deck, upgrades, currency and unrelated metadata
+PASS offline and online event dealing leaves every save file unchanged, including collection history
+PASS save isolated combat inventory fixture
+PASS spectator presentation writes no event collection or discovery state
+PASS online guest receives its event hand without permanent copies, discoveries or save writes
+PASS repeated event-hand refreshes preserve collection and save bytes
+PASS match cleanup clears both event hands, pile and the initial-deal guard
+STARTING_EVENTS_TESTS: PASS (52 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 27 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

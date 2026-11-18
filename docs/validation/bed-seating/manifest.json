@@ -1,0 +1,34 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "jackpot_bed_seating",
+  "scene": "res://scenes/rooms/EmptyHospitalRoom.tscn",
+  "units": "existing project units",
+  "forward": "authored bed local +Z is the foot end",
+  "origin": "unchanged imported bed root",
+  "footprint_m": [4.198, 6.604],
+  "height_m": 2.178,
+  "interaction_sides": ["free long edge nearest the room center"],
+  "style_references": [
+    "assets/environments/props/Bed/bed.glb: reuse the user's placed beds without geometry edits",
+    "assets/shader/inventory_outline.gdshader: existing yellow inverted-hull interaction outline",
+    "scenes/rooms/EmptyHospitalRoom.tscn: retain authored room lighting and layout",
+    "scripts/main/Main.gd: existing footsteps, walking bob and shared camera rig"
+  ],
+  "collision": {"required": true, "strategy": "two mesh-accurate picking areas with three concave shapes each; no new physical obstacles"},
+  "routes": ["standing origin -> foot-end lane -> side corner -> free long edge -> turn -> sit", "rise and step into aisle -> direct smooth return at 55 percent walking duration -> exact original camera pose"],
+  "budgets": {"added_nodes": 9, "added_visible_meshes": 0, "added_triangles": 0, "picking_shapes": 6, "picking_triangles": 548, "outline_materials": 1, "added_lights": 0, "added_particles": 0},
+  "review": {"required_views": ["bed-0-hover", "bed-1-hover", "bed-0-walking", "bed-1-walking", "bed-0-seated", "bed-1-seated"], "status": "visually reviewed"},
+  "evidence": {
+    "structural": ["MCP loaded-scene inspection before and after; both imported bed transforms unchanged"],
+    "runtime": ["bed_seating_test: 65 checks", "room_travel_test: 71 checks", "deck_fan_depth_test: 29 checks"],
+    "routes": ["review_report.json: minimum sampled approach and return clearance 1.25", "both returns verified faster, straight through the aisle, with no camera yaw reversals"],
+    "visual": ["bed-0-hover.png", "bed-1-hover.png", "bed-0-walking.png", "bed-1-walking.png", "bed-0-seated.png", "bed-1-seated.png"]
+  },
+  "notes": [
+    "This project moves a first-person camera along authored routes; no NPC navigation or player-body movement is introduced.",
+    "Existing bed geometry, joints and ground contact are unchanged; construction gates apply to the authored source asset.",
+    "All jobs use explicit project binding, owned bounded processes, Dummy audio and off-desktop rendering.",
+    "No exported build or live Steam verification performed."
+  ]
+}

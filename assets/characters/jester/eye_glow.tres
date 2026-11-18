@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://bxek7xpbdgrjq"]
+
+[ext_resource type="Texture2D" uid="uid://dk2lqf5tvggyn" path="res://assets/characters/jester/jester.png" id="1_4xmn3"]
+[ext_resource type="Texture2D" uid="uid://cyxu8vyh8650x" path="res://assets/characters/jester/jester_eyes.res" id="2_2mqoy"]
+
+[resource]
+resource_name = "Character emission: jester"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_4xmn3")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 3.0
+emission_operator = 1
+emission_texture = ExtResource("2_2mqoy")
+texture_filter = 0
+billboard_mode = 1
+billboard_keep_scale = true
+metadata/character_eye_glow = true

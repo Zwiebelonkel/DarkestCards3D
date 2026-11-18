@@ -1,0 +1,91 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS regular hit shows armor-reduced damage and a separate counter
+PASS local hit numbers accompany real HP changes and actual popup nodes
+PASS naturally expired numbers leave no tracked popup nodes
+PASS blocked attack and blocked counter each create a visible zero
+PASS zero numbers do not imply lost HP
+PASS lethal overkill number is capped to available HP and the dead defender still counters
+PASS double strike keeps each thorns hit separate from its single counter
+PASS multi-hit popups match every actual hit without an extra aggregated attacker number
+PASS poison number bypasses armor/shield but is capped to remaining HP
+PASS healing and undamaged cards create no damage numbers
+PASS cleave shows rounded armor damage and a blocked neighbor's zero
+PASS cleave creates no numbers on its center or nonadjacent slots
+PASS lava shows one mitigated number per target and separate secondary thorns/main counter
+PASS lava creates seven real popups without duplicate primary or counter totals
+PASS regeneration displays actual restored HP after the max-HP cap
+PASS regeneration creates a real positive healing popup without a damage observation
+PASS full-HP regeneration creates no zero or nominal healing popup
+PASS neighbor healing shows each recipient's actual capped HP increase separately
+PASS neighbor healing creates no popup for its source or a nonadjacent card
+PASS lifesteal shows the two HP actually restored rather than its nominal six-point heal
+PASS lifesteal on a full-HP attacker never creates a healing popup
+PASS mirrored client preserves separate authoritative thorns/counter numbers
+PASS mirrored client maps all lava numbers including zero to the correct cards
+PASS mirrored client ignores duplicate primary impact packets
+PASS mirrored client rejects a stale-turn impact before creating numbers
+PASS mirrored client rejects an impact for another owned copy
+PASS mirrored client supports legacy aggregate attacker damage exactly once
+PASS mirrored client applies an HP snapshot without inventing or replaying damage numbers
+PASS mirrored client generic poison/cleave packet displays damage without applying it twice
+PASS mirrored client deduplicates generic damage packets
+PASS mirrored client pure no-blood damage packet still displays a zero
+PASS mirrored client rejects stale turns and stale generic target identities
+PASS mirrored client holds generic numbers until attack contact
+PASS mirrored client queued number cannot land on a replacement occupying the old slot
+PASS mirrored client legacy blood-only packet never invents a damage amount
+PASS mirrored client displays authoritative healing without applying HP a second time or creating a damage number
+PASS mirrored client rejects replayed, stale-turn and wrong-card healing packets
+PASS mirrored client ignores zero or absent healing amounts instead of inventing +0
+PASS mirrored client holds healing presentation until attack contact
+PASS mirrored client queued healing appears exactly once at contact without changing HP
+PASS mirrored client queued healing cannot land on a replacement in the old slot
+PASS spectator preserves separate authoritative thorns/counter numbers
+PASS spectator maps all lava numbers including zero to the correct cards
+PASS spectator ignores duplicate primary impact packets
+PASS spectator rejects a stale-turn impact before creating numbers
+PASS spectator rejects an impact for another owned copy
+PASS spectator supports legacy aggregate attacker damage exactly once
+PASS spectator applies an HP snapshot without inventing or replaying damage numbers
+PASS spectator generic poison/cleave packet displays damage without applying it twice
+PASS spectator deduplicates generic damage packets
+PASS spectator pure no-blood damage packet still displays a zero
+PASS spectator rejects stale turns and stale generic target identities
+PASS spectator holds generic numbers until attack contact
+PASS spectator queued number cannot land on a replacement occupying the old slot
+PASS spectator legacy blood-only packet never invents a damage amount
+PASS spectator displays authoritative healing without applying HP a second time or creating a damage number
+PASS spectator rejects replayed, stale-turn and wrong-card healing packets
+PASS spectator ignores zero or absent healing amounts instead of inventing +0
+PASS spectator holds healing presentation until attack contact
+PASS spectator queued healing appears exactly once at contact without changing HP
+PASS spectator queued healing cannot land on a replacement in the old slot
+PASS active hit numbers are owned and tracked by their GameTable
+PASS healing and damage share the same tracked popup lifecycle
+PASS match cleanup immediately resets popup and lane bookkeeping
+PASS late online damage and healing cannot recreate popups after match exit
+PASS all popup nodes are freed after match cleanup
+PASS disabled numbers preserve actual attack and counter damage
+PASS disabled numbers suppress only the presentation of local hits
+PASS disabled numbers retain existing hit effects
+PASS disabled numbers preserve real regeneration while suppressing its popup
+PASS re-enabling numbers displays the next hits
+PASS re-enabled healing joins active damage numbers under the shared setting
+PASS disabling in paused settings immediately hides and clears existing numbers
+PASS re-enabling while paused never replays an old hit
+PASS disabled active numbers free without waiting for the combat animation
+PASS local number preference preserves authoritative online damage for client
+PASS disabled remote secondary numbers preserve blood presentation
+PASS disabled remote healing remains presentation-only for client
+PASS re-enabled online numbers do not replay a duplicate impact or heal
+PASS local number preference preserves authoritative online damage for spectator
+PASS disabled remote secondary numbers preserve blood presentation
+PASS disabled remote healing remains presentation-only for spectator
+PASS re-enabled online numbers do not replay a duplicate impact or heal
+DAMAGE_NUMBERS_TESTS: PASS (83 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 7 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

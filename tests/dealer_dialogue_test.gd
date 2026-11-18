@@ -30,10 +30,12 @@ func _run() -> void:
 		get_tree().quit(1)
 		return
 	GameCurrency.set_process(false)
+	GameCurrency._rescued_npcs["dealer"] = true
 	CollectionManager.clear_profile_state()
 	DeckManager.clear_profile_state()
 	CardUpgradeManager.clear_profile_state()
 	CollectionManager.add_card("black_market_access")
+	check(CollectionManager.use_access_key("black_market_access"), "dealer fixture explicitly activates Black Market access")
 	Localization.set_locale("de")
 	viewport = SubViewport.new()
 	viewport.size = Vector2i(1280, 720)
@@ -60,9 +62,22 @@ func _run() -> void:
 	check(dialog.actor == main.get_node("BlackMarketRoom/Kiosk/Dealer"), "dialog uses the authored dealer sprite")
 	var point := main.main_camera.unproject_position(dialog.npc_area.global_position)
 	check(viewport.get_visible_rect().has_point(point) and dialog._pointer_hits_area(point), "actual dealer hit box is visible and unobstructed")
+	var idle_texture := dialog.actor.texture
+	dialog.actor.frame = 7
+	dialog.actor.set("_frame_timer", 0.04)
+	_move_pointer(point)
+	dialog._update_pointer_hover()
+	check(dialog.actor.texture.resource_path == "res://assets/characters/baclmarketDealer/dealerHover.png" and dialog.actor.frame == 7 and is_equal_approx(dialog.actor.get("_frame_timer"), 0.04), "dealer hover preserves the current frame and its elapsed time")
+	_move_pointer(Vector2(-50, -50))
+	dialog._update_pointer_hover()
+	check(dialog.actor.texture == idle_texture and dialog.actor.frame == 7 and is_equal_approx(dialog.actor.get("_frame_timer"), 0.04), "leaving the dealer restores idle without restarting the loop")
+	_move_pointer(point)
+	await settle(0.2)
+	check(dialog.actor.texture.resource_path.ends_with("dealerHover.png") and dialog.actor.frame != 7, "dealer hover animation continues advancing")
 	_click(point)
 	await settle()
 	check(dialog.is_dialog_open() and dialog._is_typing(), "actual dealer pointer click opens a typewriter sentence")
+	check(dialog.actor.texture == idle_texture, "dealer dialog clears the hover hint")
 	check(dialog._laugh_audio._laughing and dialog._laugh_audio.stream.resource_path.ends_with("satanVoice.mp3"), "dealer speaks using the existing voice sound")
 	var max_dealer_pitch := pow(2.0, (6.0 + dialog.voice_pitch_offset) / 12.0)
 	var min_other_pitch := pow(2.0, -4.0 / 12.0)
@@ -82,6 +97,7 @@ func _run() -> void:
 		RenderingServer.force_draw(false)
 		check(viewport.get_texture().get_image().save_png("res://dealer-dialogue.png") == OK, "captured actual dealer and dialog")
 	_click(Vector2(640, 650))
+	await settle(0.28)
 	check(not dialog.is_dialog_open() and main.black_market_board.interaction_enabled and main._can_turn(), "second dialog click restores shopping and navigation")
 	check(CollectionManager.collection == snapshot and GameCurrency.get_coin_cents() == coins, "conversations preserve cards and coins")
 	var seen := {}
@@ -94,6 +110,7 @@ func _run() -> void:
 		previous = dialog._last_sentence_index
 		seen[previous] = true
 		dialog.close_dialog()
+		await settle(0.28)
 	check(no_repeats and seen.size() == dialog._get_sentences().size(), "private random dialog selection covers all lines without immediate repeats")
 	for locale: String in Localization.SUPPORTED_LOCALES:
 		Localization.set_locale(locale)
@@ -104,13 +121,15 @@ func _run() -> void:
 		dialog._advance_dialog_text(50.0)
 		check(dialog._text_finished and not dialog._laugh_audio.playing, "natural sentence completion silences voice in " + locale)
 		dialog.close_dialog()
+		await settle(0.28)
 	Localization.set_locale("de")
 	dialog.open_dialog()
 	_key(KEY_ESCAPE)
+	await settle(0.28)
 	check(not dialog.is_dialog_open() and not main.pause_menu.visible, "Escape closes only the dialog")
 	dialog.open_dialog()
 	get_tree().paused = true
-	await settle()
+	await settle(0.28)
 	check(not dialog.is_dialog_open() and not dialog._laugh_audio.playing, "pause immediately closes dialog and stops voice")
 	get_tree().paused = false
 	await settle()

@@ -60,6 +60,7 @@ func _ready() -> void:
 	CollectionManager.collection_changed.connect(_queue_refresh)
 	CardUpgradeManager.upgrades_changed.connect(_on_upgrades_changed)
 	GameCurrency.coins_changed.connect(_on_coins_changed)
+	GameCurrency.npc_rescue_changed.connect(refresh_offers)
 	Localization.locale_changed.connect(_on_locale_changed)
 	refresh_offers()
 	set_interaction_enabled(false)
@@ -113,7 +114,7 @@ func set_interaction_enabled(enabled: bool) -> void:
 
 
 func _can_interact() -> bool:
-	return interaction_enabled and not get_tree().paused and is_visible_in_tree() and is_instance_valid(camera) and camera.is_current()
+	return GameCurrency.is_npc_rescued("dealer") and interaction_enabled and not get_tree().paused and is_visible_in_tree() and is_instance_valid(camera) and camera.is_current()
 
 
 func purchase_offer(index: int) -> Dictionary:
@@ -212,7 +213,16 @@ func _setup_preview(card: Card3D, card_id: String) -> void:
 
 
 func _refresh_labels() -> void:
-	if not is_instance_valid(_title):
+	if not is_instance_valid(_title) or not is_instance_valid(_content):
+		return
+	var rescued := GameCurrency.is_npc_rescued("dealer")
+	_content.visible = rescued
+	if not rescued:
+		_title.text = Localization.text("GESCHLOSSEN")
+		_subtitle.text = Localization.text("Befreie zuerst den Dealer.")
+		_status.text = ""
+		Localization.fit_text_3d(_title, 5.5, 0.33)
+		Localization.fit_text_3d(_subtitle, 5.5, 0.22)
 		return
 	_title.text = Localization.text("TAGESANGEBOTE")
 	Localization.fit_text_3d(_title, 5.5, 0.33)

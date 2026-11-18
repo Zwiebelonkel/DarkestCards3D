@@ -2,6 +2,7 @@ shader_type canvas_item;
 render_mode unshaded;
 
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear;
+uniform float effect_mix : hint_range(0.0, 1.0) = 1.0;
 
 uniform float intensity : hint_range(0.0, 2.0) = 0.75;
 uniform float speed : hint_range(0.0, 10.0) = 2.5;
@@ -93,5 +94,5 @@ void fragment() {
 	float vignette = smoothstep(0.85, 0.25, dist);
 	col *= mix(1.0, vignette, vignette_strength);
 
-	COLOR = vec4(col, 1.0);
+	COLOR = vec4(mix(texture(screen_texture, SCREEN_UV).rgb, col, effect_mix), 1.0);
 }

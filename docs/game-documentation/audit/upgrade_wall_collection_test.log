@@ -1,0 +1,26 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+ROOM WALL DISTANCES +X,+Z,-X,-Z: [8.46850872039795, 11.2710371017456, 8.46850872039795, 11.2710371017456]
+PASS: empty profile has a wall empty state
+PASS: seven upgrade types and the owned access key appear after acquiring cards
+PASS: access key remains in the special collection while combat cards are excluded
+PASS: slot-room key is grouped with the other access keys
+PASS: duplicate upgrade copies share a card with correct amount
+PASS: owned Holo copy is used for the wall display
+PASS: wall cards do not intercept other scenes' physics input
+PASS: disabled wall ignores card targeting
+PASS: disabled wall rejects direct detail opening
+PASS: screen ray targets the actual card face
+PASS: detail preserves the actual owned Holo instance
+PASS: detail starts with the existing wall card at its exact wall transform
+PASS: detail displays total owned count and background input surface
+PASS: detail contains no visible Back or Escape button
+PASS: gating new clicks keeps an existing detail visible
+PASS: return flight retains overlay input until the card reaches the wall
+PASS: completed return releases overlay input
+PASS: return keeps the original card in its original slot
+PASS: scrolling reaches the last starting-hand upgrade before reset
+PASS: reset during entry clears the wall and cancels the flying obsolete detail
+PASS: reset during return cancels its tween without resurrecting removed cards
+UPGRADE_WALL_COLLECTION_TESTS: PASS (21 checks)

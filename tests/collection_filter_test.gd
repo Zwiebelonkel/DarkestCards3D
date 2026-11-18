@@ -4,11 +4,12 @@ const UPGRADE_IDS: Array[String] = [
 	"clicker", "clicker_upgrade", "starting_hand_1", "starting_hand_2",
 	"starting_hand_3", "starting_hand_4", "starting_hand_5",
 ]
+const ACCESS_IDS: Array[String] = ["slot_room_key", "black_market_access", "graveyard_key", "basement_key"]
 
 var checks := 0
 var failures := 0
-var door_requests := 0
 var screen: CollectionScreen
+var wall: UpgradeWallCollection
 
 
 func _ready() -> void:
@@ -40,9 +41,12 @@ func _run() -> void:
 	DeckManager.deck_instance_ids.clear()
 	DeckManager.starting_deck_indices.clear()
 	var upgrade_catalog: Array[String] = []
+	var special_catalog: Array[String] = []
 	var regular_specials: Array[String] = []
 	var combat_preserved := true
 	for data: Dictionary in CardDatabase.get_all_cards():
+		if str(data.get("category", "")) == "special":
+			special_catalog.append(str(data.id))
 		var is_upgrade := CardData.is_upgrade_collection_card(data)
 		if is_upgrade:
 			upgrade_catalog.append(str(data.id))
@@ -51,17 +55,17 @@ func _run() -> void:
 		if CardData.is_combat_card(data):
 			combat_preserved = combat_preserved and not is_upgrade
 	upgrade_catalog.sort()
-	var expected_catalog := UPGRADE_IDS.duplicate()
-	expected_catalog.sort()
-	check(upgrade_catalog == expected_catalog, "All seven upgrade types belong to the separate wall collection")
-	check(regular_specials == [CollectionManager.SLOT_ROOM_KEY_ID], "The key is the only special type remaining in the normal collection")
+	special_catalog.sort()
+	check(upgrade_catalog == special_catalog and upgrade_catalog.size() > UPGRADE_IDS.size(), "Every current special card and upgrade belongs to the separate wall collection")
+	check(regular_specials.is_empty(), "No access key or other special type remains in the normal collection")
 	check(combat_preserved and not CardData.is_upgrade_collection_card({}), "All combat cards keep their normal collection category")
 	for card_id in UPGRADE_IDS:
+		CollectionManager.create_card_instance(card_id)
+	for card_id in ACCESS_IDS:
 		CollectionManager.create_card_instance(card_id)
 	CollectionManager.create_card_instance("clicker_upgrade")
 	CollectionManager.create_card_instance("corpse")
 	CollectionManager.create_card_instance("harald")
-	CollectionManager.create_card_instance(CollectionManager.SLOT_ROOM_KEY_ID)
 	var inventory_before := CollectionManager.collection.duplicate(true)
 	screen = (load("res://scenes/ui/CollectionScreen.tscn") as PackedScene).instantiate() as CollectionScreen
 	screen.camera = screen.get_node("Camera3D") as Camera3D
@@ -70,11 +74,18 @@ func _run() -> void:
 	screen.detail_duration = 0.04
 	screen.detail_mouse_tilt_strength = 0
 	screen.add_button_slide_duration = 0.02
-	screen.slot_room_key_requested.connect(func(): door_requests += 1)
 	add_child(screen)
+	wall = (load("res://scenes/props/UpgradeWallCollection.tscn") as PackedScene).instantiate() as UpgradeWallCollection
+	wall.camera = screen.camera
+	wall.position = Vector3(100, 0, 0)
+	add_child(wall)
 	await settle()
 	_disable_desktop_picking()
-	check(_shown_ids() == ["corpse", "harald", "slot_room_key"], "The actual collection creates only combat cards and the key")
+	check(_shown_ids() == ["corpse", "harald"], "The actual normal collection creates only the owned combat cards")
+	var all_keys_on_wall := true
+	for card_id in ACCESS_IDS:
+		all_keys_on_wall = all_keys_on_wall and wall._cards.has(card_id)
+	check(all_keys_on_wall and wall._cards.size() == UPGRADE_IDS.size() + ACCESS_IDS.size(), "The separate physical wall includes all four access keys alongside owned upgrades")
 	check(not screen.empty_label.visible, "Owned visible cards suppress the empty-collection message")
 	check(CollectionManager.collection == inventory_before, "Separating displays leaves every owned copy and instance identity intact")
 	check(CollectionManager.get_starting_hand_slot_count() == 5, "The hidden upgrade cards still unlock all five starting slots")
@@ -84,40 +95,30 @@ func _run() -> void:
 	screen.camera.add_child(progress)
 	progress.set_enabled(false)
 	check(is_equal_approx(progress.coins_per_click, 0.04), "The real clicker still applies its unlock and both upgrade copies")
-	await screen._open_detail_card(_card(CollectionManager.SLOT_ROOM_KEY_ID))
-	await settle()
-	check(screen._deck_button.visible and not screen._deck_button.disabled and screen._deck_button.label.text == "Zur Tür", "The remaining key retains its visible and enabled door action")
-	var click := InputEventMouseButton.new()
-	click.button_index = MOUSE_BUTTON_LEFT
-	click.pressed = true
-	screen._deck_button.area.input_event.emit(screen.camera, click, Vector3.ZERO, Vector3.UP, 0)
-	await settle()
-	check(door_requests == 1 and screen._detail_card == null, "The key's actual button still closes detail and requests the door once")
-	check(CollectionManager.get_amount(CollectionManager.SLOT_ROOM_KEY_ID) == 1 and DeckManager.get_card_count(CollectionManager.SLOT_ROOM_KEY_ID) == 0, "Using the key keeps ownership and does not put it in the battle deck")
-	screen.finish_slot_room_key_request()
 	CollectionManager.save_collection()
 	CollectionManager.load_collection()
 	screen.refresh_collection()
 	await settle()
 	var saved_inventory: Dictionary = JSON.parse_string(JSON.stringify(inventory_before))
-	check(CollectionManager.collection == saved_inventory and _shown_ids() == ["corpse", "harald", "slot_room_key"], "Save and reload preserve upgrade ownership and the display partition")
+	check(CollectionManager.collection == saved_inventory and _shown_ids() == ["corpse", "harald"], "Save and reload preserve special-card ownership and the display partition")
 	# A player who only owns upgrades must see an empty normal collection.
 	DeckManager.battle_deck.clear()
 	DeckManager.deck_instance_ids.clear()
 	DeckManager.starting_deck_indices.clear()
-	for card_id: String in ["corpse", "harald", CollectionManager.SLOT_ROOM_KEY_ID]:
+	for card_id: String in ["corpse", "harald"]:
 		CollectionManager.collection.cards.erase(card_id)
-	CollectionManager.collection.instances = CollectionManager.collection.instances.filter(func(instance: Dictionary) -> bool: return UPGRADE_IDS.has(str(instance.card_id)))
+	CollectionManager.collection.instances = CollectionManager.collection.instances.filter(func(instance: Dictionary) -> bool: return UPGRADE_IDS.has(str(instance.card_id)) or ACCESS_IDS.has(str(instance.card_id)))
 	var changed: Array[String] = []
 	CollectionManager.collection_changed.emit(changed)
 	screen.refresh_collection()
 	await settle()
 	check(_shown_ids().is_empty() and screen.cards_root.get_child_count() == 0 and screen.empty_label.visible, "An upgrade-only inventory shows the actual empty state without hidden card rows")
 	check(CollectionManager.get_starting_hand_slot_count() == 5 and is_equal_approx(progress.coins_per_click, 0.04), "Empty normal collection does not reset slot unlocks or clicker earnings")
-	CollectionManager.add_card(CollectionManager.SLOT_ROOM_KEY_ID)
+	CollectionManager.add_card("lucky_coin")
 	await settle()
-	check(_shown_ids() == ["slot_room_key"] and not screen.empty_label.visible, "Acquiring the key refreshes an upgrade-only collection into a visible key-only collection")
+	check(_shown_ids().is_empty() and screen.empty_label.visible and wall._cards.has("lucky_coin"), "Acquiring another special card updates only the separate wall")
 	screen.queue_free()
+	wall.queue_free()
 	await settle(0.3)
 	print("COLLECTION_FILTER_TESTS: %s (%d checks)" % ["PASS" if failures == 0 else "FAIL", checks])
 	get_tree().quit(0 if failures == 0 else 1)
@@ -129,13 +130,6 @@ func _shown_ids() -> Array[String]:
 		ids.append(str(card.card_data.id))
 	ids.sort()
 	return ids
-
-
-func _card(card_id: String) -> Card3D:
-	for card: Card3D in screen._base_positions:
-		if str(card.card_data.id) == card_id:
-			return card
-	return null
 
 
 func _disable_desktop_picking() -> void:

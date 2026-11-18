@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/SatanVoicePortrait.gd" id="1_portrait"]
-[ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan.png" id="2_idle"]
-[ext_resource type="Texture2D" path="res://assets/characters/satanHover.png" id="3_speaking"]
-[ext_resource type="Texture2D" path="res://assets/characters/satanLaught.png" id="4_loud"]
+[ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan/satan.png" id="2_idle"]
+[ext_resource type="Texture2D" path="res://assets/characters/satan/satanHover.png" id="3_speaking"]
+[ext_resource type="Texture2D" path="res://assets/characters/satan/satanLaught.png" id="4_loud"]
 
 [node name="SatanVoicePortrait" type="Control"]
 process_mode = 3

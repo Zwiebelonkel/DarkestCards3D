@@ -1,0 +1,98 @@
+{
+  "animation_duration_seconds": 1.0,
+  "captured_utc": "2026-11-18T00:10:52",
+  "performance": {
+    "with_syringe": {
+      "average_ms": 16.6611,
+      "draw_calls": 691.0,
+      "frames": 30,
+      "p95_ms": 16.702,
+      "render_objects": 1203.0,
+      "video_memory_bytes": 398774088.0
+    },
+    "without_syringe": {
+      "average_ms": 16.6719666666667,
+      "draw_calls": 682.0,
+      "frames": 30,
+      "p95_ms": 16.846,
+      "render_objects": 1194.0,
+      "video_memory_bytes": 398835448.0
+    }
+  },
+  "scene_modified": 1794959915,
+  "shots": [
+    {
+      "mean_luminance_sample": 0.310004252442882,
+      "name": "context-entry",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/poison-syringe/context-entry.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.309321365843197,
+      "name": "context-pierce",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/poison-syringe/context-pierce.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.30928274337812,
+      "name": "context-press",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/poison-syringe/context-press.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.310260490380872,
+      "name": "context-exit",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/poison-syringe/context-exit.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.21297522747781,
+      "name": "detail-front",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/poison-syringe/detail-front.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.311569270269105,
+      "name": "detail-back",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/poison-syringe/detail-back.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.218873962084677,
+      "name": "detail-left",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/poison-syringe/detail-left.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.224782767919915,
+      "name": "detail-right",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/poison-syringe/detail-right.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    }
+  ],
+  "visual_review": "Accepted: one-second entry/press/exit timing; original geometry and materials retained. Confirmed target death hides the model synchronously."
+}

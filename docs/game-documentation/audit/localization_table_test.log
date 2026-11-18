@@ -1,0 +1,45 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS whole ally prompt and event name: de
+PASS visible hand notice refreshed: de
+PASS locale preserves selection, snapshot and RNG: de
+PASS whole ally prompt and event name: en
+PASS visible hand notice refreshed: en
+PASS locale preserves selection, snapshot and RNG: en
+PASS whole ally prompt and event name: es
+PASS visible hand notice refreshed: es
+PASS locale preserves selection, snapshot and RNG: es
+PASS whole ally prompt and event name: fr
+PASS visible hand notice refreshed: fr
+PASS locale preserves selection, snapshot and RNG: fr
+PASS whole ally prompt and event name: pl
+PASS visible hand notice refreshed: pl
+PASS locale preserves selection, snapshot and RNG: pl
+PASS wrong ally target uses a complete English sentence
+PASS whole opposing prompt and authored name
+PASS wrong opposing target uses a complete English sentence
+PASS actual event resolves once
+PASS played event localizes You and authored event name
+PASS event result locale does not replay effect or alter network state
+PASS validation reason remains a canonical network source
+PASS actual battle notice translates card name after locale change
+PASS battle translation does not rerun duel or consume RNG
+PASS Steam persona identical to source key stays verbatim
+PASS authored guest fallback retranslates
+PASS actual win displays full English reward and level bonus
+PASS both reward lines retranslate without cache: de
+PASS locale and duplicate results never award twice: de
+PASS both reward lines retranslate without cache: es
+PASS locale and duplicate results never award twice: es
+PASS both reward lines retranslate without cache: fr
+PASS locale and duplicate results never award twice: fr
+PASS both reward lines retranslate without cache: pl
+PASS locale and duplicate results never award twice: pl
+PASS both reward lines retranslate without cache: en
+PASS locale and duplicate results never award twice: en
+PASS exit status is not overwritten by stored reward
+PASS new match clears cached reward presentation
+LOCALIZATION_TABLE_TESTS: PASS (39 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

@@ -1,0 +1,59 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS isolated settings only
+PASS language applies immediately: de
+PASS labels below textless arrows refresh: de
+PASS formatted text buttons refresh: de
+PASS textless button tooltips refresh: de
+PASS visible mic error refreshes: de
+PASS formatted cheat status refreshes: de
+PASS locale preserves cheat/audio/mic state: de
+PASS selected language is persisted: de
+PASS language applies immediately: en
+PASS labels below textless arrows refresh: en
+PASS formatted text buttons refresh: en
+PASS textless button tooltips refresh: en
+PASS visible mic error refreshes: en
+PASS formatted cheat status refreshes: en
+PASS locale preserves cheat/audio/mic state: en
+PASS selected language is persisted: en
+PASS language applies immediately: es
+PASS labels below textless arrows refresh: es
+PASS formatted text buttons refresh: es
+PASS textless button tooltips refresh: es
+PASS visible mic error refreshes: es
+PASS formatted cheat status refreshes: es
+PASS locale preserves cheat/audio/mic state: es
+PASS selected language is persisted: es
+PASS language applies immediately: fr
+PASS labels below textless arrows refresh: fr
+PASS formatted text buttons refresh: fr
+PASS textless button tooltips refresh: fr
+PASS visible mic error refreshes: fr
+PASS formatted cheat status refreshes: fr
+PASS locale preserves cheat/audio/mic state: fr
+PASS selected language is persisted: fr
+PASS language applies immediately: pl
+PASS labels below textless arrows refresh: pl
+PASS formatted text buttons refresh: pl
+PASS textless button tooltips refresh: pl
+PASS visible mic error refreshes: pl
+PASS formatted cheat status refreshes: pl
+PASS locale preserves cheat/audio/mic state: pl
+PASS selected language is persisted: pl
+PASS saved language reloads
+PASS unsupported language falls back to English
+PASS supported region locale normalizes
+PASS network error changes language without replaying request: de
+PASS lobby and user names remain verbatim: de
+PASS network error changes language without replaying request: en
+PASS lobby and user names remain verbatim: en
+PASS network error changes language without replaying request: es
+PASS lobby and user names remain verbatim: es
+PASS network error changes language without replaying request: fr
+PASS lobby and user names remain verbatim: fr
+PASS network error changes language without replaying request: pl
+PASS lobby and user names remain verbatim: pl
+PASS roster translates role but preserves persona
+LOCALIZATION_UI_TESTS: PASS (55 checks)

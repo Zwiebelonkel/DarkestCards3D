@@ -1,0 +1,78 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "Satan halfway-click stream",
+  "scene": "res://scenes/effects/Piss.tscn",
+  "units": "meters",
+  "origin": "lower_satan_emitter",
+  "forward": "+Z toward the hub player; launch velocity is world-space",
+  "interaction_sides": [
+    "player-facing table side"
+  ],
+  "style_references": [
+    {
+      "path": "WaitingForHeavenStandalone/scenes/events/Piss.tscn",
+      "reason": "User-supplied yellow unshaded ribbon, trail and sound"
+    },
+    {
+      "path": "res://scenes/table/GameTable.tscn",
+      "reason": "Actual table bounds and lower-body anchors"
+    },
+    {
+      "path": "res://scenes/main/Main.tscn",
+      "reason": "Honest player view with lens and pixelation"
+    }
+  ],
+  "collision": {
+    "required": false,
+    "strategy": "Reuse existing GPU particle/table collision; the ballistic arc clears the tabletop"
+  },
+  "budgets": {
+    "nodes": 3,
+    "particles": 1,
+    "particle_capacity": 420,
+    "materials": 2,
+    "lights": 0,
+    "collision_shapes": 0
+  },
+  "review": {
+    "required_views": [
+      "front",
+      "back",
+      "left",
+      "right",
+      "context"
+    ]
+  },
+  "evidence": {
+    "structural": [
+      "tests/satan_stream_test.tscn"
+    ],
+    "runtime": [
+      "tests/satan_stream_test.tscn",
+      "tests/satan_jumpscare_test.tscn"
+    ],
+    "performance": [
+      "docs/validation/satan-stream-review.json"
+    ],
+    "visual": [
+      "docs/validation/satan-stream-review.json"
+    ]
+  },
+  "notes": [
+    "Dynamic VFX profile: static mesh, construction-junction and navigation gates do not apply. The saved RibbonTrailMesh is the particle draw pass.",
+    "Source is the editable Piss child at GameTable/dealer/SatanMotionRoot/satan/Piss. Its authored local transform is never overwritten. Target is 1.5 m below the player's camera and 0.2 m forward.",
+    "No other source-project scripts, achievements, editor sessions or gameplay state are imported."
+  ],
+  "measured": {
+    "nodes": 3,
+    "particles": 1,
+    "particle_capacity": 420,
+    "lights": 0,
+    "collision_shapes": 0,
+    "loaded_scene_inspection": "pass",
+    "source_editability": "pass",
+    "tabletop_clearance": "pass",
+    "ballistic_target": "pass"
+  }
+}

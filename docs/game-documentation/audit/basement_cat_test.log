@@ -1,0 +1,100 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: cat fixture explicitly activates both room entrances
+PASS: the isolated fresh profile saves successfully
+PASS: the cat belongs to the permanent basement in Main's existing world
+PASS: the living cat uses the two-frame 40 by 23 pixel walk sheet
+PASS: hub cardinal view 3 cannot start the basement encounter
+PASS: hub cardinal view 2 cannot start the basement encounter
+PASS: hub cardinal view 1 cannot start the basement encounter
+PASS: hub cardinal view 0 cannot start the basement encounter
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 4
+PASS: the same right-facing view in the Black Market cannot trigger the cat
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 0
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 3
+PASS: basement arrival alone leaves the encounter waiting for a right turn
+PASS: the real D key starts a right turn without starting the cat during camera rotation
+PASS: the cat starts walking only after the right turn settles
+PASS: right-facing basement view reveals the moving cat and owns the encounter
+PASS: the moral-choice UI waits until the cat finishes crossing the floor
+PASS: walking blocks turns, doorway travel and underlying crate interaction
+PASS: Pause freezes the walking cat in place
+PASS: a paused queued choice cannot resolve the encounter
+PASS: the online pause overlay also freezes the cat and shared camera without pausing networking
+PASS: the live cat advances from the back corner toward the player
+PASS: arrival completes before the player receives the angel and Satan choice
+PASS: the raised portraits and pistol finish their entrance before accepting input
+PASS: the cat stays alive in front of the player while the choice is displayed
+PASS: both choices expose real pointer controls
+PASS: the angel appears on the left and Satan on the right
+PASS: the same first-person pistol rises in the middle of the screen
+PASS: hovering Satan explains the shot and the exact 1000 Soul Coin reward
+PASS: hovering the angel explains sparing the cat's life
+PASS: hovering either character has no monetary or permanent effect
+PASS: D cannot rotate the camera away from an unanswered choice
+PASS: Pause suspends the choice without accepting a queued shot
+PASS: unpausing restores the unanswered choice
+ERROR: Could not save currency and level progress: File not found
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: a failed profile save cannot award coins or commit a shot
+PASS: save failure leaves the cat alive and the choice retryable without firing
+PASS: clicking Satan commits exactly 1000 Soul Coins with the permanent shot choice
+PASS: the gun cinematic retains navigation ownership until its shot finishes
+PASS: the shared gun presentation fires exactly once
+PASS: the muzzle flash and shot sound begin on the exact world-impact signal
+PASS: the shot impact immediately replaces the living sheet with Cat Dead
+PASS: online pause suspends the knockback, recoil and shot timers together
+PASS: Cat Dead visibly flies away from the impact position
+PASS: the shot sequence resolves and releases the camera
+PASS: the dead cat and gun UI disappear and normal navigation resumes
+PASS: duplicate callbacks cannot fire again, change the choice or duplicate its reward
+PASS: turning away and returning never brings the shot cat back
+PASS: save/load restores the permanent shot and the single reward together
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 3
+PASS: a freshly loaded basement never respawns the shot cat or its choice
+PASS: revisiting the loaded basement cannot award another 1000 Soul Coins
+PASS: the isolated fresh profile saves successfully
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 3
+PASS: the real D key starts a right turn without starting the cat during camera rotation
+PASS: the cat starts walking only after the right turn settles
+PASS: right-facing basement view reveals the moving cat and owns the encounter
+PASS: the moral-choice UI waits until the cat finishes crossing the floor
+PASS: walking blocks turns, doorway travel and underlying crate interaction
+PASS: the live cat advances from the back corner toward the player
+PASS: arrival completes before the player receives the angel and Satan choice
+PASS: the raised portraits and pistol finish their entrance before accepting input
+PASS: the cat stays alive in front of the player while the choice is displayed
+PASS: clicking the angel saves mercy without a coin reward
+PASS: mercy visibly lowers the pistol below the screen before hiding it
+PASS: the mercy animation stows the gun and ends the encounter
+PASS: sparing never fires and leaves the cat standing there with its two-frame Cat Spare sheet
+PASS: the entire spared cat remains visible after the normal room camera returns
+PASS: the spared cat continues animating while it stays in the basement
+PASS: mercy dismisses the characters and gun and restores normal room navigation
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 0
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 3
+PASS: leaving and reentering retains the spared cat without repeating the moral choice
+PASS: the spared outcome and unchanged balance survive profile reload
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 3
+PASS: a fresh scene restores the animated Cat Spare at the encounter location
+PASS: the restored Cat Spare animation keeps playing after profile reload
+BASEMENT_CAT_TESTS: PASS (92 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

@@ -1,0 +1,156 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS Main owns the 3D journal and registers its J key action
+PASS journal starts closed and available at rest in the hub
+PASS key repeat cannot accidentally open the journal
+PASS J starts opening and immediately blocks room travel
+PASS journal opening blocks A/D rotation
+PASS journal finishes its physical opening animation
+PASS camera moves down and looks down at the physical book
+PASS journal uses a temporary reading environment without bloom washing out the paper
+PASS reading preserves the visible camera filters, original shader materials and every shader parameter
+PASS mouse tilt and shop focus cannot fight the reading camera
+PASS reading keeps the game running while disabling underlying room input
+PASS holding J does not repeatedly close and reopen the journal
+PASS journal contains seven populated chapters including a dedicated event-card chapter
+PASS journal has no Close or X button
+PASS normal and special chapters together document the complete collectible catalog
+PASS combat and special chapters contain only their respective collectible categories
+PASS every physical journal control fits the landscape viewport completely
+PASS journal control is visible: index_next
+PASS index-page click updates the visible list immediately without a page animation
+PASS physical journal interaction leaves the camera filters unchanged: index_next
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS physical page control advances the card index
+PASS journal control is visible: entry:1
+PASS entry click updates its printed text immediately without a page animation
+PASS physical journal interaction leaves the camera filters unchanged: entry:1
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS physical index row changes to the second entry on the next page
+PASS journal control is visible: chapter:1
+PASS category click starts the physical page animation: chapter:1
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:1
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS physical special-card tab resets and opens its dedicated index
+PASS special-card tab displays an actual special Card3D preview without combat data
+PASS dedicated special index includes the original slot-room key
+PASS journal control is visible: index_next
+PASS index-page click updates the visible list immediately without a page animation
+PASS physical journal interaction leaves the camera filters unchanged: index_next
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS journal control is visible: entry:1
+PASS entry click updates its printed text immediately without a page animation
+PASS physical journal interaction leaves the camera filters unchanged: entry:1
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS special-card index pagination selects the requested printed entry
+PASS journal control is visible: chapter:2
+PASS category click starts the physical page animation: chapter:2
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:2
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS physical event tab exposes every event article immediately
+PASS event chapter displays its real event preview without a NEW badge
+PASS journal control is visible: chapter:3
+PASS category click starts the physical page animation: chapter:3
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:3
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS physical effects tab remains reachable and resets its index
+PASS displayed effect icon uses nearest texture filtering
+PASS journal control is visible: chapter:4
+PASS category click starts the physical page animation: chapter:4
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:4
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS physical rules tab remains reachable and opens the game instructions
+PASS journal control is visible: chapter:5
+PASS category click starts the physical page animation: chapter:5
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:5
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS physical profile tab opens the player's profile overview
+PASS Escape begins closing the journal without opening Pause
+PASS journal closing animation releases input
+PASS closing restores the exact hub camera pose and FOV before controls resume
+PASS closing restores the original camera environment
+PASS closing leaves both camera filters visible with their original materials and parameters
+PASS J during the opening animation safely closes and restores the camera
+PASS closing during a page flip rebuilds the selected printed entry on reopening
+PASS J cannot open the journal during a cardinal turn
+PASS unfinished pack opening blocks the journal
+PASS moving deck cards block journal opening
+PASS Pause blocks journal opening
+PASS door travel blocks journal opening
+PASS journal fixture reaches the slot room through the normal door
+PASS J also opens the journal in the slot room
+PASS reading disables slot machine and return-door clicks
+PASS Escape restores the exact slot-room camera
+PASS active card fusion blocks journal opening
+PASS room return remains available after reading
+PASS the longest card entry offers physical continuation pages
+PASS journal control is visible: body_next
+PASS body-page click updates its printed text immediately without a page animation
+PASS physical journal interaction leaves the camera filters unchanged: body_next
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS physical body-page control reveals the remaining long entry text
+PASS journal opens in a narrow portrait viewport
+PASS all four corners of every physical journal control fit the 800x900 viewport
+PASS journal control is visible: chapter:1
+PASS category click starts the physical page animation: chapter:1
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:1
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS all portrait controls fit and selected special subject survives live translation: en
+PASS all portrait controls fit and selected special subject survives live translation: de
+PASS all portrait controls fit and selected special subject survives live translation: fr
+PASS all portrait controls fit and selected special subject survives live translation: pl
+PASS all portrait controls fit and selected special subject survives live translation: es
+PASS journal control is visible: chapter:3
+PASS category click starts the physical page animation: chapter:3
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:3
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS effects tab accepts real pointer input in the translated portrait layout
+PASS journal control is visible: chapter:2
+PASS category click starts the physical page animation: chapter:2
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:2
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS dedicated event tab accepts real pointer input and fits the translated portrait layout
+PASS journal control is visible: chapter:4
+PASS category click starts the physical page animation: chapter:4
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:4
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS rules tab accepts real pointer input in the translated portrait layout
+PASS journal control is visible: chapter:5
+PASS category click starts the physical page animation: chapter:5
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:5
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS profile tab accepts real pointer input in the translated portrait layout
+PASS journal control is visible: chapter:0
+PASS category click starts the physical page animation: chapter:0
+PASS all sidebar tabs stay visible while the page contents turn
+PASS physical journal interaction leaves the camera filters unchanged: chapter:0
+PASS journal interaction reuses the same visible sidebar tab nodes
+PASS combat tab accepts real pointer input in the translated portrait layout
+PASS narrow-viewport close restores the exact camera and leaves the camera filters unchanged
+PASS journal is available during an idle card-battle turn
+PASS journal blocks underlying attacks and event input without pausing the match
+PASS an opponent attack synchronously closes the journal before battle camera motion
+PASS the interrupted battle continues and restores normal card input
+PASS an active combat action blocks reopening the journal
+PASS journal can reopen after the attack finishes
+PASS opening Pause immediately closes the book and releases its battle-input guard
+PASS journal opens during an idle online guest turn
+PASS incoming online attack immediately restores camera and environment before presentation
+PASS online attack interruption leaves both visible camera filters unchanged
+PASS online interruption releases input without pausing the networked match
+PASS the real online attack animation completes after interrupting reading
+PASS authoritative online damage still reaches the original defending card
+JOURNAL_TESTS: PASS (150 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

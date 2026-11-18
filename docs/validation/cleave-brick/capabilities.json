@@ -1,0 +1,18 @@
+{
+  "server": "Coding-Solo/godot-mcp + local asset compatibility 1.0",
+  "godot_version": "4.4.1.stable.official.49a5bc7b6",
+  "executable": "C:/Users/Luca/Desktop/Godot_v4.4.1-stable_win64.exe",
+  "project": "C:/Users/Luca/Documents/DarkestCards3D",
+  "binding": "Explicit project_path on every owned job/inspection; server default frozenassets was not used.",
+  "smoke": "Owned headless smoke succeeded with COIN_SMOKE: PASS; render jobs completed using Dummy audio without opening an editor.",
+  "capabilities": [
+    {"capability":"project_binding", "provider":"get_project_info", "status":"available"},
+    {"capability":"loaded_scene_inspection", "provider":"inspect_scene", "status":"available"},
+    {"capability":"owned_bounded_headless_jobs", "provider":"run_godot_job", "status":"available"},
+    {"capability":"off_desktop_rendering_and_silent_audio", "provider":"run_godot_job render", "status":"available"},
+    {"capability":"runtime_input_and_physics", "provider":"project-side test runner via owned jobs", "status":"adapted"}
+  ],
+  "editor_process_observed_before_work": 28720,
+  "process_actions": "Only owned job processes were managed. No editor launch or unrelated process stop was requested.",
+  "restart_required": false
+}

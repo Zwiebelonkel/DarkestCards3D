@@ -1,0 +1,16 @@
+{
+  "schema_version": 2, "profile": "prop", "asset_name": "Random Damage Coin",
+  "scene": "res://scenes/effects/RandomDamageCoin.tscn", "units": "meters", "forward": "-Z",
+  "origin": "center", "footprint_m": [0.685, 0.72], "height_m": 0.0969,
+  "interaction_sides": ["top_0.75", "bottom_2"],
+  "style_references": [
+    "assets/effects/coin/coin.glb: preserve all original meshes and red/green face materials",
+    "scenes/table/Card3D.tscn: coin fits the center gap between card rows",
+    "assets/shader/dissolve.gdshader: existing tabletop disappearance effect"
+  ],
+  "collision": {"required": false, "strategy": "none; cosmetic scripted flip"}, "routes": [],
+  "budgets": {"nodes": 8, "mesh_instances": 3, "surfaces": 3, "triangles": 1200, "unique_materials": 3, "lights": 0, "particles": 0, "collision_shapes": 0},
+  "review": {"required_views": ["top_0.75", "bottom_2", "left", "right", "context", "dissolve"]},
+  "evidence": {"structural": [], "runtime": [], "performance": [], "visual": []},
+  "notes": ["Face +Y is red 0.75; face -Y is green 2. Landing center is 0.04m above card-plane minus 0.095m table offset.", "No navigation, terrain, or blocking collision applies to this transient combat effect."]
+}

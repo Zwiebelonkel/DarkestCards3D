@@ -84,7 +84,10 @@ func configure(
 	if changed:
 		_rebuild_cards()
 	for card in _cards:
-		card.set_state(_playable, card.uid == _selected_uid)
+		var was_hovered := card.uid == _hovered_uid
+		card.set_hand_state(_playable, _selected_uid)
+		if was_hovered:
+			_hovered_uid = card.uid
 	_layout_hand()
 
 
@@ -158,24 +161,54 @@ func _make_page_button(caption: String, direction: int) -> Button:
 
 
 func _rebuild_cards() -> void:
+	var hovered_identity: Dictionary = {}
+	var previous_order: Array[Dictionary] = []
 	for card in _cards:
+		previous_order.append(_event_identity(card.data))
+		if card.uid == _hovered_uid:
+			hovered_identity = _event_identity(card.data)
 		remove_child(card)
 		card.queue_free()
 	_cards.clear()
-	var hover_still_present := false
+	_hovered_uid = ""
+	var identities: Array[Dictionary] = []
 	for data in _hand:
+		var identity := _event_identity(data)
+		var stack_index := identities.find(identity)
+		if stack_index >= 0:
+			_cards[stack_index].instances.append(data)
+			continue
 		var card := EventHandCard.new()
-		card.uid = str(data.get("uid", ""))
 		card.data = data
+		card.instances.append(data)
 		card.size = CARD_SIZE
 		card.activated.connect(_on_card_activated)
 		card.cancelled.connect(_cancel_selection)
-		add_child(card)
-		card.set_state(_playable, card.uid == _selected_uid)
+		identities.append(identity)
 		_cards.append(card)
-		hover_still_present = hover_still_present or card.uid == _hovered_uid
-	if not hover_still_present:
-		_hovered_uid = ""
+	# Playing the first physical copy must not move its remaining stack sideways.
+	var ordered_cards: Array[EventHandCard] = []
+	for identity in previous_order:
+		var index := identities.find(identity)
+		if index >= 0:
+			ordered_cards.append(_cards[index])
+	for card in _cards:
+		if not ordered_cards.has(card):
+			ordered_cards.append(card)
+	_cards = ordered_cards
+	for card in _cards:
+		card.set_hand_state(_playable, _selected_uid)
+		add_child(card)
+		if _event_identity(card.data) == hovered_identity:
+			_hovered_uid = card.uid
+
+
+func _event_identity(data: Dictionary) -> Dictionary:
+	# Physical copies differ only by UID. All other fields must match, including
+	# the exact effect/multiplier; similar-looking event variants stay separate.
+	var identity := data.duplicate()
+	identity.erase("uid")
+	return identity
 
 
 func _layout_hand() -> void:
@@ -244,20 +277,23 @@ func _animate_hand(delta: float) -> void:
 
 func _update_hover(pointer: Vector2) -> void:
 	var hovered := ""
-	# All card headers remain independently reachable in the bottom strip.
+	# Each distinct event stack has its own reachable header and exposed edges.
 	for card in _cards:
 		if not card.visible:
 			continue
+		var stack_peek := card.stack_peek_height() * _hand_scale
 		var bottom_strip := Rect2(
-			Vector2(card.position.x, size.y - PEEK_HEIGHT * _hand_scale),
-			Vector2(CARD_SIZE.x * _hand_scale, PEEK_HEIGHT * _hand_scale)
+			Vector2(card.position.x, size.y - PEEK_HEIGHT * _hand_scale - stack_peek),
+			Vector2(CARD_SIZE.x * _hand_scale, PEEK_HEIGHT * _hand_scale + stack_peek)
 		)
 		if bottom_strip.has_point(pointer):
 			hovered = card.uid
 			break
 	if hovered.is_empty():
 		for card in _cards:
-			if card.visible and Rect2(card.position, CARD_SIZE * _hand_scale).has_point(pointer):
+			var stack_peek := card.stack_peek_height() * _hand_scale
+			var card_rect := Rect2(card.position - Vector2(0, stack_peek), CARD_SIZE * _hand_scale + Vector2(0, stack_peek))
+			if card.visible and card_rect.has_point(pointer):
 				hovered = card.uid
 				break
 	_hovered_uid = hovered
@@ -324,13 +360,18 @@ class EventHandCard extends Control:
 	signal activated(uid: String)
 	signal cancelled
 
+	const STACK_OFFSET := 7.0
+	const MAX_STACK_LAYERS := 2
+
 	var uid := ""
 	var data: Dictionary = {}
+	var instances: Array[Dictionary] = []
 	var _playable := false
 	var _selected := false
 	var _hovered := false
 	var _accent := Color("ad96c7")
 	var _body_style: StyleBoxFlat
+	var _stack_style: StyleBoxFlat
 	var _action_label: Label
 	var _title_label: Label
 	var _rarity_label: Label
@@ -355,7 +396,13 @@ class EventHandCard extends Control:
 		_body_style.shadow_color = Color(0.0, 0.0, 0.0, 0.68)
 		_body_style.shadow_size = 12
 		_body_style.shadow_offset = Vector2(0, 2)
+		_stack_style = _body_style.duplicate() as StyleBoxFlat
+		_stack_style.shadow_size = 0
+		_stack_style.bg_color = Color("211729")
 		_title_label = _add_label("", Vector2(10, 9), Vector2(178, 29), 21, _accent, true)
+		if instances.size() > 1:
+			_title_label.size.x = 136
+			_add_label("×%d" % instances.size(), Vector2(151, 10), Vector2(37, 27), 15, _accent)
 		_rarity_label = _add_label("", Vector2(12, 111), Vector2(174, 18), 10, _accent.darkened(0.12))
 		_description_label = _add_label("", Vector2(16, 132), Vector2(166, 130), 13, Color("eee5e9"))
 		_description_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -422,6 +469,21 @@ class EventHandCard extends Control:
 		queue_redraw()
 
 
+	func set_hand_state(playable: bool, selected_uid: String) -> void:
+		# Keep the actual selected copy addressable across snapshots and rebuilds.
+		data = instances[0]
+		for instance in instances:
+			if str(instance.get("uid", "")) == selected_uid:
+				data = instance
+				break
+		uid = str(data.get("uid", ""))
+		set_state(playable, uid == selected_uid)
+
+
+	func stack_peek_height() -> float:
+		return mini(MAX_STACK_LAYERS, maxi(0, instances.size() - 1)) * STACK_OFFSET
+
+
 	func set_hovered(hovered: bool) -> void:
 		if _hovered == hovered:
 			return
@@ -468,6 +530,10 @@ class EventHandCard extends Control:
 		var ink := _accent if _playable or _hovered else _accent.darkened(0.25)
 		_body_style.border_color = ink if _hovered or _selected else ink.darkened(0.4)
 		_body_style.bg_color = Color("25192e") if _selected else Color("17101e")
+		_stack_style.border_color = ink.darkened(0.4)
+		var layers := mini(MAX_STACK_LAYERS, maxi(0, instances.size() - 1))
+		for layer in range(layers, 0, -1):
+			draw_style_box(_stack_style, Rect2(Vector2(0, -layer * STACK_OFFSET), size))
 		draw_style_box(_body_style, Rect2(Vector2.ZERO, size))
 		draw_line(Vector2(14, 44), Vector2(184, 44), Color(ink, 0.4), 1.0)
 		draw_line(Vector2(14, 263), Vector2(184, 263), Color(ink, 0.3), 1.0)
@@ -487,12 +553,28 @@ class EventHandCard extends Control:
 			draw_rect(Rect2(center + Vector2(-16, -17), Vector2(19, 28)), Color(ink, 0.35), false, 2.0)
 			draw_rect(Rect2(center + Vector2(-2, -10), Vector2(19, 28)), ink, false, 2.0)
 			_draw_arrow(center + Vector2(-9, 5), center + Vector2(11, 5), ink)
+		elif event_id == "rearrange_event":
+			_draw_arrow(center + Vector2(-18, -9), center + Vector2(18, -9), ink)
+			_draw_arrow(center + Vector2(18, 9), center + Vector2(-18, 9), ink)
+		elif event_id == "heal_event":
+			draw_line(center + Vector2(-17, 0), center + Vector2(17, 0), ink, 9.0, true)
+			draw_line(center + Vector2(0, -17), center + Vector2(0, 17), ink, 9.0, true)
+		elif event_id == "piss_event":
+			var arc := PackedVector2Array([
+				center + Vector2(-21, -9), center + Vector2(-15, -18),
+				center + Vector2(-7, -21), center + Vector2(2, -19),
+				center + Vector2(10, -11), center + Vector2(16, 3),
+			])
+			draw_polyline(arc, ink, 3.0, true)
+			draw_circle(center + Vector2(18, 9), 2.5, ink, true, -1.0, true)
+			draw_arc(center + Vector2(12, 17), 12, 0.0, PI, 20, ink, 2.0, true)
+			draw_line(center + Vector2(-2, 17), center + Vector2(26, 17), Color(ink, 0.5), 2.0, true)
 		else:
 			_draw_arrow(center + Vector2(0, 17), center + Vector2(0, -17), ink)
 			draw_line(center + Vector2(-12, 8), center + Vector2(-12, -5), ink, 2.0, true)
 			draw_line(center + Vector2(12, 8), center + Vector2(12, -5), ink, 2.0, true)
 		if _selected:
-			draw_circle(Vector2(183, 17), 4.0, ink)
+			draw_circle(Vector2(183, 45 if instances.size() > 1 else 17), 4.0, ink)
 
 
 	func _draw_arrow(start: Vector2, end: Vector2, ink: Color) -> void:

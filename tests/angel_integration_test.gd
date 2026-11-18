@@ -38,6 +38,7 @@ func _run() -> void:
 		get_tree().quit(1)
 		return
 	GameCurrency.set_process(false)
+	GameCurrency._rescued_npcs["angel"] = true
 	CollectionManager.clear_profile_state()
 	DeckManager.clear_profile_state()
 	CardUpgradeManager.clear_profile_state()

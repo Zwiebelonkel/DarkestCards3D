@@ -1,0 +1,76 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS new profiles have no discovered cards
+PASS legacy ownership reveals positive counts without revealing absent cards
+PASS old completed offerings recover consumed cards and their recorded reward
+PASS legacy discoveries without hover history are new while undiscovered cards are not
+PASS discovery queries return detached values without changing state, save bytes, or RNG
+PASS ordinary saves persist legacy discovery migration
+PASS migrated discovery survives loss of all owned copies and old offering metadata
+PASS flat legacy collections are inspected without generating instances
+PASS rolling or previewing a pack card alone does not discover it
+PASS collecting the exact pack instance discovers its card
+PASS duplicate pack callbacks cannot alter discovery or award another copy
+PASS regular card awards record discovery
+PASS special-card acquisitions record discovery
+PASS event batches and malformed IDs never create collectible discoveries
+PASS receiving match events leaves collectible inventory and notifications unchanged
+PASS event hands remain a silent no-op with unchanged save bytes
+PASS reload preserves collectible discovery while keeping events outside collection history
+PASS event acquisition is rejected through every collection entry point: fixture_event
+PASS events never enter discovery or NEW acknowledgement: fixture_event
+PASS event acquisition is rejected through every collection entry point: switch
+PASS events never enter discovery or NEW acknowledgement: switch
+PASS event acquisition is rejected through every collection entry point: block
+PASS events never enter discovery or NEW acknowledgement: block
+PASS event acquisition is rejected through every collection entry point: steel
+PASS events never enter discovery or NEW acknowledgement: steel
+PASS event acquisition is rejected through every collection entry point: strength_120
+PASS events never enter discovery or NEW acknowledgement: strength_120
+PASS event acquisition is rejected through every collection entry point: strength_150
+PASS events never enter discovery or NEW acknowledgement: strength_150
+PASS event acquisition is rejected through every collection entry point: strength_200
+PASS events never enter discovery or NEW acknowledgement: strength_200
+PASS rejected event acquisitions and discovery reads preserve state, save bytes, and RNG
+PASS reward admission excludes category:event and reserved EventDeck IDs even without a category
+PASS pack and fixed-rarity reward pools exclude all event definitions
+PASS an event-only catalog cannot return a reward through any public random draw path
+PASS legacy event ownership and hover metadata fixture is saved without deletion
+PASS old event discovery and seen metadata cannot reveal cards or NEW labels
+PASS legacy events are excluded from collectible counts, copies, and table display
+PASS profile counts exclude event ownership, Holo copies, saved deck entries, and catalog definitions
+PASS legacy event queries are read-only and never rewrite or remove old save metadata
+PASS new collectible types await their first collection hover
+PASS unknown and undiscovered cards cannot be marked seen
+PASS invalid acknowledgements neither save nor publish a change
+PASS failed acknowledgement keeps the card new and all in-memory metadata unchanged
+PASS failed acknowledgement keeps save bytes and both signals untouched
+PASS a successful hover acknowledges only its own card type
+PASS seen notification follows the durable save without refreshing the inventory
+PASS repeated hover is a successful silent no-op without another save
+PASS seen and still-new card states survive profile reload
+PASS obtaining another copy of a seen type does not restore its badge
+PASS previously discovered collectible types can be acknowledged without remaining inventory copies
+PASS collectible acknowledgement is durable
+PASS fusion fixture records the consumed type's first hover
+PASS failed collectible discovery writes reveal nothing and publish no change
+PASS failed fusion cannot discover its rolled reward or consume discovery inputs
+PASS successful fusion preserves a fully consumed type and discovers its reward
+PASS consumption retains acknowledgement while the new fusion reward awaits hover
+PASS fusion input and reward discoveries are durable
+PASS reacquiring a fully consumed seen type preserves its acknowledgement after reload
+PASS first Jester offering preserves its fully consumed card's discovery
+PASS failed final offering cannot discover a Secret reward
+PASS completed offering retains consumed discoveries and records its Secret reward
+PASS offering history and reward discovery survive reload
+PASS slot-one fixture starts with its own fresh profile
+PASS switching to a fresh slot does not inherit discoveries
+PASS the same card type starts unseen in an independent slot
+PASS returning to slot one restores only its discoveries
+PASS slot one restores its own seen and unseen types
+PASS slot two preserves its independent discovery history
+PASS slot two restores its own independent hover history
+PASS resetting the active slot clears discoveries
+PASS resetting a slot also clears its previous acknowledgements
+COLLECTION_DISCOVERY_TESTS: PASS (72 checks)

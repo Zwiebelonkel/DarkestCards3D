@@ -1,0 +1,19 @@
+{
+  "validated_date": "2026-11-15",
+  "engine": "Godot 4.4.1",
+  "isolated_saves": true,
+  "tests": {
+    "collection_escape_test": {"status": "PASS", "checks": 25},
+    "card_detail_rotation_test": {"status": "PASS", "checks": 34, "renderer": "Forward+"},
+    "collection_interaction_test": {"status": "PASS", "checks": 29}
+  },
+  "total_checks": 88,
+  "script_errors": 0,
+  "shader_errors": 0,
+  "notes": [
+    "Escape closes collection details and Deck ansehen before Pause or main-menu navigation.",
+    "Outside click uses the same close request. Entry animations queue return; repeated Escape during return is consumed.",
+    "Empty deck, populated deck, active gestures, card switch, exact card restoration and unchanged deck copies verified.",
+    "Existing ObjectDB cleanup warnings occur in collection_escape_test and collection_interaction_test. Rotation render test exits without warnings."
+  ]
+}

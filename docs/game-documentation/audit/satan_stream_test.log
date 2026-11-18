@@ -1,0 +1,28 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS the imported scene is idle on entry
+PASS Piss is an authored child of Satan inside GameTable.tscn
+PASS the supplied ribbon scene stays within its three-node, one-emitter budget
+PASS right clicks, releases and a single click cannot start the stream
+PASS two of four clicks trigger only the stream
+PASS Satan immediately starts fast looping laughter with faster voice during the stream
+PASS pointer hover cannot replace the stream's fast laughing animation
+PASS moving the scene node changes the actual emission point without resetting the authored position
+PASS the aim moves in a small circle around the lower player target
+PASS circling preserves the authored source transform and ballistic landing
+PASS the third click does not restart or stack the stream
+PASS the halfway effect leaves normal controls available
+PASS the stream and looping sound stop after their bounded duration
+PASS fast laughter stops and the ordinary animation returns as emission ends, before particles finish draining
+PASS remaining particles drain and the effect returns to idle
+PASS an odd threshold waits until half the clicks are reached
+PASS three of five clicks trigger the halfway effect
+PASS slow clicks expire without triggering the halfway effect
+PASS jumpscare cooldown also suppresses the halfway stream
+PASS starting another table interaction immediately clears particles and audio
+PASS an incoming lobby cancels a halfway stream before a jumpscare exists
+PASS lobby cancellation also immediately ends the stream laughter
+SATAN_STREAM_TESTS: PASS (22 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

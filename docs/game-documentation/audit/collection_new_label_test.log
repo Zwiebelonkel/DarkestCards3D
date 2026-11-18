@@ -1,0 +1,54 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS two collectible combat types occupy the first fixed journal spread
+PASS fixture acquires alley_lurker
+PASS newly acquired type starts unread: alley_lurker
+PASS fixture acquires angry_pigeon
+PASS newly acquired type starts unread: angry_pigeon
+PASS table collection renders both acquired types
+PASS table entrance connects the real Area3D hover callback
+PASS journal opens with its own reading camera
+PASS journal page turn reaches the collection grid
+PASS journal reveals both acquired fixed slots
+PASS unread card owns a Sprite3D NEW label: alley_lurker
+PASS collection badge reuses the authored animation and camera-facing upper-left attachment
+PASS unread card owns a Sprite3D NEW label: angry_pigeon
+PASS collection badge reuses the authored animation and camera-facing upper-left attachment
+PASS unread card owns a Sprite3D NEW label: alley_lurker
+PASS collection badge reuses the authored animation and camera-facing upper-left attachment
+PASS unread card owns a Sprite3D NEW label: angry_pigeon
+PASS collection badge reuses the authored animation and camera-facing upper-left attachment
+PASS unknown question-mark slots never expose a NEW badge
+PASS collection NEW badge animates through ordinary scene processing
+PASS a late table hover while hidden cannot acknowledge a new card
+PASS suspended table interaction cannot acknowledge a new card
+PASS disabled card picking cannot acknowledge a new card
+PASS first table hover clears that type's NEW badge from both open collections
+PASS table acknowledgement preserves existing card nodes and row layout
+PASS table acknowledgement preserves the journal preview node and fixed pose
+PASS hovering one type leaves the other type unread in both collections
+PASS repeated hover of a seen card does not rewrite its save
+PASS pointer ray reaches the second acquired journal card
+PASS first journal hover clears that type's NEW badge in both open collections
+PASS journal acknowledgement preserves both card nodes and the table pose
+PASS acknowledging the badge preserves the journal's camera-facing hover animation
+PASS seen status survives an actual collection save reload
+PASS journal collection reopens after persistence reload
+PASS rebuilding and reopening both collections cannot restore acknowledged badges
+PASS a duplicate of the seen type can still be acquired
+PASS receiving another copy of a seen type does not restart the NEW notification
+PASS detail-wheel fixture begins with four genuinely unread card types
+PASS opening detail without a prior hover acknowledges the inspected card and removes its NEW label
+PASS opening one detail leaves every uninspected neighbor unread
+PASS real wheel-down input acknowledges the next unhovered detail card and removes its NEW label
+PASS scrolling back to an already inspected detail does not rewrite its save
+PASS real wheel-up input acknowledges the previous unhovered detail card and removes its NEW label
+PASS detail browsing never needs a hover event and leaves the unvisited fourth card NEW
+PASS reload preserves all wheel-inspected seen flags while the unvisited card remains unread
+PASS rebuilding the collection restores only the unvisited card's NEW label
+COLLECTION_NEW_LABEL_TESTS: PASS (46 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 4 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

@@ -171,26 +171,8 @@ func _award_prop_secret(camera: Camera3D) -> void:
 
 
 func _show_prop_discovery(instance: Dictionary, camera: Camera3D, origin: Vector3) -> void:
-	if not is_instance_valid(camera) or not is_inside_tree():
-		return
-	var card := CARD_SCENE.instantiate() as Card3D
-	card.name = "DiscoveredUsbSecret" if instance.get("card_id") == "usb_stick" else "DiscoveredPropSecret"
-	card.top_level = true
-	get_parent().add_child(card)
-	card.setup(CardData.merge_card_and_instance(CardDatabase.get_card(str(instance["card_id"])), instance))
-	card.description_label.skip()
-	_disable_card_picking(card)
-	var facing := camera.global_basis.orthonormalized()
-	var destination := camera.global_position - facing.z * 1.6 - facing.y * 0.08
-	card.global_transform = Transform3D(facing.scaled(Vector3.ONE * 0.15), origin)
-	var reveal := card.create_tween()
-	reveal.tween_property(card, "global_transform", Transform3D(facing, destination), 0.65).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	# A gentle turn makes the room's depth visible at the moment of discovery.
-	for angle in [-18.0, 18.0, 0.0]:
-		var pose := Transform3D(facing * Basis(Vector3.UP, deg_to_rad(angle)), destination)
-		reveal.tween_property(card, "global_transform", pose, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	reveal.tween_property(card, "scale", Vector3.ONE * 0.01, 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	reveal.tween_callback(card.queue_free)
+	if is_inside_tree():
+		preload("res://scripts/ui/SecretCardReveal.gd").play(get_parent(), instance, camera, origin)
 
 
 func _knife_key_found() -> bool:

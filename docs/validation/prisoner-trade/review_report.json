@@ -1,0 +1,48 @@
+{
+  "source_checks": [
+    {
+      "matches_validated_snapshot": true,
+      "path": "scripts/autoload/CollectionManager.gd"
+    },
+    {
+      "matches_validated_snapshot": true,
+      "path": "scripts/main/Main.gd"
+    },
+    {
+      "matches_validated_snapshot": true,
+      "path": "scripts/card/CardData.gd"
+    },
+    {
+      "matches_validated_snapshot": true,
+      "path": "scripts/ui/AccessKeyTray.gd"
+    },
+    {
+      "matches_validated_snapshot": true,
+      "path": "scripts/ui/UpgradeWallCollection.gd"
+    },
+    {
+      "matches_validated_snapshot": true,
+      "path": "data/cards.json"
+    }
+  ],
+  "script_errors": 0,
+  "engine": "Godot 4.4.1, Forward+ Vulkan, Dummy audio, owned off-desktop MCP children",
+  "shader_errors": 0,
+  "suites": {
+    "prisoner_trade": 25,
+    "upgrade_wall": 21,
+    "total": 203,
+    "prisoner_dialogue": 70,
+    "access_key_tray": 87
+  },
+  "limitations": [
+    "Existing ObjectDB shutdown warning in some full-scene headless suites",
+    "Live Steam and exported builds not tested"
+  ],
+  "visually_reviewed": [
+    "prisoner-trade-tray.png",
+    "prisoner-holy-water-reward.png",
+    "prisoner-story-cards-wall.png"
+  ],
+  "validated_utc": "2026-11-16T19:04:51.4889386Z"
+}

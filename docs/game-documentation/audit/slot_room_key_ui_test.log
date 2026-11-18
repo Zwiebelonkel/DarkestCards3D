@@ -1,0 +1,23 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: Full combat deck keeps its normal detail action disabled
+PASS: Silent key acquisition waits for the current detail to close
+PASS: Receiving the key does not request the door or play a reward sound
+PASS: Deferred discovery does not replace the inspected card underneath the pointer
+PASS: Key stays out of the normal collection after closing detail
+PASS: Owned unused key is available to the lower tray even with a full combat deck
+PASS: Acquiring a key never uses it or starts a door reveal
+PASS: Access keys cannot enter the battle deck
+PASS: A regular card restores its own visible label and capacity rules
+PASS: Ordinary add-to-deck still works after acquiring the key
+PASS: Other special cards are absent from the normal collection without losing their unlock effect
+PASS: A collection suspended while looking elsewhere remembers the silent reward refresh
+PASS: Returning to the collection preserves the key partition
+PASS: Owned key can be activated independently of normal collection details
+PASS: Used key leaves the tray inventory
+PASS: Used key remains owned in the special collection
+PASS: Activating a key never adds a normal collection card or starts its legacy detail action
+SLOT_ROOM_KEY_UI_TESTS: PASS (17 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

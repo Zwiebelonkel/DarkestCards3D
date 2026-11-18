@@ -14,7 +14,7 @@ func _initialize() -> void:
 	second_rng.seed = 9042
 	var deck := EVENTS.create_shuffled(first_rng)
 	var same_seed_deck := EVENTS.create_shuffled(second_rng)
-	_expect(deck.size() == EVENTS.DECK_SIZE, "Each match starts with 24 events")
+	_expect(deck.size() == EVENTS.DECK_SIZE, "Each match starts with 31 events")
 	_expect(deck == same_seed_deck, "The match RNG determines the complete order")
 	_expect(deck.all(func(card: Dictionary) -> bool: return card.get("category") == "event" and not CARD_DATA.is_combat_card(card)), "Events cannot enter combat-card pools")
 	var ids: Dictionary = {}
@@ -24,9 +24,12 @@ func _initialize() -> void:
 		ids[card["uid"]] = true
 		counts[card["id"]] = int(counts.get(card["id"], 0)) + 1
 	_expect(counts["steel"] == 1, "There is exactly one Steel")
+	_expect(counts["piss_event"] == 1, "There is exactly one legendary Piss alongside Steel")
+	_expect(counts["heal_event"] == 3, "Three Heal events join the shared pile")
+	_expect(counts["rearrange_event"] == 3, "Three Rearrange events join the shared pile")
 	for event_id: String in counts:
-		if event_id != "steel":
-			_expect(int(counts[event_id]) > int(counts["steel"]), "Steel is strictly rarer than every other event")
+		if event_id not in ["steel", "piss_event"]:
+			_expect(int(counts[event_id]) > int(counts["steel"]), "The two legendary events are rarer than all other events")
 
 	var discard: Array[Dictionary] = []
 	var hand: Array[Dictionary] = []

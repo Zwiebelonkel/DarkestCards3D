@@ -1,0 +1,4 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://tools/weed/build_pump_reward_assets.gd" id="1"]
+[node name="BuildPumpRewardAssets" type="Node"]
+script = ExtResource("1")

@@ -10,6 +10,7 @@ const EFFECT_OVERVIEW_SCENE := preload("res://scenes/CardEffectOverview.tscn")
 const RARITY_SOUND_PATH := "res://assets/sounds/SFX/%s.mp3"
 const FOIL_SCRIPT := preload("res://scripts/packs/PackFoil.gd")
 const FOIL_AUDIO_SCRIPT := preload("res://scripts/packs/FoilAudio.gd")
+const SURFACE_SCRIPT := preload("res://scripts/packs/PackSurface.gd")
 
 @export var card_count := 5
 
@@ -20,6 +21,10 @@ const FOIL_AUDIO_SCRIPT := preload("res://scripts/packs/FoilAudio.gd")
 @export var pack_top_throw_velocity := Vector3(2.8, 3.0, 0.6)
 @export var pack_top_throw_gravity := 10.0
 @export var pack_top_throw_duration := 1.1
+
+@export_group("Pack Mouse Tilt")
+@export_range(0.0, 15.0, 0.5) var pack_mouse_tilt_degrees: float = 7.0
+@export_range(1.0, 20.0, 0.5) var pack_mouse_follow_speed: float = 9.0
 
 @export_group("Pack Top Drag")
 @export var drag_open_distance: float = 260.0
@@ -209,7 +214,8 @@ func _exit_tree() -> void:
 func _setup_foil() -> void:
 	if _foil == null or not is_instance_valid(pack_top):
 		return
-	_foil.configure(pack_top)
+	SURFACE_SCRIPT.apply_to_pack(pack, selected_pack_id, false)
+	_foil.configure(pack_top, selected_pack_id)
 	_foil_rest_bounds = _foil.get_local_bounds()
 	_reset_foil_state()
 
@@ -270,13 +276,32 @@ func _process(delta: float) -> void:
 		_foil_audio.set_motion(clampf(tear_speed * 0.65 + _foil_motion_speed * 0.16, 0.0, 1.0) if _dragging_pack_top else 0.0, _foil_lift if _dragging_pack_top else 0.0)
 
 	var pull_force := clampf(tear_speed * 0.3 + _foil_motion_speed * 0.12, 0.0, 1.0)
-	_apply_base_shake(pull_force if _dragging_pack_top else 0.0)
+	if _dragging_pack_top:
+		_apply_base_shake(pull_force)
+	else:
+		pack.position = _pack_start_position
+		_update_pack_mouse_tilt(delta)
 	if _drag_progress >= 1.0:
 		_open_pack_from_drag()
-	elif _drag_progress <= 0.0 and not _dragging_pack_top:
-		var time := Time.get_ticks_msec() * 0.001
-		pack.rotation = _pack_home_rotation * (PI / 180.0) + Vector3(sin(time * 1.5) * 0.04, sin(time * 1.1) * 0.055, 0.0)
 
+
+func _update_pack_mouse_tilt(delta: float) -> void:
+	var viewport := get_viewport()
+	var camera := viewport.get_camera_3d()
+	if camera == null:
+		return
+	var center := pack_mesh.to_global(pack_mesh.get_aabb().get_center())
+	if camera.is_position_behind(center):
+		return
+	var half_size := (viewport.get_visible_rect().size * 0.5).max(Vector2.ONE)
+	var offset := (viewport.get_mouse_position() - camera.unproject_position(center)) / half_size
+	offset = offset.clamp(Vector2(-1.0, -1.0), Vector2.ONE)
+	var angle := deg_to_rad(pack_mouse_tilt_degrees)
+	# Follow screen directions even when the shop or camera is rotated.
+	var camera_basis := pack.get_parent_node_3d().global_basis.orthonormalized().inverse() * camera.global_basis.orthonormalized()
+	var tilt := Basis(camera_basis.y, offset.x * angle) * Basis(camera_basis.x, offset.y * angle)
+	var target := (tilt * Basis.from_euler(_pack_home_rotation * (PI / 180.0))).get_rotation_quaternion()
+	pack.quaternion = pack.quaternion.slerp(target, 1.0 - exp(-pack_mouse_follow_speed * delta))
 
 
 func _input(event: InputEvent) -> void:
@@ -1090,8 +1115,12 @@ func _collect_revealed_cards() -> void:
 	if cards_fly_target:
 		target_pos = cards_fly_target.global_position
 
-	for instance in _pending_collection_instances:
-		CollectionManager.add_card_instance(instance)
+	var result := CollectionManager.add_card_instances(_pending_collection_instances)
+	if not result["success"]:
+		_collecting_cards = false
+		_waiting_for_collect_click = true
+		info_label.text = "Speichern fehlgeschlagen – zum Wiederholen klicken"
+		return
 
 	if collection_screen and collection_screen.has_method("refresh_collection"):
 		collection_screen.refresh_collection()

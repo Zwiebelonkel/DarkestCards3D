@@ -24,7 +24,7 @@ const PACK_TYPES := {
 	"ultra": {
 		"name": "ULTRA PACK",
 		"cost": 20,
-		"minimum_level": 1,
+		"minimum_level": 5,
 		"card_count": 7,
 		"description": "Stärkere Auswahl mit deutlich besseren Chancen.",
 		"scene": preload("res://assets/cards/pack/ultra/pack.glb"),

@@ -29,6 +29,7 @@ func _run() -> void:
 		push_error("Run with tests/run_match_feature_tests.ps1 to isolate player saves.")
 		get_tree().quit(1)
 		return
+	GameCurrency._rescued_npcs["angel"] = true
 	for scene: PackedScene in MACHINE_SCENES:
 		await _check_machine(scene)
 	if DisplayServer.get_name() != "headless":

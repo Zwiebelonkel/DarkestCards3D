@@ -1,0 +1,28 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS actual match presents the three private event cards
+PASS empty hand surface leaves the table clickable
+PASS the hidden logical event deck retains all undealt events
+PASS the table has no visible event-pile marker
+PASS the table has no rendered event-deck counter
+PASS blocked table card shows its remaining-turn badge
+PASS block status has enough screen space for two readable text lines
+PASS 1280x720 preserves the original match-marker camera transform
+PASS hovering the bottom edge raises the intended event
+PASS the hovered card exposes its full rules
+PASS selecting an event leaves all ten board target centers clickable
+PASS a spectator sees the public event reveal while the private hand stays hidden
+PASS the public reveal creates a visible card for a spectator
+PASS match reset clears pending public reveals
+PASS block status has enough screen space for two readable text lines
+PASS 800x600 preserves the original match-marker camera transform
+PASS selecting an event leaves all ten board target centers clickable
+PASS narrow hand keeps every shown card horizontally on screen
+PASS narrow hand keeps every shown card horizontally on screen
+PASS narrow hand keeps every shown card horizontally on screen
+EVENT_CARDS_VISUAL_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

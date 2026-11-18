@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/PoisonSyringe.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/effects/syringe/adrenalin.glb" id="2_model"]
+[ext_resource type="AudioStream" path="res://assets/sounds/SFX/effects/poison.mp3" id="3_sound"]
+
+[node name="PoisonSyringe" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="InjectionPivot" type="Node3D" parent="."]
+rotation = Vector3(0, -0.35, -0.70)
+
+[node name="Model" parent="InjectionPivot" instance=ExtResource("2_model")]
+position = Vector3(0, 0.53817, 0)
+rotation = Vector3(1.5707963, 0, 0)
+scale = Vector3(0.13, 0.13, 0.13)
+
+[node name="Sound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_sound")
+pitch_scale = 1.42
+bus = &"SFX"

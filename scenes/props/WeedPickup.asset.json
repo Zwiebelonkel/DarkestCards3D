@@ -1,0 +1,122 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "Story package reward: weed 7 / cocaine 20",
+  "scene": "res://scenes/props/WeedPickup.tscn",
+  "units": "meters in table-local space (hub scale 0.72)",
+  "forward": "-Z",
+  "origin": "ground_center",
+  "footprint_m": [
+    0.509132,
+    0.695991
+  ],
+  "height_m": 0.111,
+  "interaction_sides": [
+    "front",
+    "left",
+    "right"
+  ],
+  "style_references": [
+    {
+      "path": "res://assets/environments/props/weed/weed.glb",
+      "reason": "Reuse the supplied textured bag, no replacement geometry."
+    },
+    {
+      "path": "res://scenes/table/GameTable.tscn",
+      "reason": "Existing gritty tabletop props, keep the central mode buttons clear."
+    },
+    {
+      "path": "res://scripts/props/BedSeating.gd",
+      "reason": "Match the existing warm yellow hover and gated pointer picking."
+    },
+    {
+      "path": "res://assets/shader/lsd.gdshader",
+      "reason": "Reuse the authored psychedelic waves, color cycling and RGB split."
+    }
+  ],
+  "collision": {
+    "required": true,
+    "strategy": "one primitive box for mouse picking only; no physics body"
+  },
+  "routes": [],
+  "budgets": {
+    "nodes": 13,
+    "mesh_instances": 2,
+    "multimesh_instances": 0,
+    "multimesh_elements": 0,
+    "collision_shapes": 1,
+    "concave_collision_shapes": 0,
+    "collision_triangles": 0,
+    "surfaces": 2,
+    "triangles": 4700,
+    "unique_materials": 2,
+    "lights": 0,
+    "particles": 0,
+    "nonuniform_scales": 2
+  },
+  "review": {
+    "required_views": [
+      "front",
+      "back",
+      "left",
+      "right",
+      "drop",
+      "landed",
+      "hover",
+      "active"
+    ]
+  },
+  "evidence": {
+    "structural": [
+      "tools/weed/asset_contract_test.tscn"
+    ],
+    "runtime": [
+      "tests/weed_reward_test.tscn",
+      "tests/cocaine_reward_test.tscn"
+    ],
+    "performance": [
+      "test-user/weed/review_report.json"
+    ],
+    "visual": [
+      "docs/validation/weed-reward/",
+      "docs/validation/cocaine-reward/"
+    ]
+  },
+  "measured": {
+    "bounds": {
+      "position": [
+        -0.254566103219986,
+        2.04518437385559E-05,
+        -0.3416787981987
+      ],
+      "size": [
+        0.509132206439972,
+        0.110359095036983,
+        0.695991396903992
+      ]
+    },
+    "collision_shapes": 1,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 2,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 13,
+    "nonuniform_scales": 2,
+    "particles": 0,
+    "surfaces": 2,
+    "triangles": 4656,
+    "unique_materials": 2
+  },
+  "notes": [
+    "Inherits the imported mesh's authored nonuniform scale; no source asset changes.",
+    "Root rests 4mm above the actual tabletop in the hub; model base is zero in prop space.",
+    "Outline adds a conditional second mesh pass; the screen filter is one full-screen pass plus a back-buffer copy.",
+    "Weed owns a dedicated Master low-pass; cocaine instead scales the existing music pitch and speed. No lights or particles.",
+    "Building construction joins and navigation are not applicable to this non-blocking pickup."
+  ]
+}

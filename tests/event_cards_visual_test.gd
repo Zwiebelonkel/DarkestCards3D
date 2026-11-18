@@ -71,7 +71,7 @@ func _run() -> void:
 	await get_tree().create_timer(0.3).timeout
 	check(hand_ui._cards.size() == 3, "actual match presents the three private event cards")
 	check(hand_ui.mouse_filter == Control.MOUSE_FILTER_IGNORE, "empty hand surface leaves the table clickable")
-	check(table._event_deck.size() == 21, "the hidden logical event deck retains all undealt events")
+	check(table._event_deck.size() == EventDeck.DECK_SIZE - 3, "the hidden logical event deck retains all undealt events")
 	check(table.get_node_or_null("EventDeck") == null, "the table has no visible event-pile marker")
 	check(table.find_child("EventDeckCount", true, false) == null, "the table has no rendered event-deck counter")
 	check(table._enemy_slots[2]._event_block_badge.is_visible_in_tree(), "blocked table card shows its remaining-turn badge")
@@ -97,6 +97,34 @@ func _run() -> void:
 	await get_tree().create_timer(0.33).timeout
 	await _screenshot("event-cards-reveal")
 	await get_tree().create_timer(0.6).timeout
+	for definition: Dictionary in EVENT_RULES.definitions():
+		if definition["id"] == "heal_event":
+			hand_ui.play_event(definition, false)
+			break
+	await get_tree().create_timer(0.33).timeout
+	await _screenshot("event-cards-heal")
+	await get_tree().create_timer(0.6).timeout
+	var rearrange: Dictionary = {}
+	for definition: Dictionary in EVENT_RULES.definitions():
+		if definition["id"] == "rearrange_event":
+			rearrange = definition.duplicate(true)
+			rearrange["uid"] = "rearrange-visual"
+			break
+	table._player_event_hand.append(rearrange)
+	table._refresh_event_hand()
+	table._on_event_selected(rearrange["uid"])
+	table._on_event_target_clicked("player", 0)
+	await get_tree().create_timer(0.2).timeout
+	await _screenshot("event-cards-rearrange-first")
+	var first := table._player_slots[0]
+	var second := table._player_slots[3]
+	table._on_event_target_clicked("player", 3)
+	await get_tree().create_timer(0.33).timeout
+	await _screenshot("event-cards-rearrange")
+	await get_tree().create_timer(0.6).timeout
+	check(table._player_slots[3] == first and table._player_slots[0] == second, "the actual match swaps the two chosen allied cards")
+	# Keep the subsequent hand-layout fixtures independent of the played event.
+	table._event_played_this_turn = false
 	hand_ui.configure(table._player_event_hand, false, "", "", false)
 	hand_ui.play_event(EVENT_RULES.definitions()[0], true)
 	check(not hand_ui.visible and hand_ui._played_events_root.is_visible_in_tree(), "a spectator sees the public event reveal while the private hand stays hidden")
@@ -116,11 +144,53 @@ func _run() -> void:
 	for card in hand_ui._cards:
 		if card.visible:
 			check(card.position.x >= 0 and card.position.x + card.size.x * card.scale.x <= root.size.x, "narrow hand keeps every shown card horizontally on screen")
+	table.set_process(false)
+	await _check_stacks(hand_ui)
 	main.queue_free()
 	await get_tree().process_frame
 	await get_tree().process_frame
 	print("EVENT_CARDS_VISUAL_TESTS: " + ("PASS" if failures == 0 else "FAIL"))
 	get_tree().quit(0 if failures == 0 else 1)
+
+
+func _check_stacks(hand_ui: Variant) -> void:
+	var hand: Array[Dictionary] = []
+	hand_ui.configure(hand, false)
+	var definitions := EVENT_RULES.definitions()
+	# Interleave copies to exercise grouping independently of draw order.
+	for index in [0, 3, 0, 1, 3, 4, 0, 5, 2]:
+		var event := definitions[index].duplicate(true)
+		event.erase("copies")
+		event["uid"] = "stack-visual-%d" % hand.size()
+		hand.append(event)
+	root.size = Vector2i(1280, 720)
+	await get_tree().process_frame
+	hand_ui.configure(hand, true)
+	_push_pointer(Vector2(30, 420))
+	await get_tree().create_timer(0.3).timeout
+	check(hand_ui._cards.size() == 6 and hand_ui._cards[0].instances.size() == 3 and hand_ui._cards[1].instances.size() == 2, "nine interleaved physical events appear as six distinct stacks with correct counts")
+	check(hand_ui._status_label.text.contains("9"), "the hand status counts physical cards instead of visual stacks")
+	await _screenshot("event-cards-stacked-peek")
+	var stack: Control = hand_ui._cards[0]
+	var edge := Vector2(stack.position.x + stack.size.x * stack.scale.x * 0.5, stack.position.y - 3.0)
+	_push_pointer(edge)
+	await get_tree().create_timer(0.35).timeout
+	check(hand_ui._hovered_uid == stack.uid and stack.position.y < root.size.y - 220, "hovering an exposed stack edge raises its event card")
+	await _screenshot("event-cards-stacked-hover")
+	_push_pointer(Vector2(30, 420))
+	root.size = Vector2i(800, 600)
+	await get_tree().process_frame
+	hand_ui.configure(hand, true, str(hand[7]["uid"]))
+	await get_tree().create_timer(0.35).timeout
+	check(hand_ui._page == 1 and hand_ui._cards[4].visible and hand_ui._cards[5].visible, "resizing keeps the selected stack visible using stack-based pagination")
+	check(hand_ui._previous_button.visible and hand_ui._next_button.disabled, "narrow paging stops at the last stack page")
+	await _screenshot("event-cards-stacked-narrow")
+	hand_ui.configure(hand, true)
+	hand_ui._change_page(-1)
+	check(hand_ui._page == 0 and hand_ui._cards[0].visible and hand_ui._cards[0].instances.size() == 3, "paging back restores the complete three-copy stack as one slot")
+	hand.clear()
+	hand_ui.configure(hand, true)
+	check(hand_ui._cards.is_empty() and not hand_ui._status_label.visible, "clearing a match removes every stack and its count")
 
 
 func _combat_card(index: int, side: String) -> Dictionary:

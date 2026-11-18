@@ -1,0 +1,142 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: all Jester modal modes share a text-only panel with no buttons
+PASS: a disabled room cannot open NPC or offering UI
+PASS: disabled station has no pickable or ray-blocking areas
+PASS: one nonblocking focus box frames the entire station
+PASS: both named graves belong to the west station
+PASS: the localized Jester dialogue remains four sentences
+PASS: NPC opens only the first localized sentence as a fresh typewriter page
+PASS: the first sentence reveals characters gradually without exposing a later line
+PASS: repeated context updates do not close a valid open dialog
+FAIL: Escape immediately closes the modal through viewport input
+ERROR: Escape immediately closes the modal through viewport input
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: open and close emit exactly one modal transition each
+ERROR: open and close emit exactly one modal transition each
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: sentence endings use the authored sound and SFX volume
+PASS: the sentence pager has four localized pages
+FAIL: sentence 1 starts in a cleared dialog field with its own typewriter
+ERROR: sentence 1 starts in a cleared dialog field with its own typewriter
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: sentence 1 types independently
+FAIL: a click while sentence 1 is typing reveals only that sentence and consumes the event
+ERROR: a click while sentence 1 is typing reveals only that sentence and consumes the event
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: a click after sentence 1 clears it before starting sentence 2
+ERROR: a click after sentence 1 clears it before starting sentence 2
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: sentence 2 starts in a cleared dialog field with its own typewriter
+ERROR: sentence 2 starts in a cleared dialog field with its own typewriter
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: sentence 2 types independently
+FAIL: a click while sentence 2 is typing reveals only that sentence and consumes the event
+ERROR: a click while sentence 2 is typing reveals only that sentence and consumes the event
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: a click after sentence 2 clears it before starting sentence 3
+ERROR: a click after sentence 2 clears it before starting sentence 3
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: sentence 3 starts in a cleared dialog field with its own typewriter
+ERROR: sentence 3 starts in a cleared dialog field with its own typewriter
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: sentence 3 types independently
+FAIL: a click while sentence 3 is typing reveals only that sentence and consumes the event
+ERROR: a click while sentence 3 is typing reveals only that sentence and consumes the event
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: a click after sentence 3 clears it before starting sentence 4
+ERROR: a click after sentence 3 clears it before starting sentence 4
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: sentence 4 starts in a cleared dialog field with its own typewriter
+ERROR: sentence 4 starts in a cleared dialog field with its own typewriter
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: sentence 4 types independently
+FAIL: a click while sentence 4 is typing reveals only that sentence and consumes the event
+ERROR: a click while sentence 4 is typing reveals only that sentence and consumes the event
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: only the click after the fourth sentence closes the dialogue without input fallthrough
+ERROR: only the click after the fourth sentence closes the dialogue without input fallthrough
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: an unowned grave explains why no copy can be offered
+ERROR: an unowned grave explains why no copy can be offered
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: clicking inside an unavailable offering closes it without passing the click through
+ERROR: clicking inside an unavailable offering closes it without passing the click through
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: clicking outside an unavailable offering also closes it
+ERROR: clicking outside an unavailable offering also closes it
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: own exact station fixture copy station-chick-deck
+PASS: own exact station fixture copy station-chick-holo
+PASS: own exact station fixture copy station-harald
+PASS: pin the normal Chick copy in the real combat deck
+FAIL: rear NPC callback cannot steal a click aimed at a front grave
+ERROR: rear NPC callback cannot steal a click aimed at a front grave
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: grave picks the concrete unprotected Holo copy
+ERROR: grave picks the concrete unprotected Holo copy
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: the reviewed copy retains its Holo preview and explicit warning
+ERROR: the reviewed copy retains its Holo preview and explicit warning
+   at: push_error (core/variant/variant_utility.cpp:1098)
+SCRIPT ERROR: Cannot call method 'find_children' on a null value.
+   at: _check_preview_pickers (res://tests/jester_station_test.gd:271)
+FAIL: a valid candidate explains inside confirmation and outside cancellation
+ERROR: a valid candidate explains inside confirmation and outside cancellation
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: outside cancellation preserves save bytes and collection data, clears preview, and consumes the click
+FAIL: review a currently free Harald before its reservation changes
+ERROR: review a currently free Harald before its reservation changes
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: reserve the reviewed Harald while the confirmation is open
+FAIL: a stale protected candidate is rejected without consumption or automatic substitution
+ERROR: a stale protected candidate is rejected without consumption or automatic substitution
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: the stale confirmation explains its protection failure
+ERROR: the stale confirmation explains its protection failure
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: another click closes the rejected candidate without trying a substitute
+ERROR: another click closes the rejected candidate without trying a substitute
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: release the second offering copy after the stale-candidate check
+FAIL: the same free copy can be reviewed again
+ERROR: the same free copy can be reviewed again
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: first confirmation commits the offering before its cosmetic flight
+ERROR: first confirmation commits the offering before its cosmetic flight
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: only the reviewed Holo is consumed, preserving the pinned normal copy
+ERROR: only the reviewed Holo is consumed, preserving the pinned normal copy
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: the offering uses the existing card dissolve presentation
+ERROR: the offering uses the existing card dissolve presentation
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: confirmation cannot be repeated during the dissolve
+FAIL: first offering finishes with an acknowledgement
+ERROR: first offering finishes with an acknowledgement
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS: candidate-to-flight-to-received stays one uninterrupted modal
+FAIL: the grave displays persistent completion immediately
+ERROR: the grave displays persistent completion immediately
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: an inside click closes the received acknowledgement without falling through
+ERROR: an inside click closes the received acknowledgement without falling through
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: an already completed grave cannot offer another copy
+ERROR: an already completed grave cannot offer another copy
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: second grave reviews its own exact candidate
+ERROR: second grave reviews its own exact candidate
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: the second confirmation has already persisted a Secret reward
+ERROR: the second confirmation has already persisted a Secret reward
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: second dissolve reaches the received-card presentation
+ERROR: second dissolve reaches the received-card presentation
+   at: push_error (core/variant/variant_utility.cpp:1098)
+FAIL: reward preview is the exact saved Secret instance
+ERROR: reward preview is the exact saved Secret instance
+   at: push_error (core/variant/variant_utility.cpp:1098)
+SCRIPT ERROR: Invalid access to property or key '_rarity_glow_material' on a base object of type 'Nil'.
+   at: _run (res://tests/jester_station_test.gd:135)

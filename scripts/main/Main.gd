@@ -2,8 +2,11 @@ extends Node3D
 class_name MainScene
 
 signal room_changed(room_index: int)
+signal _npc_rescue_step_finished
 
 const SIDE_COUNT := 4
+const TURN_SOUND := preload("res://assets/sounds/SFX/turn.mp3")
+const STEP_SOUND := preload("res://assets/sounds/SFX/step.mp3")
 const WAKEUP_BLUR_START := 5.0
 const WAKEUP_BLUR_END := 0.265
 const DIAGNOSTICS := preload("res://scripts/autoload/SessionDiagnostics.gd")
@@ -11,6 +14,19 @@ const UPGRADE_COLLECTION_SCENE := preload("res://scenes/props/UpgradeWallCollect
 const FUSION_WORKBENCH_SCENE := preload("res://scenes/props/FusionWorkbench.tscn")
 const JOURNAL_SCENE := preload("res://scenes/props/Journal3D.tscn")
 const TURN_ARROWS_SCRIPT := preload("res://scripts/ui/TurnArrows.gd")
+const GREETING_SCRIPT := preload("res://scripts/main/SatanGreeting.gd")
+const JUMPSCARE_SCRIPT := preload("res://scripts/main/SatanJumpscare.gd")
+const CRYPT_GATE_SCRIPT := preload("res://scripts/rooms/CryptGate.gd")
+const PRISONER_DIALOGUE_SCRIPT := preload("res://scripts/rooms/PrisonerDialogue.gd")
+const BED_SEATING_SCRIPT := preload("res://scripts/props/BedSeating.gd")
+const AMBIENT_SCREAMS_SCRIPT := preload("res://scripts/main/AmbientScreams.gd")
+const IMPRISONED_NPC_SCRIPT := preload("res://scripts/main/ImprisonedNPCPresentation.gd")
+const NPC_RESCUE_FACE_UVS := {
+	"angel": Vector2(0.5, 26.0 / 64.0),
+	"Dealer": Vector2(31.0 / 64.0, 27.0 / 64.0),
+	"jester": Vector2(27.0 / 64.0, 26.0 / 64.0),
+	"Prisoner": Vector2(32.6 / 64.0, 18.2 / 64.0),
+}
 const ROOM_AMBIENCE := {
 	2: preload("res://assets/sounds/atmoGraveyard.mp3"),
 	3: preload("res://assets/sounds/atmoBasement.mp3"),
@@ -44,6 +60,12 @@ const SIDE_NAMES := [
 @export_range(0.1, 10.0, 0.1) var room_travel_duration := 3.2
 @export_range(0.1, 5.0, 0.1) var door_key_look_duration := 1.4
 
+@export_group("Walking Camera")
+@export_range(0.0, 0.1, 0.001) var walking_bob_height := 0.025
+@export_range(0.0, 3.0, 0.05) var walking_pitch_degrees := 0.6
+@export_range(0.2, 1.0, 0.01) var walking_step_interval := 0.38
+@export_range(0.01, 1.0, 0.01) var walking_fade_duration := 0.2
+
 @export_group("Room Music")
 # All rooms outside the hub share the slot room's music treatment.
 @export_range(-30.0, 0.0, 0.5) var slot_room_music_attenuation_db := -12.0
@@ -51,6 +73,15 @@ const SIDE_NAMES := [
 
 @export_group("Aufwachen")
 @export_range(0.1, 15.0, 0.1) var wakeup_blur_duration := 5.0
+@export var greeting_enabled := true
+
+@export_group("NPC Rescue Introductions")
+@export_range(0.1, 5.0, 0.1) var npc_intro_approach_duration := 1.5
+@export_range(0.1, 5.0, 0.1) var npc_intro_return_duration := 1.3
+
+@export_group("Imprisoned NPC Animation")
+@export_range(0.1, 5.0, 0.1) var imprisoned_reveal_duration := 1.6
+@export_range(0.1, 5.0, 0.1) var imprisoned_departure_duration := 1.15
 
 @export_group("Debug")
 @export var debug_interaction_clicks := true
@@ -63,6 +94,7 @@ const SIDE_NAMES := [
 @onready var camera_tilt: Node3D = $CameraPivot/CameraTilt
 @onready var main_camera: Camera3D = $CameraPivot/CameraTilt/Camera3D
 @onready var level_progress: Node3D = $CameraPivot/CameraTilt/Camera3D/LevelProgress
+@onready var access_key_tray: AccessKeyTray = $CameraPivot/CameraTilt/Camera3D/AccessKeyTray
 @onready var table_lobby: Control = $ScenePivot/GameTable/OnlineCanvas/MatchmakingScreen
 @onready var screen_camera_focus: ScreenCameraFocus = $ScreenCameraFocus
 @onready var music: AudioStreamPlayer = $Music
@@ -73,11 +105,15 @@ const SIDE_NAMES := [
 @onready var return_door: HospitalDoor = $EmptyRoom/ReturnDoor
 @onready var room_camera_anchor: Marker3D = $EmptyRoom/CameraAnchor
 @onready var slot_machine: SoulSlotMachine = $EmptyRoom/SlotMachine
+@onready var secret_wall_input: Node3D = $EmptyRoom/SecretWallInput
 @onready var graveyard_jester: GraveyardJester = $GraveyardRoom
 @onready var black_market_board: BlackMarketBoard = $BlackMarketRoom/OfferBoard
 @onready var dealer_dialogue: DealerDialogue = $BlackMarketRoom/DealerDialogue
 @onready var basement_cat: BasementCatEncounter = $BasementRoom/BasementCatEncounter
+@onready var basement_pump_control: BasementPumpControl = $BasementRoom/PumpStation
 @onready var dirty_lens: ColorRect = $CameraPivot/CameraTilt/Camera3D/CanvasLayer/DirtyLensRect
+@onready var blood_overlay = $CameraPivot/CameraTilt/Camera3D/BloodOverlay
+@onready var weed_pickup = $ScenePivot/GameTable/WeedPickup
 
 var _wakeup_blur_material: ShaderMaterial
 var _wakeup_blur_tween: Tween
@@ -87,9 +123,17 @@ var journal: Journal3D
 var turn_arrows: TurnArrows
 var progression_areas: Array[ProgressionArea] = []
 var connected_rooms: Dictionary = {}
+var basement_boilers: Array[BasementBoiler] = []
+var _last_checked_boiler_settings := ""
+var crypt_gate: CRYPT_GATE_SCRIPT
+var prisoner_dialogue: PRISONER_DIALOGUE_SCRIPT
+var bed_seating: BED_SEATING_SCRIPT
 
 var _active_room := 0
 var _room_transition_active := false
+var _crypt_gate_close := false
+var _crypt_return_pivot := Transform3D.IDENTITY
+var _crypt_camera_base_transform := Transform3D.IDENTITY
 var _room_travel_tween: Tween = null
 var _room_music_tween: Tween = null
 var _room_music_bus: StringName = &""
@@ -101,6 +145,7 @@ var _room_ambience_tween: Tween
 var _room_ambience_volume_db := 0.0
 var _door_key_tween: Tween = null
 var _door_key_view_active := false
+var _key_reveal_door: HospitalDoor
 var _hub_camera_base_transform := Transform3D.IDENTITY
 var _hub_camera_base_fov := 58.0
 var _hub_return_pivot_transform := Transform3D.IDENTITY
@@ -161,8 +206,27 @@ var _visual_pivot_rotation := Vector3.ZERO
 var _hub_camera_base_basis := Basis.IDENTITY
 
 var _pending_direction := 0
+var _turn_sound: AudioStreamPlayer
+var _step_sound: AudioStreamPlayer
+var _step_random := RandomNumberGenerator.new()
+var _walking_steps_active := false
+var _walking_duration := 0.0
+var _walking_camera_base_transform := Transform3D.IDENTITY
+var _step_countdown := 0.0
+var _step_previous_position := Vector3.ZERO
 var _pack_opening_blocks_screen_focus := false
 var _loss_cinematic_active := false
+var _npc_rescue_intro_active := false
+var _npc_rescue_intro_id := ""
+var _npc_rescue_intro_tween: Tween
+var _npc_rescue_intro_aborted := false
+var imprisoned_npcs: IMPRISONED_NPC_SCRIPT
+var _greeting_active := false
+var _playtime_encounter: Node3D
+var _greeting: Node3D
+var _satan_jumpscare: JUMPSCARE_SCRIPT
+var _satan_stream: Node3D
+var _jumpscare_active := false
 var _cinematic_input_block_frame := -1
 var _loss_music_tween: Tween = null
 var _loss_music_restore_db := 0.0
@@ -173,6 +237,9 @@ func _ready() -> void:
 	_setup_localized_neon_signs()
 	_setup_room_music()
 	_setup_room_ambience()
+	var ambient_screams := AMBIENT_SCREAMS_SCRIPT.new()
+	ambient_screams.name = "AmbientScreams"
+	add_child(ambient_screams)
 	_start_wakeup_blur()
 	_base_x_rotation = camera_pivot.rotation.x
 	_settle_origin_y = camera_pivot.rotation.y
@@ -190,9 +257,18 @@ func _ready() -> void:
 		_hub_camera_base_fov = main_camera.fov
 	_hub_settle_origin_y = _settle_origin_y
 	_setup_upgrade_collection()
+	bed_seating = BED_SEATING_SCRIPT.new()
+	bed_seating.name = "BedSeating"
+	add_child(bed_seating)
+	bed_seating.configure(self, empty_room)
 	_setup_fusion_workbench()
 	_setup_journal()
+	_setup_crypt_gate()
+	_setup_prisoner_dialogue()
 	_setup_progression_areas()
+	access_key_tray.context_available = _access_key_context_is_safe
+	access_key_tray.key_available = _can_use_access_key
+	access_key_tray.key_requested.connect(_on_access_key_requested)
 	black_market_board.camera = main_camera
 	black_market_board.card_purchased.connect(_on_fusion_completed)
 	dealer_dialogue.camera = main_camera
@@ -200,6 +276,9 @@ func _ready() -> void:
 	dealer_dialogue.modal_changed.connect(_on_dealer_modal_changed)
 	basement_cat.camera = main_camera
 	basement_cat.modal_changed.connect(_on_basement_cat_modal_changed)
+	_setup_basement_boilers()
+	basement_pump_control.camera = main_camera
+	basement_pump_control.context_available = _pump_control_context_is_safe
 	_setup_turn_arrows()
 	_claim_shared_camera_for_hub_rotation(true)
 	_setup_screen_camera_focus()
@@ -211,6 +290,7 @@ func _ready() -> void:
 	_connect_pack_collection_refresh()
 	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
 	if collection != null:
+		collection.angel_presence_available = _npc_has_reached_station.bind("angel")
 		collection.slot_room_key_requested.connect(_on_slot_room_key_requested)
 		collection.angel_dialog_changed.connect(_on_angel_dialog_changed)
 		pause_menu.visibility_changed.connect(func() -> void:
@@ -224,10 +304,338 @@ func _ready() -> void:
 	return_door.activated.connect(_on_room_door_activated)
 	_update_room_door_interaction()
 	# Loading the hub also leaves the previous basement scene behind.
+	GameCurrency.npc_rescue_changed.connect(_refresh_npc_rescue_state)
+	CollectionManager.collection_changed.connect(_on_npc_rescue_collection_changed)
+	imprisoned_npcs = IMPRISONED_NPC_SCRIPT.new()
+	imprisoned_npcs.name = "ImprisonedNPCPresentation"
+	imprisoned_npcs.reveal_duration = imprisoned_reveal_duration
+	imprisoned_npcs.departure_duration = imprisoned_departure_duration
+	add_child(imprisoned_npcs)
+	imprisoned_npcs.configure(self, scene_pivot.get_node("GameTable") as GameTable)
+	imprisoned_npcs.presentation_changed.connect(_refresh_npc_rescue_state)
+	_refresh_npc_rescue_state()
+	_setup_satan_jumpscare()
+	weed_pickup.configure(self, $Hint1, $EmptyRoom/hint2)
 	GameCurrency.mark_basement_cat_left()
+	PlaytimeManager.timer_reset.connect(_on_playtime_timer_reset)
+	NetworkManager.lobby_state_changed.connect(_on_greeting_lobby_changed)
+	if _start_greeting_if_needed():
+		return
+	music.play()
 	if CollectionManager.get_meta("slot_room_key_focus_requested", false):
 		CollectionManager.remove_meta("slot_room_key_focus_requested")
 		_on_slot_room_key_requested.call_deferred(true)
+
+
+func _on_npc_rescue_collection_changed(_ids: Array[String]) -> void:
+	_refresh_npc_rescue_state()
+
+
+func _refresh_npc_rescue_state() -> void:
+	var waiting := GameCurrency.get_imprisoned_npc_ids()
+	var table := scene_pivot.get_node("GameTable") as GameTable
+	if is_instance_valid(imprisoned_npcs):
+		var story_victory := not table._online_mode and table._local_mode == "story" and table._table_state == GameTable.TableState.GAME_OVER and table._last_match_outcome == GameTable.MatchOutcome.WIN
+		imprisoned_npcs.sync_waiting(waiting, story_victory)
+	$ScenePivot/Collection/angel.visible = _npc_has_reached_station("angel")
+	$BlackMarketRoom/Kiosk/Dealer.visible = _npc_has_reached_station("dealer")
+	$GraveyardRoom/jester.visible = _npc_has_reached_station("jester")
+	$GraveyardRoom/Crypt/Prisoner.visible = _npc_has_reached_station("prisoner")
+	_update_active_scene_interaction()
+	_update_room_door_interaction()
+
+
+func _npc_has_reached_station(npc_id: String) -> bool:
+	return GameCurrency.is_npc_rescued(npc_id) and (not is_instance_valid(imprisoned_npcs) or not imprisoned_npcs.is_awaiting_departure(npc_id))
+
+
+func _try_start_npc_rescue_intro() -> bool:
+	if _npc_rescue_intro_active or not _can_turn(false) or _door_key_view_active or access_key_tray.is_expanded():
+		return false
+	if not main_camera.is_current() or NetworkManager.has_active_session() or NetworkManager.is_lobby_operation_pending():
+		return false
+	var npc_id := ""
+	var actor: Sprite3D
+	if _active_room == 0 and _active_side == 2:
+		npc_id = "angel"
+		actor = $ScenePivot/Collection/angel
+	elif _active_room == 4 and _active_side == black_market_board.view_side:
+		npc_id = "dealer"
+		actor = $BlackMarketRoom/Kiosk/Dealer
+	elif _active_room == 2 and not _crypt_gate_close and _active_side == graveyard_jester.view_side:
+		npc_id = "jester"
+		actor = $GraveyardRoom/jester
+	elif _active_room == 2 and _crypt_gate_close and _active_side == 0:
+		npc_id = "prisoner"
+		actor = $GraveyardRoom/Crypt/Prisoner
+	if npc_id.is_empty() or not GameCurrency.is_npc_rescue_intro_pending(npc_id) or not actor.is_visible_in_tree():
+		return false
+	_play_npc_rescue_intro(npc_id, actor)
+	return true
+
+
+func _npc_rescue_face_position(actor: Sprite3D) -> Vector3:
+	var height := actor.texture.get_height() * actor.pixel_size * actor.global_basis.get_scale().y / maxi(actor.vframes, 1)
+	var width := actor.texture.get_width() * actor.pixel_size * actor.global_basis.get_scale().x / maxi(actor.hframes, 1)
+	var uv: Vector2 = NPC_RESCUE_FACE_UVS.get(str(actor.name), Vector2(0.5, 0.4))
+	var up := actor.global_basis.y.normalized() if actor.billboard == BaseMaterial3D.BILLBOARD_DISABLED else Vector3.UP
+	var right := actor.global_basis.x.normalized() if actor.billboard == BaseMaterial3D.BILLBOARD_DISABLED else main_camera.global_basis.x.normalized()
+	return actor.global_position + up * height * (0.5 - uv.y) + right * width * (uv.x - 0.5)
+
+
+func _npc_rescue_camera_pose(actor: Sprite3D) -> Transform3D:
+	var face := _npc_rescue_face_position(actor)
+	var height := actor.texture.get_height() * actor.pixel_size * actor.global_basis.get_scale().y / maxi(actor.vframes, 1)
+	var outward := main_camera.global_position - face
+	outward.y = 0.0
+	outward = outward.normalized()
+	var eye := face + outward * maxf(height * 0.95, 0.8)
+	if str(actor.name) == "Prisoner":
+		# Look through the rightmost gap in the grille, staying in front of it.
+		# Moving straight toward the leaning sprite hides its face behind a post.
+		var crypt := actor.get_parent() as Node3D
+		var local_face := crypt.to_local(face)
+		var gate_z := crypt.to_local(crypt_gate.gate_area.global_position).z
+		eye = crypt.to_global(Vector3(-0.28, local_face.y, gate_z + 1.4))
+	return Transform3D(Basis.looking_at(face - eye, Vector3.UP), eye)
+
+
+func _play_npc_rescue_intro(npc_id: String, actor: Sprite3D) -> void:
+	_npc_rescue_intro_active = true
+	_npc_rescue_intro_aborted = false
+	_npc_rescue_intro_id = npc_id
+	_room_transition_active = true
+	_pending_direction = 0
+	# Hand over the visible camera pose without snapping out of a hover zoom.
+	var return_pose := main_camera.transform
+	var return_fov := main_camera.fov
+	var focus_resume := screen_camera_focus.suspend_for_cinematic()
+	_claim_shared_camera_for_hub_rotation(false)
+	main_camera.transform = return_pose
+	pause_menu.set_cinematic_locked(true)
+	_set_journal_input_blocked(true)
+	level_progress.set_enabled(false)
+	access_key_tray.set_enabled(false)
+	_update_active_scene_interaction()
+	_update_room_door_interaction()
+	turn_arrows.refresh()
+	var focused_pose := _npc_rescue_camera_pose(actor)
+	var focused_fov := minf(return_fov, 44.0)
+	_npc_rescue_intro_tween = create_tween().set_parallel(true)
+	_npc_rescue_intro_tween.tween_property(main_camera, "global_transform", focused_pose, npc_intro_approach_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_npc_rescue_intro_tween.tween_property(main_camera, "fov", focused_fov, npc_intro_approach_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_npc_rescue_intro_tween.finished.connect(_npc_rescue_step_finished.emit, CONNECT_ONE_SHOT)
+	await _npc_rescue_step_finished
+	if _npc_rescue_intro_aborted:
+		return
+	_npc_rescue_intro_tween = null
+	var dialogue := preload("res://scripts/main/NPCRescueDialogue.gd").new()
+	dialogue.name = "NPCRescueDialogue"
+	dialogue.npc_id = npc_id
+	dialogue.actor = actor
+	dialogue.camera = main_camera
+	add_child(dialogue)
+	dialogue.interaction_enabled = true
+	var completed := false
+	if dialogue.open_dialog():
+		dialogue.modal_changed.connect(func(opened: bool):
+			if not opened:
+				_npc_rescue_step_finished.emit()
+		)
+		await _npc_rescue_step_finished
+		if _npc_rescue_intro_aborted:
+			return
+		completed = true
+	dialogue.queue_free()
+	# The rig and its side/room heading never move. Restore the exact lens
+	# transform and FOV, including the Crypt's authored downward view.
+	_npc_rescue_intro_tween = create_tween().set_parallel(true)
+	_npc_rescue_intro_tween.tween_property(main_camera, "transform", return_pose, npc_intro_return_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_npc_rescue_intro_tween.tween_property(main_camera, "fov", return_fov, npc_intro_return_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_npc_rescue_intro_tween.finished.connect(_npc_rescue_step_finished.emit, CONNECT_ONE_SHOT)
+	await _npc_rescue_step_finished
+	if _npc_rescue_intro_aborted:
+		return
+	_npc_rescue_intro_tween = null
+	main_camera.transform = return_pose
+	main_camera.fov = return_fov
+	if completed:
+		GameCurrency.complete_npc_rescue_intro(npc_id)
+	_room_transition_active = false
+	_npc_rescue_intro_active = false
+	_npc_rescue_intro_id = ""
+	_cinematic_input_block_frame = Engine.get_process_frames() + 1
+	pause_menu.set_cinematic_locked(false)
+	_set_journal_input_blocked(false)
+	_update_labels()
+	_refresh_npc_rescue_state()
+	_update_screen_camera_focus_context()
+	screen_camera_focus.resume_after_cinematic(focus_resume)
+	turn_arrows.refresh()
+
+
+func _on_playtime_timer_reset() -> void:
+	if is_instance_valid(_playtime_encounter):
+		_playtime_encounter.cancel()
+
+
+func _try_start_playtime_encounter() -> bool:
+	if is_instance_valid(_playtime_encounter):
+		return true
+	if not PlaytimeManager.is_encounter_pending() or _active_room != 0:
+		return false
+	if not _can_turn(false) or _npc_rescue_intro_active or _door_key_view_active or access_key_tray.is_expanded():
+		return false
+	if not main_camera.is_current() or NetworkManager.has_active_session() or NetworkManager.is_lobby_operation_pending():
+		return false
+	var table := scene_pivot.get_node("GameTable") as GameTable
+	if table._table_state != GameTable.TableState.MENU or table.is_offline_board_open() or table._satan_is_dying:
+		return false
+	# Hand over the currently visible pose, including a shop's hover framing.
+	var return_pose := main_camera.transform
+	var return_fov := main_camera.fov
+	var focus_resume := screen_camera_focus.suspend_for_cinematic()
+	_claim_shared_camera_for_hub_rotation(false)
+	main_camera.transform = return_pose
+	main_camera.fov = return_fov
+	_playtime_encounter = preload("res://scripts/main/SatanPlaytimeEncounter.gd").new()
+	_playtime_encounter.name = "SatanPlaytimeEncounter"
+	_playtime_encounter.camera = main_camera
+	_playtime_encounter.actor = table.dealer_satan
+	_pending_direction = 0
+	pause_menu.set_cinematic_locked(true)
+	_set_journal_input_blocked(true)
+	level_progress.set_enabled(false)
+	access_key_tray.set_enabled(false)
+	turn_arrows.refresh()
+	add_child(_playtime_encounter)
+	_playtime_encounter.finished.connect(func():
+		_playtime_encounter = null
+		_cinematic_input_block_frame = Engine.get_process_frames() + 1
+		pause_menu.set_cinematic_locked(false)
+		_set_journal_input_blocked(false)
+		_update_screen_camera_focus_context()
+		screen_camera_focus.resume_after_cinematic(focus_resume)
+		turn_arrows.refresh()
+	)
+	_playtime_encounter.start(table)
+	return true
+
+
+func _start_greeting_if_needed() -> bool:
+	if not greeting_enabled or GameCurrency.greeting_completed or _greeting_active:
+		return false
+	# Steam invites and active matches keep their existing entry path.
+	if NetworkManager.has_active_session() or NetworkManager.is_lobby_operation_pending():
+		return false
+	_greeting_active = true
+	_pending_direction = 0
+	pause_menu.set_cinematic_locked(true)
+	screen_camera_focus.set_context(_active_side, false)
+	screen_camera_focus.restore_immediately()
+	_claim_shared_camera_for_hub_rotation(true)
+	if _wakeup_blur_tween != null:
+		_wakeup_blur_tween.kill()
+		_wakeup_blur_tween = null
+	if _wakeup_blur_material != null:
+		_wakeup_blur_material.set_shader_parameter("blur_strength", WAKEUP_BLUR_END)
+	_set_journal_input_blocked(true)
+	level_progress.set_enabled(false)
+	access_key_tray.set_enabled(false)
+	turn_arrows.refresh()
+	_greeting = GREETING_SCRIPT.new()
+	_greeting.name = "SatanGreeting"
+	add_child(_greeting)
+	_greeting.finished.connect(_on_greeting_finished)
+	var table := scene_pivot.get_node("GameTable") as GameTable
+	_greeting.start(self, main_camera, table.dealer_satan)
+	return true
+
+
+func _on_greeting_finished() -> void:
+	music.play()
+	_greeting_active = false
+	_greeting = null
+	_pending_direction = 0
+	_cinematic_input_block_frame = Engine.get_process_frames() + 1
+	pause_menu.set_cinematic_locked(false)
+	_set_journal_input_blocked(false)
+	turn_arrows.refresh()
+	if CollectionManager.get_meta("slot_room_key_focus_requested", false):
+		CollectionManager.remove_meta("slot_room_key_focus_requested")
+		_on_slot_room_key_requested.call_deferred(false)
+
+
+func _on_greeting_lobby_changed() -> void:
+	if is_instance_valid(_playtime_encounter) and NetworkManager.has_active_session():
+		_playtime_encounter.cancel()
+	if is_instance_valid(_satan_stream) and NetworkManager.has_active_session():
+		_satan_stream.stop_pissing(true)
+	if _jumpscare_active and NetworkManager.has_active_session():
+		_satan_jumpscare.cancel()
+	if _greeting_active and NetworkManager.has_active_session() and is_instance_valid(_greeting):
+		_greeting.cancel()
+
+
+func _setup_satan_jumpscare() -> void:
+	var table := scene_pivot.get_node("GameTable") as GameTable
+	_satan_jumpscare = JUMPSCARE_SCRIPT.new()
+	_satan_jumpscare.name = "SatanJumpscare"
+	add_child(_satan_jumpscare)
+	_satan_jumpscare.configure(main_camera, table.dealer_satan, table.satan_hover_area,
+		_satan_jumpscare_context_is_safe, ($hospitalRoom as Node3D).global_position.y)
+	_satan_jumpscare.started.connect(_on_satan_jumpscare_started)
+	_satan_jumpscare.recovery_started.connect(_on_satan_jumpscare_recovery_started)
+	_satan_jumpscare.cancelled.connect(func() -> void: blood_overlay.clear())
+	_satan_jumpscare.finished.connect(_on_satan_jumpscare_finished)
+	_satan_stream = table.get_node("dealer/SatanMotionRoot/satan/Piss")
+	_satan_stream.configure(main_camera, table.dealer_satan, table.get_node("table/Cube"), _satan_jumpscare_context_is_safe)
+	_satan_stream.emitting_changed.connect(table.set_satan_stream_laughing)
+	_satan_stream.emitting_changed.connect(AchievementManager.record_satan_stream)
+	_satan_jumpscare.started.connect(AchievementManager.record_satan_jumpscare)
+	_satan_jumpscare.halfway_clicked.connect(_satan_stream.start_pissing)
+
+
+func _satan_jumpscare_context_is_safe() -> bool:
+	if _jumpscare_active or not _can_turn(false) or _active_room != 0 or _active_side != 0:
+		return false
+	if NetworkManager.has_active_session() or NetworkManager.is_lobby_operation_pending():
+		return false
+	var table := scene_pivot.get_node("GameTable") as GameTable
+	return (table._table_state == GameTable.TableState.MENU and not table.is_offline_board_open()
+		and not table._journal_input_blocked and not table._satan_is_dying and not table._satan_is_laughing
+		and table.dealer_satan.is_visible_in_tree() and table.satan_hover_area.input_ray_pickable
+		and get_viewport().get_camera_3d() == main_camera)
+
+
+func _on_satan_jumpscare_started() -> void:
+	_satan_stream.stop_pissing(true)
+	_jumpscare_active = true
+	_pending_direction = 0
+	pause_menu.set_cinematic_locked(true)
+	screen_camera_focus.set_context(_active_side, false)
+	screen_camera_focus.restore_immediately()
+	_claim_shared_camera_for_hub_rotation(true)
+	_set_journal_input_blocked(true)
+	# Clear the ordinary hover before the scare records and replaces the sheet.
+	# A delayed mouse-exit must not restore idle artwork over the close-up.
+	(scene_pivot.get_node("GameTable") as GameTable)._set_satan_hovered(false)
+	level_progress.set_enabled(false)
+	access_key_tray.set_enabled(false)
+	turn_arrows.refresh()
+
+
+func _on_satan_jumpscare_recovery_started() -> void:
+	blood_overlay.play()
+
+
+func _on_satan_jumpscare_finished() -> void:
+	_jumpscare_active = false
+	_pending_direction = 0
+	_cinematic_input_block_frame = Engine.get_process_frames() + 1
+	pause_menu.set_cinematic_locked(false)
+	_set_journal_input_blocked(false)
+	turn_arrows.refresh()
 
 
 func _setup_localized_neon_signs() -> void:
@@ -252,6 +660,14 @@ func _start_wakeup_blur(duration: float = -1.0) -> void:
 
 
 func _exit_tree() -> void:
+	_npc_rescue_intro_aborted = true
+	if _npc_rescue_intro_tween != null and _npc_rescue_intro_tween.is_valid():
+		_npc_rescue_intro_tween.kill()
+	_npc_rescue_intro_tween = null
+	if _npc_rescue_intro_active:
+		# A killed Tween never emits finished. Wake the owned coroutine before
+		# its scene disappears, preserving the pending greeting for next time.
+		_npc_rescue_step_finished.emit()
 	_cleanup_room_music()
 	if _room_ambience_tween != null:
 		_room_ambience_tween.kill()
@@ -262,6 +678,17 @@ func _exit_tree() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if _npc_rescue_intro_active:
+		return
+	if _greeting_active or _jumpscare_active:
+		get_viewport().set_input_as_handled()
+		return
+	if is_instance_valid(bed_seating) and bed_seating.handle_input(event):
+		get_viewport().set_input_as_handled()
+		return
+	if secret_wall_input.handle_key(event):
+		get_viewport().set_input_as_handled()
+		return
 	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
 	if (
 		(game_table != null and game_table.try_skip_offline_exit(event))
@@ -269,7 +696,7 @@ func _input(event: InputEvent) -> void:
 	):
 		get_viewport().set_input_as_handled()
 		return
-	if _is_progression_area_open() or _is_angel_busy() or _is_basement_cat_busy():
+	if _is_progression_area_open() or _is_angel_busy() or _is_basement_cat_busy() or _is_prisoner_busy():
 		return
 	if event.is_action_pressed("journal") and not event.is_echo():
 		_toggle_journal()
@@ -277,6 +704,11 @@ func _input(event: InputEvent) -> void:
 		return
 	if _is_journal_active():
 		return
+	if _crypt_gate_close and _can_travel_between_rooms() and not pause_menu.settings_menu.visible:
+		if event.is_action_pressed("ui_cancel") or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT):
+			get_viewport().set_input_as_handled()
+			_travel_to_crypt_gate(false)
+			return
 	_debug_interaction_click(event)
 	if event is InputEventKey \
 	and event.pressed \
@@ -335,18 +767,29 @@ func _debug_interaction_click(event: InputEvent) -> void:
 	)
 
 func _process(delta: float) -> void:
+	if _try_start_playtime_encounter():
+		return
+	if _greeting_active or _jumpscare_active or _npc_rescue_intro_active:
+		return
+	if _try_start_npc_rescue_intro():
+		return
+	_update_walking_steps(delta)
 	if _is_journal_active() and not _journal_context_is_safe():
 		journal.close_journal(true)
+	access_key_tray.set_enabled(_access_key_context_is_safe())
 	level_progress.set_enabled(
 		not _loss_cinematic_active
+		and not _is_bed_busy()
 		and not _room_transition_active
 		and not _pack_opening_blocks_screen_focus
 		and not _is_upgrade_collection_detail_open()
 		and not _is_fusion_workbench_busy()
 		and not _is_jester_busy()
+		and not _is_prisoner_busy()
 		and not _is_dealer_busy()
 		and not _is_angel_busy()
 		and not _is_basement_cat_busy()
+		and not _is_boiler_dragging()
 		and not _is_journal_active()
 		and not _is_progression_area_open()
 		and not (pause_menu != null and pause_menu.visible)
@@ -363,7 +806,7 @@ func _process(delta: float) -> void:
 		_request_turn(dir)
 
 	_advance_phase(delta)
-	if not _loss_cinematic_active and not _is_angel_busy() and not _is_dealer_busy() and not _is_basement_cat_busy():
+	if not _loss_cinematic_active and not _is_bed_busy() and not _is_angel_busy() and not _is_dealer_busy() and not _is_basement_cat_busy() and not _is_prisoner_busy() and not _is_boiler_dragging():
 		_update_mouse_tilt(delta)
 	_update_screen_camera_focus_context()
 
@@ -388,6 +831,14 @@ func _setup_turn_arrows() -> void:
 
 
 func _can_turn(allow_interrupt: bool = true) -> bool:
+	if is_instance_valid(_playtime_encounter):
+		return false
+	if _is_bed_busy():
+		return false
+	if is_instance_valid(secret_wall_input) and secret_wall_input.is_busy():
+		return false
+	if _greeting_active or _jumpscare_active or _is_boiler_dragging():
+		return false
 	if Engine.get_process_frames() <= _cinematic_input_block_frame:
 		return false
 	if not is_inside_tree() or get_tree().paused or _loss_cinematic_active or _room_transition_active:
@@ -396,7 +847,7 @@ func _can_turn(allow_interrupt: bool = true) -> bool:
 		return false
 	if pause_menu.visible or pause_menu.settings_menu.visible or table_lobby.visible or _pack_opening_blocks_screen_focus:
 		return false
-	if _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy() or _is_journal_active() or _is_progression_area_open():
+	if _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_prisoner_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy() or _is_journal_active() or _is_progression_area_open():
 		return false
 	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
 	if game_table != null and game_table.is_match_active():
@@ -466,9 +917,20 @@ func _begin_turn(direction: int) -> void:
 	var turn_direction := signi(direction)
 	if turn_direction == 0:
 		return
+	if not is_instance_valid(_turn_sound):
+		_turn_sound = AudioStreamPlayer.new()
+		_turn_sound.name = "TurnSound"
+		_turn_sound.stream = TURN_SOUND
+		_turn_sound.bus = &"SFX"
+		_turn_sound.max_polyphony = 4
+		add_child(_turn_sound)
+	_turn_sound.play()
 	if _door_key_view_active:
 		_door_key_view_active = false
-		hub_door.set_travel_open(false)
+		if is_instance_valid(_key_reveal_door):
+			_key_reveal_door.set_travel_open(false)
+		_key_reveal_door = null
+	access_key_tray.set_enabled(false)
 
 	# Falls GameTable nach einem Szenenaufbau oder Cinematic noch seinen
 	# Rückkehr-Tween auf der gemeinsam genutzten Kamera besitzt, übernimmt der
@@ -556,7 +1018,7 @@ func _claim_shared_camera_for_hub_rotation(force_startup_claim: bool) -> void:
 	# Nur die lokale Basis neutralisieren. Position und FOV gehören weiterhin
 	# ScreenCameraFocus, sodass dessen weiche Rückfahrt beim Drehen erhalten bleibt.
 	var camera_transform := main_camera.transform
-	camera_transform.basis = _hub_camera_base_basis
+	camera_transform.basis = _crypt_camera_base_transform.basis if _crypt_gate_close else _hub_camera_base_basis
 	main_camera.transform = camera_transform
 
 
@@ -577,9 +1039,13 @@ func _ease(t: float, kind: EaseKind) -> float:
 
 
 func _can_travel_between_rooms() -> bool:
+	if _is_bed_busy():
+		return false
+	if _greeting_active or _jumpscare_active or _is_boiler_dragging():
+		return false
 	if _room_transition_active or _phase != Phase.IDLE or _loss_cinematic_active or get_tree().paused or _is_progression_area_open():
 		return false
-	if _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy() or _is_journal_active():
+	if _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_prisoner_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy() or _is_journal_active():
 		return false
 	if _pack_opening_blocks_screen_focus or pause_menu.visible or table_lobby.visible:
 		return false
@@ -599,12 +1065,13 @@ func _update_room_door_interaction() -> void:
 	var allowed := _can_travel_between_rooms()
 	hub_door.set_locked(not CollectionManager.is_slot_room_unlocked())
 	hub_door.set_interaction_enabled(allowed and _active_room == 0)
-	return_door.set_interaction_enabled(allowed and _active_room == 1)
+	return_door.set_interaction_enabled(allowed and _active_room == 1 and not secret_wall_input.is_busy())
+	secret_wall_input.set_interaction_enabled(allowed and _active_room == 1 and _active_side == secret_wall_input.VIEW_SIDE)
 	for area in progression_areas:
-		area.set_interaction_enabled(allowed and _active_room == 0 and not _door_key_view_active)
+		area.set_interaction_enabled(allowed and _active_room == 0 and (not _door_key_view_active or area.door == _key_reveal_door))
 	for room_index: int in connected_rooms:
 		var room_return := connected_rooms[room_index].get_node("ReturnDoor") as HospitalDoor
-		room_return.set_interaction_enabled(allowed and _active_room == room_index)
+		room_return.set_interaction_enabled(allowed and _active_room == room_index and not _crypt_gate_close)
 		if connected_rooms[room_index] is BasementDiscovery:
 			(connected_rooms[room_index] as BasementDiscovery).set_interaction_enabled(allowed and _active_room == room_index)
 	slot_machine.set_interaction_enabled(allowed and _active_room == 1 and _active_side == 0 and not get_tree().paused)
@@ -614,6 +1081,137 @@ func _update_room_door_interaction() -> void:
 	_update_angel_interaction()
 	_update_black_market_interaction()
 	_update_basement_cat_context()
+	_update_basement_boiler_interaction()
+	basement_pump_control.set_interaction_enabled(_pump_control_context_is_safe())
+	crypt_gate.set_interaction_enabled(_crypt_gate_context_is_safe())
+	crypt_gate.refresh_return_beacon()
+	if is_instance_valid(prisoner_dialogue):
+		prisoner_dialogue.set_interaction_enabled(_prisoner_context_is_safe())
+
+
+func _crypt_gate_context_is_safe() -> bool:
+	return (
+		_active_room == 2 and _active_side == 0 and not _crypt_gate_close
+		and _can_travel_between_rooms() and not _door_key_view_active
+		and not pause_menu.settings_menu.visible
+	)
+
+
+func _setup_crypt_gate() -> void:
+	crypt_gate = CRYPT_GATE_SCRIPT.new()
+	crypt_gate.name = "CryptGateInteraction"
+	crypt_gate.camera = main_camera
+	crypt_gate.context_available = _crypt_gate_context_is_safe
+	crypt_gate.return_available = _crypt_return_context_is_safe
+	crypt_gate.activated.connect(_on_crypt_gate_activated)
+	crypt_gate.return_requested.connect(func():
+		if _crypt_return_context_is_safe():
+			_travel_to_crypt_gate(false)
+	)
+	$GraveyardRoom/Crypt.add_child(crypt_gate)
+
+
+func _on_crypt_gate_activated() -> void:
+	if _crypt_gate_context_is_safe():
+		_travel_to_crypt_gate(true)
+
+
+func _crypt_return_context_is_safe() -> bool:
+	return (
+		_active_room == 2 and _crypt_gate_close and _can_travel_between_rooms()
+		and not _door_key_view_active and not pause_menu.settings_menu.visible
+	)
+
+
+func _setup_prisoner_dialogue() -> void:
+	prisoner_dialogue = PRISONER_DIALOGUE_SCRIPT.new()
+	prisoner_dialogue.name = "PrisonerDialogue"
+	prisoner_dialogue.actor = $GraveyardRoom/Crypt/Prisoner
+	prisoner_dialogue.camera = main_camera
+	prisoner_dialogue.context_available = _prisoner_context_is_safe
+	prisoner_dialogue.modal_changed.connect(_on_prisoner_modal_changed)
+	$GraveyardRoom/Crypt.add_child(prisoner_dialogue)
+
+
+func _prisoner_context_is_safe() -> bool:
+	# Keep its own active conversation enabled while it locks navigation.
+	return (
+		GameCurrency.is_npc_rescued("prisoner") and _active_room == 2 and _crypt_gate_close and _active_side == 0
+		and _phase == Phase.IDLE and not _room_transition_active
+		and not _greeting_active and not _jumpscare_active and not _loss_cinematic_active
+		and not _door_key_view_active and not pause_menu.visible
+		and not pause_menu.settings_menu.visible and not get_tree().paused
+		and not table_lobby.visible and not _pack_opening_blocks_screen_focus
+		and not _is_table_match_active() and not _is_journal_active()
+		and not _is_progression_area_open()
+	)
+
+
+func _is_prisoner_busy() -> bool:
+	return is_instance_valid(prisoner_dialogue) and prisoner_dialogue.is_busy()
+
+
+func _on_prisoner_modal_changed(opened: bool) -> void:
+	_pending_direction = 0
+	if opened:
+		level_progress.set_enabled(false)
+	_update_room_door_interaction()
+	_update_screen_camera_focus_context()
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+
+
+func _travel_to_crypt_gate(approach: bool) -> void:
+	if _room_transition_active:
+		return
+	if approach:
+		_crypt_return_pivot = camera_pivot.global_transform
+	var visible_pose := main_camera.global_transform
+	_room_transition_active = true
+	_crypt_gate_close = approach
+	_pending_direction = 0
+	pause_menu.set_cinematic_locked(true)
+	screen_camera_focus.set_context(_active_side, false)
+	screen_camera_focus.restore_immediately()
+	_claim_shared_camera_for_hub_rotation(false)
+	camera_tilt.rotation = Vector3.ZERO
+	main_camera.transform = _hub_camera_base_transform
+	var camera_to_pivot := _hub_camera_base_transform.affine_inverse()
+	var start := visible_pose * camera_to_pivot
+	var target: Transform3D = crypt_gate.get_approach_camera_pose() * camera_to_pivot if approach else _crypt_return_pivot
+	if not approach:
+		# Walk back to the crossing while keeping the direction the player
+		# currently faces; returning must not turn them toward the crypt.
+		target.basis = camera_pivot.global_basis
+	var resting_pivot := target
+	if approach:
+		# Keep the turning rig upright at the new position. The close view's
+		# downward look belongs to the camera, so A/D rotates in place.
+		var eye_pose: Transform3D = crypt_gate.get_approach_camera_pose()
+		resting_pivot.basis = _crypt_return_pivot.basis
+		resting_pivot.origin = eye_pose.origin - resting_pivot.basis * _hub_camera_base_transform.origin
+		_crypt_camera_base_transform = _hub_camera_base_transform
+		_crypt_camera_base_transform.basis = resting_pivot.basis.inverse() * eye_pose.basis
+	camera_pivot.global_transform = start
+	level_progress.set_enabled(false)
+	_update_room_door_interaction()
+	turn_arrows.refresh()
+	_start_walking_sequence(maxf(room_travel_duration, 0.01))
+	_room_travel_tween = create_tween()
+	_room_travel_tween.tween_method(_apply_room_travel_pose.bind(start, target), 0.0, 1.0, maxf(room_travel_duration, 0.01)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await _room_travel_tween.finished
+	_stop_walking_sequence()
+	_room_travel_tween = null
+	camera_pivot.global_transform = resting_pivot
+	main_camera.transform = _crypt_camera_base_transform if approach else _hub_camera_base_transform
+	if not approach:
+		_snap_camera_pivot_to_cardinal_target()
+	_room_transition_active = false
+	pause_menu.set_cinematic_locked(false)
+	_update_room_door_interaction()
+	_update_screen_camera_focus_context()
+	_update_labels()
+	turn_arrows.refresh()
 
 
 func _setup_upgrade_collection() -> void:
@@ -673,11 +1271,15 @@ func _is_journal_active() -> bool:
 
 
 func _journal_context_is_safe() -> bool:
+	if _is_bed_busy():
+		return false
+	if _greeting_active or _jumpscare_active or _is_boiler_dragging():
+		return false
 	if _room_transition_active or _phase != Phase.IDLE or _loss_cinematic_active or _is_progression_area_open():
 		return false
 	if pause_menu.visible or get_tree().paused or table_lobby.visible or _pack_opening_blocks_screen_focus:
 		return false
-	if _is_fusion_workbench_busy() or _is_upgrade_collection_detail_open() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy():
+	if _is_fusion_workbench_busy() or _is_upgrade_collection_detail_open() or _is_jester_busy() or _is_prisoner_busy() or _is_angel_busy() or _is_dealer_busy() or _is_basement_cat_busy():
 		return false
 	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
 	if collection != null and (
@@ -715,7 +1317,7 @@ func _toggle_journal() -> void:
 
 
 func _set_journal_input_blocked(blocked: bool) -> void:
-	blocked = blocked or _is_progression_area_open()
+	blocked = blocked or is_instance_valid(_playtime_encounter) or _greeting_active or _jumpscare_active or _is_progression_area_open()
 	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
 	if game_table != null:
 		game_table.set_journal_input_blocked(blocked)
@@ -739,6 +1341,10 @@ func _on_journal_close_requested() -> void:
 func _interrupt_journal() -> void:
 	if _is_journal_active():
 		journal.close_journal(true)
+
+
+func _is_bed_busy() -> bool:
+	return is_instance_valid(bed_seating) and bed_seating.is_busy()
 
 
 func _is_upgrade_collection_detail_open() -> bool:
@@ -768,6 +1374,94 @@ func _is_jester_busy() -> bool:
 
 func _is_basement_cat_busy() -> bool:
 	return is_instance_valid(basement_cat) and basement_cat.is_busy()
+
+
+func _setup_basement_boilers() -> void:
+	# Authored child order is 2, 1, 4, 3. The puzzle uses the actual boiler numbers.
+	for number in range(1, 5):
+		var boiler := $BasementRoom/BoilerEquipment.get_node("MainBoiler_%d" % number) as BasementBoiler
+		basement_boilers.append(boiler)
+		boiler.camera = main_camera
+		boiler.context_available = _boiler_context_is_safe
+		boiler.dragging_changed.connect(_on_boiler_dragging_changed)
+
+
+func _is_boiler_dragging() -> bool:
+	for boiler in basement_boilers:
+		if boiler.is_dragging():
+			return true
+	return false
+
+
+func _boiler_context_is_safe() -> bool:
+	return (
+		_active_room == 3 and _active_side in [0, 2] and _phase == Phase.IDLE
+		and not _room_transition_active and not _loss_cinematic_active
+		and not _door_key_view_active and not pause_menu.visible
+		and not pause_menu.settings_menu.visible and not get_tree().paused
+		and not table_lobby.visible and not _pack_opening_blocks_screen_focus
+		and not _is_journal_active() and not _is_progression_area_open()
+		and not _is_basement_cat_busy()
+	)
+
+
+func _update_basement_boiler_interaction() -> void:
+	var enabled := _boiler_context_is_safe()
+	var newly_enabled := false
+	for boiler in basement_boilers:
+		var active := enabled and _active_side == boiler.view_side
+		newly_enabled = newly_enabled or (active and not boiler.interaction_enabled)
+		boiler.set_interaction_enabled(active)
+	# Observe the settled settings as well as release signals. A temporarily
+	# blocked callback must not leave a correctly displayed solution unclaimed.
+	if not enabled or _is_boiler_dragging():
+		return
+	var settings := "%s:%s" % [GameCurrency.cocaine_consumed, GameCurrency.is_training_session()]
+	for boiler in basement_boilers:
+		settings += ":%.1f" % boiler.pressure
+	if newly_enabled or settings != _last_checked_boiler_settings:
+		_last_checked_boiler_settings = settings
+		_try_claim_boiler_reward.call_deferred()
+
+
+func _try_claim_boiler_reward() -> void:
+	if not _boiler_context_is_safe() or _is_boiler_dragging():
+		return
+	var pressures: Array[float] = []
+	for boiler in basement_boilers:
+		pressures.append(boiler.pressure)
+	var reward := CollectionManager.claim_boiler_puzzle_reward(pressures)
+	if reward.is_empty():
+		return
+	var origin := basement_boilers[0].focus_area.global_position
+	for boiler in basement_boilers:
+		if boiler.view_side == _active_side:
+			origin = boiler.focus_area.global_position
+			if screen_camera_focus._focused_screen == boiler.focus_area:
+				break
+	var card := preload("res://scripts/ui/SecretCardReveal.gd").play(self, reward, main_camera, origin, true)
+	if card != null:
+		card.name = "BoilerPuzzleRewardReveal"
+
+
+func _on_boiler_dragging_changed(_dragging: bool) -> void:
+	_pending_direction = 0
+	if _is_boiler_dragging():
+		level_progress.set_enabled(false)
+	else:
+		_try_claim_boiler_reward.call_deferred()
+	_update_screen_camera_focus_context()
+	_update_room_door_interaction()
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+
+
+func _pump_control_context_is_safe() -> bool:
+	return (
+		_active_room == 3 and _active_side == basement_pump_control.view_side
+		and _can_travel_between_rooms() and not _door_key_view_active
+		and not pause_menu.settings_menu.visible and not _is_table_match_active()
+	)
 
 
 func _update_basement_cat_context() -> void:
@@ -810,7 +1504,7 @@ func _is_angel_busy() -> bool:
 func _angel_context_is_safe() -> bool:
 	# Keep the current dialog enabled while its own modal state locks the hub.
 	return (
-		_active_room == 0 and _active_side == 2
+		GameCurrency.is_npc_rescued("angel") and _active_room == 0 and _active_side == 2
 		and _phase == Phase.IDLE and not _room_transition_active
 		and not _loss_cinematic_active and not _door_key_view_active
 		and not pause_menu.visible and not pause_menu.settings_menu.visible
@@ -824,6 +1518,7 @@ func _update_angel_interaction() -> void:
 	var collection := scene_pivot.get_node_or_null("Collection") as CollectionScreen
 	if collection != null:
 		collection.set_angel_context_enabled(_angel_context_is_safe())
+		collection.get_node("angel").visible = _npc_has_reached_station("angel")
 
 
 func _on_angel_dialog_changed(opened: bool) -> void:
@@ -841,7 +1536,8 @@ func _jester_context_is_safe() -> bool:
 	# state only locks the room, book and turn controls, not the dialog itself.
 	return (
 		is_instance_valid(graveyard_jester)
-		and _active_room == 2 and _active_side == graveyard_jester.view_side
+		and GameCurrency.is_npc_rescued("jester")
+		and _active_room == 2 and not _crypt_gate_close and _active_side == graveyard_jester.view_side
 		and _phase == Phase.IDLE and not _room_transition_active
 		and not _loss_cinematic_active and not _door_key_view_active
 		and not pause_menu.visible and not pause_menu.settings_menu.visible
@@ -859,6 +1555,7 @@ func _update_jester_interaction() -> void:
 func _black_market_context_is_safe() -> bool:
 	return (
 		is_instance_valid(black_market_board)
+		and GameCurrency.is_npc_rescued("dealer")
 		and _active_room == 4 and _active_side == black_market_board.view_side
 		and _can_travel_between_rooms() and not _door_key_view_active
 		and not pause_menu.settings_menu.visible
@@ -880,6 +1577,7 @@ func _dealer_context_is_safe() -> bool:
 	# Its own modal locks shopping and navigation without dismissing itself.
 	return (
 		is_instance_valid(black_market_board)
+		and GameCurrency.is_npc_rescued("dealer")
 		and _active_room == 4 and _active_side == black_market_board.view_side
 		and _phase == Phase.IDLE and not _room_transition_active
 		and not _loss_cinematic_active and not _door_key_view_active
@@ -946,7 +1644,7 @@ func _on_upgrade_collection_pause_changed() -> void:
 	_update_angel_interaction()
 	_update_black_market_interaction()
 	_update_screen_camera_focus_context()
-	if pause_menu.visible and _active_room in [1, 2, 4] and screen_camera_focus != null:
+	if pause_menu.visible and _active_room in [1, 2, 3, 4] and screen_camera_focus != null:
 		# PauseMenu pauses the tree after this signal, so finish the return now.
 		screen_camera_focus.restore_immediately()
 
@@ -957,13 +1655,87 @@ func _on_upgrade_collection_detail_changed(_opened: bool) -> void:
 
 
 func _on_slot_room_key_requested(wait_for_wakeup: bool = false) -> void:
+	await _on_access_key_requested(CollectionManager.SLOT_ROOM_KEY_ID, wait_for_wakeup)
+
+
+func _access_key_context_is_safe() -> bool:
+	return ((_active_room == 0 and _can_turn(false))
+		or _can_use_access_key(CollectionManager.PUMP_REWARD_CARD_ID)
+		or _can_use_access_key(CollectionManager.BOILER_REWARD_CARD_ID))
+
+
+func _can_use_access_key(card_id: String) -> bool:
+	if CollectionManager.get_amount(card_id) <= 0:
+		return false
+	if card_id == CollectionManager.PUMP_REWARD_CARD_ID:
+		return (_prisoner_context_is_safe() and _can_turn(false) and not _is_prisoner_busy()
+			and main_camera.is_current() and is_instance_valid(prisoner_dialogue)
+			and prisoner_dialogue.actor.is_visible_in_tree()
+			and not main_camera.is_position_behind(prisoner_dialogue.actor.global_position)
+			and not CollectionManager.has_discovered_card(CollectionManager.PRISONER_REWARD_CARD_ID))
+	if card_id == CollectionManager.BOILER_REWARD_CARD_ID:
+		return (_jester_context_is_safe() and _can_turn(false) and not _is_jester_busy()
+			and main_camera.is_current() and graveyard_jester.is_visible_in_tree()
+			and $GraveyardRoom/jester.is_visible_in_tree()
+			and not main_camera.is_position_behind($GraveyardRoom/jester.global_position)
+			and not CollectionManager.has_discovered_card(CollectionManager.JESTER_STORY_REWARD_CARD_ID))
+	return _active_room == 0 and not CollectionManager.get_access_key_area_id(card_id).is_empty()
+
+
+func _show_prisoner_trade_reward(instance: Dictionary) -> void:
+	if not is_inside_tree() or not is_instance_valid(main_camera):
+		return
+	var card := preload("res://scripts/ui/SecretCardReveal.gd").play(self, instance, main_camera, prisoner_dialogue.actor.global_position)
+	if card != null:
+		card.name = "PrisonerHolyWaterReveal"
+
+
+func _show_jester_trade_reward(instance: Dictionary) -> void:
+	if not is_inside_tree() or not is_instance_valid(main_camera):
+		return
+	var card := preload("res://scripts/ui/SecretCardReveal.gd").play(self, instance, main_camera, $GraveyardRoom/jester.global_position, true)
+	if card != null:
+		card.name = "JesterCrucifixReveal"
+
+
+func _on_access_key_requested(card_id: String, wait_for_wakeup: bool = false) -> void:
+	if card_id == CollectionManager.BOILER_REWARD_CARD_ID:
+		if not _can_use_access_key(card_id):
+			return
+		var reward := CollectionManager.exchange_jester_eye()
+		if not reward.is_empty():
+			access_key_tray.set_expanded(false)
+			_show_jester_trade_reward.call_deferred(reward)
+		return
+	if card_id == CollectionManager.PUMP_REWARD_CARD_ID:
+		if not _can_use_access_key(card_id):
+			return
+		var reward := CollectionManager.exchange_prisoner_toilet_paper()
+		if not reward.is_empty():
+			access_key_tray.set_expanded(false)
+			_show_prisoner_trade_reward.call_deferred(reward)
+		return
 	var collection := scene_pivot.get_node("Collection") as CollectionScreen
-	if _active_room != 0 or not _can_travel_between_rooms() or CollectionManager.get_amount(CollectionManager.SLOT_ROOM_KEY_ID) == 0:
+	var area_id := CollectionManager.get_access_key_area_id(card_id)
+	if _active_room != 0 or area_id.is_empty() or not _can_travel_between_rooms() or pause_menu.settings_menu.visible or CollectionManager.get_amount(card_id) == 0 or CollectionManager.is_access_key_used(card_id):
 		collection.finish_slot_room_key_request()
 		return
+	var target_door: HospitalDoor = hub_door if area_id == "slot_room" else null
+	for area in progression_areas:
+		if area.area_id == area_id:
+			target_door = area.door
+			break
+	if target_door == null:
+		collection.finish_slot_room_key_request()
+		return
+	if is_instance_valid(_key_reveal_door) and _key_reveal_door != target_door:
+		_key_reveal_door.set_travel_open(false)
+	_key_reveal_door = target_door
 	_room_transition_active = true
 	_pending_direction = 0
 	_door_key_view_active = true
+	access_key_tray.set_enabled(false)
+	level_progress.set_enabled(false)
 	pause_menu.set_cinematic_locked(true)
 	screen_camera_focus.set_context(_active_side, false)
 	screen_camera_focus.restore_immediately()
@@ -975,7 +1747,7 @@ func _on_slot_room_key_requested(wait_for_wakeup: bool = false) -> void:
 		await _wakeup_blur_tween.finished
 	# Keep the normal turning center and lens, aiming toward the real doorway.
 	# The next A/D turn starts at this visible angle and returns to the usual grid.
-	var direction := hub_door.doorway_area.global_position - main_camera.global_position
+	var direction := target_door.doorway_area.global_position - main_camera.global_position
 	var target_y := atan2(-direction.x, -direction.z)
 	var start_rotation := camera_pivot.rotation
 	target_y = start_rotation.y + wrapf(target_y - start_rotation.y, -PI, PI)
@@ -988,12 +1760,16 @@ func _on_slot_room_key_requested(wait_for_wakeup: bool = false) -> void:
 	_settle_target_y = _settle_origin_y + deg_to_rad(rotation_step_degrees) * _settle_step_index
 	_active_side = posmod(_settle_step_index, SIDE_COUNT)
 	# Grant access only after the player is looking, so the opening is visible.
-	if CollectionManager.unlock_slot_room():
-		hub_door.set_locked(false)
-		hub_door.set_travel_open(true)
+	if CollectionManager.use_access_key(card_id):
+		target_door.set_locked(false)
+		target_door.set_travel_open(true)
 		_door_key_tween = create_tween()
-		_door_key_tween.tween_interval(hub_door.travel_duration + 0.35)
+		_door_key_tween.tween_interval(target_door.travel_duration + 0.35)
 		await _door_key_tween.finished
+	else:
+		_door_key_view_active = false
+		_key_reveal_door = null
+		_snap_camera_pivot_to_cardinal_target()
 	_door_key_tween = null
 	_room_transition_active = false
 	collection.finish_slot_room_key_request()
@@ -1002,6 +1778,22 @@ func _on_slot_room_key_requested(wait_for_wakeup: bool = false) -> void:
 	_update_active_scene_interaction()
 	_update_screen_camera_focus_context()
 	_update_room_door_interaction()
+
+
+func _prepare_hub_return_facing(door: HospitalDoor) -> void:
+	# Face from the entrance toward the hub turning center, snapped to its
+	# cardinal sides: basement -> pack shop, graveyard -> table.
+	var parent_basis := (camera_pivot.get_parent() as Node3D).global_basis
+	var inward := parent_basis.inverse() * (_hub_return_pivot_transform.origin - door.global_position)
+	var heading := atan2(-inward.x, -inward.z)
+	var step := deg_to_rad(rotation_step_degrees)
+	var target_index := roundi((heading - _hub_settle_origin_y) / step)
+	target_index += roundi(float(_hub_return_step_index - target_index) / float(SIDE_COUNT)) * SIDE_COUNT
+	_hub_return_step_index = target_index
+	_hub_return_active_side = posmod(target_index, SIDE_COUNT)
+	_hub_return_pivot_transform.basis = parent_basis * Basis.from_euler(
+		Vector3(_base_x_rotation, _hub_settle_origin_y + step * float(target_index), 0.0)
+	)
 
 
 func _on_room_door_activated(door: HospitalDoor) -> void:
@@ -1054,7 +1846,12 @@ func _on_room_door_activated(door: HospitalDoor) -> void:
 			_hub_return_pivot_transform.basis = Basis.from_euler(Vector3(_base_x_rotation, _settle_target_y, 0.0))
 		_hub_return_step_index = _settle_step_index
 		_hub_return_active_side = _active_side
+	else:
+		_prepare_hub_return_facing(destination_door)
 	_door_key_view_active = false
+	if is_instance_valid(_key_reveal_door) and _key_reveal_door != source_door:
+		_key_reveal_door.set_travel_open(false)
+	_key_reveal_door = null
 
 	_room_transition_active = true
 	_pending_direction = 0
@@ -1119,23 +1916,27 @@ func _on_room_door_activated(door: HospitalDoor) -> void:
 	var total_distance := 0.0
 	for index in range(1, camera_poses.size()):
 		total_distance += camera_poses[index - 1].origin.distance_to(camera_poses[index].origin)
+	var walking_duration := 0.0
 	_room_travel_tween = create_tween()
 	for index in range(1, camera_poses.size()):
 		var start_pose := camera_poses[index - 1] * camera_to_pivot
 		var end_pose := camera_poses[index] * camera_to_pivot
 		var distance := camera_poses[index - 1].origin.distance_to(camera_poses[index].origin)
-		var duration := room_travel_duration * distance / maxf(total_distance, 0.001)
+		var duration := maxf(room_travel_duration * distance / maxf(total_distance, 0.001), 0.01)
+		walking_duration += duration
 		var leg := _room_travel_tween.tween_method(
-			_apply_room_travel_pose.bind(start_pose, end_pose), 0.0, 1.0, maxf(duration, 0.01)
+			_apply_room_travel_pose.bind(start_pose, end_pose), 0.0, 1.0, duration
 		)
 		if index == 1:
 			leg.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 			_room_travel_tween.parallel().tween_property(
-				main_camera, "fov", _hub_camera_base_fov, maxf(duration, 0.01)
+				main_camera, "fov", _hub_camera_base_fov, duration
 			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		elif index == camera_poses.size() - 1:
 			leg.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_start_walking_sequence(walking_duration)
 	await _room_travel_tween.finished
+	_stop_walking_sequence()
 	_room_travel_tween = null
 	camera_pivot.global_transform = destination_pivot
 	_active_room = destination_room
@@ -1151,10 +1952,15 @@ func _on_room_door_activated(door: HospitalDoor) -> void:
 	_settle_step_index = 0 if entering_room else _hub_return_step_index
 	_active_side = 0 if entering_room else _hub_return_active_side
 	_snap_camera_pivot_to_cardinal_target()
-	_room_transition_active = false
 	source_door.set_travel_open(false)
 	destination_door.set_travel_open(false)
 	destination_door.set_return_passage_open(false)
+	if destination_room == 0:
+		if CollectionManager.claim_crucifix_return_dialogue():
+			await _play_crucifix_return_dialogue()
+		if CollectionManager.claim_holy_water_return_dialogue():
+			await _play_holy_water_return_dialogue()
+	_room_transition_active = false
 	pause_menu.set_cinematic_locked(false)
 	_update_labels()
 	_update_active_scene_interaction()
@@ -1163,8 +1969,110 @@ func _on_room_door_activated(door: HospitalDoor) -> void:
 	room_changed.emit(_active_room)
 
 
+func _play_holy_water_return_dialogue() -> void:
+	await _play_story_item_return_dialogue(preload("res://scripts/main/SatanHolyWaterDialogue.gd"), "SatanHolyWaterDialogue")
+
+
+func _play_crucifix_return_dialogue() -> void:
+	await _play_story_item_return_dialogue(preload("res://scripts/main/SatanCrucifixDialogue.gd"), "SatanCrucifixDialogue")
+
+
+func _play_story_item_return_dialogue(dialogue_script: Script, dialogue_name: String) -> void:
+	var table := scene_pivot.get_node("GameTable") as GameTable
+	var music_was_paused := music.stream_paused
+	music.stream_paused = true
+	# Return to the inward-facing arrival view after speaking with Satan.
+	var return_step_index := _settle_step_index
+	var return_pose := camera_pivot.global_transform
+	var saved_fov := main_camera.fov
+	var eye := main_camera.global_position
+	var target := table.dealer_satan.global_position + Vector3.UP * table.dealer_satan.pixel_size * 6.0 * table.dealer_satan.global_basis.get_scale().y
+	var face_direction := (target - eye).normalized()
+	var approach_distance := minf(0.45, eye.distance_to(target) * 0.08)
+	var focused_camera := Transform3D(Basis.looking_at(face_direction, Vector3.UP), eye + face_direction * approach_distance)
+	var focused_pivot := focused_camera * main_camera.transform.affine_inverse()
+	var swing := create_tween().set_parallel(true)
+	swing.tween_property(camera_pivot, "global_transform", focused_pivot, 2.8).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	swing.tween_property(main_camera, "fov", saved_fov * 0.88, 2.8).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await swing.finished
+	var dialogue := dialogue_script.new() as AngelDialogue
+	dialogue.name = dialogue_name
+	dialogue.actor = table.dealer_satan
+	dialogue.camera = main_camera
+	dialogue.connect("laughing_changed", table._set_satan_laughing)
+	add_child(dialogue)
+	dialogue.interaction_enabled = true
+	if dialogue.open_dialog():
+		await dialogue.modal_changed
+	dialogue.queue_free()
+	swing = create_tween().set_parallel(true)
+	swing.tween_property(camera_pivot, "global_transform", return_pose, 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	swing.tween_property(main_camera, "fov", saved_fov, 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await swing.finished
+	camera_pivot.global_transform = return_pose
+	_settle_origin_y = _hub_settle_origin_y
+	_settle_step_index = return_step_index
+	_active_side = posmod(return_step_index, SIDE_COUNT)
+	_snap_camera_pivot_to_cardinal_target()
+	main_camera.fov = saved_fov
+	music.stream_paused = music_was_paused
+	_cinematic_input_block_frame = Engine.get_process_frames() + 1
+
+
 func _apply_room_travel_pose(weight: float, start: Transform3D, target: Transform3D) -> void:
 	camera_pivot.global_transform = start.interpolate_with(target, weight)
+	if not _walking_steps_active or _room_travel_tween == null:
+		return
+	# One continuous rhythm across every doorway/stair leg. Always compose
+	# from the clean lens pose so neither bobbing nor pitch can accumulate.
+	var elapsed := _room_travel_tween.get_total_elapsed_time()
+	var fade := minf(walking_fade_duration, _walking_duration * 0.5)
+	var envelope := smoothstep(0.0, fade, elapsed) * smoothstep(0.0, fade, _walking_duration - elapsed)
+	var phase := elapsed * TAU / walking_step_interval
+	var pose := _walking_camera_base_transform
+	pose.origin.y += sin(phase) * walking_bob_height * envelope
+	pose.basis = pose.basis * Basis(Vector3.RIGHT, sin(phase - PI * 0.35) * deg_to_rad(walking_pitch_degrees) * envelope)
+	main_camera.transform = pose
+
+
+func _start_walking_sequence(duration: float) -> void:
+	_walking_steps_active = true
+	_walking_duration = duration
+	_walking_camera_base_transform = main_camera.transform
+	_step_countdown = 0.12
+	_step_previous_position = camera_pivot.global_position
+
+
+func _stop_walking_sequence() -> void:
+	_walking_steps_active = false
+	main_camera.transform = _walking_camera_base_transform
+
+
+func _update_walking_steps(delta: float) -> void:
+	if not _walking_steps_active:
+		return
+	# Footsteps follow the route, never the cosmetic lens movement itself.
+	var position_now := camera_pivot.global_position
+	var moving := position_now.distance_squared_to(_step_previous_position) > 0.000001
+	_step_previous_position = position_now
+	if not moving:
+		return
+	_step_countdown -= delta
+	if _step_countdown > 0.0:
+		return
+	if not is_instance_valid(_step_sound):
+		_step_random.randomize()
+		_step_sound = AudioStreamPlayer.new()
+		_step_sound.name = "WalkingSteps"
+		_step_sound.stream = STEP_SOUND
+		_step_sound.bus = &"SFX"
+		_step_sound.max_polyphony = 3
+		add_child(_step_sound)
+	# About one semitone either side keeps the same footstep believable.
+	# Use separate cosmetic randomness so walking never changes card rolls.
+	_step_sound.pitch_scale = _step_random.randf_range(0.94, 1.06)
+	_step_sound.play()
+	_step_countdown = walking_step_interval * _step_random.randf_range(0.92, 1.08)
 
 
 func _setup_room_ambience() -> void:
@@ -1278,6 +2186,10 @@ func _cleanup_room_music() -> void:
 func _update_labels() -> void:
 	if not is_inside_tree() or is_queued_for_deletion():
 		return
+	if _is_bed_busy():
+		side_label.text = ""
+		hint_label.text = ""
+		return
 	if _active_room == 2 or _active_room == 3:
 		side_label.text = ""
 		hint_label.text = ""
@@ -1312,7 +2224,9 @@ func _update_active_scene_interaction() -> void:
 	]
 
 	for side_index in range(interactive_roots.size()):
-		var active := _active_room == 0 and not _room_transition_active and not _door_key_view_active and not _is_journal_active() and not _is_progression_area_open() and side_index == _active_side
+		var active := not is_instance_valid(_playtime_encounter) and not _greeting_active and not _jumpscare_active and _active_room == 0 and not _room_transition_active and not _door_key_view_active and not _is_journal_active() and not _is_progression_area_open() and side_index == _active_side
+		if side_index == 3:
+			active = active and GameCurrency.is_npc_rescued("angel")
 		for root_name in interactive_roots[side_index]:
 			var root := scene_pivot.get_node_or_null(str(root_name))
 			if root != null:
@@ -1322,6 +2236,12 @@ func _update_active_scene_interaction() -> void:
 func _setup_screen_camera_focus() -> void:
 	if screen_camera_focus == null:
 		return
+	secret_wall_input.camera = main_camera
+	secret_wall_input.focus_controller = screen_camera_focus
+	screen_camera_focus.register_screen(secret_wall_input.focus_area, secret_wall_input.VIEW_SIDE, 1)
+	var table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	if is_instance_valid(table) and is_instance_valid(table._offline_board):
+		table._offline_board.set_focus_controller(screen_camera_focus)
 
 	var pack_screen := scene_pivot.get_node_or_null("PackShopMachine/ScreenArea") as Area3D
 	var upgrade_screen := scene_pivot.get_node_or_null("UpgradeMachine/ScreenArea") as Area3D
@@ -1343,13 +2263,21 @@ func _setup_screen_camera_focus() -> void:
 		screen_camera_focus.register_screen(graveyard_jester.focus_area, graveyard_jester.view_side, 2)
 	if is_instance_valid(black_market_board) and is_instance_valid(black_market_board.focus_area):
 		screen_camera_focus.register_screen(black_market_board.focus_area, black_market_board.view_side, 4)
+	for boiler in basement_boilers:
+		screen_camera_focus.register_screen(boiler.focus_area, boiler.view_side, 3)
+	screen_camera_focus.register_screen(basement_pump_control.focus_area, basement_pump_control.view_side, 3)
 
 
 func _update_screen_camera_focus_context() -> void:
 	if screen_camera_focus == null:
 		return
+	if _greeting_active or _jumpscare_active:
+		screen_camera_focus.set_context(_active_side, false)
+		return
 
-	var hub_screen_active := _active_room == 0 and (_active_side == 1 or _active_side == 3)
+	var hub_screen_active := _active_room == 0 and (_active_side == 1 or (_active_side == 3 and GameCurrency.is_npc_rescued("angel")))
+	var table := scene_pivot.get_node_or_null("GameTable") as GameTable
+	var board_active := is_instance_valid(table) and table.is_offline_board_open() and _active_room == 0 and _active_side == 0
 	var wall_screen_active := (
 		_active_room == 1 and is_instance_valid(upgrade_collection)
 		and _active_side == upgrade_collection.view_side
@@ -1358,20 +2286,25 @@ func _update_screen_camera_focus_context() -> void:
 		_active_room == 1 and is_instance_valid(fusion_workbench)
 		and _active_side == fusion_workbench.view_side
 	)
+	var secret_input_active: bool = _active_room == 1 and _active_side == secret_wall_input.VIEW_SIDE
 	var focus_allowed := (
-		(hub_screen_active or wall_screen_active or forge_screen_active or _jester_context_is_safe() or _black_market_context_is_safe() or _dealer_context_is_safe())
+		(board_active or hub_screen_active or wall_screen_active or forge_screen_active or secret_input_active or _jester_context_is_safe() or _black_market_context_is_safe() or _dealer_context_is_safe() or _boiler_context_is_safe() or _pump_control_context_is_safe())
+		and not _is_bed_busy()
 		and not _is_progression_area_open()
 		and not _room_transition_active
 		and not _door_key_view_active
+		and not access_key_tray.is_expanded()
 		and not _loss_cinematic_active
 		and not pause_menu.visible
 		and _phase == Phase.IDLE
-		and not _is_table_match_active()
+		and (board_active or not _is_table_match_active())
 		and not _pack_opening_blocks_screen_focus
 		and not _is_journal_active()
 	)
-	screen_camera_focus.set_hover_suspended(_is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or (is_instance_valid(turn_arrows) and turn_arrows.is_pointer_over_arrow()))
+	screen_camera_focus.set_hover_suspended(board_active or secret_wall_input.is_busy() or _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_boiler_dragging() or (is_instance_valid(turn_arrows) and turn_arrows.is_pointer_over_arrow()))
 	screen_camera_focus.set_context(_active_side, focus_allowed, _active_room)
+	if board_active and focus_allowed and not screen_camera_focus.is_focused():
+		screen_camera_focus.focus_screen(table._offline_board.focus_area)
 
 
 func _connect_pack_opening_focus_state() -> void:
@@ -1407,6 +2340,8 @@ func _connect_loss_exit_cinematic() -> void:
 		game_table.loss_exit_started.connect(_on_loss_exit_started)
 	if not game_table.loss_shot_fired.is_connected(_on_loss_shot_fired):
 		game_table.loss_shot_fired.connect(_on_loss_shot_fired)
+	if not game_table.win_shot_fired.is_connected(_on_win_shot_fired):
+		game_table.win_shot_fired.connect(_on_win_shot_fired)
 	if not game_table.loss_reveal_started.is_connected(_on_loss_reveal_started):
 		game_table.loss_reveal_started.connect(_on_loss_reveal_started)
 	if not game_table.player_wakeup_started.is_connected(_on_player_wakeup_started):
@@ -1420,6 +2355,8 @@ func _connect_loss_exit_cinematic() -> void:
 func _on_loss_exit_started(music_fade_duration: float) -> void:
 	_interrupt_journal()
 	_loss_cinematic_active = true
+	# The visor receives input before Main, so close it before the next event.
+	level_progress.set_enabled(false)
 	_pending_direction = 0
 	if screen_camera_focus != null:
 		screen_camera_focus.set_context(_active_side, false)
@@ -1449,6 +2386,11 @@ func _on_loss_exit_started(music_fade_duration: float) -> void:
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
 
+func _on_win_shot_fired() -> void:
+	if is_instance_valid(imprisoned_npcs):
+		imprisoned_npcs.depart_on_shot()
+
+
 func _on_loss_shot_fired() -> void:
 	if music == null:
 		return
@@ -1460,6 +2402,7 @@ func _on_loss_shot_fired() -> void:
 
 func _on_player_wakeup_started() -> void:
 	_start_wakeup_blur(wakeup_blur_duration * 0.5)
+	blood_overlay.play()
 
 
 func _on_loss_reveal_started(duration: float) -> void:
@@ -1479,6 +2422,8 @@ func _on_loss_reveal_started(duration: float) -> void:
 
 
 func _on_loss_exit_skipped() -> void:
+	imprisoned_npcs.finish_victory()
+	blood_overlay.clear()
 	# A skip key can also be a turn/journal/pause key. Keep its input frame local
 	# to the cinematic, including actions polled by _process instead of _input.
 	_cinematic_input_block_frame = Engine.get_process_frames() + 1
@@ -1500,6 +2445,7 @@ func _on_loss_exit_finished() -> void:
 
 	_loss_music_restore_pending = false
 	_loss_cinematic_active = false
+	imprisoned_npcs.finish_victory()
 	if pause_menu != null:
 		pause_menu.set_cinematic_locked(false)
 	_update_screen_camera_focus_context()

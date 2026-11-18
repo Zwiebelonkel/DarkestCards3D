@@ -5,6 +5,7 @@ signal spin_started(stake_cents: int)
 signal spin_finished(result: Array[int], payout_cents: int)
 
 const BETS: Array[int] = [100, 200, 500, 1000, 2000, 5000]
+const BET_STEP_CENTS := 1000
 const COLOR_NAMES: Array[String] = ["GRÜN", "ROT", "BLAU", "GOLD", "VIOLETT"]
 const COLOR_TINTS: Array[Color] = [Color("69ed4b"), Color("ff5c65"), Color("639dff"), Color("ffcb50"), Color("ee75ff")]
 const SYMBOL_NAMES: Array[String] = ["HEILUNG", "LEBENSRAUB", "SCHILD", "DREIFACHSCHLAG", "FLUCH"]
@@ -15,13 +16,19 @@ const SYMBOL_TEXTURES: Array[Texture2D] = [
 	preload("res://assets/effects/triple_strike.png"),
 	preload("res://assets/effects/curse.png"),
 ]
-const MULTIPLIERS: Array[int] = [5, 10, 15, 30, 50]
+const MULTIPLIERS: Array[int] = [5, 10, 15, 35, 55]
 # The five actual colored faces of the imported pentagonal cylinders.
 const STOP_ANGLES: Array[float] = [0.0, -72.0, -144.0, -216.0, -288.0]
 const BUTTON_NAMES := {"increase": "erhöhen", "decrease": "verringern", "bet": "setzen", "spin": "spin"}
 const FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 const CLICK_SOUND := preload("res://assets/sounds/SFX/button.mp3")
 const SPIN_SOUND := preload("res://assets/sounds/SFX/spin.mp3")
+const ROLLING_SOUND := preload("res://assets/sounds/SFX/rolling.mp3")
+# The recording is already quiet. Extra gain reduction plus 3D attenuation
+# buried it under the reel clicks at the player's normal viewing distance.
+const ROLLING_VOLUME_DB := 0.0
+const ROLLING_END_VOLUME_DB := -55.0
+const ROLLING_END_PITCH := 0.4
 const SPIN_CLICK_ANGLE := TAU / 5.0
 const WIN_SOUND := preload("res://assets/sounds/SFX/rare.mp3")
 const REWARD_EFFECT := preload("res://scripts/ui/RewardRevealEffect.gd")
@@ -58,17 +65,21 @@ var _status_label: Label3D
 var _result_label: Label3D
 var _click_audio: AudioStreamPlayer3D
 var _spin_audio: AudioStreamPlayer3D
+var _rolling_audio: AudioStreamPlayer3D
+var _rolling_tail_tween: Tween
 var _spin_next_click_angle := 0.0
 var _stop_audio: AudioStreamPlayer3D
 var _win_audio: AudioStreamPlayer3D
 var _win_effect: RewardRevealEffect
+var _model_text: LocalizedModelText
+var _jackpot_elapsed := 0.0
 
 
 func _ready() -> void:
 	_rng.randomize()
 	_recover_orphaned_spin()
 	_prepare_model()
-	LocalizedModelText.attach_slot_model($Model/slots)
+	_model_text = LocalizedModelText.attach_slot_model($Model/slots)
 	_build_display()
 	_build_audio()
 	Localization.locale_changed.connect(_refresh_display)
@@ -112,7 +123,7 @@ func _can_present_win_effect() -> bool:
 func choose_bet(direction: int) -> bool:
 	if not _can_interact() or is_spinning or _owns_pending_spin or direction == 0:
 		return false
-	var next := clampi(selected_bet_index + signi(direction), 0, BETS.size() - 1)
+	var next := maxi(selected_bet_index + signi(direction), 0)
 	if next == selected_bet_index:
 		return false
 	selected_bet_index = next
@@ -123,13 +134,19 @@ func choose_bet(direction: int) -> bool:
 	return true
 
 
+func get_selected_bet_cents() -> int:
+	if selected_bet_index < BETS.size():
+		return BETS[selected_bet_index]
+	return BETS[-1] + (selected_bet_index - BETS.size() + 1) * BET_STEP_CENTS
+
+
 func confirm_bet() -> bool:
 	if not _can_interact() or is_spinning or _owns_pending_spin:
 		return false
-	if GameCurrency.get_coin_cents() < BETS[selected_bet_index]:
+	if GameCurrency.get_coin_cents() < get_selected_bet_cents():
 		_set_status("Nicht genug Soul Coins", Color("ff8178"))
 		return false
-	committed_bet_cents = BETS[selected_bet_index]
+	committed_bet_cents = get_selected_bet_cents()
 	_set_status("")
 	_refresh_display()
 	_refresh_buttons()
@@ -172,6 +189,7 @@ func start_spin() -> bool:
 	_set_status("")
 	_refresh_buttons()
 	_spin_audio.play()
+	_start_rolling_audio()
 	spin_started.emit(committed_bet_cents)
 	_animate_result()
 	return true
@@ -224,22 +242,28 @@ func _on_reel_stopped(index: int, generation: int) -> void:
 	_set_reel_angle(deg_to_rad(STOP_ANGLES[last_result[index]]), index)
 	_stop_audio.pitch_scale = 0.8 + index * 0.16
 	_stop_audio.play()
+	if index == 0:
+		_fade_rolling_audio()
 	if index == 2:
 		_spin_audio.stop()
+		_stop_rolling_audio()
 
 
 func _finish_spin(generation: int = -1) -> void:
 	if not _owns_pending_spin or (generation >= 0 and generation != _spin_generation):
 		return
 	_spin_audio.stop()
+	_stop_rolling_audio()
 	if not GameCurrency.complete_slot_spin():
 		is_spinning = false
+		_update_jackpot_flicker(0.0)
 		_set_status("Speichern fehlgeschlagen\nSPIN: Auszahlung erneut versuchen", Color("ff8178"))
 		_refresh_buttons()
 		return
 	_owns_pending_spin = false
 	GameCurrency.remove_meta("slot_spin_visual_owner")
 	is_spinning = false
+	_update_jackpot_flicker(0.0)
 	_spin_tweens.clear()
 	if last_payout_cents > 0:
 		if is_instance_valid(_result_label):
@@ -359,6 +383,7 @@ func _on_button_input(_camera: Node, event: InputEvent, _position: Vector3, _nor
 
 
 func _process(delta: float) -> void:
+	_update_jackpot_flicker(delta)
 	var action := ""
 	if _can_interact() and not is_spinning:
 		var camera := get_viewport().get_camera_3d()
@@ -374,6 +399,18 @@ func _process(delta: float) -> void:
 					break
 	_set_hover(action)
 	_update_button_blink(delta)
+
+
+func _update_jackpot_flicker(delta: float) -> void:
+	if is_spinning:
+		_jackpot_elapsed += delta
+		# Uneven short flashes, independent of the payout RNG.
+		var phase := fmod(_jackpot_elapsed, 0.46)
+		var lit := phase < 0.09 or (phase > 0.15 and phase < 0.21) or phase > 0.30
+		_model_text.set_jackpot_brightness(1.0 if lit else 0.16)
+	else:
+		_jackpot_elapsed = 0.0
+		_model_text.set_jackpot_brightness(1.0)
 
 
 func _notification(what: int) -> void:
@@ -393,7 +430,6 @@ func _refresh_buttons() -> void:
 	for action: String in button_areas:
 		var enabled := _can_interact() and not is_spinning
 		if _owns_pending_spin and action != "spin": enabled = false
-		if action == "increase": enabled = enabled and selected_bet_index < BETS.size() - 1
 		if action == "decrease": enabled = enabled and selected_bet_index > 0
 		var area := button_areas[action] as Area3D
 		area.input_ray_pickable = enabled
@@ -507,8 +543,39 @@ func _build_audio() -> void:
 	spin_stream.loop = false
 	_spin_audio = _make_audio("SpinSound", spin_stream, -13.0)
 	_spin_audio.max_polyphony = 4
+	# Only this machine's private stream loops; keep the imported source intact.
+	var rolling_stream := ROLLING_SOUND.duplicate() as AudioStreamMP3
+	rolling_stream.loop = true
+	_rolling_audio = _make_audio("RollingSound", rolling_stream, ROLLING_VOLUME_DB)
 	_stop_audio = _make_audio("ReelStop", CLICK_SOUND, -10.0)
 	_win_audio = _make_audio("WinSound", WIN_SOUND, -15.0)
+
+
+func _start_rolling_audio() -> void:
+	_stop_rolling_audio()
+	_rolling_audio.pitch_scale = 1.0
+	_rolling_audio.volume_db = ROLLING_VOLUME_DB
+	_rolling_audio.play()
+
+
+func _fade_rolling_audio() -> void:
+	if not _rolling_audio.playing:
+		return
+	# The first visible result starts the slowdown. The last reel's stop owns
+	# final silence, including failed payouts and short test/custom spins.
+	var tail_duration := maxf(reel_stop_delay * 2.0, 0.01)
+	_rolling_tail_tween = create_tween().set_parallel(true)
+	_rolling_tail_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_rolling_tail_tween.tween_property(_rolling_audio, "pitch_scale", ROLLING_END_PITCH, tail_duration)
+	_rolling_tail_tween.tween_property(_rolling_audio, "volume_db", ROLLING_END_VOLUME_DB, tail_duration)
+
+
+func _stop_rolling_audio() -> void:
+	if _rolling_tail_tween != null and _rolling_tail_tween.is_valid():
+		_rolling_tail_tween.kill()
+	_rolling_tail_tween = null
+	if is_instance_valid(_rolling_audio):
+		_rolling_audio.stop()
 
 
 func _make_audio(node_name: String, stream: AudioStream, volume: float) -> AudioStreamPlayer3D:
@@ -540,7 +607,7 @@ func _set_status(message: String, color: Color = Color("ded6b2")) -> void:
 
 func _refresh_display() -> void:
 	_credit_label.text = Localization.format_text("SOUL COINS  %s", [GameCurrency.format_coins()])
-	_bet_label.text = Localization.format_text("EINSATZ  %s SC", [_format_cents(BETS[selected_bet_index])])
+	_bet_label.text = Localization.format_text("EINSATZ  %s SC", [_format_cents(get_selected_bet_cents())])
 	Localization.fit_text_3d(_credit_label, 1.14, 0.13)
 	Localization.fit_text_3d(_bet_label, 1.24, 0.14)
 	_set_status(_status_text, _status_color)
@@ -567,6 +634,7 @@ func _recover_orphaned_spin() -> void:
 
 
 func _exit_tree() -> void:
+	_stop_rolling_audio()
 	if is_instance_valid(_spin_audio):
 		_spin_audio.stop()
 	for tween in _spin_tweens:

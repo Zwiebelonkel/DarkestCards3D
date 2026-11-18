@@ -1,0 +1,94 @@
+{
+  "reviewed_at": "2026-11-14T17:55:22.210727Z",
+  "scene": "res://scenes/props/TravelBeacon.tscn",
+  "scene_modified_at": "2026-11-14T17:51:41.1612668Z",
+  "engine": "Godot 4.4.1, Forward+, AMD Radeon RX 7600",
+  "capability_matrix": {
+    "bounded_headless_jobs": "mcp__godot__run_godot_job: passed",
+    "loaded_scene_inspection": "mcp__godot__inspect_scene: passed",
+    "off_desktop_rendering_and_silent_audio": "mcp__godot__run_godot_job render: passed",
+    "project_binding": "Explicit project_path for DarkestCards3D and isolated project copy"
+  },
+  "visual_review": {
+    "ground_contact": "Ring base at local y 0.1227 above slab tops near y 0.1; glyph deliberately suspended",
+    "context": "hover, crypt close view, crossing beacon, returned viewpoint: accepted at 1280 x 720",
+    "cardinal_views": "front, back, left, right: accepted at 512 x 512",
+    "junction_matrix": "Buildings unchanged; roof, wall, door and window junction gates not applicable to this marker",
+    "palette": "Muted teal glow matches the path accent; warm neighboring fire retained",
+    "framing": "Existing shared camera at player height; isolated beacon cameras 2.4 local units from center, FOV 45"
+  },
+  "validation": {
+    "navigation": "No free-moving character or NPC navigation mesh involved; scripted camera route tested directly",
+    "crypt_and_beacon_render": "PASS: 52 checks, no script errors or render warnings",
+    "off_path_checks": "Click away, repeated click, Pause, journal, inactive room, stationary pointer",
+    "room_travel_regression": "PASS: 102 checks; existing ObjectDB exit warning",
+    "jester_baseline": "Six existing dialogue/close failures reproduced identically with crypt integration disabled",
+    "route": "Real shared camera travels crypt -> crossing; full in-place rotation preserves position and view",
+    "asset_contract": "PASS: 9 nodes, 4 meshes, 376 triangles, 2 materials, 1 nonblocking hover box, no lights or particles"
+  },
+  "performance": {
+    "hidden": {
+      "average_draw_calls": 2228.0,
+      "average_frame_ms": 16.8662666666667,
+      "frames": 30,
+      "p95_frame_ms": 18.26
+    },
+    "visible": {
+      "average_draw_calls": 2232.13333333333,
+      "average_frame_ms": 16.9393333333333,
+      "frames": 30,
+      "p95_frame_ms": 18.896
+    }
+  },
+  "performance_note": "Short matched in-world 30-frame samples after warmup; approximately four added draws; frame timings are noisy and not an FPS guarantee",
+  "image_diagnostics": {
+    "crypt-gate-beacon-returned.png": {
+      "sampled_mean_luminance": 11.77,
+      "height": 720,
+      "width": 1280,
+      "sample_stride_pixels": 8
+    },
+    "crypt-beacon-right.png": {
+      "sampled_mean_luminance": 79.807,
+      "height": 512,
+      "width": 512,
+      "sample_stride_pixels": 8
+    },
+    "crypt-beacon-front.png": {
+      "sampled_mean_luminance": 79.807,
+      "height": 512,
+      "width": 512,
+      "sample_stride_pixels": 8
+    },
+    "crypt-gate-beacon-context.png": {
+      "sampled_mean_luminance": 7.957,
+      "height": 720,
+      "width": 1280,
+      "sample_stride_pixels": 8
+    },
+    "crypt-beacon-back.png": {
+      "sampled_mean_luminance": 79.807,
+      "height": 512,
+      "width": 512,
+      "sample_stride_pixels": 8
+    },
+    "crypt-gate-close.png": {
+      "sampled_mean_luminance": 53.817,
+      "height": 720,
+      "width": 1280,
+      "sample_stride_pixels": 8
+    },
+    "crypt-gate-hover.png": {
+      "sampled_mean_luminance": 11.746,
+      "height": 720,
+      "width": 1280,
+      "sample_stride_pixels": 8
+    },
+    "crypt-beacon-left.png": {
+      "sampled_mean_luminance": 79.807,
+      "height": 512,
+      "width": 512,
+      "sample_stride_pixels": 8
+    }
+  }
+}

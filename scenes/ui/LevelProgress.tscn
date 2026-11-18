@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bbyrfgwjhj3ik" path="res://scripts/ui/LevelProgress.gd" id="1_progress"]
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_h77tj"]
 [ext_resource type="AudioStream" uid="uid://dsugd2fapfweu" path="res://assets/sounds/SFX/button.mp3" id="3_click"]
-[ext_resource type="Texture2D" uid="uid://d2yqvgck6uowd" path="res://assets/characters/catClick.png" id="4_cat_click"]
+[ext_resource type="Texture2D" uid="uid://d2yqvgck6uowd" path="res://assets/characters/cat/catClick.png" id="4_cat_click"]
 
 [sub_resource type="StandardMaterial3D" id="Material_frame"]
 render_priority = 80

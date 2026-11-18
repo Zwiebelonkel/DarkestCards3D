@@ -1,0 +1,26 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: initial list includes every owned combat type and excludes upgrades and keys
+PASS: YOUR CARDS starts in the full collection mode
+PASS: screen ray hovers the clickable title
+PASS: real 3D screen press toggles the YOUR CARDS button on
+PASS: deck filter shows current deck types once even for duplicate deck copies
+PASS: filtering out a card clears its preview and disables upgrades
+PASS: count matches the visible deck types
+PASS: screen ray hovers the clickable title
+PASS: second physical screen click restores the full collection
+PASS: a still-visible selection and its preview survive toggling
+PASS: screen ray hovers the clickable title
+PASS: collection acquisitions keep the active filter and exclude cards outside the deck
+PASS: editing the current deck refreshes the filtered machine without reopening it
+PASS: removing one duplicate keeps that deck card type and current selection
+PASS: removing the last deck copy also clears its selection and preview
+PASS: empty deck displays an empty filtered list rather than the collection
+PASS: screen ray hovers the clickable title
+PASS: turning filtering off after an empty deck reveals newly acquired cards immediately
+PASS: screen ray hovers the clickable title
+PASS: acquiring another deck-card copy refreshes the visible owned count
+UPGRADE_DECK_FILTER_TESTS: PASS (20 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

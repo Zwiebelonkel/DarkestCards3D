@@ -1,0 +1,77 @@
+{
+  "active": {
+    "draw_calls": 45,
+    "mean_frame_ms": 15.559,
+    "objects": 62,
+    "p95_frame_ms": 16.713
+  },
+  "audio_driver": "Dummy",
+  "baseline": {
+    "draw_calls": 44,
+    "mean_frame_ms": 16.6656333333333,
+    "objects": 61,
+    "p95_frame_ms": 16.914
+  },
+  "captures": [
+    "res://test-user/weed/drop.png",
+    "res://test-user/weed/landed.png",
+    "res://test-user/weed/hover.png",
+    "res://test-user/weed/fade-in.png",
+    "res://test-user/weed/active.png",
+    "res://test-user/weed/fade-out.png",
+    "res://test-user/weed/admin-menu.png",
+    "res://test-user/weed/front.png",
+    "res://test-user/weed/back.png",
+    "res://test-user/weed/left.png",
+    "res://test-user/weed/right.png"
+  ],
+  "checks": 64,
+  "failures": 0,
+  "validation_utc": "2026-11-16T18:51:44.3450327Z",
+  "requirement": {
+    "fade_out_seconds": 5,
+    "reward": "toilet_paper, collect only",
+    "unlock": "Saved story level 7 victory",
+    "puzzle": "up,down,down after first trip",
+    "total_seconds": 60,
+    "fade_in_seconds": 5,
+    "admin_button": "Settings/Cheats/Weed-Paket fallen lassen"
+  },
+  "suites": {
+    "settings_cheats": 33,
+    "save_slots": 174,
+    "puzzle_backend": 19,
+    "pump_render": 77,
+    "total": 454,
+    "access_key_tray": 87,
+    "weed_render": 64
+  },
+  "engine": {
+    "warning": "Some full-scene suites retain existing ObjectDB instance-leak warnings at shutdown",
+    "job_provider": "Godot MCP owned bounded off-desktop children",
+    "version": "4.4.1",
+    "audio": "Dummy",
+    "script_errors": 0,
+    "renderer": "Forward+ Vulkan",
+    "shader_errors": 0
+  },
+  "visual_review": {
+    "hint": "All three red arrows readable in dark hub; source texture doubles as the colored emission map",
+    "inspected": [
+      "drop",
+      "landed",
+      "hover",
+      "fade-in",
+      "active",
+      "fade-out",
+      "admin-menu",
+      "front",
+      "back",
+      "left",
+      "right",
+      "basement-pump-solved-key-reveal"
+    ],
+    "card": "Klopapier name, icon and collect-for-later description readable",
+    "admin": "Button within scroll viewport and activated by real UI click"
+  }
+}

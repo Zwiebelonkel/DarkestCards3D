@@ -321,7 +321,7 @@ size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.6, 0.56, 0.62, 1)
 theme_override_fonts/font = ExtResource("2_pguvw")
 theme_override_font_sizes/font_size = 12
-text = "Start the microphone test to animate Satan with your voice."
+text = "Start the microphone test to see your character react to your voice."
 vertical_alignment = 1
 autowrap_mode = 2
 
@@ -440,7 +440,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Applied to your outgoing voice and the local microphone test."
-max_value = 4.0
+max_value = 20.0
 step = 0.05
 value = 1.0
 
@@ -467,7 +467,7 @@ text = "Voice chat volume"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 1.0
+max_value = 20.0
 step = 0.01
 value = 0.3
 

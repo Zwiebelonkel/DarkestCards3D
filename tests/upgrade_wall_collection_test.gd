@@ -53,8 +53,9 @@ func _run() -> void:
 	for index in range(1, 6):
 		CollectionManager.add_card_instance(CardData.create_instance("starting_hand_%d" % index))
 	await settle()
-	check(wall._cards.size() == 7 and not wall._empty_label.visible, "all seven upgrade types appear after acquiring cards")
-	check(not wall._cards.has("slot_room_key") and not wall._cards.has("wanderer"), "key and combat cards are excluded")
+	check(wall._cards.size() == 8 and not wall._empty_label.visible, "seven upgrade types and the owned access key appear after acquiring cards")
+	check(wall._cards.has("slot_room_key") and not wall._cards.has("wanderer"), "access key remains in the special collection while combat cards are excluded")
+	check(wall._rows[int(wall._card_rows["slot_room_key"])]["group"] == "upgrade_group_access", "slot-room key is grouped with the other access keys")
 	check(wall._amount_labels["clicker_upgrade"].text == "× 2", "duplicate upgrade copies share a card with correct amount")
 	check(CardData.is_holo(wall._cards["clicker_upgrade"].card_data), "owned Holo copy is used for the wall display")
 	check(not wall._cards["clicker"].area.input_ray_pickable and wall._cards["clicker"].area.collision_layer == 0, "wall cards do not intercept other scenes' physics input")

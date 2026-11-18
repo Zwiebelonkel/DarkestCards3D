@@ -10,8 +10,8 @@
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="7_bkjnr"]
 [ext_resource type="PackedScene" uid="uid://g6mmig2vuj1q" path="res://scenes/Neon.tscn" id="7_eclvw"]
 [ext_resource type="AudioStream" uid="uid://ca2m8sijon4ep" path="res://assets/sounds/theme3.mp3" id="9_cius5"]
-[ext_resource type="PackedScene" uid="uid://byptauqy0lmst" path="res://scenes/ui/LevelProgress.tscn" id="10_level_progress"]
 [ext_resource type="Script" uid="uid://c8m2n7eio1hk3" path="res://scripts/ui/SaveSlotPicker.gd" id="11_slots"]
+[ext_resource type="Material" path="res://assets/characters/satan/menu_glow.tres" id="12_satan_glow"]
 
 [sub_resource type="Environment" id="Environment_cius5"]
 background_energy_multiplier = 0.0
@@ -77,9 +77,6 @@ environment = SubResource("Environment_cius5")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.36792, -2.60684)
 
-[node name="LevelProgress" parent="Camera3D" instance=ExtResource("10_level_progress")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.265307, 0)
-
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
 
 [node name="DirtyLensRect" type="ColorRect" parent="Camera3D/CanvasLayer"]
@@ -105,7 +102,6 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Background" type="ColorRect" parent="."]
-visible = false
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -264,6 +260,16 @@ unique_name_in_owner = true
 transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.15325)
 script = null
 
+[node name="WinCinematicCanvas" parent="ScenePivot/GameTable" index="2"]
+visible = false
+
+[node name="PlayerGunMount" parent="ScenePivot/GameTable/WinCinematicCanvas" index="0"]
+offset_top = 0.0
+offset_bottom = 0.0
+
+[node name="satan" parent="ScenePivot/GameTable/dealer/SatanMotionRoot" index="0"]
+material_override = ExtResource("12_satan_glow")
+
 [node name="hospitalRoom" parent="." instance=ExtResource("5_blefk")]
 transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.925, 0.179363, -2.21619, 0.438384)
 
@@ -286,6 +292,8 @@ light_energy = 11.214
 spot_range = 13.528
 spot_angle = 55.15
 
+[editable path="ScenePivot/GameTable"]
+[editable path="ScenePivot/GameTable/dealer"]
 [editable path="Neon"]
 [editable path="Neon/darkest"]
 [editable path="Neon/cards2"]

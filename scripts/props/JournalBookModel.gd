@@ -31,7 +31,6 @@ func _ready() -> void:
 	_build_half(self, -1.0)
 	_build_half(_right_leaf, 1.0)
 	_build_spine()
-	_build_bookmark()
 	_commit_batches()
 	set_open_amount(_open_amount)
 
@@ -58,13 +57,11 @@ func _make_materials() -> void:
 	_materials["gutter"] = _material(Color("978360"), 1.0, 0.0)
 	_materials["thread"] = _material(Color("b19a75"), 1.0, 0.0)
 	_materials["ribbon"] = _material(Color("723b38"), 1.0, 0.0)
-	# Printed pages retain their contrast under the different room lights.
-	for key in ["paper", "paper_edge", "paper_light", "gutter", "thread"]:
-		(_materials[key] as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 
 
 func _material(tint: Color, roughness: float, metallic: float) -> StandardMaterial3D:
 	var result := StandardMaterial3D.new()
+	result.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	result.albedo_color = tint
 	result.roughness = roughness
 	result.metallic = metallic
@@ -143,31 +140,6 @@ func _build_spine() -> void:
 	for end in [-1.0, 1.0]:
 		for stitch in range(5):
 			_box(self, Vector3(0.014, 0.073, 0.014), Vector3(-0.056 + stitch * 0.028, end * 2.205, 0.041), "thread" if stitch % 2 == 0 else "ribbon")
-
-
-func _build_bookmark() -> void:
-	var vertices := PackedVector3Array([
-		Vector3(-0.105, 0.18, 0.0), Vector3(0.105, 0.18, 0.0),
-		Vector3(0.105, -0.21, 0.0), Vector3(0.0, -0.14, 0.0),
-		Vector3(-0.105, -0.21, 0.0),
-	])
-	var arrays: Array = []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = vertices
-	arrays[Mesh.ARRAY_NORMAL] = PackedVector3Array([Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK])
-	arrays[Mesh.ARRAY_INDEX] = PackedInt32Array([0, 1, 3, 1, 2, 3, 0, 3, 4])
-	var mesh := ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	var bookmark := MeshInstance3D.new()
-	bookmark.name = "ClothBookmark"
-	bookmark.mesh = mesh
-	bookmark.position = Vector3(-0.44, -2.15, 0.084)
-	var material := (_materials["ribbon"] as StandardMaterial3D).duplicate() as StandardMaterial3D
-	material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	bookmark.material_override = material
-	add_child(bookmark)
-	for side in [-1.0, 1.0]:
-		_box(self, Vector3(0.010, 0.30, 0.003), Vector3(-0.44 + side * 0.071, -2.115, 0.087), "brass_dark")
 
 
 func _box(parent: Node3D, size: Vector3, at: Vector3, material: String, angles := Vector3.ZERO) -> void:

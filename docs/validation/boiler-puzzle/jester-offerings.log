@@ -1,0 +1,53 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS new profile starts with neither grave offered and no reward
+PASS missing Chick has no sacrifice candidate
+PASS free normal copy is preferred even when a Holo was acquired first
+PASS confirmation receives upgraded stats and the precise offered copy's identity and level
+PASS preview dictionaries are detached and cannot change owned copies or upgrades
+PASS an exact copy added to the starting hand after preview is protected at confirmation
+PASS a free Holo remains selectable while the normal copy is protected
+PASS unsupported graves, wrong card identity and stale copies are rejected
+PASS rejected requests consume no cards, emit no award signal and do not roll a reward
+PASS candidate lookup and rejection never rewrite or alter the saved deck or starting hand
+PASS legacy deck copy resolution protects its Holo-first binding before choosing a sacrifice
+PASS all offering previews preserve type upgrades byte for byte
+PASS the first grave consumes the confirmed copy without awarding a Secret early
+PASS one exact Chick is removed while the spare and Harald remain
+PASS a synchronous first-offer listener cannot secretly submit the second sacrifice
+PASS offering notification also rejects a reentrant fusion of otherwise eligible cards
+PASS observers see first-offer consumption and progress already saved together
+PASS partial progress survives reload and cannot consume another Chick
+PASS the second grave immediately grants one existing eligible Secret combat card
+PASS final atomic replacement consumes one Harald and creates exactly one reward
+PASS completion emits one combined change and remains guarded through reentrant listeners
+PASS the persisted completion contains both consumption and the exact granted reward before notification
+PASS duplicate clicks and spare copies cannot farm a completed offering
+PASS completed progress and its original reward survive reload without granting again
+PASS state payloads are detached and both sacrifices leave all upgrades unchanged
+PASS usb_stick stays excluded from random rewards during the Jester quest
+PASS Jester can explicitly grant usb_stick despite its discovery-only random flag
+PASS saved Jester reward prevents a duplicate table discovery for usb_stick
+PASS cigarettes stays excluded from random rewards during the Jester quest
+PASS Jester can explicitly grant cigarettes despite its discovery-only random flag
+PASS saved Jester reward prevents a duplicate table discovery for cigarettes
+PASS moewenmilch stays excluded from random rewards during the Jester quest
+PASS Jester can explicitly grant moewenmilch despite its discovery-only random flag
+PASS saved Jester reward prevents a duplicate table discovery for moewenmilch
+PASS a player's only free Holo can be offered explicitly and is clearly identified
+PASS an only-Holo deck copy remains protected
+PASS confirming the free Holo consumes that exact copy without substituting another
+PASS failed first-offer save rolls back every card, metadata field and notification
+PASS a failed transaction releases its guard so the same copy can be retried
+PASS an empty eligible Secret pool preserves the second card and partial progress
+PASS failed final save grants no reward and preserves the offered Harald and partial progress
+PASS retry after final-save failure atomically awards exactly once
+PASS slot-one fixture uses the public profile controller
+PASS slot one can persist a partial offering
+PASS slot two starts without inheriting slot one's grave progress
+PASS the graves accept either order and award independently in slot two
+PASS returning to slot one restores only its own partial progress and remaining card
+PASS each save slot may earn one distinct reward through its own two sacrifices
+PASS reopening a completed slot restores its original reward without a second grant
+JESTER_OFFERING_TESTS: PASS (49 checks)

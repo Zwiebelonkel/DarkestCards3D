@@ -1,0 +1,64 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS throw starts at the existing transform
+PASS ballistic throw rises first
+PASS gravity carries the throw below its starting height
+PASS offset mesh center follows the throw trajectory
+PASS tumbling preserves object scale
+PASS throw rotates around its spin axis
+PASS death motion and dissolve leave the global reward RNG untouched
+PASS death preserves a partially raised selected card's starting transform
+PASS death installs the complete body and artwork dissolve at frame zero with no delayed start
+PASS death retains blood state while removing the separate overlay that could outlive dissolved artwork
+PASS cosmetic death motion leaves battle randomness unchanged
+PASS selection tween cannot compete with death motion
+PASS the same initial upward flight step already dissolves every card surface
+PASS repeated initialization and stale progress cannot reset or stack an ongoing death dissolve
+PASS dying card launches upward
+PASS dying card flies away from the impact source
+PASS dying card keeps its size while airborne
+PASS every surface finishes dissolving during the existing tumble and fall
+PASS dying card falls under gravity instead of stopping midair
+PASS dying card tumbles in flight
+PASS fully dissolved card remains allocated until the original flight cleanup deadline
+PASS a neighboring living card retains its original materials and presentation
+PASS the final flight step dissolves all card surfaces completely and queues normal cleanup
+PASS normal flight completion frees only the dead card
+PASS SceneTree pause freezes the death flight and dissolve on the same frame
+PASS unpausing resumes both motion and dissolve together
+PASS an interrupted death can be cleared without leaving a dissolving card behind
+PASS dead card leaves its playable slot immediately
+PASS flying dead card cannot be clicked
+PASS duplicate death notification creates one flight and one replacement
+PASS replacement gives the dying card a brief slot-clearance interval
+PASS duplicate death delivery cannot restart or stack the active dissolve
+PASS replacement draw starts while the original card is still visibly dissolving
+PASS full death flight continues while the replacement arrives
+PASS replacement arrival preserves the ongoing death presentation instead of resetting it
+PASS replacement reaches the empty slot within a fraction of a second
+PASS remaining cosmetic flight no longer blocks the next action
+PASS replacement consumes one card from the deck
+PASS replacement finishes at its slot
+PASS a replacement starts with normal living-card materials
+PASS death and replacement finish without a stalled action barrier
+PASS dead card is freed after its flight
+PASS flight cleanup cannot remove the replacement card
+PASS remote death releases the snapshot barrier before its cosmetic flight ends
+PASS remote death uses the same in-flight dissolve without granting local replacements
+PASS remote death leaves replacement to the authoritative snapshot
+PASS reset fixture interrupts an active replacement draw
+PASS reset interrupts a card whose death dissolve is already advancing
+PASS match reset kills the in-flight death tween
+PASS match reset also kills the replacement tween
+PASS match reset frees flying cards and clears death jobs
+PASS cancelled death cannot refill a reset board
+PASS local draw starts at the pre-draw pile top
+PASS replacement snapshots cannot respawn a dead card still finishing its attack
+PASS first simultaneous remote draw starts at the previous top
+PASS second simultaneous remote draw starts one layer lower
+CARD_DEATH_TESTS: PASS (56 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 5 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

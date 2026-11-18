@@ -15,6 +15,10 @@ func check(condition: bool, detail: String) -> void:
 
 
 func _run() -> void:
+	if not CollectionManager.SAVE_PATH.begins_with("res://test-user/"):
+		push_error("Run only with isolated test saves.")
+		get_tree().quit(1)
+		return
 	AudioServer.set_bus_mute(0, true)
 	_check_probability_and_persistence()
 	await _check_materials()
@@ -127,6 +131,12 @@ func _check_pack_and_collection() -> void:
 	check(screen._pending_collection_instances.size() == 3 and CardData.is_holo(screen._pending_collection_instances[0]), "reveal queues the exact rolled instances once, including Holo")
 	check(CollectionManager.get_amount(card_id) == amount_before, "revealing alone does not yet award duplicate collection entries")
 	await get_tree().create_timer(0.85).timeout
+	var before_collect := CollectionManager.collection.duplicate(true)
+	var temporary_path := CollectionManager.SAVE_PATH + ".tmp"
+	check(DirAccess.make_dir_absolute(temporary_path) == OK, "pack retry fixture blocks saving before collection")
+	screen._collect_revealed_cards()
+	check(CollectionManager.collection == before_collect and screen._pending_collection_instances.size() == 3 and screen._waiting_for_collect_click and not screen._collecting_cards, "failed pack save keeps every revealed copy available for a collect retry")
+	DirAccess.remove_absolute(temporary_path)
 	screen._collect_revealed_cards()
 	screen._collect_revealed_cards()
 	var matching := CollectionManager.get_instances_for_card(card_id).filter(func(entry): return str(entry.get("instance_id", "")) == identity)

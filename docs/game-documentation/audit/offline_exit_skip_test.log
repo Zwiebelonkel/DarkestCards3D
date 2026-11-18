@@ -1,0 +1,296 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: GameTable exposes the offline cinematic input handler
+PASS: ordinary menu input cannot skip a nonexistent cinematic
+PASS: the actual match result settles before the exit cinematic
+PASS: offline win owns the camera and locks pause while running
+PASS: Mouse motion at position ((0.0, 0.0)) with velocity ((0.0, 0.0)) does not accidentally skip
+PASS: Space does not accidentally skip
+PASS: Space does not accidentally skip
+PASS: Left Mouse Button does not accidentally skip
+PASS: Joypad Button 0 (Bottom Action, Sony Cross, Xbox A, Nintendo B) does not accidentally skip
+PASS: Joypad Motion on Axis 0 (Left Stick X-Axis, Joystick 0 X-Axis) with Value 1.00 does not accidentally skip
+PASS: Escape skips early win: cinematic finishes exactly once by the next frame
+PASS: Escape skips early win: normal mode menu is restored
+PASS: Escape skips early win: player camera position, orientation and field of view are restored
+PASS: Escape skips early win: both gun presentations and flashes reset
+PASS: Escape skips early win: Satan is restored to his normal visible pose
+PASS: Escape skips early win: no black overlay blocks the screen
+PASS: Escape skips early win: original hearing volume, filter frequency and enabled state return
+PASS: Escape skips early win: background music returns to its original volume
+PASS: Escape skips early win: wakeup blur cannot linger after the skip
+PASS: Escape skips early win: blood border cannot linger after the skip
+PASS: Escape skips early win: pause and scene interactions are available again
+PASS: Escape skips early win: settled coins, level and XP remain unchanged
+PASS: the Escape used to skip cannot also open pause
+PASS: the skip returns to gameplay without opening another overlay
+PASS: a repeated skip request cannot complete the same sequence twice
+PASS: early win stays finished after its old camera wait: cinematic finishes exactly once by the next frame
+PASS: early win stays finished after its old camera wait: normal mode menu is restored
+PASS: early win stays finished after its old camera wait: player camera position, orientation and field of view are restored
+PASS: early win stays finished after its old camera wait: both gun presentations and flashes reset
+PASS: early win stays finished after its old camera wait: Satan is restored to his normal visible pose
+PASS: early win stays finished after its old camera wait: no black overlay blocks the screen
+PASS: early win stays finished after its old camera wait: original hearing volume, filter frequency and enabled state return
+PASS: early win stays finished after its old camera wait: background music returns to its original volume
+PASS: early win stays finished after its old camera wait: wakeup blur cannot linger after the skip
+PASS: early win stays finished after its old camera wait: blood border cannot linger after the skip
+PASS: early win stays finished after its old camera wait: pause and scene interactions are available again
+PASS: early win stays finished after its old camera wait: settled coins, level and XP remain unchanged
+PASS: skipping before the shot prevents all later shot and reveal signals
+PASS: the actual match result settles before the exit cinematic
+PASS: D skips without polling the same press as a room turn
+PASS: the turn key used to skip leaves the active camera side unchanged
+PASS: turn-key skip with active Main processing: cinematic finishes exactly once by the next frame
+PASS: turn-key skip with active Main processing: normal mode menu is restored
+PASS: turn-key skip with active Main processing: player camera position, orientation and field of view are restored
+PASS: turn-key skip with active Main processing: both gun presentations and flashes reset
+PASS: turn-key skip with active Main processing: Satan is restored to his normal visible pose
+PASS: turn-key skip with active Main processing: no black overlay blocks the screen
+PASS: turn-key skip with active Main processing: original hearing volume, filter frequency and enabled state return
+PASS: turn-key skip with active Main processing: background music returns to its original volume
+PASS: turn-key skip with active Main processing: wakeup blur cannot linger after the skip
+PASS: turn-key skip with active Main processing: blood border cannot linger after the skip
+PASS: turn-key skip with active Main processing: pause and scene interactions are available again
+PASS: turn-key skip with active Main processing: settled coins, level and XP remain unchanged
+PASS: the actual match result settles before the exit cinematic
+PASS: win gun raise is reached before natural completion
+PASS: win gun raise accepts a single pressed input
+PASS: win gun raise: cinematic finishes exactly once by the next frame
+PASS: win gun raise: normal mode menu is restored
+PASS: win gun raise: player camera position, orientation and field of view are restored
+PASS: win gun raise: both gun presentations and flashes reset
+PASS: win gun raise: Satan is restored to his normal visible pose
+PASS: win gun raise: no black overlay blocks the screen
+PASS: win gun raise: original hearing volume, filter frequency and enabled state return
+PASS: win gun raise: background music returns to its original volume
+PASS: win gun raise: wakeup blur cannot linger after the skip
+PASS: win gun raise: blood border cannot linger after the skip
+PASS: win gun raise: pause and scene interactions are available again
+PASS: win gun raise: settled coins, level and XP remain unchanged
+PASS: win gun raise after retired waits: cinematic finishes exactly once by the next frame
+PASS: win gun raise after retired waits: normal mode menu is restored
+PASS: win gun raise after retired waits: player camera position, orientation and field of view are restored
+PASS: win gun raise after retired waits: both gun presentations and flashes reset
+PASS: win gun raise after retired waits: Satan is restored to his normal visible pose
+PASS: win gun raise after retired waits: no black overlay blocks the screen
+PASS: win gun raise after retired waits: original hearing volume, filter frequency and enabled state return
+PASS: win gun raise after retired waits: background music returns to its original volume
+PASS: win gun raise after retired waits: wakeup blur cannot linger after the skip
+PASS: win gun raise after retired waits: blood border cannot linger after the skip
+PASS: win gun raise after retired waits: pause and scene interactions are available again
+PASS: win gun raise after retired waits: settled coins, level and XP remain unchanged
+PASS: win gun raise emits no deferred shot or reveal after skipping
+PASS: win gun raise releases the original exit caller exactly once
+PASS: the actual match result settles before the exit cinematic
+PASS: win Satan absent is reached before natural completion
+PASS: win Satan absent accepts a single pressed input
+PASS: win Satan absent: cinematic finishes exactly once by the next frame
+PASS: win Satan absent: normal mode menu is restored
+PASS: win Satan absent: player camera position, orientation and field of view are restored
+PASS: win Satan absent: both gun presentations and flashes reset
+PASS: win Satan absent: Satan is restored to his normal visible pose
+PASS: win Satan absent: no black overlay blocks the screen
+PASS: win Satan absent: original hearing volume, filter frequency and enabled state return
+PASS: win Satan absent: background music returns to its original volume
+PASS: win Satan absent: wakeup blur cannot linger after the skip
+PASS: win Satan absent: blood border cannot linger after the skip
+PASS: win Satan absent: pause and scene interactions are available again
+PASS: win Satan absent: settled coins, level and XP remain unchanged
+PASS: win Satan absent after retired waits: cinematic finishes exactly once by the next frame
+PASS: win Satan absent after retired waits: normal mode menu is restored
+PASS: win Satan absent after retired waits: player camera position, orientation and field of view are restored
+PASS: win Satan absent after retired waits: both gun presentations and flashes reset
+PASS: win Satan absent after retired waits: Satan is restored to his normal visible pose
+PASS: win Satan absent after retired waits: no black overlay blocks the screen
+PASS: win Satan absent after retired waits: original hearing volume, filter frequency and enabled state return
+PASS: win Satan absent after retired waits: background music returns to its original volume
+PASS: win Satan absent after retired waits: wakeup blur cannot linger after the skip
+PASS: win Satan absent after retired waits: blood border cannot linger after the skip
+PASS: win Satan absent after retired waits: pause and scene interactions are available again
+PASS: win Satan absent after retired waits: settled coins, level and XP remain unchanged
+PASS: win Satan absent emits no deferred shot or reveal after skipping
+PASS: win Satan absent releases the original exit caller exactly once
+PASS: the actual match result settles before the exit cinematic
+PASS: win Satan return is reached before natural completion
+PASS: win Satan return accepts a single pressed input
+PASS: win Satan return: cinematic finishes exactly once by the next frame
+PASS: win Satan return: normal mode menu is restored
+PASS: win Satan return: player camera position, orientation and field of view are restored
+PASS: win Satan return: both gun presentations and flashes reset
+PASS: win Satan return: Satan is restored to his normal visible pose
+PASS: win Satan return: no black overlay blocks the screen
+PASS: win Satan return: original hearing volume, filter frequency and enabled state return
+PASS: win Satan return: background music returns to its original volume
+PASS: win Satan return: wakeup blur cannot linger after the skip
+PASS: win Satan return: blood border cannot linger after the skip
+PASS: win Satan return: pause and scene interactions are available again
+PASS: win Satan return: settled coins, level and XP remain unchanged
+PASS: win Satan return after retired waits: cinematic finishes exactly once by the next frame
+PASS: win Satan return after retired waits: normal mode menu is restored
+PASS: win Satan return after retired waits: player camera position, orientation and field of view are restored
+PASS: win Satan return after retired waits: both gun presentations and flashes reset
+PASS: win Satan return after retired waits: Satan is restored to his normal visible pose
+PASS: win Satan return after retired waits: no black overlay blocks the screen
+PASS: win Satan return after retired waits: original hearing volume, filter frequency and enabled state return
+PASS: win Satan return after retired waits: background music returns to its original volume
+PASS: win Satan return after retired waits: wakeup blur cannot linger after the skip
+PASS: win Satan return after retired waits: blood border cannot linger after the skip
+PASS: win Satan return after retired waits: pause and scene interactions are available again
+PASS: win Satan return after retired waits: settled coins, level and XP remain unchanged
+PASS: win Satan return emits no deferred shot or reveal after skipping
+PASS: win Satan return releases the original exit caller exactly once
+PASS: the actual match result settles before the exit cinematic
+PASS: loss gun raise is reached before natural completion
+PASS: loss gun raise accepts a single pressed input
+PASS: loss gun raise: cinematic finishes exactly once by the next frame
+PASS: loss gun raise: normal mode menu is restored
+PASS: loss gun raise: player camera position, orientation and field of view are restored
+PASS: loss gun raise: both gun presentations and flashes reset
+PASS: loss gun raise: Satan is restored to his normal visible pose
+PASS: loss gun raise: no black overlay blocks the screen
+PASS: loss gun raise: original hearing volume, filter frequency and enabled state return
+PASS: loss gun raise: background music returns to its original volume
+PASS: loss gun raise: wakeup blur cannot linger after the skip
+PASS: loss gun raise: blood border cannot linger after the skip
+PASS: loss gun raise: pause and scene interactions are available again
+PASS: loss gun raise: settled coins, level and XP remain unchanged
+PASS: loss gun raise after retired waits: cinematic finishes exactly once by the next frame
+PASS: loss gun raise after retired waits: normal mode menu is restored
+PASS: loss gun raise after retired waits: player camera position, orientation and field of view are restored
+PASS: loss gun raise after retired waits: both gun presentations and flashes reset
+PASS: loss gun raise after retired waits: Satan is restored to his normal visible pose
+PASS: loss gun raise after retired waits: no black overlay blocks the screen
+PASS: loss gun raise after retired waits: original hearing volume, filter frequency and enabled state return
+PASS: loss gun raise after retired waits: background music returns to its original volume
+PASS: loss gun raise after retired waits: wakeup blur cannot linger after the skip
+PASS: loss gun raise after retired waits: blood border cannot linger after the skip
+PASS: loss gun raise after retired waits: pause and scene interactions are available again
+PASS: loss gun raise after retired waits: settled coins, level and XP remain unchanged
+PASS: loss gun raise emits no deferred shot or reveal after skipping
+PASS: loss gun raise releases the original exit caller exactly once
+PASS: the actual match result settles before the exit cinematic
+PASS: loss hearing hold is reached before natural completion
+PASS: loss hearing hold accepts a single pressed input
+PASS: loss hearing hold: cinematic finishes exactly once by the next frame
+PASS: loss hearing hold: normal mode menu is restored
+PASS: loss hearing hold: player camera position, orientation and field of view are restored
+PASS: loss hearing hold: both gun presentations and flashes reset
+PASS: loss hearing hold: Satan is restored to his normal visible pose
+PASS: loss hearing hold: no black overlay blocks the screen
+PASS: loss hearing hold: original hearing volume, filter frequency and enabled state return
+PASS: loss hearing hold: background music returns to its original volume
+PASS: loss hearing hold: wakeup blur cannot linger after the skip
+PASS: loss hearing hold: blood border cannot linger after the skip
+PASS: loss hearing hold: pause and scene interactions are available again
+PASS: loss hearing hold: settled coins, level and XP remain unchanged
+PASS: loss hearing hold after retired waits: cinematic finishes exactly once by the next frame
+PASS: loss hearing hold after retired waits: normal mode menu is restored
+PASS: loss hearing hold after retired waits: player camera position, orientation and field of view are restored
+PASS: loss hearing hold after retired waits: both gun presentations and flashes reset
+PASS: loss hearing hold after retired waits: Satan is restored to his normal visible pose
+PASS: loss hearing hold after retired waits: no black overlay blocks the screen
+PASS: loss hearing hold after retired waits: original hearing volume, filter frequency and enabled state return
+PASS: loss hearing hold after retired waits: background music returns to its original volume
+PASS: loss hearing hold after retired waits: wakeup blur cannot linger after the skip
+PASS: loss hearing hold after retired waits: blood border cannot linger after the skip
+PASS: loss hearing hold after retired waits: pause and scene interactions are available again
+PASS: loss hearing hold after retired waits: settled coins, level and XP remain unchanged
+PASS: loss hearing hold emits no deferred shot or reveal after skipping
+PASS: loss hearing hold releases the original exit caller exactly once
+PASS: the actual match result settles before the exit cinematic
+PASS: loss hearing fade is reached before natural completion
+PASS: loss hearing fade accepts a single pressed input
+PASS: loss hearing fade: cinematic finishes exactly once by the next frame
+PASS: loss hearing fade: normal mode menu is restored
+PASS: loss hearing fade: player camera position, orientation and field of view are restored
+PASS: loss hearing fade: both gun presentations and flashes reset
+PASS: loss hearing fade: Satan is restored to his normal visible pose
+PASS: loss hearing fade: no black overlay blocks the screen
+PASS: loss hearing fade: original hearing volume, filter frequency and enabled state return
+PASS: loss hearing fade: background music returns to its original volume
+PASS: loss hearing fade: wakeup blur cannot linger after the skip
+PASS: loss hearing fade: blood border cannot linger after the skip
+PASS: loss hearing fade: pause and scene interactions are available again
+PASS: loss hearing fade: settled coins, level and XP remain unchanged
+PASS: loss hearing fade after retired waits: cinematic finishes exactly once by the next frame
+PASS: loss hearing fade after retired waits: normal mode menu is restored
+PASS: loss hearing fade after retired waits: player camera position, orientation and field of view are restored
+PASS: loss hearing fade after retired waits: both gun presentations and flashes reset
+PASS: loss hearing fade after retired waits: Satan is restored to his normal visible pose
+PASS: loss hearing fade after retired waits: no black overlay blocks the screen
+PASS: loss hearing fade after retired waits: original hearing volume, filter frequency and enabled state return
+PASS: loss hearing fade after retired waits: background music returns to its original volume
+PASS: loss hearing fade after retired waits: wakeup blur cannot linger after the skip
+PASS: loss hearing fade after retired waits: blood border cannot linger after the skip
+PASS: loss hearing fade after retired waits: pause and scene interactions are available again
+PASS: loss hearing fade after retired waits: settled coins, level and XP remain unchanged
+PASS: loss hearing fade emits no deferred shot or reveal after skipping
+PASS: loss hearing fade releases the original exit caller exactly once
+PASS: the actual match result settles before the exit cinematic
+PASS: loss wakeup reveal is reached before natural completion
+PASS: loss wakeup reveal accepts a single pressed input
+PASS: loss wakeup reveal: cinematic finishes exactly once by the next frame
+PASS: loss wakeup reveal: normal mode menu is restored
+PASS: loss wakeup reveal: player camera position, orientation and field of view are restored
+PASS: loss wakeup reveal: both gun presentations and flashes reset
+PASS: loss wakeup reveal: Satan is restored to his normal visible pose
+PASS: loss wakeup reveal: no black overlay blocks the screen
+PASS: loss wakeup reveal: original hearing volume, filter frequency and enabled state return
+PASS: loss wakeup reveal: background music returns to its original volume
+PASS: loss wakeup reveal: wakeup blur cannot linger after the skip
+PASS: loss wakeup reveal: blood border cannot linger after the skip
+PASS: loss wakeup reveal: pause and scene interactions are available again
+PASS: loss wakeup reveal: settled coins, level and XP remain unchanged
+PASS: loss wakeup reveal after retired waits: cinematic finishes exactly once by the next frame
+PASS: loss wakeup reveal after retired waits: normal mode menu is restored
+PASS: loss wakeup reveal after retired waits: player camera position, orientation and field of view are restored
+PASS: loss wakeup reveal after retired waits: both gun presentations and flashes reset
+PASS: loss wakeup reveal after retired waits: Satan is restored to his normal visible pose
+PASS: loss wakeup reveal after retired waits: no black overlay blocks the screen
+PASS: loss wakeup reveal after retired waits: original hearing volume, filter frequency and enabled state return
+PASS: loss wakeup reveal after retired waits: background music returns to its original volume
+PASS: loss wakeup reveal after retired waits: wakeup blur cannot linger after the skip
+PASS: loss wakeup reveal after retired waits: blood border cannot linger after the skip
+PASS: loss wakeup reveal after retired waits: pause and scene interactions are available again
+PASS: loss wakeup reveal after retired waits: settled coins, level and XP remain unchanged
+PASS: loss wakeup reveal emits no deferred shot or reveal after skipping
+PASS: loss wakeup reveal releases the original exit caller exactly once
+PASS: the actual match result settles before the exit cinematic
+PASS: loss enters the hearing delay before immediate next-match regression
+PASS: loss hearing delay can be skipped before starting another match
+PASS: the actual match result settles before the exit cinematic
+PASS: a retired loss cannot end the next match's cinematic
+PASS: the old hearing timer cannot change the next match's audio
+PASS: old exit waits cannot issue completion for the next match
+PASS: the next cinematic remains independently skippable
+PASS: second consecutive cinematic: cinematic finishes exactly once by the next frame
+PASS: second consecutive cinematic: normal mode menu is restored
+PASS: second consecutive cinematic: player camera position, orientation and field of view are restored
+PASS: second consecutive cinematic: both gun presentations and flashes reset
+PASS: second consecutive cinematic: Satan is restored to his normal visible pose
+PASS: second consecutive cinematic: no black overlay blocks the screen
+PASS: second consecutive cinematic: original hearing volume, filter frequency and enabled state return
+PASS: second consecutive cinematic: background music returns to its original volume
+PASS: second consecutive cinematic: wakeup blur cannot linger after the skip
+PASS: second consecutive cinematic: blood border cannot linger after the skip
+PASS: second consecutive cinematic: pause and scene interactions are available again
+PASS: second consecutive cinematic: settled coins, level and XP remain unchanged
+PASS: the actual match result settles before the exit cinematic
+PASS: online cinematic starts
+PASS: online results reject local skip input
+PASS: online skip attempts cannot finish the shared result
+PASS: online presentation still finishes normally
+PASS: online completion still plays the complete result exactly once
+PASS: online input does not award the result twice
+PASS: the actual match result settles before the exit cinematic
+PASS: online disconnected fallback cinematic starts
+PASS: online disconnected fallback results reject local skip input
+PASS: online skip attempts cannot finish the shared result
+PASS: online disconnected fallback presentation still finishes normally
+PASS: online completion still plays the complete result exactly once
+PASS: online input does not award the result twice
+OFFLINE_EXIT_SKIP_TESTS: PASS (290 checks, 0 failures)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

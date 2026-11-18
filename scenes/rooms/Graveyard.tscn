@@ -1,12 +1,17 @@
-[gd_scene load_steps=29 format=3 uid="uid://c56rp7bjuokw6"]
+[gd_scene load_steps=34 format=3 uid="uid://c56rp7bjuokw6"]
 
 [ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="1_door"]
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_font"]
 [ext_resource type="Shader" uid="uid://rs7iepy35b2j" path="res://assets/shader/basement_surface.gdshader" id="3_surface"]
 [ext_resource type="PackedScene" uid="uid://cw6nn8l7wpnhm" path="res://scenes/props/GraveyardBrazier.tscn" id="4_brazier"]
-[ext_resource type="Texture2D" uid="uid://dk2lqf5tvggyn" path="res://assets/characters/jester.png" id="5_id05c"]
+[ext_resource type="Texture2D" uid="uid://dk2lqf5tvggyn" path="res://assets/characters/jester/jester.png" id="5_id05c"]
+[ext_resource type="Texture2D" uid="uid://cs6a232v4f24t" path="res://assets/characters/prisoner/prisoner.png" id="6_1poa5"]
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="6_j10nc"]
 [ext_resource type="Script" uid="uid://b1qpgq71mj0j6" path="res://scripts/rooms/GraveyardJester.gd" id="7_jester_station"]
+[ext_resource type="Texture2D" uid="uid://c106ugrl6gowv" path="res://assets/characters/prisoner/prisonerHover.png" id="8_g8xyk"]
+[ext_resource type="Texture2D" uid="uid://lufwi21gl84" path="res://assets/characters/jester/jesterHover.png" id="8_jester_hover"]
+[ext_resource type="Material" uid="uid://bxek7xpbdgrjq" path="res://assets/characters/jester/eye_glow.tres" id="9_jester_eyes"]
+[ext_resource type="Material" uid="uid://vptoi2ysaulb" path="res://assets/characters/prisoner/eye_glow.tres" id="10_prisoner_eyes"]
 
 [sub_resource type="ShaderMaterial" id="grass"]
 render_priority = 0
@@ -4620,6 +4625,7 @@ mesh = SubResource("unit_box")
 
 [node name="CryptName" type="Label3D" parent="Crypt"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.65, -16.64)
+visible = false
 pixel_size = 0.0034
 modulate = Color(0.69, 0.72, 0.6, 1)
 text = "THE QUIET KEEP"
@@ -4636,6 +4642,24 @@ mesh = SubResource("unit_box")
 transform = Transform3D(0.52, 0, 0, 0, 0.13, 0, 0, 0, 0.04, 0, 4.6, -16.54)
 material_override = SubResource("pale_stone")
 mesh = SubResource("unit_box")
+
+[node name="Prisoner" type="Sprite3D" parent="Crypt"]
+transform = Transform3D(0.852722, -0.522364, 0, 0.522364, 0.852722, 0, 0, 0, 1, 0.957311, 1.64583, -17.9848)
+material_override = ExtResource("10_prisoner_eyes")
+pixel_size = 0.025
+texture_filter = 0
+texture = ExtResource("6_1poa5")
+hframes = 12
+script = ExtResource("6_j10nc")
+fps = 10.0
+TOTAL_FRAMES = 12
+hover_texture = ExtResource("8_g8xyk")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Crypt"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.50412, -19.7368)
+visible = false
+light_color = Color(1, 0.517846, 0.454451, 1)
+light_energy = 7.747
 
 [node name="Lanterns" type="Node3D" parent="."]
 
@@ -5283,6 +5307,7 @@ omni_attenuation = 1.15
 
 [node name="jester" type="Sprite3D" parent="."]
 transform = Transform3D(0.26, 0, 0, 0, 0.26, 3.87431e-09, 0, -3.87431e-09, 0.26, -5.65704, 2.06642, -5.99858)
+material_override = ExtResource("9_jester_eyes")
 pixel_size = 0.092
 billboard = 1
 texture_filter = 0
@@ -5291,15 +5316,4 @@ hframes = 19
 script = ExtResource("6_j10nc")
 fps = 10.0
 TOTAL_FRAMES = 19
-
-[node name="jester2" type="Sprite3D" parent="."]
-transform = Transform3D(0.26, 0, 0, 0, 0.26, 3.87431e-09, 0, -3.87431e-09, 0.26, -0.0753107, 1.48059, -18.026)
-visible = false
-pixel_size = 0.092
-billboard = 1
-texture_filter = 0
-texture = ExtResource("5_id05c")
-hframes = 19
-script = ExtResource("6_j10nc")
-fps = 10.0
-TOTAL_FRAMES = 19
+hover_texture = ExtResource("8_jester_hover")

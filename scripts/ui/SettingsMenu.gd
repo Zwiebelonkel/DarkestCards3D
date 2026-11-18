@@ -39,8 +39,12 @@ const SETTINGS_CONTROL_OUTLINES := preload("res://scripts/ui/SettingsControlOutl
 var cheats_toggle: Button
 var cheats_actions: VBoxContainer
 var cheat_level_button: Button
+var cheat_story_level_button: Button
 var cheat_coins_button: Button
 var cheat_starting_hand_button: Button
+var cheat_weed_button: Button
+var cheat_characters_button: Button
+var cheat_brain_timer_button: Button
 var cheat_rarity_check_boxes: Dictionary = {}
 var cheat_status: Label
 
@@ -70,6 +74,7 @@ func _ready() -> void:
 	damage_numbers_check_box.toggled.connect(SettingsManager.set_damage_numbers_enabled)
 	turn_arrows_check_box.toggled.connect(SettingsManager.set_turn_arrows_enabled)
 	SettingsManager.presentation_settings_changed.connect(_refresh_presentation_options)
+	SettingsManager.character_appearance_changed.connect(_refresh_microphone_avatar)
 	scale_3d_slider.value_changed.connect(_set_scale_3d)
 	master_slider.value_changed.connect(SettingsManager.set_master_volume)
 	music_slider.value_changed.connect(SettingsManager.set_music_volume)
@@ -84,8 +89,12 @@ func _ready() -> void:
 	close_button.pressed.connect(close)
 	cheats_toggle.toggled.connect(func(expanded: bool) -> void: cheats_actions.visible = expanded)
 	cheat_level_button.pressed.connect(_cheat_level_up)
+	cheat_story_level_button.pressed.connect(_cheat_story_level_up)
 	cheat_coins_button.pressed.connect(_cheat_add_coins)
 	cheat_starting_hand_button.pressed.connect(_cheat_unlock_starting_hand)
+	cheat_weed_button.pressed.connect(_cheat_drop_weed)
+	cheat_characters_button.pressed.connect(_cheat_unlock_characters)
+	cheat_brain_timer_button.pressed.connect(_cheat_reset_brain_timer)
 	SettingsManager.cheat_rarities_changed.connect(_refresh_cheat_rarities)
 	_refresh_cheat_controls()
 	visibility_changed.connect(_on_visibility_changed)
@@ -121,6 +130,7 @@ func close() -> void:
 
 
 func _populate_from_settings() -> void:
+	_refresh_microphone_avatar()
 	language_option_button.select(Localization.SUPPORTED_LOCALES.find(Localization.get_locale()))
 	frame_limit_spin_box.set_value_no_signal(SettingsManager.frame_limit)
 	fullscreen_check_box.set_pressed_no_signal(SettingsManager.fullscreen)
@@ -131,7 +141,10 @@ func _populate_from_settings() -> void:
 	sfx_slider.set_value_no_signal(SettingsManager.sfx_volume)
 	satan_voice_enabled_check_box.set_pressed_no_signal(SettingsManager.satan_voice_enabled)
 	satan_voice_pitch_slider.set_value_no_signal(SettingsManager.satan_voice_pitch)
+	microphone_gain_slider.min_value = SettingsManager.MIN_MICROPHONE_GAIN
+	microphone_gain_slider.max_value = SettingsManager.MAX_MICROPHONE_GAIN
 	microphone_gain_slider.set_value_no_signal(SettingsManager.microphone_gain)
+	satan_voice_volume_slider.max_value = SettingsManager.MAX_SATAN_VOICE_VOLUME
 	satan_voice_volume_slider.set_value_no_signal(SettingsManager.satan_voice_volume)
 	_update_scale_3d_label(SettingsManager.scale_3d)
 	_update_satan_voice_labels()
@@ -154,6 +167,7 @@ func _on_locale_changed(_locale: String = "") -> void:
 	cheat_status.text = Localization.format_text(_cheat_status_source, _cheat_status_arguments) if not _cheat_status_arguments.is_empty() else Localization.text(_cheat_status_source)
 	_refresh_cheat_rarities()
 	_refresh_microphone_test_ui()
+	_refresh_package_button()
 
 
 func _set_cheat_status(source: String, arguments: Array = []) -> void:
@@ -197,10 +211,16 @@ func _build_cheats_section() -> void:
 	section.add_child(cheats_actions)
 	cheat_level_button = _make_cheat_button("CheatLevelButton", "Level +1", cheats_actions)
 	cheat_level_button.tooltip_text = "Steigt um ein Level auf, inklusive des normalen Levelbonus."
+	cheat_story_level_button = _make_cheat_button("CheatStoryLevelButton", "Story-Level +1", cheats_actions)
 	cheat_coins_button = _make_cheat_button("CheatCoinsButton", "+50 Soul Coins", cheats_actions)
 	cheat_starting_hand_button = _make_cheat_button("CheatStartingHandButton", "Startdeck-Karten freischalten", cheats_actions)
 	cheat_starting_hand_button.tooltip_text = "Erhält Starthand I–V und schaltet alle fünf Startplätze frei."
+	cheat_weed_button = _make_cheat_button("CheatWeedButton", "Weed-Paket fallen lassen", cheats_actions)
 	_build_cheat_rarities()
+	cheat_characters_button = _make_cheat_button("CheatCharactersButton", "Alle Charaktere freischalten", cheats_actions)
+	cheat_characters_button.tooltip_text = "Befreit alle Charaktere und öffnet ihre Bereiche. Dialogfortschritt bleibt erhalten."
+	cheat_brain_timer_button = _make_cheat_button("CheatBrainTimerButton", "Brain Timer zurücksetzen", cheats_actions)
+	cheat_brain_timer_button.tooltip_text = "Setzt Spielzeit und Satan-Szene zurück, damit sie erneut ausgelöst werden kann."
 	cheat_status = Label.new()
 	cheat_status.name = "CheatStatus"
 	cheat_status.add_theme_font_override("font", preload("res://fonts/VCR_OSD_MONO_1.001.ttf"))
@@ -275,10 +295,37 @@ func _cheat_level_up() -> void:
 	_set_cheat_status("Level %d erreicht · +%s Soul Coins Levelbonus", [GameCurrency.get_level(), GameCurrency.format_coins(float(reward.get("coins_awarded", 0)))])
 
 
+func _cheat_story_level_up() -> void:
+	var next := GameCurrency.story_completed_level + 1
+	if GameCurrency.award_story_win(next).is_empty():
+		return
+	_refresh_cheat_controls()
+	cheat_status.text = "Story-Level %d abgeschlossen" % GameCurrency.story_completed_level
+
+
 func _cheat_add_coins() -> void:
 	var before := GameCurrency.get_coins()
 	GameCurrency.add_coins(50.0)
 	_set_cheat_status("+%s Soul Coins · Kontostand: %s", [GameCurrency.format_coins(GameCurrency.get_coins() - before, true), GameCurrency.format_coins()])
+
+
+func _cheat_drop_weed() -> void:
+	GameCurrency.request_admin_weed_drop()
+	_set_cheat_status("Das Paket fällt, sobald du zum freien Spieltisch zurückkehrst.")
+
+
+func _cheat_unlock_characters() -> void:
+	if GameCurrency.cheat_unlock_all_characters():
+		_set_cheat_status("Alle Charaktere freigeschaltet · Dialoge bleiben erhalten")
+	else:
+		_set_cheat_status("Charaktere konnten nicht freigeschaltet werden.")
+
+
+func _cheat_reset_brain_timer() -> void:
+	if PlaytimeManager.reset_timer() == OK:
+		_set_cheat_status("Brain Timer und Satan-Szene zurückgesetzt.")
+	else:
+		_set_cheat_status("Brain Timer zurückgesetzt, konnte aber nicht gespeichert werden.")
 
 
 func _cheat_unlock_starting_hand() -> void:
@@ -291,8 +338,14 @@ func _cheat_unlock_starting_hand() -> void:
 
 
 func _refresh_cheat_controls() -> void:
+	cheat_story_level_button.disabled = not GameCurrency.is_story_level_unlocked(GameCurrency.story_completed_level + 1)
 	cheat_starting_hand_button.disabled = CollectionManager.get_starting_hand_slot_count() >= 5
+	_refresh_package_button()
 	_refresh_cheat_rarities()
+
+
+func _refresh_package_button() -> void:
+	cheat_weed_button.text = Localization.text("Kokain-Paket fallen lassen" if GameCurrency.get_story_package_kind() == "cocaine" else "Weed-Paket fallen lassen")
 
 
 func _update_scale_3d_label(value: float) -> void:
@@ -398,6 +451,13 @@ func _refresh_microphone_test_ui() -> void:
 	mic_test_stop_button.disabled = not is_active or is_stopping
 
 
+func _refresh_microphone_avatar() -> void:
+	if is_instance_valid(mic_test_satan_portrait):
+		# Use the saved local composite in every voice state. The portrait's
+		# independent voice-level shake continues without changing image frames.
+		mic_test_satan_portrait.set_character_appearance(SettingsManager.get_character_appearance())
+
+
 func _update_microphone_test_satan_preview(is_active: bool) -> void:
 	if (
 		mic_test_satan_portrait == null
@@ -417,7 +477,7 @@ func _update_microphone_test_satan_preview(is_active: bool) -> void:
 			"font_color",
 			Color(0.56, 0.52, 0.57, 1.0)
 		)
-		mic_test_satan_hint_label.text = "Start the microphone test to animate Satan with your voice."
+		mic_test_satan_hint_label.text = "Start the microphone test to see your character react to your voice."
 		return
 
 	var activity := _microphone_test.input_voice_activity
@@ -437,7 +497,7 @@ func _update_microphone_test_satan_preview(is_active: bool) -> void:
 				"font_color",
 				Color(1.0, 0.24, 0.2, 1.0)
 			)
-			mic_test_satan_hint_label.text = "Loud input triggers Satan's laugh."
+			mic_test_satan_hint_label.text = "Louder input makes your character shake more."
 		MicrophoneTestController.InputVoiceActivity.SPEAKING:
 			mic_test_satan_state_label.text = "SPEAKING"
 			mic_test_satan_state_label.add_theme_color_override(

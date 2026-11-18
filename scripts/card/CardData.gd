@@ -3,7 +3,7 @@ class_name CardData
 
 const MAX_EFFECTS_PER_CARD := 2
 const HOLO_ROLL_SIDES := 100
-const INNATE_ONLY_EFFECT_TYPES := ["lava"]
+const INNATE_ONLY_EFFECT_TYPES := ["lava", "eternal_suffering"]
 
 static func normalize_effect(effect: Dictionary) -> Dictionary:
 	var effect_type: Variant = effect.get("type", "")
@@ -11,8 +11,14 @@ static func normalize_effect(effect: Dictionary) -> Dictionary:
 		return {}
 	# Legacy migration only: the retired effect has no remaining gameplay or
 	# presentation fields. Its old amount/name/description must not survive.
-	if effect_type.strip_edges().to_lower() == "deck_burn":
-		return {"type": "draw_on_kill"}
+	if effect_type.strip_edges().to_lower() in ["deck_burn", "draw_on_kill"]:
+		return {"type": "draw_on_death"}
+	if effect_type.strip_edges().to_lower() == "random_damage":
+		# Includes effects already stored in older collection saves.
+		var normalized := effect.duplicate(true)
+		normalized["min"] = 0.75
+		normalized["max"] = 2.0
+		return normalized
 	return effect.duplicate(true)
 
 static func is_innate_only_effect(effect_type: String) -> bool:
@@ -32,8 +38,14 @@ static func is_combat_card(data: Dictionary) -> bool:
 	return not data.is_empty() and str(data.get("category", "combat")).to_lower() not in ["special", "event"]
 
 static func is_upgrade_collection_card(data: Dictionary) -> bool:
+	return str(data.get("category", "")).to_lower() == "special"
+
+static func is_story_card(data: Dictionary) -> bool:
+	return is_upgrade_collection_card(data) and str(data.get("card_group", "")) == "story_cards"
+
+static func is_access_key(data: Dictionary) -> bool:
 	var card_id := str(data.get("id", data.get("card_id", "")))
-	return str(data.get("category", "")).to_lower() == "special" and card_id != "slot_room_key"
+	return str(data.get("category", "")).to_lower() == "special" and (data.get("access_key", false) == true or card_id == "slot_room_key" or not str(data.get("area_unlock", "")).is_empty())
 
 static func is_unique_unlock(data: Dictionary) -> bool:
 	return str(data.get("category", "")).to_lower() == "special" and data.get("unique_unlock", false) == true
@@ -125,7 +137,7 @@ static func _normalize_effects(effects: Variant) -> Array[Dictionary]:
 		var normalized := normalize_effect(effect)
 		if normalized.is_empty():
 			continue
-		if str(normalized.get("type", "")) == "draw_on_kill":
+		if str(normalized.get("type", "")) == "draw_on_death":
 			if has_mailman:
 				continue
 			has_mailman = true

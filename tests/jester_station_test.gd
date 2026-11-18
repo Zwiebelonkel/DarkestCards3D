@@ -15,6 +15,8 @@ var station: GraveyardJester
 var modal_events: Array[bool] = []
 var input_sink: InputSink
 
+const DIALOGUE_SENTENCES_SOURCE := "Ich wurde hier draußen zurückgelassen.\nMein Auge wurde mir genommen.\nAlles wurde mir genommen.\nWürdest du bitte ein Opfer hierlassen?"
+
 
 func _ready() -> void:
 	_run.call_deferred()
@@ -41,32 +43,41 @@ func _run() -> void:
 		_finish()
 		return
 	_create_station()
+	GameCurrency._rescued_npcs["jester"] = true
+	GameCurrency.save()
 	await get_tree().physics_frame
-	check(station._modal_root.find_children("*", "BaseButton", true, false).is_empty(), "all Jester modal modes share a text-only panel with no buttons")
+	check(station._modal_root.find_children("*", "BaseButton", true, false).size() == 2 and not station._choice_buttons.visible, "the modal owns two offering buttons, hidden outside the candidate view")
 	check(not station.interaction_enabled and not station.open_dialog() and not station.open_grave("chick"), "a disabled room cannot open NPC or offering UI")
 	_check_disabled_pickers()
 	station.set_interaction_enabled(true)
 	check(station.focus_area.collision_layer == 0 and station.focus_area.input_ray_pickable and is_equal_approx(float(station.focus_area.get_meta("focus_distance")), 6.5), "one nonblocking focus box frames the entire station")
 	check(station.grave_areas.size() == 2 and station.view_side == 1, "both named graves belong to the west station")
-	check(station.open_dialog() and station.is_busy() and station._body_label.text == GraveyardJester.DIALOGUE and station._body_label.visible_characters == 0, "NPC opens the four-line typewriter dialogue")
+	var dialogue_sentences := _dialogue_sentences()
+	var first_sentence := dialogue_sentences[0] if not dialogue_sentences.is_empty() else ""
+	check(dialogue_sentences.size() == 4, "the localized Jester dialogue remains four sentences")
+	check(station.open_dialog() and station.is_busy() and station._body_label.text == first_sentence and station._body_label.visible_characters == 0, "NPC opens only the first localized sentence as a fresh typewriter page")
 	await get_tree().create_timer(0.10).timeout
-	check(station._body_label.visible_characters > 0 and station._body_label.visible_characters < station._body_label.text.length(), "dialogue reveals characters gradually")
+	check(station._body_label.visible_characters > 0 and station._body_label.visible_characters < station._body_label.get_total_character_count(), "the first sentence reveals characters gradually without exposing a later line")
 	station.set_interaction_enabled(true)
 	check(station.is_busy(), "repeated context updates do not close a valid open dialog")
 	var escape := InputEventKey.new()
 	escape.keycode = KEY_ESCAPE
 	escape.pressed = true
 	viewport.push_input(escape, true)
-	check(not station.is_busy() and not station._layer.visible, "Escape immediately closes the modal through viewport input")
+	await _wait_closed()
+	check(not station.is_busy() and not station._layer.visible, "Escape finishes the existing modal swipe through viewport input")
 	check(modal_events == [true, false], "open and close emit exactly one modal transition each")
 	await _check_sentence_end_sound()
 	check(station.open_grave("chick") and not station._candidate.get("ok", false) and not station._body_label.text.is_empty(), "an unowned grave explains why no copy can be offered")
+	await _wait_panel()
+	check(station._sacrifice_button.disabled and not station._decline_button.disabled, "an unavailable offering disables only Sacrifice")
 	var input_count := input_sink.presses
 	_click(station._panel.get_global_rect().get_center())
-	check(not station.is_busy() and input_sink.presses == input_count, "clicking inside an unavailable offering closes it without passing the click through")
-	station.open_grave("chick")
 	_click(Vector2(8, 8))
-	check(not station.is_busy(), "clicking outside an unavailable offering also closes it")
+	check(station._mode == GraveyardJester.Mode.CANDIDATE and input_sink.presses == input_count, "text and background clicks leave an unavailable offering open without fallthrough")
+	await _click_choice(station._decline_button)
+	await _wait_closed()
+	check(not station.is_busy(), "Do not sacrifice closes the unavailable explanation")
 	_add("chick", "station-chick-deck")
 	_add("chick", "station-chick-holo", true)
 	_add("harald", "station-harald")
@@ -83,30 +94,47 @@ func _run() -> void:
 	grave.input_event.emit(camera, click, grave.global_position, Vector3.ZERO, 0)
 	check(station._mode == GraveyardJester.Mode.CANDIDATE and str(station._candidate.get("instance", {}).get("instance_id", "")) == "station-chick-holo", "grave picks the concrete unprotected Holo copy")
 	check(is_instance_valid(station._preview_card) and CardData.is_holo(station._preview_card.card_data) and station._body_label.text.contains("Holo"), "the reviewed copy retains its Holo preview and explicit warning")
+	var entry_start := camera.unproject_position(station._preview_card.global_position)
+	check(entry_start.y > viewport.size.y and is_zero_approx(station._preview_entry_progress) and station._sacrifice_button.disabled, "offering card starts below the viewport and cannot be sacrificed during entry")
+	var entry_copy := CollectionManager.collection.duplicate(true)
+	station._confirm_offering()
+	check(CollectionManager.collection == entry_copy and station._mode == GraveyardJester.Mode.CANDIDATE, "early confirmation cannot interrupt the card's incoming flight")
+	await get_tree().create_timer(GraveyardJester.PANEL_SWIPE_DURATION * 0.4).timeout
+	var entry_middle := camera.unproject_position(station._preview_card.global_position)
+	check(entry_middle.y < entry_start.y and entry_middle.y > viewport.size.y * 0.31 and station._preview_entry_progress > 0.0 and station._preview_entry_progress < 1.0 and station._panel_slide_offset_y > 0.0, "card and dialog visibly move together through intermediate entry positions")
 	_check_preview_pickers()
 	var before := CollectionManager.collection.duplicate(true)
 	var before_bytes := FileAccess.get_file_as_string(CollectionManager.SAVE_PATH)
 	input_count = input_sink.presses
-	check(station._body_label.text.contains(Localization.text("Ins Textfeld klicken: opfern · Daneben klicken: abbrechen.")), "a valid candidate explains inside confirmation and outside cancellation")
+	await _wait_panel()
+	check(is_equal_approx(camera.unproject_position(station._preview_card.global_position).y, viewport.size.y * 0.31) and is_equal_approx(station._preview_entry_progress, 1.0), "card finishes its flight at the existing review position")
+	check(station._choice_buttons.visible and not station._sacrifice_button.disabled and station._sacrifice_button.text == Localization.text("Opfern") and station._decline_button.text == Localization.text("Nicht opfern"), "eligible offering shows the two localized decisions inside the panel")
+	_click(station._body_label.get_global_rect().get_center())
 	_click(Vector2(8, 8))
-	check(CollectionManager.collection == before and FileAccess.get_file_as_string(CollectionManager.SAVE_PATH) == before_bytes and not is_instance_valid(station._preview_card) and input_sink.presses == input_count, "outside cancellation preserves save bytes and collection data, clears preview, and consumes the click")
+	check(station._mode == GraveyardJester.Mode.CANDIDATE and CollectionManager.collection == before and input_sink.presses == input_count, "text and outside clicks cannot confirm or cancel the reviewed copy")
+	await _click_choice(station._decline_button)
+	await _wait_closed()
+	check(CollectionManager.collection == before and FileAccess.get_file_as_string(CollectionManager.SAVE_PATH) == before_bytes and not is_instance_valid(station._preview_card) and input_sink.presses == input_count, "explicit decline preserves save bytes and collection data, clears preview, and consumes the click")
 	check(station.open_grave("harald") and station._candidate.get("ok", false), "review a currently free Harald before its reservation changes")
 	DeckManager.battle_deck.assign(["chick", "harald"])
 	DeckManager.deck_instance_ids.assign(["station-chick-deck", "station-harald"])
 	check(DeckManager.save_deck(), "reserve the reviewed Harald while the confirmation is open")
 	before = CollectionManager.collection.duplicate(true)
-	_click(station._panel.get_global_rect().get_center())
+	await _click_choice(station._sacrifice_button)
 	check(CollectionManager.collection == before and station._mode == GraveyardJester.Mode.CANDIDATE and not station._candidate.get("ok", false) and not is_instance_valid(station._preview_card), "a stale protected candidate is rejected without consumption or automatic substitution")
 	check(station._body_label.text == Localization.text("Im Kampfdeck – zuerst aus dem Deck entfernen."), "the stale confirmation explains its protection failure")
-	_click(station._panel.get_global_rect().get_center())
-	check(not station.is_busy() and CollectionManager.collection == before, "another click closes the rejected candidate without trying a substitute")
+	check(station._sacrifice_button.disabled, "a rejected candidate cannot submit another sacrifice")
+	await _click_choice(station._decline_button)
+	await _wait_closed()
+	check(not station.is_busy() and CollectionManager.collection == before, "declining the rejected candidate closes without trying a substitute")
 	DeckManager.battle_deck.assign(["chick"])
 	DeckManager.deck_instance_ids.assign(["station-chick-deck"])
 	check(DeckManager.save_deck(), "release the second offering copy after the stale-candidate check")
 	check(station.open_grave("chick"), "the same free copy can be reviewed again")
 	modal_events.clear()
-	_click(station._panel.get_global_rect().get_center())
+	await _click_choice(station._sacrifice_button)
 	check(station._mode == GraveyardJester.Mode.OFFERING and CollectionManager.get_jester_offering_state()["offered"].has("chick"), "first confirmation commits the offering before its cosmetic flight")
+	check(not station._choice_buttons.visible, "offering decisions disappear once the exact copy is committed")
 	check(CollectionManager.get_amount("chick") == 1 and DeckManager.deck_instance_ids == ["station-chick-deck"], "only the reviewed Holo is consumed, preserving the pinned normal copy")
 	check(is_instance_valid(station._preview_card) and station._preview_card._death_dissolve != null, "the offering uses the existing card dissolve presentation")
 	var after_first := CollectionManager.collection.duplicate(true)
@@ -117,11 +145,13 @@ func _run() -> void:
 	check((station.get_node("Burials/Grave_27/Inscription") as Label3D).text.contains(Localization.text("Geopfert")), "the grave displays persistent completion immediately")
 	input_count = input_sink.presses
 	_click(station._panel.get_global_rect().get_center())
+	await _wait_closed()
 	check(not station.is_busy() and input_sink.presses == input_count, "an inside click closes the received acknowledgement without falling through")
 	check(station.open_grave("chick") and not station._candidate.get("ok", false) and not is_instance_valid(station._preview_card), "an already completed grave cannot offer another copy")
-	_click(Vector2(8, 8))
+	await _click_choice(station._decline_button)
+	await _wait_closed()
 	check(station.open_grave("harald") and station._candidate.get("ok", false), "second grave reviews its own exact candidate")
-	_click(station._panel.get_global_rect().get_center())
+	await _click_choice(station._sacrifice_button)
 	var completed := CollectionManager.get_jester_offering_state()
 	check(completed["completed"] and not completed["reward_instance"].is_empty(), "the second confirmation has already persisted a Secret reward")
 	var reward_id := str(completed["reward_instance"].get("instance_id", ""))
@@ -134,23 +164,27 @@ func _run() -> void:
 	check(station._title_label.text == Localization.format_text("Erhalten: %s", [Localization.text(str(station._preview_card.card_data.get("name", "")))]) and CollectionManager.collection == completed_collection, "locale changes update reward text without rerolling or granting cards")
 	input_count = input_sink.presses
 	_click(Vector2(8, 8))
+	await _wait_closed()
 	check(not station.is_busy() and CollectionManager.collection == completed_collection and input_sink.presses == input_count, "an outside click closes the Secret receipt without awarding or consuming another card")
 	CollectionManager.load_collection()
 	station.refresh_state()
 	check(CollectionManager.get_jester_offering_state()["reward_instance"].get("instance_id") == reward_id and station.open_dialog(), "saved completion and reward identity survive reload")
 	check(station._body_label.text == Localization.text("Dein Opfer ist nicht vergessen."), "completed NPC acknowledges the saved offering")
 	station.close_dialog()
+	await _wait_closed()
 	check(SaveSlots.select_slot(2) == OK, "switch to a fresh isolated profile")
+	GameCurrency._rescued_npcs["jester"] = true
 	station.refresh_state()
 	check(not (station.get_node("Burials/Grave_27/Inscription") as Label3D).text.contains(Localization.text("Geopfert")), "fresh profile removes the first profile's grave completion labels")
 	_add("chick", "station-slot2-chick")
 	check(station.open_grave("chick"), "new profile has its own eligible offering")
 	station.offering_duration = 0.12
+	await _click_choice(station._sacrifice_button)
 	var inside := station._panel.get_global_rect().get_center()
-	_click(inside)
 	var committed := CollectionManager.collection.duplicate(true)
 	input_count = input_sink.presses
 	_click(inside)
+	await _wait_closed()
 	check(not station.is_busy() and not is_instance_valid(station._preview_card) and station._offering_tween == null and CollectionManager.collection == committed and input_sink.presses == input_count, "a second immediate inside click cancels only the cosmetic flight without a duplicate offering or input fallthrough")
 	station.set_interaction_enabled(false)
 	await get_tree().create_timer(0.18).timeout
@@ -160,6 +194,7 @@ func _run() -> void:
 	check(station.open_grave("harald"), "missing second copy can still be inspected in the new profile")
 	check(SaveSlots.select_slot(1) == OK, "restore the completed profile")
 	station.refresh_state()
+	await _wait_closed()
 	check(not station.is_busy() and CollectionManager.get_jester_offering_state()["reward_instance"].get("instance_id") == reward_id, "profile changes close stale candidates and restore the original reward")
 	viewport.queue_free()
 	await get_tree().process_frame
@@ -171,33 +206,35 @@ func _check_sentence_end_sound() -> void:
 	station.set_process(false)
 	var ending := station._sentence_end_audio
 	check(ending.stream == GraveyardJester.SENTENCE_END_SOUND and ending.bus == &"SFX", "sentence endings use the authored sound and SFX volume")
-	var expected_characters := 0
-	var sentence_index := 0
-	for sentence: String in station._body_label.get_parsed_text().split("\n"):
-		expected_characters += sentence.length()
-		station._advance_dialog_text(100.0)
-		check(station._body_label.visible_characters == expected_characters and ending.playing and not station._laugh_audio._laughing, "a slow frame stops at sentence %d and plays its ending without laughter" % (sentence_index + 1))
-		station._advance_dialog_text(100.0)
-		check(station._body_label.visible_characters == expected_characters, "sentence %d waits for its ending sound before more text appears" % (sentence_index + 1))
-		if sentence_index == 0:
-			await get_tree().create_timer(ending.stream.get_length() + 0.2).timeout
-			check(not ending.playing and station._laugh_audio._laughing, "finishing the ending sound resumes the Jester voice for the next sentence")
-		else:
-			ending.stop()
-		expected_characters += 1
-		sentence_index += 1
-	station._advance_dialog_text(100.0)
-	check(not ending.playing and not station._laugh_audio._laughing, "completed dialogue does not repeat its final sound")
-	station.close_dialog()
-	for inside in [false, true]:
-		station.open_dialog()
-		var point := station._panel.get_global_rect().get_center() if inside else Vector2(8, 8)
+	var sentences := _dialogue_sentences()
+	check(sentences.size() == 4, "the sentence pager has four localized pages")
+	var point := station._panel.get_global_rect().get_center()
+	for sentence_index in range(sentences.size()):
+		var sentence: String = sentences[sentence_index]
+		check(station._body_label.text == sentence and station._body_label.visible_characters == 0, "sentence %d starts in a cleared dialog field with its own typewriter" % (sentence_index + 1))
+		station._advance_dialog_text(0.10)
+		check(station._body_label.visible_characters > 0 and station._body_label.visible_characters < station._body_label.get_total_character_count(), "sentence %d types independently" % (sentence_index + 1))
 		var input_count := input_sink.presses
 		_click(point)
-		check(station._body_label.visible_characters == -1 and ending.playing and not station._laugh_audio._laughing and input_sink.presses == input_count, "%s click reveals the entire dialogue, plays one ending and consumes the event" % ("inside" if inside else "outside"))
+		check(station.is_busy() and station._body_label.text == sentence and _is_current_sentence_fully_visible() and ending.playing and not station._laugh_audio._laughing and input_sink.presses == input_count, "a click while sentence %d is typing reveals only that sentence and consumes the event" % (sentence_index + 1))
+		ending.stop()
 		_click(point)
-		check(not station.is_busy() and not ending.playing and not station._laugh_audio._laughing and input_sink.presses == input_count, "%s closing click silences both voices without input fallthrough" % ("inside" if inside else "outside"))
+		await get_tree().process_frame
+		if sentence_index < sentences.size() - 1:
+			var next_sentence: String = sentences[sentence_index + 1]
+			check(station.is_busy() and station._body_label.text == next_sentence and station._body_label.visible_characters == 0 and not station._body_label.text.contains(sentence), "a click after sentence %d clears it before starting sentence %d" % [sentence_index + 1, sentence_index + 2])
+		else:
+			await _wait_closed()
+			check(not station.is_busy() and not station._layer.visible and not ending.playing and not station._laugh_audio._laughing and input_sink.presses == input_count, "only the click after the fourth sentence closes the dialogue without input fallthrough")
 	station.set_process(true)
+
+
+func _dialogue_sentences() -> PackedStringArray:
+	return Localization.text(DIALOGUE_SENTENCES_SOURCE).split("\n")
+
+
+func _is_current_sentence_fully_visible() -> bool:
+	return station._body_label.visible_characters < 0 or station._body_label.visible_characters >= station._body_label.get_total_character_count()
 
 
 func _create_station() -> void:
@@ -258,6 +295,24 @@ func _click(point: Vector2) -> void:
 		event.position = point
 		event.global_position = point
 		viewport.push_input(event, true)
+
+
+func _wait_panel() -> void:
+	await get_tree().create_timer(GraveyardJester.PANEL_SWIPE_DURATION + 0.05).timeout
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+
+func _wait_closed() -> void:
+	var deadline := Time.get_ticks_msec() + 1200
+	while station.is_busy() and Time.get_ticks_msec() < deadline:
+		await get_tree().process_frame
+	await get_tree().process_frame
+
+
+func _click_choice(button: Button) -> void:
+	await _wait_panel()
+	_click(button.get_global_rect().get_center())
 
 
 func _check_preview_pickers() -> void:

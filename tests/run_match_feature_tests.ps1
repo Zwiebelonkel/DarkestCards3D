@@ -21,6 +21,12 @@ $config = $config.Replace('res://scenes/main/MainMenu.tscn', $TestScene)
 $config = $config.Replace('initialization/processes/initialize_on_startup=true', 'initialization/processes/initialize_on_startup=false')
 $config = $config.Replace('window/size/mode=3', "window/size/mode=0`nwindow/size/viewport_width=1280`nwindow/size/viewport_height=720")
 Set-Content -LiteralPath (Join-Path $testRoot 'project.godot') -Value $config -Encoding utf8
+# Other suites exercise an already-entered hub. The greeting suite explicitly
+# enables the intro on its Main instances to test the actual first-visit path.
+$mainScenePath = Join-Path $testRoot 'scenes/main/Main.tscn'
+$mainScene = Get-Content -LiteralPath $mainScenePath -Raw
+$mainScene = $mainScene.Replace('script = ExtResource("1_main")', "script = ExtResource(`"1_main`")`ngreeting_enabled = false")
+Set-Content -LiteralPath $mainScenePath -Value $mainScene -Encoding utf8
 # Redirect all persistence before any autoload starts; real player saves are untouched.
 Get-ChildItem -LiteralPath (Join-Path $testRoot 'scripts') -Recurse -Filter '*.gd' | ForEach-Object {
     $source = Get-Content -LiteralPath $_.FullName -Raw

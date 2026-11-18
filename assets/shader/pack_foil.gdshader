@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode cull_disabled, diffuse_burley, specular_schlick_ggx;
 
-uniform sampler2D albedo_texture : source_color, filter_linear_mipmap;
+uniform sampler2D albedo_texture : source_color, filter_nearest_mipmap;
 uniform bool has_albedo_texture = true;
 uniform vec4 albedo_tint : source_color = vec4(1.0);
 uniform float metallic_value = 1.0;
@@ -15,6 +15,8 @@ uniform float peel_progress = 0.0;
 uniform float peel_lift = 0.0;
 uniform float ripple_energy = 0.0;
 uniform float ripple_phase = 0.0;
+
+#include "res://assets/shader/pack_surface.gdshaderinc"
 
 varying vec3 source_point;
 varying float detached_weight;
@@ -51,6 +53,7 @@ vec3 rotate_axis(vec3 point, vec3 axis, float angle) {
 }
 
 void vertex() {
+	surface_world_scale = length(MODEL_MATRIX[0].xyz) / max(metric_scale.x, 0.0001);
 	source_point = VERTEX * metric_scale;
 	detached_weight = 0.0;
 	reverse_surface = (NORMAL.z < -0.1 || NORMAL.y < -0.5) ? 1.0 : 0.0;
@@ -83,10 +86,12 @@ void fragment() {
 	}
 	float fine_ridges = sin(source_point.x * 185.0 + sin(source_point.y * 76.0) * 1.4) * 0.5 + 0.5;
 	vec3 silver_color = mix(vec3(0.45, 0.48, 0.52), vec3(0.76, 0.79, 0.82), fine_ridges * 0.22 + 0.48);
-	ALBEDO = mix(artwork.rgb, silver_color, silver);
+	float height = pack_surface_height(source_point);
+	ALBEDO = mix(pack_surface_color(artwork.rgb, height), silver_color, silver);
+	NORMAL = pack_surface_normal(NORMAL, VERTEX, height * (1.0 - silver));
 	METALLIC = mix(metallic_value, 0.88, silver);
-	ROUGHNESS = clamp(mix(roughness_value, 0.3, silver) + (fine_ridges - 0.5) * 0.065 * detached_weight, 0.24, 0.68);
-	SPECULAR = 0.55;
-	CLEARCOAT = 0.12 * detached_weight;
-	CLEARCOAT_ROUGHNESS = 0.45;
+	ROUGHNESS = clamp(mix(roughness_value + (height - 0.5) * surface_roughness_strength, 0.3, silver) + (fine_ridges - 0.5) * 0.065 * detached_weight, 0.26, 0.4);
+	SPECULAR = 0.45;
+	CLEARCOAT = mix(laminate_clearcoat, 0.12, silver);
+	CLEARCOAT_ROUGHNESS = mix(laminate_roughness, 0.45, silver);
 }

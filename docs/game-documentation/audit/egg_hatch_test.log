@@ -1,0 +1,191 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS fixture owns no Chick and has no saved Chick in its deck
+PASS a living Egg consumes no hatch roll
+PASS 10,000 seeded independent Egg deaths hatch approximately 25 percent (2507)
+PASS non-Egg deaths consume no hatch roll
+PASS remote peers cannot roll an Egg hatch even through the replacement helper
+PASS last_stand prevents real lethal poison before any Egg hatch roll
+PASS grave_return prevents real lethal poison before any Egg hatch roll
+PASS player drawn Chick begins as a living Chick
+PASS player drawn Chick does not count the partial arrival turn
+PASS player drawn Chick remains Chick after completed turn 1 of ten
+PASS player drawn Chick cannot age twice for completed turn 1
+PASS player drawn Chick remains Chick after completed turn 2 of ten
+PASS player drawn Chick cannot age twice for completed turn 2
+PASS player drawn Chick remains Chick after completed turn 3 of ten
+PASS player drawn Chick cannot age twice for completed turn 3
+PASS player drawn Chick remains Chick after completed turn 4 of ten
+PASS player drawn Chick cannot age twice for completed turn 4
+PASS player drawn Chick remains Chick after completed turn 5 of ten
+PASS player drawn Chick cannot age twice for completed turn 5
+PASS player drawn Chick remains Chick after completed turn 6 of ten
+PASS player drawn Chick cannot age twice for completed turn 6
+PASS player drawn Chick remains Chick after completed turn 7 of ten
+PASS player drawn Chick cannot age twice for completed turn 7
+PASS player drawn Chick remains Chick after completed turn 8 of ten
+PASS player drawn Chick cannot age twice for completed turn 8
+PASS player drawn Chick remains Chick after completed turn 9 of ten
+PASS player drawn Chick cannot age twice for completed turn 9
+PASS player drawn Chick evolves exactly at five full rounds through the real turn transition
+PASS player drawn Chick becomes Chicken in the same physical slot with its completed growth animation
+PASS player drawn Chick becomes a fresh base 3/10 Chicken with ready Last Stand and no inherited buffs or upgrades
+PASS player drawn Chick clears level, Holo, poison, growth age, stun and event block on evolution
+PASS player drawn Chick receives a new battle-only Chicken identity
+PASS player drawn Chick evolves without consuming, reordering or animating a deck draw
+PASS player drawn Chick evolution produces no death signal, death job or replacement barrier
+PASS player drawn Chick evolution grants no kill-event reward and changes no event pile
+PASS player drawn Chick evolution preserves collection, saved deck, upgrades, wallet and every profile file
+PASS player hatched Chick enters its original slot after Egg dies
+PASS player hatched Chick begins as a living Chick
+PASS player hatched Chick does not count the partial arrival turn
+PASS player hatched Chick remains Chick after completed turn 1 of ten
+PASS player hatched Chick cannot age twice for completed turn 1
+PASS player hatched Chick remains Chick after completed turn 2 of ten
+PASS player hatched Chick cannot age twice for completed turn 2
+PASS player hatched Chick remains Chick after completed turn 3 of ten
+PASS player hatched Chick cannot age twice for completed turn 3
+PASS player hatched Chick remains Chick after completed turn 4 of ten
+PASS player hatched Chick cannot age twice for completed turn 4
+PASS player hatched Chick remains Chick after completed turn 5 of ten
+PASS player hatched Chick cannot age twice for completed turn 5
+PASS player hatched Chick remains Chick after completed turn 6 of ten
+PASS player hatched Chick cannot age twice for completed turn 6
+PASS player hatched Chick remains Chick after completed turn 7 of ten
+PASS player hatched Chick cannot age twice for completed turn 7
+PASS player hatched Chick remains Chick after completed turn 8 of ten
+PASS player hatched Chick cannot age twice for completed turn 8
+PASS player hatched Chick remains Chick after completed turn 9 of ten
+PASS player hatched Chick cannot age twice for completed turn 9
+PASS player hatched Chick evolves exactly at five full rounds through the real turn transition
+PASS player hatched Chick becomes Chicken in the same physical slot with its completed growth animation
+PASS player hatched Chick becomes a fresh base 3/10 Chicken with ready Last Stand and no inherited buffs or upgrades
+PASS player hatched Chick clears level, Holo, poison, growth age, stun and event block on evolution
+PASS player hatched Chick receives a new battle-only Chicken identity
+PASS player hatched Chick evolves without consuming, reordering or animating a deck draw
+PASS player hatched Chick evolution produces no death signal, death job or replacement barrier
+PASS player hatched Chick evolution grants no kill-event reward and changes no event pile
+PASS player hatched Chick evolution preserves collection, saved deck, upgrades, wallet and every profile file
+PASS player Chick killed before its tenth completion never evolves or resurrects
+PASS player young Chick death draws the normal next card exactly once
+PASS player a replacement never inherits the dead Chick's pending maturation
+PASS enemy drawn Chick begins as a living Chick
+PASS enemy drawn Chick does not count the partial arrival turn
+PASS enemy drawn Chick remains Chick after completed turn 1 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 1
+PASS enemy drawn Chick remains Chick after completed turn 2 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 2
+PASS enemy drawn Chick remains Chick after completed turn 3 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 3
+PASS enemy drawn Chick remains Chick after completed turn 4 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 4
+PASS enemy drawn Chick remains Chick after completed turn 5 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 5
+PASS enemy drawn Chick remains Chick after completed turn 6 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 6
+PASS enemy drawn Chick remains Chick after completed turn 7 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 7
+PASS enemy drawn Chick remains Chick after completed turn 8 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 8
+PASS enemy drawn Chick remains Chick after completed turn 9 of ten
+PASS enemy drawn Chick cannot age twice for completed turn 9
+PASS enemy drawn Chick evolves exactly at five full rounds through the real turn transition
+PASS enemy drawn Chick becomes Chicken in the same physical slot with its completed growth animation
+PASS enemy drawn Chick becomes a fresh base 3/10 Chicken with ready Last Stand and no inherited buffs or upgrades
+PASS enemy drawn Chick clears level, Holo, poison, growth age, stun and event block on evolution
+PASS enemy drawn Chick receives a new battle-only Chicken identity
+PASS enemy drawn Chick evolves without consuming, reordering or animating a deck draw
+PASS enemy drawn Chick evolution produces no death signal, death job or replacement barrier
+PASS enemy drawn Chick evolution grants no kill-event reward and changes no event pile
+PASS enemy drawn Chick evolution preserves collection, saved deck, upgrades, wallet and every profile file
+PASS enemy hatched Chick enters its original slot after Egg dies
+PASS enemy hatched Chick begins as a living Chick
+PASS enemy hatched Chick does not count the partial arrival turn
+PASS enemy hatched Chick remains Chick after completed turn 1 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 1
+PASS enemy hatched Chick remains Chick after completed turn 2 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 2
+PASS enemy hatched Chick remains Chick after completed turn 3 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 3
+PASS enemy hatched Chick remains Chick after completed turn 4 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 4
+PASS enemy hatched Chick remains Chick after completed turn 5 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 5
+PASS enemy hatched Chick remains Chick after completed turn 6 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 6
+PASS enemy hatched Chick remains Chick after completed turn 7 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 7
+PASS enemy hatched Chick remains Chick after completed turn 8 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 8
+PASS enemy hatched Chick remains Chick after completed turn 9 of ten
+PASS enemy hatched Chick cannot age twice for completed turn 9
+PASS enemy hatched Chick evolves exactly at five full rounds through the real turn transition
+PASS enemy hatched Chick becomes Chicken in the same physical slot with its completed growth animation
+PASS enemy hatched Chick becomes a fresh base 3/10 Chicken with ready Last Stand and no inherited buffs or upgrades
+PASS enemy hatched Chick clears level, Holo, poison, growth age, stun and event block on evolution
+PASS enemy hatched Chick receives a new battle-only Chicken identity
+PASS enemy hatched Chick evolves without consuming, reordering or animating a deck draw
+PASS enemy hatched Chick evolution produces no death signal, death job or replacement barrier
+PASS enemy hatched Chick evolution grants no kill-event reward and changes no event pile
+PASS enemy hatched Chick evolution preserves collection, saved deck, upgrades, wallet and every profile file
+PASS enemy Chick killed before its tenth completion never evolves or resurrects
+PASS enemy young Chick death draws the normal next card exactly once
+PASS enemy a replacement never inherits the dead Chick's pending maturation
+PASS player Egg takes actual lethal damage
+PASS player duplicate successful-hatch death cannot reroll
+PASS player duplicate removal clears only one slot and schedules one replacement
+PASS player Egg produces a replacement without owning Chick
+PASS player replacement is a newly created Chick
+PASS player Chick appears directly in the original slot
+PASS player hatching preserves draw order, deck count and the visible pile
+PASS player Chick receives a fresh battle-only identity
+PASS player Chick uses its real catalog stats and Swarm without collection upgrades or premature Last Stand
+PASS player Chick does not inherit Egg level, Holo finish or poison
+PASS player in-slot hatch animation releases the replacement barrier
+PASS player fully hatched Chick has normal scale and battle input
+PASS player an actually dead Chick draws the next ordinary deck card exactly once
+PASS player poisoned final Egg hatches with an empty deck and prevents premature game over
+PASS player losing the last Chick with an empty deck ends the match normally
+PASS player final Chick death preserves the correct win/loss result
+PASS player a duplicate failed-hatch death cannot reroll
+PASS player a failed hatch draws the normal next card exactly once
+PASS player a duplicate failed-hatch death cannot reroll
+PASS player the last Egg can fail to hatch and ends the match when its draw pile is empty
+PASS enemy Egg takes actual lethal damage
+PASS enemy duplicate successful-hatch death cannot reroll
+PASS enemy duplicate removal clears only one slot and schedules one replacement
+PASS enemy Egg produces a replacement without owning Chick
+PASS enemy replacement is a newly created Chick
+PASS enemy Chick appears directly in the original slot
+PASS enemy hatching preserves draw order, deck count and the visible pile
+PASS enemy Chick receives a fresh battle-only identity
+PASS enemy Chick uses its real catalog stats and Swarm without collection upgrades or premature Last Stand
+PASS enemy Chick does not inherit Egg level, Holo finish or poison
+PASS enemy in-slot hatch animation releases the replacement barrier
+PASS enemy fully hatched Chick has normal scale and battle input
+PASS enemy an actually dead Chick draws the next ordinary deck card exactly once
+PASS enemy poisoned final Egg hatches with an empty deck and prevents premature game over
+PASS enemy losing the last Chick with an empty deck ends the match normally
+PASS enemy final Chick death preserves the correct win/loss result
+PASS enemy a duplicate failed-hatch death cannot reroll
+PASS enemy a failed hatch draws the normal next card exactly once
+PASS enemy a duplicate failed-hatch death cannot reroll
+PASS enemy the last Egg can fail to hatch and ends the match when its draw pile is empty
+PASS simultaneous lava death hatches Egg in slot 0
+PASS simultaneous lava death hatches Egg in slot 2
+PASS simultaneous lava death hatches Egg in slot 4
+PASS simultaneously hatched Chicks have distinct new identities
+PASS multiple simultaneous Egg deaths consume no ordinary replacements or end the match
+PASS lethal attack and lethal counter each hatch their Egg on its own side
+PASS mutual final-Egg deaths continue with two undamaged Chicks
+PASS thorns kills an attacking Egg and hatches Chick after its completed hit
+PASS remote death presentation waits for the authoritative Chick snapshot
+PASS reset cancels pending Egg hatches without overwriting a new match's slot
+PASS hatching never grants persistent collection or saved-deck cards
+PASS all hatch paths leave the saved collection unchanged
+EGG_HATCH_TESTS: PASS (183 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 7 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

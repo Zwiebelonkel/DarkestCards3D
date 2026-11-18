@@ -3,6 +3,7 @@ class_name GameTable
 
 signal loss_exit_started(music_fade_duration: float)
 signal loss_shot_fired
+signal win_shot_fired
 signal loss_reveal_started(duration: float)
 signal player_wakeup_started
 signal loss_exit_finished
@@ -10,16 +11,23 @@ signal loss_exit_skipped
 signal journal_interrupted
 
 const HAND_SIZE: int = 5
+const OFFLINE_RULES := preload("res://scripts/match/OfflineMatchRules.gd")
+const OFFLINE_BOARD := preload("res://scripts/table/OfflineModeBoard.gd")
 const EGG_HATCH_CHANCE := 0.25
 const CHICK_GROWTH_TURNS := 10 # Five full rounds: one turn from each side.
 const DIAGNOSTICS := preload("res://scripts/autoload/SessionDiagnostics.gd")
 const EVENT_DECK_RULES := preload("res://scripts/events/EventDeck.gd")
 const EVENT_HAND_UI := preload("res://scripts/ui/EventHandUI.gd")
+const EVENT_PISS_SCENE := preload("res://scenes/effects/Piss.tscn")
+const RANDOM_DAMAGE_COIN_SCENE := preload("res://scenes/effects/RandomDamageCoin.tscn")
+const POISON_SYRINGE_SCENE := preload("res://scenes/effects/PoisonSyringe.tscn")
+const CLEAVE_BRICK_SCENE := preload("res://scenes/effects/CleaveBrick.tscn")
+const MAX_CLEAVE_BRICKS := 24
 const DAMAGE_NUMBER_SCRIPT := preload("res://scripts/ui/DamageNumber3D.gd")
 const MAX_DAMAGE_NUMBERS := 64
-const SATAN_LAUGH_TEXTURE := preload("res://assets/characters/satanLaught.png")
-const SATAN_HOVER_TEXTURE := preload("res://assets/characters/satanHover.png")
-const SATAN_DEATH_TEXTURE := preload("res://assets/characters/satanDeath.png")
+const SATAN_LAUGH_TEXTURE := preload("res://assets/characters/satan/satanLaught.png")
+const SATAN_HOVER_TEXTURE := preload("res://assets/characters/satan/satanHover.png")
+const SATAN_DEATH_TEXTURE := preload("res://assets/characters/satan/satanDeath.png")
 const SATAN_VOICE_CHAT_SCRIPT := preload("res://scripts/SatanVoiceChat.gd")
 const SATAN_LAUGH_AUDIO_SCRIPT := preload("res://scripts/SatanLaughAudio.gd")
 const THROW_MOTION := preload("res://scripts/table/TableThrowMotion.gd")
@@ -30,6 +38,8 @@ const SATAN_DEATH_FRAMES := 2
 const SATAN_IDLE_FPS := 15.0
 const SATAN_HOVER_FPS := 15.0
 const SATAN_LAUGH_FPS := 20.0
+const SATAN_STREAM_LAUGH_FPS := 32.0
+const SATAN_STREAM_LAUGH_PITCH_OFFSET := 7.0
 const SATAN_DEATH_FPS := 20.0
 const SATAN_HOVER_COLLISION_LAYER := 1 << 9
 const ONLINE_VISUAL_SYNC_TIMEOUT_MSEC := 3000
@@ -51,7 +61,10 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @onready var damage_sfx: AudioStreamPlayer = $Audio/DamageSFX
 @onready var kill_sfx: AudioStreamPlayer = $Audio/KillSFX
 @onready var flash_sprite: Sprite3D = $dealer/flash
+@onready var win_blood_sprite: Sprite3D = $blood
 @onready var death_shot_sfx: AudioStreamPlayer = $Audio/DeathShotSFX
+@onready var win_tinnitus_sfx: AudioStreamPlayer = $Audio/WinTinnitusSFX
+@onready var win_shot_light: OmniLight3D = $WinShotLight
 @onready var satan_motion_root: Node3D = $dealer/SatanMotionRoot
 @onready var dealer_satan: Sprite3D = $dealer/SatanMotionRoot/satan
 @onready var satan_hover_area: Area3D = $dealer/SatanMotionRoot/SatanHoverArea
@@ -60,6 +73,7 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @onready var pistol_start_marker: Marker3D = $dealer/PistolStart
 @onready var pistol_end_marker: Marker3D = $dealer/PistolEnd
 @onready var player_gun_mount: Control = $WinCinematicCanvas/PlayerGunMount
+@onready var player_gun_back: TextureRect = $WinCinematicCanvas/PlayerGunMount/GunBack
 @onready var player_muzzle_flash: TextureRect = (
 	$WinCinematicCanvas/PlayerGunMount/MuzzleFlash
 )
@@ -77,6 +91,10 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @export_range(0.25, 5.0, 0.05) var loss_reveal_duration := 2.0
 
 @export_group("Win Exit Cinematic")
+@export_range(0.0, 30.0, 0.5) var win_blood_hold_duration := 8.0
+@export_range(0.1, 20.0, 0.1) var win_blood_fade_duration := 6.0
+@export_range(0.01, 0.2, 0.005) var win_shot_shake_strength := 0.08
+@export_range(0.1, 0.5, 0.01) var win_shot_shake_duration := 0.22
 @export_range(100.0, 800.0, 10.0) var win_gun_hidden_offset := 420.0
 @export_range(0.1, 1.5, 0.05) var win_gun_raise_duration := 0.55
 @export_range(0.05, 0.4, 0.01) var win_gun_recoil_duration := 0.08
@@ -101,6 +119,7 @@ const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
 @export var poison_burst_scene: PackedScene
 
 @export var blood_spawn_offset := Vector3(0, 0.16, 0)
+# Table-local offset above the tabletop, independent of card animation height.
 @export var blood_decal_offset := Vector3(0, 0.012, 0)
 
 @export_group("Card Death Animation")
@@ -148,7 +167,9 @@ enum TableState {
 	DIFFICULTY_SELECT,
 	ONLINE_LOBBY,
 	PLAYING,
-	GAME_OVER
+	GAME_OVER,
+	STORY_SELECT,
+	TRAINING_SETUP
 }
 
 enum MatchOutcome {
@@ -162,6 +183,15 @@ var _table_state: TableState = TableState.MENU
 var _selected_difficulty := "normal"
 # Freeze reward tuning when the match starts; menu choices are not match state.
 var _match_reward_difficulty := "normal"
+var _local_mode := "legacy"
+var _story_level := 0
+var _training_player: Array[Dictionary] = []
+var _training_enemy: Array[Dictionary] = []
+var _offline_menu: Control
+var _offline_board: Node3D
+var _training_hud: Node3D
+var _training_damage_log: Label3D
+var _training_hits: Array[String] = []
 
 @onready var menu_root: Node3D = $MenuRoot
 @onready var mode_buttons: Node3D = $MenuRoot/ModeButtons
@@ -190,6 +220,7 @@ var _enemy_event_hand: Array[Dictionary] = []
 var _starting_events_dealt := false
 var _event_played_this_turn := false
 var _selected_event_uid := ""
+var _rearrange_first_card: Card3D
 var _event_notice := ""
 var _event_notice_source := ""
 var _event_notice_arguments: Array = []
@@ -203,6 +234,8 @@ var _last_event_side := ""
 var _event_play_sequence := 0
 var _event_presented_sequence := 0
 var _event_reveal_deadline_msec := 0
+var _piss_hidden_turns := {"player": 0, "enemy": 0}
+var _event_piss_stream: Node3D
 
 var _player_slot_markers: Array[Marker3D] = []
 var _enemy_slot_markers: Array[Marker3D] = []
@@ -244,8 +277,12 @@ var _satan_base_modulate := Color.WHITE
 var _satan_base_visible := true
 var _satan_motion_tween: Tween = null
 var _player_gun_tween: Tween = null
+var _win_blood_tween: Tween = null
+var _win_shot_tween: Tween = null
 var _satan_hovered := false
 var _satan_is_laughing := false
+var _satan_stream_laughing := false
+var _satan_stream_laugh_pitch := 0.0
 var _satan_laugh_audio: AudioStreamPlayer3D = null
 var _satan_is_dying := false
 var _satan_voice_chat: Node = null
@@ -261,6 +298,12 @@ var _hearing_effect_was_enabled := false
 var _online_mode := false
 var _online_is_host := false
 var _online_is_spectator := false
+var _online_character_data: Dictionary = {}
+var _online_second_character_data: Dictionary = {}
+var _online_character_retired := false
+var multiplayer_character_customizer: CharacterCustomizer
+var _character_creation_pending := false
+var _character_creation_paused_tree := false
 var _match_reward_text := ""
 var _match_reward_data: Dictionary = {}
 var _match_reward_outcome_source := ""
@@ -318,6 +361,10 @@ var _journal_input_blocked := false
 # Every board reset invalidates timers/coroutines that still belong to the
 # previous local match.
 var _match_generation := 0
+var _random_damage_coins: Array[Node3D] = []
+var _poison_syringes: Array[Node3D] = []
+var _cleave_bricks: Array[RigidBody3D] = []
+var _cleave_brick_surface: StaticBody3D
 var _card_death_sequence := 0
 # Flight cleanup can outlive the short replacement barrier; use
 # _has_pending_card_replacements() when deciding whether play may continue.
@@ -348,6 +395,7 @@ func _ready() -> void:
 	_camera_base_transform = table_camera.global_transform
 	_camera_base_fov = table_camera.fov
 	_collect_slot_markers()
+	_setup_offline_modes()
 	_connect_menu_buttons()
 	_connect_online_signals()
 	_ensure_effect_overview()
@@ -357,6 +405,12 @@ func _ready() -> void:
 	SettingsManager.presentation_settings_changed.connect(_on_presentation_settings_changed)
 
 	_reset_dealer_gun()
+	win_tinnitus_sfx.stream = _create_win_tinnitus_stream()
+	if win_blood_sprite.material_override is BaseMaterial3D:
+		# Keep the blood's smooth alpha fade independent of the shared eye material.
+		var blood_material := win_blood_sprite.material_override.duplicate() as BaseMaterial3D
+		blood_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		win_blood_sprite.material_override = blood_material
 	_reset_win_cinematic_visuals()
 	_show_main_menu()
 
@@ -478,6 +532,7 @@ func _setup_satan_voice_chat() -> void:
 
 
 func _sync_satan_voice_state() -> void:
+	_sync_online_character()
 	var should_be_active := (
 		_table_state == TableState.PLAYING
 		and _online_mode
@@ -486,11 +541,63 @@ func _sync_satan_voice_state() -> void:
 		and not _loss_exit_running
 	)
 	if match_hud != null and is_instance_valid(match_hud):
-		match_hud.show_for_match(should_be_active)
+		match_hud.show_for_match(_online_mode and not _online_character_retired and _table_state in [TableState.PLAYING, TableState.GAME_OVER])
 		match_hud.set_voice_chat_enabled(SettingsManager.satan_voice_enabled)
 	if _satan_voice_chat == null or not is_instance_valid(_satan_voice_chat):
 		return
 	_satan_voice_chat.call("set_match_active", should_be_active)
+
+
+func _sync_online_character() -> void:
+	if not is_instance_valid(dealer_satan) or not is_instance_valid(match_hud):
+		return
+	# The exit epilogue belongs to the local hub even while the transport waits
+	# for the other cinematic. Late roster updates must not dress Satan again.
+	if _online_character_retired:
+		return
+	if not _online_mode:
+		# Disconnected exits set local mode before playing their final shot. Keep
+		# that opponent until the same hidden swap used by a connected exit.
+		if _loss_exit_running:
+			return
+		if not _online_character_data.is_empty():
+			dealer_satan.call("clear_player_appearance")
+			match_hud.set_character_players()
+			_online_character_data = {}
+			_online_second_character_data = {}
+		return
+	var opponent: Dictionary = NetworkManager.remote_player_data
+	var second: Dictionary = {}
+	if _online_is_spectator:
+		var fighters := NetworkManager.get_fighter_peer_ids()
+		if fighters.size() == 2:
+			# Overhead view preserves host sides: far-side guest, near-side host.
+			opponent = NetworkManager.get_player_data_for_peer(fighters[1])
+			second = NetworkManager.get_player_data_for_peer(fighters[0])
+	# Keep the last accepted look if transport closes during a result/cinematic.
+	if opponent.is_empty():
+		return
+	var character := {"name": opponent.get("name", ""), "appearance": CharacterAppearance.sanitize(opponent.get("appearance"))}
+	var second_character := {"name": second.get("name", ""), "appearance": CharacterAppearance.sanitize(second.get("appearance"))} if not second.is_empty() else {}
+	if character == _online_character_data and second_character == _online_second_character_data:
+		return
+	_online_character_data = character
+	_online_second_character_data = second_character
+	dealer_satan.call("set_player_appearance", character["appearance"])
+	match_hud.set_character_players(character, second_character, _online_is_spectator)
+
+
+func _restore_standard_satan_for_exit() -> void:
+	if not _online_mode and _online_character_data.is_empty():
+		return
+	_online_character_retired = true
+	if is_instance_valid(dealer_satan):
+		dealer_satan.call("clear_player_appearance")
+	_online_character_data = {}
+	_online_second_character_data = {}
+	if is_instance_valid(match_hud):
+		match_hud.set_character_players()
+		match_hud.show_for_match(false)
 
 
 func _on_remote_voice_activity_changed(activity: int) -> void:
@@ -525,6 +632,10 @@ func _collect_slot_markers() -> void:
 # --- Match-Aufbau ---------------------------------------------------------
 
 func _start_match() -> void:
+	if _local_mode == "story" and not GameCurrency.is_story_level_unlocked(_story_level):
+		return
+	if _local_mode == "training" and (_training_player.size() != HAND_SIZE or _training_enemy.size() != HAND_SIZE):
+		return
 	# A KI match is entirely local and must never inherit a still-set online
 	# presentation barrier from the previous session.
 	_online_mode = false
@@ -538,7 +649,7 @@ func _start_match() -> void:
 	_match_reward_granted = false
 	_reset_win_cinematic_visuals()
 
-	if DeckManager.is_empty():
+	if _local_mode != "training" and DeckManager.is_empty():
 		_show_main_menu()
 		return
 	_table_state = TableState.PLAYING
@@ -548,8 +659,14 @@ func _start_match() -> void:
 	_current_turn = "player"
 	_selected_player_card = null
 
-	var player_pool: Array[Dictionary] = _build_player_pool()
-	var enemy_pool: Array[Dictionary] = _build_enemy_pool()
+	var player_pool: Array[Dictionary] = _training_player.duplicate(true) if _local_mode == "training" else _build_player_pool()
+	var enemy_pool: Array[Dictionary]
+	if _local_mode == "training":
+		enemy_pool = _training_enemy.duplicate(true)
+	elif _local_mode == "story":
+		enemy_pool = OFFLINE_RULES.story_deck(_story_level, deck_size)
+	else:
+		enemy_pool = _build_enemy_pool()
 
 	if player_pool.is_empty():
 		push_error("Spieler hat keine Karten in der Sammlung — Kampf kann nicht starten.")
@@ -561,10 +678,16 @@ func _start_match() -> void:
 		_set_match_status("Keine Kartendaten gefunden!")
 		return
 
-	enemy_pool.shuffle()
-	enemy_pool = _limit_deck_size(enemy_pool, deck_size)
-
-	_player_deck = DeckManager.prepare_match_deck(player_pool, DeckManager.get_starting_deck_indices(), CollectionManager.get_starting_hand_slot_count(), deck_size)
+	if _local_mode == "training":
+		# Preserve chosen slot order. Both five-card decks are exhausted by the
+		# opening deal; no collection card or ordinary reserve is added later.
+		player_pool.reverse()
+		enemy_pool.reverse()
+		_player_deck = player_pool
+	else:
+		enemy_pool.shuffle()
+		enemy_pool = _limit_deck_size(enemy_pool, deck_size)
+		_player_deck = DeckManager.prepare_match_deck(player_pool, DeckManager.get_starting_deck_indices(), CollectionManager.get_starting_hand_slot_count(), deck_size)
 	_enemy_deck = enemy_pool
 	_initialize_event_deck()
 	_deal_starting_event_hands()
@@ -578,6 +701,7 @@ func _start_match() -> void:
 	_rebuild_stack_visual("enemy")
 
 	_update_status_for_current_turn()
+	_training_hud.visible = _local_mode == "training"
 
 
 # Resolve each deck occurrence to its saved collection instance before applying
@@ -769,6 +893,11 @@ func _setup_event_presentation() -> void:
 
 
 func _clear_event_match() -> void:
+	_clear_rearrange_target()
+	_piss_hidden_turns = {"player": 0, "enemy": 0}
+	_refresh_piss_visibility()
+	if is_instance_valid(_event_piss_stream):
+		_event_piss_stream.stop_pissing(true)
 	if _event_resolution_tween != null and _event_resolution_tween.is_valid():
 		_event_resolution_tween.kill()
 	_event_resolution_tween = null
@@ -821,6 +950,8 @@ func _refresh_event_hand() -> void:
 		status = "Event gespielt · Wähle jetzt deine Karte zum Angriff"
 	elif status.is_empty():
 		status = "Optional: 1 Event vor deinem Angriff · Weitere Karten durch Kill-Effekte"
+	if not _online_is_spectator and int(_piss_hidden_turns["player"]) > 0:
+		status += "\n" + Localization.format_text("Piss · Kartenwerte verborgen: noch %d eigene Züge", [int(_piss_hidden_turns["player"])])
 	_event_hand_ui.configure(_player_event_hand, can_act and not _event_played_this_turn, _selected_event_uid, status, show_hand)
 	_event_pass_button.visible = show_hand and can_act and not _has_event_attack_card(_player_slots)
 
@@ -848,16 +979,38 @@ func _draw_event_card(side: String) -> Dictionary:
 	return event
 
 
-func _award_event_for_kill(killer: Card3D, victim: Card3D) -> void:
-	if not is_instance_valid(killer) or not is_instance_valid(victim):
+func _award_event_for_death(victim: Card3D) -> void:
+	if not is_instance_valid(victim) or not victim.is_dead() or (_online_mode and not _online_is_host):
 		return
-	if not CardData.has_effect(killer.card_data, "draw_on_kill") or victim.has_meta("event_kill_awarded"):
+	_spread_eternal_suffering_on_death(victim)
+	if not CardData.has_effect(victim.card_data, "draw_on_death") or victim.has_meta("event_death_awarded"):
 		return
-	var side := str(_find_slot_of(killer).get("side", ""))
+	var side := str(_find_slot_of(victim).get("side", ""))
 	if side.is_empty():
 		return
-	victim.set_meta("event_kill_awarded", true)
+	victim.set_meta("event_death_awarded", true)
 	_draw_event_card(side)
+
+
+func _spread_eternal_suffering_on_death(victim: Card3D) -> void:
+	if victim.eternal_suffering_damage <= 0 or victim.has_meta("eternal_suffering_spread"):
+		return
+	var info := _find_slot_of(victim)
+	var index := int(info.get("index", -1))
+	if index < 0:
+		return
+	# Mark before applying to either neighbor. Repeated damage/death cleanup
+	# cannot refresh this poison or spread it to replacements drawn later.
+	victim.set_meta("eternal_suffering_spread", true)
+	var slots: Array[Card3D] = _player_slots if str(info.get("side", "")) == "player" else _enemy_slots
+	for neighbor_index in [index - 1, index + 1]:
+		if neighbor_index < 0 or neighbor_index >= slots.size():
+			continue
+		var neighbor := slots[neighbor_index]
+		if not is_instance_valid(neighbor) or neighbor.is_dead():
+			continue
+		neighbor.apply_poison(victim.eternal_suffering_damage, 3)
+		_spawn_effect_vfx(neighbor, poison_vfx_scene)
 
 
 func _on_event_selected(uid: String) -> void:
@@ -878,6 +1031,7 @@ func _on_event_selected(uid: String) -> void:
 	if is_instance_valid(_selected_player_card):
 		_selected_player_card.clear_selected_immediate()
 	_selected_player_card = null
+	_clear_rearrange_target()
 	_selected_event_uid = uid
 	_set_event_notice(
 		"%s · Choose one of your cards. Right-click/Esc: cancel" if event.get("target") == "ally"
@@ -887,6 +1041,7 @@ func _on_event_selected(uid: String) -> void:
 
 
 func _cancel_event_selection() -> void:
+	_clear_rearrange_target()
 	_selected_event_uid = ""
 	_set_event_notice("")
 
@@ -900,12 +1055,43 @@ func _on_event_target_clicked(side: String, slot: int) -> void:
 	if side != target_side:
 		_set_event_notice("Choose one of your cards for this event." if target_side == "player" else "Choose an opposing card for this event.")
 		return
+	if event.get("id") == "rearrange_event":
+		var card := _get_card_from_slot(side, slot)
+		if not is_instance_valid(card) or card.is_dead():
+			return
+		if not is_instance_valid(_rearrange_first_card):
+			_rearrange_first_card = card
+			card.set_selected(true)
+			_set_event_notice("Rearrange · Wähle jetzt eine zweite eigene Karte. Rechtsklick/Esc: Abbrechen")
+			return
+		var first := _find_slot_of(_rearrange_first_card)
+		if str(first.get("side", "")) != "player":
+			_cancel_event_selection()
+			return
+		_submit_event(_selected_event_uid, int(first.get("index", -1)), slot)
+		return
 	_submit_event(_selected_event_uid, slot)
 
 
-func _event_target_error(side: String, event: Dictionary, target_slot: int) -> String:
+func _clear_rearrange_target() -> void:
+	if is_instance_valid(_rearrange_first_card):
+		_rearrange_first_card.clear_selected_immediate()
+	_rearrange_first_card = null
+
+
+func _event_target_error(side: String, event: Dictionary, target_slot: int, second_slot: int = -1) -> String:
 	if event.is_empty() or side not in ["player", "enemy"]:
 		return "Event nicht verfügbar."
+	if event.get("id") == "rearrange_event":
+		var first := _get_card_from_slot(side, target_slot)
+		var second := _get_card_from_slot(side, second_slot)
+		if target_slot == second_slot or not is_instance_valid(first) or not is_instance_valid(second):
+			return "Wähle zwei verschiedene eigene Karten auf dem Tisch."
+		return "Wähle zwei lebende eigene Karten." if first.is_dead() or second.is_dead() else ""
+	if second_slot != -1:
+		return "Dieses Event benötigt nur ein Ziel."
+	if str(event.get("id", "")) == "piss_event":
+		return "Piss wird direkt ohne Ziel ausgespielt." if target_slot != -1 else ""
 	if str(event.get("id", "")) == "switch":
 		if target_slot != -1:
 			return "Switch wird direkt ohne Ziel ausgespielt."
@@ -914,10 +1100,12 @@ func _event_target_error(side: String, event: Dictionary, target_slot: int) -> S
 	var target := _get_card_from_slot(target_side, target_slot)
 	if not is_instance_valid(target) or target.is_dead():
 		return "Wähle eine lebende Karte auf dem Tisch."
+	if event.get("id") == "heal_event" and target.current_hp >= target.max_hp:
+		return "Diese Karte ist bereits vollständig geheilt."
 	return ""
 
 
-func _try_play_event(side: String, uid: String, target_slot: int = -1) -> bool:
+func _try_play_event(side: String, uid: String, target_slot: int = -1, second_slot: int = -1) -> bool:
 	if (
 		_game_over or _table_state != TableState.PLAYING or _loss_exit_running
 		or side != _current_turn or _event_played_this_turn or _is_online_match_exiting()
@@ -926,13 +1114,23 @@ func _try_play_event(side: String, uid: String, target_slot: int = -1) -> bool:
 	):
 		return false
 	var event := _event_from_hand(side, uid)
-	var error := _event_target_error(side, event, target_slot)
+	var error := _event_target_error(side, event, target_slot, second_slot)
 	if not error.is_empty():
 		_set_event_notice(error)
 		return false
 	var target_side := side if event.get("target") == "ally" else ("enemy" if side == "player" else "player")
 	var target := _get_card_from_slot(target_side, target_slot)
 	match str(event.get("id", "")):
+		"rearrange_event":
+			_clear_rearrange_target()
+			_swap_event_slots(side, target_slot, second_slot)
+		"heal_event":
+			var missing_hp := maxi(target.max_hp - target.current_hp, 0)
+			target.heal(missing_hp)
+			_spawn_heal_from_card(target, missing_hp)
+		"piss_event":
+			_piss_hidden_turns[target_side] = maxi(int(_piss_hidden_turns[target_side]), int(event.get("hidden_turns", 2)))
+			_refresh_piss_visibility()
 		"switch":
 			var player_index := _rng.randi_range(0, _player_deck.size() - 1)
 			var enemy_index := _rng.randi_range(0, _enemy_deck.size() - 1)
@@ -951,6 +1149,7 @@ func _try_play_event(side: String, uid: String, target_slot: int = -1) -> bool:
 	_event_hand(side).erase(event)
 	_event_discard.append(event)
 	_event_played_this_turn = true
+	_clear_rearrange_target()
 	_selected_event_uid = ""
 	_set_event_notice("%s spielt %s", [
 		Localization.localized_arg("Du" if side == "player" else "Gegner"),
@@ -992,18 +1191,19 @@ func _steal_event_target(side: String, target_side: String, slot: int, target: C
 	_event_replacement_tween = _draw_to_slot(target_side, slot, true)
 
 
-func _submit_event(uid: String, target_slot: int) -> void:
+func _submit_event(uid: String, target_slot: int, second_slot: int = -1) -> void:
 	if not _can_local_event_or_attack():
 		return
-	var error := _event_target_error("player", _event_from_hand("player", uid), target_slot)
+	var error := _event_target_error("player", _event_from_hand("player", uid), target_slot, second_slot)
 	if not error.is_empty():
 		_set_event_notice(error)
 		return
 	if _online_mode and not _online_is_host:
 		_online_action_in_progress = true
-		_rpc_request_event.rpc_id(1, uid, target_slot, _online_turn_sequence)
+		_clear_rearrange_target()
+		_rpc_request_event.rpc_id(1, uid, target_slot, _online_turn_sequence, second_slot)
 		return
-	if not _try_play_event("player", uid, target_slot):
+	if not _try_play_event("player", uid, target_slot, second_slot):
 		return
 	await _complete_event_action()
 
@@ -1042,18 +1242,55 @@ func _present_played_event() -> void:
 		return
 	_event_presented_sequence = _event_play_sequence
 	_event_reveal_deadline_msec = Time.get_ticks_msec() + 850
+	var local_side := _canonical_side_to_local(_last_event_side) if _online_mode else _last_event_side
+	if str(_last_played_event.get("id", "")) == "piss_event":
+		_play_piss_stream(local_side)
 	if _event_hand_ui != null and _event_hand_ui.has_method("play_event"):
-		_event_hand_ui.play_event(_last_played_event, _canonical_side_to_local(_last_event_side) == "enemy")
+		_event_hand_ui.play_event(_last_played_event, local_side == "enemy")
+
+
+func _refresh_piss_visibility() -> void:
+	var hidden := not _online_is_spectator and int(_piss_hidden_turns["player"]) > 0
+	if hidden:
+		_clear_damage_numbers()
+		if is_instance_valid(_effect_overview):
+			_effect_overview.hide_overview()
+			_effect_overview.hide()
+	for card: Card3D in _player_slots + _enemy_slots:
+		if is_instance_valid(card):
+			card.set_stats_hidden(hidden)
+
+
+func _tick_piss_visibility(side: String) -> void:
+	_piss_hidden_turns[side] = maxi(int(_piss_hidden_turns[side]) - 1, 0)
+	_refresh_piss_visibility()
+
+
+func _play_piss_stream(side: String) -> void:
+	if not is_instance_valid(_event_piss_stream):
+		_event_piss_stream = EVENT_PISS_SCENE.instantiate()
+		_event_piss_stream.name = "EventPissStream"
+		add_child(_event_piss_stream)
+		_event_piss_stream.configure_table_event($table/Cube, func() -> bool:
+			return _table_state == TableState.PLAYING and not _game_over and not _loss_exit_running
+		)
+	_event_piss_stream.stop_pissing(true)
+	# A separate emitter preserves the authored hub interaction and its pose.
+	var source := (player_slots_root if side == "player" else enemy_slots_root).global_position
+	var toward_center := global_position - source
+	toward_center.y = 0.0
+	_event_piss_stream.global_position = source - toward_center.normalized() * 1.25 + Vector3.UP * 0.85
+	_event_piss_stream.start_pissing()
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func _rpc_request_event(uid: String, target_slot: int, turn_sequence: int) -> void:
+func _rpc_request_event(uid: String, target_slot: int, turn_sequence: int, second_slot: int = -1) -> void:
 	if not _online_mode or not _online_is_host or _is_online_match_exiting():
 		return
 	var sender := multiplayer.get_remote_sender_id()
 	if not _is_online_opponent(sender):
 		return
-	if turn_sequence != _online_turn_sequence or not _try_play_event("enemy", uid, target_slot):
+	if turn_sequence != _online_turn_sequence or not _try_play_event("enemy", uid, target_slot, second_slot):
 		_rpc_apply_online_state.rpc_id(sender, _build_online_snapshot(0, sender))
 		return
 	await _complete_event_action()
@@ -1107,6 +1344,13 @@ func _rpc_request_event_pass(turn_sequence: int) -> void:
 
 func _play_enemy_event() -> void:
 	for event in _enemy_event_hand.duplicate():
+		if event.get("id") == "rearrange_event":
+			for first in range(HAND_SIZE):
+				for second in range(first + 1, HAND_SIZE):
+					if _try_play_event("enemy", str(event.get("uid", "")), first, second):
+						await _complete_event_action()
+						return
+			continue
 		var target_side := "enemy" if event.get("target") == "ally" else "player"
 		var candidates: Array = [-1] if event.get("target") == "none" else [0, 1, 2, 3, 4]
 		candidates.shuffle()
@@ -1173,7 +1417,37 @@ func _get_slot_marker(side: String, slot_index: int) -> Marker3D:
 	return _player_slot_markers[slot_index] if side == "player" else _enemy_slot_markers[slot_index]
 
 
+func _swap_event_slots(side: String, first: int, second: int, animate: bool = true) -> Tween:
+	var slots := _player_slots if side == "player" else _enemy_slots
+	var a := slots[first]
+	var b := slots[second]
+	for entry: Array in [[a, first, second], [b, second, first]]:
+		var card: Card3D = entry[0]
+		card.clear_selected_immediate()
+		# Its old selection anchor must not pull it back after the move.
+		card._has_select_base_position = false
+		var click := _on_card_clicked.bind(side, int(entry[1]))
+		if card.area.input_event.is_connected(click):
+			card.area.input_event.disconnect(click)
+		var death := _on_card_died.bind(side, int(entry[1]))
+		if card.died.is_connected(death):
+			card.died.disconnect(death)
+		_connect_card_input(card, side, int(entry[2]))
+		card.died.connect(_on_card_died.bind(side, int(entry[2])))
+	slots[first] = b
+	slots[second] = a
+	if not animate:
+		a.global_position = _get_slot_marker(side, second).global_position
+		b.global_position = _get_slot_marker(side, first).global_position
+		return null
+	_event_resolution_tween = create_tween().set_parallel(true)
+	_event_resolution_tween.tween_property(a, "global_position", _get_slot_marker(side, second).global_position, 0.35).set_trans(Tween.TRANS_SINE)
+	_event_resolution_tween.tween_property(b, "global_position", _get_slot_marker(side, first).global_position, 0.35).set_trans(Tween.TRANS_SINE)
+	return _event_resolution_tween
+
+
 func _connect_card_input(card: Card3D, side: String, slot_index: int) -> void:
+	card.set_stats_hidden(not _online_is_spectator and int(_piss_hidden_turns["player"]) > 0)
 	if card.area == null:
 		return
 
@@ -1200,9 +1474,9 @@ func _ensure_effect_overview() -> void:
 
 
 func _on_effect_card_hovered(card: Card3D) -> void:
-	if _loss_exit_running or _journal_input_blocked:
+	if _loss_exit_running or _journal_input_blocked or is_offline_board_open():
 		return
-	if CardData.get_active_effects(card.card_data).is_empty():
+	if card.get_available_effects().is_empty():
 		return
 	_ensure_effect_overview()
 	if _effect_overview != null:
@@ -1373,11 +1647,34 @@ func _try_attack_enemy(slot_index: int) -> void:
 
 # --- Kampf-Ablauf -----------------------------------------------------------
 
-# Fuehrt ein Duell zwischen attacker und defender aus: beide Karten
-# fuegen sich gegenseitig Schaden in Hoehe ihres Angriffswerts zu,
-# unabhaengig davon ob die jeweils andere Karte dabei stirbt (beide
-# Treffer gelten gleichzeitig). attacker_side bestimmt, wessen Zug das
-# war, damit danach korrekt der naechste Zug eingeleitet wird.
+func _play_random_damage_coin(multiplier: float, generation: int, started_online: bool) -> void:
+	var coin := RANDOM_DAMAGE_COIN_SCENE.instantiate()
+	_random_damage_coins = _random_damage_coins.filter(func(item) -> bool: return is_instance_valid(item))
+	_random_damage_coins.append(coin)
+	add_child(coin)
+	# Slots sit 0.095m above the table. Account for coin half-thickness.
+	var landing := (player_slots_root.position + enemy_slots_root.position) * 0.5
+	landing.y -= 0.055
+	coin.play_flip(multiplier, landing, Vector3(-3.7, 0.9, 0.35))
+	while is_instance_valid(coin) and not coin.result_revealed:
+		if not _is_current_match_flow(generation, started_online):
+			coin.queue_free()
+			return
+		await get_tree().process_frame
+	if is_instance_valid(coin) and _is_current_match_flow(generation, started_online):
+		# The attack starts on return; fading never delays combat.
+		coin.dissolve()
+
+
+func _clear_random_damage_coins() -> void:
+	for coin: Node3D in _random_damage_coins:
+		if is_instance_valid(coin):
+			coin.queue_free()
+	_random_damage_coins.clear()
+
+
+# Both cards deal their damage at contact, even if either dies. attacker_side
+# owns the chosen attack and determines which side receives the next turn.
 func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) -> void:
 	_interrupt_journal()
 	var started_online := _online_mode
@@ -1412,7 +1709,13 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 	var attacker_died := false
 	var poisoned_targets: Dictionary = {}
 	var damaged_targets: Dictionary = {}
+	# A connected attack keeps its status payload even if its source is freed
+	# during the counterattack/death presentation before this action finishes.
+	var stun := CardData.get_effect(attacker.card_data, "stun")
+	var stun_chance := clampf(float(stun.get("chance", 1.0)), 0.0, 1.0)
+	var curse := CardData.get_effect(attacker.card_data, "curse")
 	var hit_count := CombatResolver.get_hit_count(attacker)
+	var eternal_sacrifice := CardData.has_effect(attacker.card_data, "eternal_suffering")
 	var lava_targets: Array[Card3D] = []
 	if CardData.has_effect(attacker.card_data, "lava"):
 		# Keep object identities for the entire attack. Cards drawn into an
@@ -1437,9 +1740,17 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		):
 			break
 
+		# One authoritative roll per strike, shared by the face and actual damage.
+		var attack_multiplier := CombatResolver.roll_attack_multiplier(attacker)
 		var online_attack_sequence := 0
 		if _online_mode and _online_is_host:
-			online_attack_sequence = _broadcast_online_attack(attacker, defender)
+			online_attack_sequence = _broadcast_online_attack(attacker, defender, attack_multiplier)
+		if CardData.has_effect(attacker.card_data, "random_damage"):
+			await _play_random_damage_coin(attack_multiplier, flow_generation, started_online)
+			if not _is_current_match_flow(flow_generation, started_online):
+				return
+			if not is_instance_valid(attacker) or not is_instance_valid(defender):
+				return
 
 		attacker.play_attack_animation(defender.global_position)
 		await attacker.attack_impact
@@ -1457,7 +1768,8 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		var defender_impact_position := defender.global_position
 		var damage := CombatResolver.get_attack_damage(
 			attacker,
-			_count_identical_on_board(str(attacker.card_data.get("id", attacker.card_data.get("card_id", ""))))
+			_count_identical_on_board(str(attacker.card_data.get("id", attacker.card_data.get("card_id", "")))),
+			attack_multiplier
 		)
 
 		var eligible_guards: Variant = lava_targets if not lava_targets.is_empty() else null
@@ -1494,6 +1806,15 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 			"damage_hits": [],
 		}
 		var all_hits: Array[Dictionary] = [hit_result]
+		if eternal_sacrifice:
+			# Sacrifice bypasses shields, armor and death saves. Its transferred
+			# status was already applied by the hit, including blocked hits.
+			var sacrifice_damage := attacker.current_hp
+			attacker.take_damage(sacrifice_damage)
+			attacker_damage_taken += sacrifice_damage
+			attacker_result["damage_hits"].append(sacrifice_damage)
+			_spawn_damage_number(attacker, sacrifice_damage)
+			_award_event_for_death(attacker)
 		all_hits.append_array(additional_hits)
 		for target_hit in all_hits:
 			attacker_damage_taken += _apply_attack_target_thorns(attacker, target_hit, attacker_result)
@@ -1510,7 +1831,7 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 			_present_healing(attacker, int(counter_result.get("healed", 0)), false)
 			guard_hits.append_array(counter_result.get("guard_hits", []))
 			if hp_before_counter > 0 and bool(counter_result.get("died", false)):
-				_award_event_for_kill(defender, attacker)
+				_award_event_for_death(attacker)
 			var counter_damage_taken := mini(maxi(int(counter_result.get("damage", 0)), 0), maxi(hp_before_counter, 0))
 			attacker_damage_taken += counter_damage_taken
 			if hp_before_counter > 0:
@@ -1597,6 +1918,11 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 				return
 
 		if attacker_died and is_instance_valid(attacker):
+			# Cleave belongs to the landed attack. Resolve it while the source
+			# still occupies its slot so its kill rewards keep the correct owner.
+			var cleave_result := _apply_cleave(attacker, defender_slot_index, attacker_side)
+			total_damage_done += int(cleave_result.get("damage", 0))
+			any_defender_died = any_defender_died or bool(cleave_result.get("died", false))
 			_remove_dead_card(attacker, false, defender_impact_position)
 
 		await _wait_for_pending_card_deaths()
@@ -1614,18 +1940,8 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		if attacker_died or (defender_died and lava_targets.is_empty()):
 			break
 
-	# The death animation keeps the node instance alive briefly, but it no
-	# longer represents a playable card. Do not let a dying attacker start
-	# lifesteal/cleave/chain actions while its death tween is freeing it.
-	if attacker_died or not is_instance_valid(attacker):
-		if _check_game_over():
-			return
-		_end_turn_to("enemy" if attacker_side == "player" else "player")
-		return
-
-	var stun := CardData.get_effect(attacker.card_data, "stun")
-	var stun_chance := clampf(float(stun.get("chance", 1.0)), 0.0, 1.0)
-	var curse := CardData.get_effect(attacker.card_data, "curse")
+	# Surviving targets retain the completed hit's effects independently of
+	# the attacker's survival. Object identities exclude replacement cards.
 	for target: Card3D in damaged_targets:
 		if not is_instance_valid(target) or target.is_dead():
 			continue
@@ -1635,6 +1951,13 @@ func _resolve_duel(attacker: Card3D, defender: Card3D, attacker_side: String) ->
 		if not curse.is_empty():
 			target.apply_curse(int(curse.get("value", 2)))
 			_spawn_effect_vfx(target, curse_vfx_scene)
+
+	# Healing and another attack still require a living source.
+	if attacker_died or not is_instance_valid(attacker):
+		if _check_game_over():
+			return
+		_end_turn_to("enemy" if attacker_side == "player" else "player")
+		return
 
 	if is_instance_valid(attacker):
 		var cleave_result := _apply_cleave(attacker, defender_slot_index, attacker_side)
@@ -1686,9 +2009,8 @@ func _resolve_attack_target_hit(
 	var poison_applied := false
 	var poison_effect := CardData.get_effect(attacker.card_data, "poison")
 	if damage_taken > 0 and not poisoned_targets.has(target) and not poison_effect.is_empty() and not bool(result.get("died", false)):
-		target.set_meta("poison_damage", int(poison_effect.get("damage", 3)))
-		target.set_meta("poison_turns", int(poison_effect.get("turns", 3)))
-		_spawn_effect_vfx(target, poison_vfx_scene)
+		target.apply_poison(int(poison_effect.get("damage", 3)), int(poison_effect.get("turns", 3)))
+		_present_poison_application(target)
 		poisoned_targets[target] = true
 		poison_applied = true
 
@@ -1703,14 +2025,19 @@ func _resolve_attack_target_hit(
 			if str(result["survival_effect"]) == "last_stand":
 				_spawn_effect_vfx(target, last_stand_vfx_scene)
 
+	if not target.is_dead() and CardData.has_effect(attacker.card_data, "eternal_suffering"):
+		target.apply_eternal_suffering()
 	var intensity := clampf(float(damage_taken) / maxf(1.0, float(target.max_hp)), 0.45, 1.6)
 	_present_healing(target, int(result.get("healed", 0)), false)
 	_spawn_damage_number(target, damage_taken)
+	var cleave_brick: RigidBody3D
+	if _uses_cleave_bricks(attacker):
+		cleave_brick = _present_cleave_brick(target)
 	if damage_taken > 0:
-		_spawn_blood_from_card(target, intensity, false)
+		_spawn_blood_from_card(target, intensity, false, 0, -1, false, cleave_brick)
 	if bool(result.get("died", false)):
 		_spawn_blood_decal_under_card(target, true, false)
-		_award_event_for_kill(attacker, target)
+		_award_event_for_death(target)
 	var slot_info := _find_slot_of(target)
 	result.merge({
 		"card": target,
@@ -1752,7 +2079,7 @@ func _apply_attack_target_thorns(attacker: Card3D, target_hit: Dictionary, attac
 		attacker_result["damage_hits"] = []
 	attacker_result["damage_hits"].append(reflected_damage)
 	if attacker.is_dead():
-		_award_event_for_kill(target, attacker)
+		_award_event_for_death(attacker)
 	return reflected_damage
 
 
@@ -1797,7 +2124,7 @@ func _apply_guarded_damage(target: Card3D, damage: int, source: Card3D, eligible
 			guard_result.merge({"card": guard, "side": str(info.get("side", "")), "slot": neighbor_index}, true)
 			guard_hits.append(guard_result)
 			if bool(guard_result.get("died", false)):
-				_award_event_for_kill(source, guard)
+				_award_event_for_death(guard)
 			break
 	var result := CombatResolver.apply_damage_with_survival(target, CombatResolver.get_damage_after_armor(target, damage))
 	result["guard_hits"] = guard_hits
@@ -1868,13 +2195,13 @@ func _apply_cleave(attacker: Card3D, center_slot_index: int, attacker_side: Stri
 			0.9
 		)
 
-		_present_secondary_damage(target, damage_taken, cleave_intensity)
+		_present_secondary_damage(target, damage_taken, cleave_intensity, true)
 		_present_healing(target, int(result.get("healed", 0)))
 		if damage_taken > 0:
 			cleave_connected = true
 		if bool(result.get("died", false)):
 			outcome["died"] = true
-			_award_event_for_kill(attacker, target)
+			_award_event_for_death(target)
 			victims.append(target)
 	for guard_hit in guard_hits:
 		_present_guard_hit(guard_hit, true)
@@ -1914,12 +2241,15 @@ func _remove_dead_card(
 	impact_origin: Vector3 = Vector3(INF, INF, INF),
 	draw_replacement: bool = true
 ) -> void:
+	_cancel_poison_syringes_for(card)
 	var slot_info := _find_slot_of(card)
 	var side: String = str(slot_info.get("side", ""))
 	var slot_index: int = int(slot_info.get("index", -1))
 
 	if slot_index == -1:
 		return
+
+	_award_event_for_death(card)
 
 	# Only the authority creates replacements. Remote death presentations wait
 	# for its snapshot, including hatches, instead of rolling another instance.
@@ -2134,6 +2464,8 @@ func _end_turn_to(next_turn: String) -> void:
 	if not _is_current_match_flow(flow_generation, started_online):
 		return
 	_tick_event_blocks(_current_turn)
+	_clear_rearrange_target()
+	_tick_piss_visibility(_current_turn)
 	_event_played_this_turn = false
 	_selected_event_uid = ""
 	if _online_mode and _online_is_host:
@@ -2372,13 +2704,136 @@ func _reset_camera() -> void:
 	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
+func _setup_offline_modes() -> void:
+	_offline_board = OFFLINE_BOARD.new()
+	_offline_board.name = "OfflineBoard"
+	_offline_board.camera = table_camera
+	add_child(_offline_board)
+	_offline_menu = _offline_board.menu
+	_offline_menu.closed.connect(_show_main_menu)
+	_offline_menu.story_requested.connect(_start_story_level)
+	_offline_menu.training_requested.connect(_start_training_match)
+	_training_hud = Node3D.new()
+	_training_hud.name = "TrainingControls"
+	add_child(_training_hud)
+	_training_damage_log = Label3D.new()
+	_training_damage_log.font = Localization.FONT
+	_training_damage_log.font_size = 40
+	_training_damage_log.pixel_size = 0.0016
+	_training_damage_log.outline_size = 6
+	_training_damage_log.modulate = Color("ffe2a1")
+	_training_damage_log.position = Vector3(0, 0.26, 0)
+	_training_damage_log.rotation_degrees.x = -90
+	_training_hud.add_child(_training_damage_log)
+	var button_scene := preload("res://scenes/Table3DButton.tscn")
+	var entries := [["Training neu starten", _restart_training], ["Training verlassen", _show_main_menu]]
+	for index in range(entries.size()):
+		var entry: Array = entries[index]
+		var button := button_scene.instantiate() as Table3DButton
+		button.name = "Restart" if index == 0 else "Leave"
+		button.label_text = entry[0]
+		button.scale = Vector3.ONE * 0.28
+		button.position = Vector3(-0.55 if index == 0 else 0.55, 0.23, 0.50)
+		button.pressed.connect(entry[1])
+		_training_hud.add_child(button)
+	_training_hud.hide()
+
+
+func _leave_offline_modes() -> void:
+	GameCurrency.set_training_session(self, false)
+	_local_mode = "legacy"
+	_story_level = 0
+	_training_player.clear()
+	_training_enemy.clear()
+	if is_instance_valid(_offline_board):
+		_offline_board.hide_board()
+	if is_instance_valid(_training_hud):
+		_training_hud.hide()
+
+
+func _show_story_menu() -> void:
+	if _online_mode or NetworkManager.has_active_session():
+		return
+	GameCurrency.set_training_session(self, false)
+	_table_state = TableState.STORY_SELECT
+	mode_buttons.hide()
+	difficulty_buttons.hide()
+	end_buttons.hide()
+	_offline_menu.open_story()
+	_open_offline_board()
+	_set_match_status("Story")
+
+
+func _show_training_menu() -> void:
+	if _online_mode or NetworkManager.has_active_session():
+		return
+	_table_state = TableState.TRAINING_SETUP
+	GameCurrency.set_training_session(self, true)
+	mode_buttons.hide()
+	difficulty_buttons.hide()
+	end_buttons.hide()
+	_offline_menu.open_training()
+	_open_offline_board()
+	_set_match_status("Training")
+
+
+func _start_story_level(level: int) -> void:
+	# Recheck at the start boundary as well as disabling the menu button.
+	if _online_mode or NetworkManager.has_active_session() or _table_state != TableState.STORY_SELECT or not GameCurrency.is_story_level_unlocked(level) or DeckManager.is_empty():
+		return
+	_local_mode = "story"
+	_story_level = level
+	_offline_board.hide_board()
+	_start_match()
+
+
+func _start_training_match(indices: Array[int], enemies: Array[Dictionary]) -> void:
+	if _online_mode or NetworkManager.has_active_session() or _table_state != TableState.TRAINING_SETUP:
+		return
+	var player := OFFLINE_RULES.training_player_deck(DeckManager.get_deck_card_data(), indices)
+	var enemy := OFFLINE_RULES.training_enemy_deck(enemies)
+	if player.size() != HAND_SIZE or enemy.size() != HAND_SIZE:
+		return
+	_local_mode = "training"
+	_training_player = player
+	_training_enemy = enemy
+	GameCurrency.set_training_session(self, true)
+	_offline_board.hide_board()
+	_start_match()
+
+
+func is_offline_board_open() -> bool:
+	return is_instance_valid(_offline_board) and _offline_board.is_open()
+
+
+func _open_offline_board() -> void:
+	if _camera_tween != null and _camera_tween.is_valid():
+		_camera_tween.kill()
+		_camera_tween = null
+	_offline_board.show_board()
+	# Standalone table scenes also work without the hub's focus controller.
+	if not is_instance_valid(_offline_board.focus_controller):
+		_camera_tween = create_tween().set_parallel(true)
+		var pose: Transform3D = _offline_board.focus_marker.global_transform.orthonormalized()
+		_camera_tween.tween_property(table_camera, "global_transform", pose, 0.30)
+		_camera_tween.tween_property(table_camera, "fov", 49.0, 0.30)
+
+
+func _restart_training() -> void:
+	if _online_mode or _local_mode != "training":
+		return
+	end_buttons.hide()
+	_start_match()
+
+
 func _connect_menu_buttons() -> void:
 	var ki_button: Table3DButton = mode_buttons.get_node("KIButton")
 	var multiplayer_button: Table3DButton = mode_buttons.get_node("MultiplayerButton")
 
-	ki_button.pressed.connect(_show_difficulty_menu)
+	ki_button.pressed.connect(_show_story_menu)
+	mode_buttons.get_node("TrainingButton").pressed.connect(_show_training_menu)
 	multiplayer_button.set_disabled(false)
-	multiplayer_button.pressed.connect(_show_multiplayer_menu)
+	multiplayer_button.pressed.connect(_on_multiplayer_pressed)
 
 	difficulty_buttons.get_node("EasyButton").pressed.connect(_on_difficulty_selected.bind("easy"))
 	difficulty_buttons.get_node("NormalButton").pressed.connect(_on_difficulty_selected.bind("normal"))
@@ -2403,9 +2858,44 @@ func _connect_online_signals() -> void:
 		NetworkManager.lobby_state_changed.connect(_on_online_lobby_state_changed)
 
 
+func _on_multiplayer_pressed() -> void:
+	if _online_mode or _loss_exit_running or _character_creation_pending:
+		return
+	if SettingsManager.character_creation_completed:
+		_show_multiplayer_menu()
+		return
+	if not is_instance_valid(multiplayer_character_customizer):
+		multiplayer_character_customizer = CharacterCustomizer.new()
+		multiplayer_character_customizer.name = "MultiplayerCharacterCustomizer"
+		add_child(multiplayer_character_customizer)
+		# Keep the editor above the hub's camera filters and online overlays.
+		multiplayer_character_customizer.layer = 140
+		multiplayer_character_customizer.closed.connect(_on_multiplayer_character_closed)
+	_character_creation_pending = true
+	_character_creation_paused_tree = not get_tree().paused and not NetworkManager.has_active_session()
+	if _character_creation_paused_tree:
+		get_tree().paused = true
+	multiplayer_character_customizer.open()
+
+
+func _on_multiplayer_character_closed() -> void:
+	if not _character_creation_pending:
+		return
+	_character_creation_pending = false
+	if _character_creation_paused_tree:
+		get_tree().paused = false
+		_character_creation_paused_tree = false
+	if SettingsManager.character_creation_completed:
+		_show_multiplayer_menu()
+
+
 func _show_multiplayer_menu() -> void:
 	if _online_mode:
 		return
+	var board_was_open := is_offline_board_open()
+	_leave_offline_modes()
+	if board_was_open:
+		_move_camera_to_base_view()
 
 	_table_state = TableState.ONLINE_LOBBY
 	mode_buttons.visible = false
@@ -2428,7 +2918,7 @@ func _on_matchmaking_closed() -> void:
 func _on_online_lobby_state_changed() -> void:
 	if _online_mode or NetworkManager.current_lobby_id <= 0:
 		return
-	if _table_state == TableState.MENU:
+	if _table_state in [TableState.MENU, TableState.STORY_SELECT, TableState.TRAINING_SETUP]:
 		_show_multiplayer_menu()
 
 
@@ -2461,6 +2951,10 @@ func _on_online_match_started() -> void:
 
 
 func _start_online_match() -> void:
+	_online_character_retired = false
+	_online_character_data = {}
+	_online_second_character_data = {}
+	_leave_offline_modes()
 	_table_state = TableState.PLAYING
 	_match_reward_difficulty = "normal"
 	_last_match_outcome = MatchOutcome.NONE
@@ -2746,7 +3240,7 @@ func _clear_online_sync_waits() -> void:
 	_online_pending_state_acks.clear()
 
 
-func _broadcast_online_attack(attacker: Card3D, defender: Card3D) -> int:
+func _broadcast_online_attack(attacker: Card3D, defender: Card3D, attack_multiplier: float = 1.0) -> int:
 	var opponent_peer_id := NetworkManager.get_connected_opponent_peer_id()
 	if not NetworkManager.is_connected_game_peer(opponent_peer_id):
 		return 0
@@ -2769,7 +3263,8 @@ func _broadcast_online_attack(attacker: Card3D, defender: Card3D) -> int:
 		defender_side,
 		defender_slot,
 		_online_turn_sequence,
-		attack_sequence
+		attack_sequence,
+		attack_multiplier
 	)
 	return attack_sequence
 
@@ -2847,7 +3342,8 @@ func _rpc_play_online_attack(
 	canonical_defender_side: String,
 	defender_slot: int,
 	turn_sequence: int,
-	attack_sequence: int
+	attack_sequence: int,
+	attack_multiplier: float = 1.0
 ) -> void:
 	if (
 		not _has_live_online_client_session()
@@ -2889,6 +3385,13 @@ func _rpc_play_online_attack(
 		"board_targets": {"player": _player_slots.duplicate(), "enemy": _enemy_slots.duplicate()},
 	}
 	attacker.clear_selected_immediate()
+	if CardData.has_effect(attacker.card_data, "random_damage"):
+		await _play_random_damage_coin(attack_multiplier, presentation_generation, true)
+		if not _is_current_match_flow(presentation_generation, true):
+			return
+		if not is_instance_valid(attacker) or not is_instance_valid(defender):
+			_finish_online_client_presentation()
+			return
 	attacker.play_attack_animation(defender.global_position, true)
 	_set_match_status("%s greift %s an...", [
 		Localization.localized_arg(str(attacker.card_data.get("name", "?"))),
@@ -3039,17 +3542,20 @@ func _try_present_online_impact(attack_sequence: int) -> void:
 	if str(impact.get("attacker_survival_effect", "")) == "last_stand":
 		_spawn_effect_vfx(attacker, last_stand_vfx_scene)
 	if bool(impact.get("poison_applied", false)):
-		_spawn_effect_vfx(defender, poison_vfx_scene)
+		_present_poison_application(defender)
 	if bool(impact.get("thorns_triggered", false)):
 		_spawn_effect_vfx(defender, thorns_vfx_scene)
 
 	var defender_damage := maxi(int(impact.get("defender_damage", 0)), 0)
 	_spawn_damage_number(defender, defender_damage)
+	var cleave_brick: RigidBody3D
+	if _uses_cleave_bricks(attacker):
+		cleave_brick = _present_cleave_brick(defender)
 	if defender_damage > 0:
 		_spawn_blood_from_card(
 			defender,
 			float(impact.get("damage_intensity", 1.0)),
-			false
+			false, 0, -1, false, cleave_brick
 		)
 
 	var defender_died := bool(impact.get("defender_died", false))
@@ -3176,7 +3682,7 @@ func _present_online_lava_hits(impact: Dictionary, impact_origin: Vector3) -> vo
 		if str(target_hit.get("survival_effect", "")) == "last_stand":
 			_spawn_effect_vfx(target, last_stand_vfx_scene)
 		if bool(target_hit.get("poison_applied", false)):
-			_spawn_effect_vfx(target, poison_vfx_scene)
+			_present_poison_application(target)
 		if bool(target_hit.get("thorns_triggered", false)):
 			_spawn_effect_vfx(target, thorns_vfx_scene)
 		if int(target_hit.get("damage", 0)) > 0:
@@ -3293,9 +3799,9 @@ func _rpc_play_online_blood(
 		or canonical_side not in ["player", "enemy"]
 		or slot_index < 0
 		or slot_index >= HAND_SIZE
-		or effect_type not in ["burst", "decal", "damage", "heal"]
+		or effect_type not in ["burst", "decal", "damage", "heal", "cleave_burst", "cleave_damage"]
 		or damage_amount < -1
-		or (effect_type == "damage" and damage_amount < 0)
+		or (effect_type in ["damage", "cleave_damage"] and damage_amount < 0)
 		or (effect_type == "heal" and damage_amount <= 0)
 	):
 		return
@@ -3359,16 +3865,21 @@ func _apply_online_blood_event(blood_event: Dictionary) -> void:
 				# The existing reliable effect channel carries the actual gain;
 				# snapshots still own HP and never create an extra healing popup.
 				_present_healing(card, int(blood_event.get("damage_amount", 0)), false)
-			"burst":
+			"burst", "cleave_burst":
+				var cleave_brick: RigidBody3D
+				if str(blood_event.get("effect_type", "")) == "cleave_burst":
+					cleave_brick = _present_cleave_brick(card)
 				var damage_amount := int(blood_event.get("damage_amount", -1))
 				if damage_amount >= 0:
 					_spawn_damage_number(card, damage_amount)
 				_spawn_blood_from_card(
 					card,
 					float(blood_event.get("intensity", 1.0)),
-					false
+					false, 0, -1, false, cleave_brick
 				)
-			"damage":
+			"damage", "cleave_damage":
+				if str(blood_event.get("effect_type", "")) == "cleave_damage":
+					_present_cleave_brick(card)
 				var damage_amount := int(blood_event.get("damage_amount", -1))
 				if damage_amount >= 0:
 					_spawn_damage_number(card, damage_amount)
@@ -3609,6 +4120,8 @@ func _build_online_snapshot(state_sync_sequence: int = 0, recipient_peer_id: int
 		"player_event_hand_count": _player_event_hand.size(),
 		"enemy_event_hand_count": _enemy_event_hand.size(),
 		"event_played_this_turn": _event_played_this_turn,
+		"player_piss_turns": int(_piss_hidden_turns["player"]),
+		"enemy_piss_turns": int(_piss_hidden_turns["enemy"]),
 		"last_played_event": _last_played_event.duplicate(true),
 		"last_event_side": _last_event_side,
 		"event_play_sequence": _event_play_sequence,
@@ -3693,6 +4206,9 @@ func _apply_online_state_now(state: Dictionary, expected_generation: int = -1) -
 	var animate_new_cards := _online_has_applied_snapshot
 	var near_side := "player" if _online_is_spectator else "enemy"
 	var far_side := "enemy" if _online_is_spectator else "player"
+	_piss_hidden_turns["player"] = clampi(int(state.get(near_side + "_piss_turns", 0)), 0, 2)
+	_piss_hidden_turns["enemy"] = clampi(int(state.get(far_side + "_piss_turns", 0)), 0, 2)
+	_refresh_piss_visibility()
 	_player_deck = _network_placeholder_deck(int(state.get(near_side + "_deck_count", 0)))
 	_enemy_deck = _network_placeholder_deck(int(state.get(far_side + "_deck_count", 0)))
 	_event_deck.clear()
@@ -3712,6 +4228,7 @@ func _apply_online_state_now(state: Dictionary, expected_generation: int = -1) -
 	_event_play_sequence = int(state.get("event_play_sequence", 0))
 	_present_played_event()
 	if _event_played_this_turn or _event_from_hand("player", _selected_event_uid).is_empty():
+		_clear_rearrange_target()
 		_selected_event_uid = ""
 	var draw_tweens: Array[Tween] = []
 	draw_tweens.append_array(_reconcile_online_slots(
@@ -3725,6 +4242,7 @@ func _apply_online_state_now(state: Dictionary, expected_generation: int = -1) -
 		animate_new_cards
 	))
 	_online_has_applied_snapshot = true
+	_refresh_piss_visibility()
 	_rebuild_stack_visual("player")
 	_rebuild_stack_visual("enemy")
 
@@ -3844,6 +4362,9 @@ func _retire_online_battle_presentation() -> void:
 	# those cards while the separate exit handshake is still exchanging RPCs.
 	_trace_exit_stage("retire_battle_presentation")
 	_match_generation += 1
+	_clear_random_damage_coins()
+	_clear_poison_syringes()
+	_clear_cleave_bricks()
 	for context: Dictionary in _online_client_attack_contexts.values():
 		var attacker: Variant = context.get("attacker")
 		if is_instance_valid(attacker):
@@ -3880,6 +4401,18 @@ func _reconcile_online_slots(side: String, value: Variant, animate_new: bool) ->
 	var draw_tweens: Array[Tween] = []
 	var states: Array = value as Array if value is Array else []
 	var slots: Array[Card3D] = _player_slots if side == "player" else _enemy_slots
+	var moved_cards: Array[Card3D] = []
+	# A pure slot exchange keeps both existing nodes and their battle presentation.
+	for first in range(mini(states.size(), HAND_SIZE)):
+		if not states[first] is Dictionary or not is_instance_valid(slots[first]) or _online_card_matches_state(slots[first], states[first]):
+			continue
+		for second in range(first + 1, mini(states.size(), HAND_SIZE)):
+			if states[second] is Dictionary and is_instance_valid(slots[second]) and _online_card_matches_state(slots[second], states[first]) and _online_card_matches_state(slots[first], states[second]):
+				moved_cards.append_array([slots[first], slots[second]])
+				var move := _swap_event_slots(side, first, second, animate_new)
+				if move != null:
+					draw_tweens.append(move)
+				break
 	var draw_origin_count := _player_deck.size() if side == "player" else _enemy_deck.size()
 	if animate_new:
 		# Snapshot deck counts already exclude the incoming cards. Reconstruct
@@ -3906,7 +4439,8 @@ func _reconcile_online_slots(side: String, value: Variant, animate_new: bool) ->
 
 		if existing != null and is_instance_valid(existing) and _online_card_matches_state(existing, state):
 			existing.apply_network_state(state)
-			existing.global_position = _get_slot_marker(side, slot_index).global_position
+			if not moved_cards.has(existing):
+				existing.global_position = _get_slot_marker(side, slot_index).global_position
 			existing.rotation_degrees = Vector3(-90, 0, 0) if side == "player" else Vector3(-90, 180, 180)
 			existing.scale = Vector3.ONE
 			continue
@@ -4022,6 +4556,12 @@ func _get_fighter_name_argument(canonical_side: String) -> Variant:
 func _grant_match_rewards() -> void:
 	if _online_is_spectator or _last_match_outcome == MatchOutcome.NONE:
 		return
+	if not _online_mode and _local_mode == "training":
+		_match_reward_granted = true
+		_match_status_is_reward = true
+		_match_reward_text = Localization.text("Training beendet - keine Belohnungen")
+		_match_status_message = _match_reward_text
+		return
 	if _match_reward_granted:
 		_match_status_is_reward = true
 		_match_status_message = _match_reward_text
@@ -4039,7 +4579,17 @@ func _grant_match_rewards() -> void:
 	# cannot grant the same match twice. Only starting a new match resets it.
 	_match_reward_granted = true
 	var reward_difficulty := "normal" if _online_mode else _match_reward_difficulty
-	_match_reward_data = GameCurrency.award_match(reward_outcome, reward_difficulty).duplicate(true)
+	if not _online_mode and _local_mode == "story":
+		if reward_outcome == "win":
+			_match_reward_data = GameCurrency.award_story_win(_story_level).duplicate(true)
+			if _match_reward_data.is_empty():
+				_match_reward_granted = false
+				_set_match_status("Speichern fehlgeschlagen. Zum erneuten Speichern auf Exit klicken.")
+				return
+		else:
+			_match_reward_data = {"xp_awarded": 0, "coins_reward": 0}
+	else:
+		_match_reward_data = GameCurrency.award_match(reward_outcome, reward_difficulty).duplicate(true)
 	_match_reward_outcome_source = outcome_text
 	_match_reward_text = _format_match_rewards()
 	_match_status_is_reward = true
@@ -4051,6 +4601,8 @@ func _grant_match_rewards() -> void:
 
 
 func _format_match_rewards() -> String:
+	if not _online_mode and _local_mode == "training" and _match_reward_granted:
+		return Localization.text("Training beendet - keine Belohnungen")
 	if _match_reward_data.is_empty():
 		return ""
 	var result := Localization.format_text("%s · +%d XP · +%s Soul Coins", [
@@ -4064,10 +4616,11 @@ func _format_match_rewards() -> String:
 	return result
 
 
-func _show_main_menu() -> void:
+func _show_main_menu(keep_lingering_effects: bool = false) -> void:
+	_leave_offline_modes()
 	_table_state = TableState.MENU
 	_last_match_outcome = MatchOutcome.NONE
-	_reset_win_cinematic_visuals()
+	_reset_win_cinematic_visuals(keep_lingering_effects)
 	_clear_match()
 	_move_camera_to_base_view()
 	_reset_dealer_gun()
@@ -4080,16 +4633,11 @@ func _show_main_menu() -> void:
 
 
 func _show_difficulty_menu() -> void:
-	_table_state = TableState.DIFFICULTY_SELECT
-
-	mode_buttons.visible = false
-	difficulty_buttons.visible = true
-	end_buttons.visible = false
-
-	_set_match_status("Wähle eine KI-Schwierigkeit")
+	_show_story_menu()
 
 
 func _on_difficulty_selected(difficulty: String) -> void:
+	_local_mode = "legacy"
 	_selected_difficulty = difficulty
 
 	mode_buttons.visible = false
@@ -4100,10 +4648,17 @@ func _on_difficulty_selected(difficulty: String) -> void:
 
 
 func _clear_match() -> void:
+	_training_hits.clear()
+	if is_instance_valid(_training_hud):
+		_training_hud.hide()
+		_training_damage_log.text = ""
 	_interrupt_journal()
 	if _online_mode or _loss_exit_running:
 		_trace_exit_stage("clear_board_begin")
 	_match_generation += 1
+	_clear_random_damage_coins()
+	_clear_poison_syringes()
+	_clear_cleave_bricks()
 	_chick_turn_eligible.clear()
 	for tween: Tween in _chick_growth_tweens:
 		if tween.is_valid():
@@ -4178,6 +4733,9 @@ func _move_camera_to_match_view() -> void:
 
 	_camera_tween = create_tween()
 	_camera_tween.set_parallel(true)
+	# A board uses a narrower field of view. The regular battle framing must
+	# restore the complete camera state, including that optical zoom.
+	_camera_tween.tween_property(table_camera, "fov", _camera_base_fov, match_camera_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 
 	_camera_tween.tween_property(
 		table_camera,
@@ -4211,7 +4769,8 @@ func _move_camera_to_base_view() -> void:
 	if _camera_tween != null:
 		_camera_tween.kill()
 
-	_camera_tween = create_tween()
+	_camera_tween = create_tween().set_parallel(true)
+	_camera_tween.tween_property(table_camera, "fov", _camera_base_fov, match_camera_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	_camera_tween.tween_property(
 		table_camera,
 		"global_transform",
@@ -4400,7 +4959,7 @@ func _get_spectator_camera_transform() -> Transform3D:
 
 func is_match_active() -> bool:
 	return (
-		_table_state == TableState.ONLINE_LOBBY
+		_table_state in [TableState.STORY_SELECT, TableState.TRAINING_SETUP, TableState.ONLINE_LOBBY]
 		or _table_state == TableState.PLAYING
 		or _table_state == TableState.GAME_OVER
 		# Both cinematics call _show_main_menu() before the network barrier is
@@ -4468,6 +5027,12 @@ func _play_sfx(sfx: AudioStreamPlayer) -> void:
 	sfx.play()
 
 func _spawn_damage_number(card: Card3D, amount: int) -> void:
+	if not _online_mode and _local_mode == "training" and is_instance_valid(card) and card.card_data.get("training_dummy", false):
+		var slot := int(card.card_data.get("training_slot", 1))
+		_training_hits.append(Localization.format_text("Trainingskarte %d - Schaden: %d", [slot, amount]))
+		while _training_hits.size() > 5:
+			_training_hits.pop_front()
+		_training_damage_log.text = "\n".join(_training_hits)
 	_spawn_combat_number(card, amount, false)
 
 
@@ -4477,7 +5042,10 @@ func _spawn_healing_number(card: Card3D, amount: int) -> void:
 
 
 func _spawn_combat_number(card: Card3D, amount: int, healing: bool) -> void:
-	if not SettingsManager.damage_numbers_enabled:
+	if not _online_is_spectator and int(_piss_hidden_turns["player"]) > 0:
+		return
+	var training_target: bool = not _online_mode and _local_mode == "training" and is_instance_valid(card) and card.card_data.get("training_dummy", false) == true
+	if not SettingsManager.damage_numbers_enabled and not training_target:
 		return
 	if not is_instance_valid(card) or amount < 0 or not is_inside_tree() or is_queued_for_deletion():
 		return
@@ -4533,13 +5101,16 @@ func _clear_damage_numbers() -> void:
 	_damage_number_lanes.clear()
 
 
-func _present_secondary_damage(card: Card3D, amount: int, intensity: float) -> void:
+func _present_secondary_damage(card: Card3D, amount: int, intensity: float, cleave_hit: bool = false) -> void:
 	_spawn_damage_number(card, amount)
+	var cleave_brick: RigidBody3D
+	if cleave_hit:
+		cleave_brick = _present_cleave_brick(card)
 	if amount > 0:
-		_spawn_blood_from_card(card, intensity, true, 0, amount)
+		_spawn_blood_from_card(card, intensity, true, 0, amount, cleave_hit, cleave_brick)
 	elif _online_mode and _online_is_host:
 		# A shielded cleave/zero poison tick still has a number, but no blood.
-		_broadcast_online_blood(card, "damage", 0.0, false, 0, null, 0)
+		_broadcast_online_blood(card, "cleave_damage" if cleave_hit else "damage", 0.0, false, 0, null, 0)
 
 
 func _spawn_blood_from_card(
@@ -4547,7 +5118,9 @@ func _spawn_blood_from_card(
 	intensity: float = 1.0,
 	replicate_online: bool = true,
 	attack_sequence: int = 0,
-	damage_amount: int = -1
+	damage_amount: int = -1,
+	cleave_hit: bool = false,
+	cleave_brick: RigidBody3D = null
 ) -> void:
 	if card == null or not is_instance_valid(card) or intensity <= 0.0:
 		return
@@ -4555,7 +5128,30 @@ func _spawn_blood_from_card(
 	# the card. Snapshots only restore gameplay state, so they never refresh it.
 	card.show_blood_hit(intensity)
 	if replicate_online and _online_mode and _online_is_host:
-		_broadcast_online_blood(card, "burst", intensity, false, attack_sequence, null, damage_amount)
+		_broadcast_online_blood(card, "cleave_burst" if cleave_hit else "burst", intensity, false, attack_sequence, null, damage_amount)
+	if blood_burst_scene == null:
+		return
+	if is_instance_valid(cleave_brick):
+		_spawn_cleave_impact_blood(cleave_brick, card.global_position + blood_spawn_offset, intensity)
+		return
+	_spawn_blood_burst_at(card.global_position + blood_spawn_offset, intensity)
+
+
+func _spawn_cleave_impact_blood(brick: RigidBody3D, impact_position: Vector3, intensity: float) -> void:
+	var generation := _match_generation
+	var deadline := Time.get_ticks_msec() + 250
+	while is_instance_valid(brick) and not brick.landed and not brick.kicked and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+		if generation != _match_generation or _is_online_match_exiting():
+			return
+	if generation != _match_generation or not is_instance_valid(brick) or brick.is_queued_for_deletion():
+		return
+	# Capture the hit position, not a subsequently moved/replaced card. Local
+	# physics contact owns only this burst's timing, never damage or deaths.
+	_spawn_blood_burst_at(impact_position, intensity)
+
+
+func _spawn_blood_burst_at(impact_position: Vector3, intensity: float) -> void:
 	if blood_burst_scene == null:
 		return
 
@@ -4566,7 +5162,7 @@ func _spawn_blood_from_card(
 
 	blood.global_transform = Transform3D(
 		Basis(),
-		card.global_position + blood_spawn_offset
+		impact_position
 	)
 
 func _spawn_blood_decal_under_card(
@@ -4596,7 +5192,13 @@ func _spawn_blood_decal_under_card(
 		decal.setup(is_kill)
 	add_child(decal)
 
-	decal.global_position = card.global_position + blood_decal_offset
+	# Card attacks and death throws change height. Anchor stains to the table,
+	# independently of the card's current animation pose and the stain's size.
+	var decal_position := to_local(card.global_position)
+	var surface := get_node("table/Cube") as MeshInstance3D
+	var surface_bounds := (global_transform.affine_inverse() * surface.global_transform) * surface.get_aabb()
+	decal_position.y = surface_bounds.end.y
+	decal.position = decal_position + blood_decal_offset
 	decal.rotation_degrees = Vector3.ZERO
 
 	# Zufällige Drehung, damit es nicht immer gleich aussieht.
@@ -4632,6 +5234,80 @@ func _spawn_card_particle_burst(scene: PackedScene, card: Card3D) -> void:
 		card.global_position + blood_spawn_offset
 	)
 
+func _present_poison_application(card: Card3D) -> void:
+	if not is_instance_valid(card) or card.is_dead():
+		return
+	_poison_syringes = _poison_syringes.filter(func(item) -> bool: return is_instance_valid(item))
+	var syringe := POISON_SYRINGE_SCENE.instantiate()
+	_poison_syringes.append(syringe)
+	add_child(syringe)
+	syringe.play_on(card)
+
+
+func _cancel_poison_syringes_for(card: Card3D) -> void:
+	for syringe: Node3D in _poison_syringes:
+		if is_instance_valid(syringe) and syringe.is_for(card):
+			syringe.cancel()
+
+
+func _clear_poison_syringes() -> void:
+	for syringe: Node3D in _poison_syringes:
+		if is_instance_valid(syringe):
+			syringe.queue_free()
+	_poison_syringes.clear()
+
+
+func _uses_cleave_bricks(attacker: Card3D) -> bool:
+	return is_instance_valid(attacker) and CardData.has_effect(attacker.card_data, "cleave") and not CardData.has_effect(attacker.card_data, "lava")
+
+
+func _present_cleave_brick(card: Card3D) -> RigidBody3D:
+	if not is_instance_valid(card):
+		return null
+	_ensure_cleave_brick_surface()
+	_cleave_bricks = _cleave_bricks.filter(func(item) -> bool: return is_instance_valid(item) and not item.is_queued_for_deletion())
+	while _cleave_bricks.size() >= MAX_CLEAVE_BRICKS:
+		var oldest: RigidBody3D = _cleave_bricks.pop_front()
+		oldest.hide()
+		oldest.queue_free()
+	var brick := CLEAVE_BRICK_SCENE.instantiate() as RigidBody3D
+	add_child(brick)
+	_cleave_bricks.append(brick)
+	brick.drop_on(card.global_position)
+	return brick
+
+
+func _ensure_cleave_brick_surface() -> void:
+	if is_instance_valid(_cleave_brick_surface):
+		return
+	_cleave_brick_surface = StaticBody3D.new()
+	_cleave_brick_surface.name = "LocalCleaveBrickSurface"
+	_cleave_brick_surface.collision_layer = 1 << 11
+	_cleave_brick_surface.collision_mask = 1 << 12
+	_cleave_brick_surface.input_ray_pickable = false
+	var collision := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	# This surface belongs exclusively to local cosmetics. Its top matches
+	# the card plane; it never blocks card input or participates in combat.
+	shape.size = Vector3(8.0, 0.12, 5.0)
+	collision.shape = shape
+	collision.position.y = player_slots_root.position.y - 0.06
+	_cleave_brick_surface.add_child(collision)
+	add_child(_cleave_brick_surface)
+
+
+func _clear_cleave_bricks() -> void:
+	for brick: RigidBody3D in _cleave_bricks:
+		if is_instance_valid(brick):
+			brick.hide()
+			brick.set_process_unhandled_input(false)
+			brick.queue_free()
+	_cleave_bricks.clear()
+	if is_instance_valid(_cleave_brick_surface):
+		_cleave_brick_surface.queue_free()
+	_cleave_brick_surface = null
+
+
 func _spawn_effect_vfx(card: Card3D, scene: PackedScene) -> void:
 	if scene == null:
 		return
@@ -4646,6 +5322,15 @@ func _spawn_effect_vfx(card: Card3D, scene: PackedScene) -> void:
 
 func _apply_start_turn_effects(side: String) -> void:
 	var slots: Array[Card3D] = _player_slots if side == "player" else _enemy_slots
+	var poisoned_at_turn_start := {}
+	for card: Card3D in slots:
+		if is_instance_valid(card) and int(card.get_meta("poison_turns", 0)) > 0:
+			poisoned_at_turn_start[card] = true
+
+	# Healing precedes periodic damage regardless of the healer's slot.
+	for healer: Card3D in slots:
+		if is_instance_valid(healer) and not healer.is_dead():
+			_apply_neighbor_heal(healer)
 
 	for card: Card3D in slots:
 		if card == null or not is_instance_valid(card) or card.is_dead():
@@ -4658,9 +5343,18 @@ func _apply_start_turn_effects(side: String) -> void:
 			_present_healing(card, maxi(card.current_hp - hp_before_regen, 0))
 			_spawn_effect_vfx(card, regeneration_vfx_scene)
 
-		_apply_neighbor_heal(card)
+		if card.eternal_suffering_damage > 0:
+			var suffering_result := CombatResolver.apply_damage_with_survival(card, card.eternal_suffering_damage)
+			_present_healing(card, int(suffering_result.get("healed", 0)))
+			_present_secondary_damage(card, int(suffering_result.get("damage", 0)), 0.7)
+			if str(suffering_result.get("survival_effect", "")) == "last_stand":
+				_spawn_effect_vfx(card, last_stand_vfx_scene)
+			if card.is_dead():
+				_remove_dead_card(card)
+				continue
+			card.advance_eternal_suffering()
 
-		if card.has_meta("poison_turns"):
+		if poisoned_at_turn_start.has(card) and card.has_meta("poison_turns"):
 			var turns := int(card.get_meta("poison_turns"))
 			var damage := int(card.get_meta("poison_damage"))
 
@@ -4676,14 +5370,13 @@ func _apply_start_turn_effects(side: String) -> void:
 					float(poison_damage_taken) / maxf(float(card.max_hp), 1.0),
 					0.25, 0.85
 				))
-				card.set_meta("poison_turns", turns - 1)
+				card.tick_poison()
 
 				if died:
 					_remove_dead_card(card)
 
-			if turns - 1 <= 0:
-				card.remove_meta("poison_turns")
-				card.remove_meta("poison_damage")
+			else:
+				card.apply_poison(0, 0)
 
 	await _wait_for_pending_card_deaths()
 
@@ -4712,6 +5405,8 @@ func _apply_neighbor_heal(damaged_card: Card3D) -> void:
 
 		var hp_before_heal := neighbor.current_hp
 		neighbor.heal(heal_amount)
+		if heal_amount > 0 and not neighbor.is_dead():
+			neighbor.cleanse_eternal_suffering_from_neighbor()
 		_spawn_heal_from_card(neighbor, maxi(neighbor.current_hp - hp_before_heal, 0))
 
 func _shake_camera(strength: float = impact_shake_strength, duration: float = impact_shake_duration) -> void:
@@ -4758,7 +5453,15 @@ func _reset_dealer_gun() -> void:
 	dealer_gun.global_transform = pistol_start_marker.global_transform
 
 
-func _reset_win_cinematic_visuals() -> void:
+func _reset_win_cinematic_visuals(keep_lingering_effects: bool = false) -> void:
+	if not keep_lingering_effects:
+		_reset_win_blood()
+		win_tinnitus_sfx.stop()
+	if _win_shot_tween != null:
+		_win_shot_tween.kill()
+		_win_shot_tween = null
+	win_shot_light.hide()
+	win_shot_light.light_energy = 0.0
 	if _player_gun_tween != null:
 		_player_gun_tween.kill()
 		_player_gun_tween = null
@@ -4787,11 +5490,91 @@ func _reset_win_cinematic_visuals() -> void:
 		satan_hover_area.input_ray_pickable = not _loss_exit_running
 
 
+func _reset_win_blood() -> void:
+	if _win_blood_tween != null:
+		_win_blood_tween.kill()
+		_win_blood_tween = null
+	if is_instance_valid(win_blood_sprite):
+		win_blood_sprite.hide()
+		win_blood_sprite.modulate.a = 0.0
+
+
+func _show_win_blood() -> void:
+	_reset_win_blood()
+	if not is_instance_valid(win_blood_sprite):
+		return
+	win_blood_sprite.modulate.a = 1.0
+	win_blood_sprite.show()
+	_win_blood_tween = create_tween()
+	_win_blood_tween.tween_interval(maxf(win_blood_hold_duration, 0.0))
+	_win_blood_tween.tween_property(
+		win_blood_sprite, "modulate:a", 0.0, maxf(win_blood_fade_duration, 0.01)
+	)
+	_win_blood_tween.tween_callback(win_blood_sprite.hide)
+
+
 func _set_player_gun_vertical_offset(vertical_offset: float) -> void:
 	if player_gun_mount == null or not is_instance_valid(player_gun_mount):
 		return
 	player_gun_mount.offset_top = vertical_offset
 	player_gun_mount.offset_bottom = vertical_offset
+
+
+func _start_win_shot_effects() -> void:
+	if _win_shot_tween != null:
+		_win_shot_tween.kill()
+	# Rotate around the actual barrel tip, keeping the bright core on the gun.
+	player_muzzle_flash.pivot_offset = player_muzzle_flash.size * 0.5
+	var muzzle_position := player_gun_back.position + player_gun_back.size * Vector2(0.5, 0.176)
+	player_muzzle_flash.position = muzzle_position - player_muzzle_flash.pivot_offset
+	player_muzzle_flash.rotation = _rng.randf_range(-0.25, 0.25)
+	player_muzzle_flash.modulate = Color.WHITE
+	player_muzzle_flash.show()
+	win_shot_light.global_position = table_camera.global_transform * Vector3(0.0, -0.1, -0.7)
+	win_shot_light.light_energy = 8.0
+	win_shot_light.show()
+	_win_shot_tween = create_tween().set_parallel(true)
+	_win_shot_tween.tween_property(player_muzzle_flash, "modulate:a", 0.0, 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_win_shot_tween.tween_property(win_shot_light, "light_energy", 0.0, 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_win_shot_tween.chain().tween_callback(player_muzzle_flash.hide)
+	_win_shot_tween.parallel().tween_callback(win_shot_light.hide)
+	win_tinnitus_sfx.play()
+	_shake_win_shot_camera()
+
+
+func _shake_win_shot_camera() -> void:
+	if _shake_tween != null:
+		_shake_tween.kill()
+	var rest := table_camera.transform
+	_shake_tween = create_tween()
+	# Four diminishing jolts, then return to the exact pre-shot camera pose.
+	for kick: Vector3 in [Vector3(0.6, 1.0, 0.2), Vector3(-0.5, -0.6, -0.1), Vector3(0.3, 0.35, 0.0), Vector3(-0.12, -0.15, 0.0)]:
+		var pose := rest
+		pose.origin += rest.basis * kick * win_shot_shake_strength
+		pose.basis = rest.basis * Basis.from_euler(Vector3(kick.y, kick.x, kick.x * 0.6) * deg_to_rad(1.8))
+		_shake_tween.tween_property(table_camera, "transform", pose, win_shot_shake_duration * 0.16).set_trans(Tween.TRANS_SINE)
+	_shake_tween.tween_property(table_camera, "transform", rest, win_shot_shake_duration * 0.36).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+func _create_win_tinnitus_stream() -> AudioStreamWAV:
+	const SAMPLE_RATE := 22050
+	const DURATION := 6.0
+	const HOLD_DURATION := 1.5
+	var samples := int(SAMPLE_RATE * DURATION)
+	var pcm := PackedByteArray()
+	pcm.resize(samples * 2)
+	for index in range(samples):
+		var time := float(index) / SAMPLE_RATE
+		# Hold the quiet ringing, then let it gently fade all the way to silence.
+		var fade := clampf((time - HOLD_DURATION) / (DURATION - HOLD_DURATION), 0.0, 1.0)
+		var envelope := minf(time / 0.008, 1.0) * pow(1.0 - fade, 1.5)
+		var tone := sin(TAU * 3000.0 * time) + 0.12 * sin(TAU * 3170.0 * time)
+		pcm.encode_s16(index * 2, int(tone * envelope * 14000.0))
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = SAMPLE_RATE
+	stream.data = pcm
+	return stream
 
 
 func _raise_player_gun() -> void:
@@ -4970,6 +5753,8 @@ func _return_satan_from_below() -> void:
 	)
 	var base_scale := _satan_motion_base_transform.basis.get_scale()
 	satan_motion_root.scale = base_scale * 0.82
+	# The defeated opponent is already gone and this replacement is below view.
+	_restore_standard_satan_for_exit()
 	_set_satan_dying(false)
 	dealer_satan.visible = true
 	var hidden_modulate := _satan_base_modulate
@@ -5017,6 +5802,24 @@ func _set_satan_dying(is_dying: bool) -> void:
 		_play_satan_sheet(SATAN_DEATH_TEXTURE, SATAN_DEATH_FRAMES, SATAN_DEATH_FPS, false)
 	else:
 		_set_satan_laughing(false)
+
+
+func set_satan_stream_laughing(enabled: bool) -> void:
+	if _satan_stream_laughing == enabled:
+		return
+	_satan_stream_laughing = enabled
+	if enabled:
+		if is_instance_valid(_satan_laugh_audio):
+			_satan_stream_laugh_pitch = _satan_laugh_audio.pitch_offset_semitones
+			_satan_laugh_audio.pitch_offset_semitones = _satan_stream_laugh_pitch + SATAN_STREAM_LAUGH_PITCH_OFFSET
+		if not _satan_is_dying and not _satan_is_laughing:
+			_play_satan_sheet(SATAN_LAUGH_TEXTURE, SATAN_LAUGH_FRAMES, SATAN_STREAM_LAUGH_FPS, false)
+	else:
+		if is_instance_valid(_satan_laugh_audio):
+			_satan_laugh_audio.pitch_offset_semitones = _satan_stream_laugh_pitch
+			_satan_laugh_audio.set_laughing(_loss_exit_running and _satan_is_laughing)
+		if not _satan_is_dying and not _satan_is_laughing and dealer_satan.texture == SATAN_LAUGH_TEXTURE:
+			_set_satan_laughing(false)
 
 
 func _set_satan_laughing(is_laughing: bool) -> void:
@@ -5098,7 +5901,7 @@ func _set_satan_hovered(is_hovered: bool) -> void:
 	if _satan_hovered == is_hovered:
 		return
 	_satan_hovered = is_hovered
-	if _satan_is_laughing or _satan_is_dying:
+	if _satan_is_laughing or _satan_is_dying or _satan_stream_laughing:
 		return
 
 	_play_satan_sheet(
@@ -5115,11 +5918,12 @@ func _play_satan_sheet(
 	target_fps: float,
 	preserve_frame: bool
 ) -> void:
+	_sync_online_character()
 	if target_texture == null:
 		return
 	if is_instance_valid(_satan_laugh_audio):
 		# The result animation stays silent until Exit starts the cinematic.
-		_satan_laugh_audio.set_laughing(_loss_exit_running and target_texture == SATAN_LAUGH_TEXTURE)
+		_satan_laugh_audio.set_laughing((_loss_exit_running or _satan_stream_laughing) and target_texture == SATAN_LAUGH_TEXTURE)
 
 	if dealer_satan.has_method("play_sheet"):
 		dealer_satan.call(
@@ -5166,6 +5970,14 @@ func _raise_dealer_gun() -> void:
 
 
 func _on_exit_button_pressed() -> void:
+	if not _online_mode and _local_mode == "training":
+		_show_main_menu()
+		_show_training_menu()
+		return
+	if not _online_mode and _local_mode == "story" and _last_match_outcome == MatchOutcome.WIN and not _match_reward_granted:
+		_grant_match_rewards()
+		if not _match_reward_granted:
+			return
 	if _loss_exit_running:
 		return
 	if _online_mode and _online_is_spectator:
@@ -5583,7 +6395,7 @@ func _finalize_online_exit_local(exit_sequence: int, session_generation: int = -
 	if NetworkManager.has_active_session():
 		NetworkManager.leave_lobby("Online-Match beendet.")
 	_reset_online_sync_tracking()
-	_show_main_menu()
+	_show_main_menu(true)
 	_set_loss_interactions_enabled(true)
 	NetworkManager.trace_session_event("local exit returned to menu")
 
@@ -5733,16 +6545,15 @@ func _run_win_exit_sequence() -> void:
 	if _exit_skip_requested:
 		return
 
-	if player_muzzle_flash != null and is_instance_valid(player_muzzle_flash):
-		player_muzzle_flash.rotation = _rng.randf_range(-0.25, 0.25)
-		player_muzzle_flash.visible = true
+	_start_win_shot_effects()
 	_hide_match_cards_for_win_shot()
 	_trace_exit_stage("win_shot")
 	_set_satan_dying(true)
+	_show_win_blood()
 	if death_shot_sfx != null:
 		death_shot_sfx.play()
 	loss_shot_fired.emit()
-	_shake_camera(impact_shake_strength * 2.2, maxf(impact_shake_duration, 0.22))
+	win_shot_fired.emit()
 	_start_player_gun_recoil()
 	var knockback_tween := _start_satan_knockback()
 
@@ -5785,7 +6596,8 @@ func _run_win_exit_sequence() -> void:
 	if _exit_skip_requested:
 		return
 
-	_show_main_menu()
+	# The wall stain and ringing outlive the camera/gun animation naturally.
+	_show_main_menu(true)
 	_trace_exit_stage("win_menu_reset")
 
 
@@ -5862,6 +6674,7 @@ func _run_loss_exit_sequence() -> void:
 		return
 
 	# Unsichtbar hinter dem Schwarz alles zurücksetzen.
+	_restore_standard_satan_for_exit()
 	_show_main_menu()
 	_reset_dealer_gun()
 	_trace_exit_stage("loss_menu_reset")
@@ -6026,6 +6839,10 @@ func _restore_hearing_state() -> void:
 
 
 func _exit_tree() -> void:
+	if _character_creation_paused_tree:
+		get_tree().paused = false
+		_character_creation_paused_tree = false
+	GameCurrency.set_training_session(self, false)
 	_trace_exit_stage("table_exit_tree")
 	_clear_damage_numbers()
 	_online_session_generation += 1

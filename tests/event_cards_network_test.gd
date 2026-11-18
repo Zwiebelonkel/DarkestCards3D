@@ -12,6 +12,10 @@ class GuestTable:
 		if state_sync_sequence > 0:
 			_rpc_ack_online_state_applied.rpc_id(1, turn_sequence, state_sync_sequence)
 
+	func _send_online_blood_ack(turn_sequence: int, blood_sequence: int) -> void:
+		if blood_sequence > 0:
+			_rpc_ack_online_blood.rpc_id(1, turn_sequence, blood_sequence)
+
 
 # Run through run_match_feature_tests.ps1, which replaces only the Steam
 # transport with match_features_network.gd and isolates player saves.
@@ -82,6 +86,9 @@ func _run() -> void:
 			check(connected, "host and guest event peers connect")
 			if connected:
 				await _check_event_rpcs()
+				await _check_piss_rpcs()
+				await _check_heal_rpcs()
+				await _check_rearrange_rpcs()
 	host._online_mode = false
 	guest._online_mode = false
 	NetworkManager.current_lobby_id = 0
@@ -99,8 +106,7 @@ func _run() -> void:
 	guest_peer = null
 	main.queue_free()
 	guest_root.queue_free()
-	await get_tree().process_frame
-	await get_tree().process_frame
+	await get_tree().create_timer(0.3).timeout
 	print("EVENT_CARDS_NETWORK_TESTS: " + ("PASS" if failures == 0 else "FAIL"))
 	get_tree().quit(0 if failures == 0 else 1)
 
@@ -157,7 +163,7 @@ func _check_opening_hands_over_enet() -> void:
 	await host._start_online_match()
 	var arrived := await _wait_until(func(): return guest._player_event_hand.size() == 3 and guest._online_turn_sequence == 1 and not guest._online_action_in_progress)
 	check(arrived, "real online match start deals and synchronizes three guest events before releasing turn one")
-	check(host._player_event_hand.size() == 3 and host._enemy_event_hand.size() == 3 and host._event_deck.size() == 18, "host deals exactly three opening events to each fighter from the 24-card shared pile")
+	check(host._player_event_hand.size() == 3 and host._enemy_event_hand.size() == 3 and host._event_deck.size() == EventDeck.DECK_SIZE - 6, "host deals exactly three opening events to each fighter from the 31-card shared pile")
 	check(host._online_pending_state_acks.is_empty() and not host._online_action_in_progress, "opening hand synchronization completes the real ENet ACK barrier")
 	check(host._can_local_event_or_attack() and not host._event_played_this_turn and host._event_notice.is_empty(), "opening events are available on the first host turn without a next-turn notice")
 	check(guest._player_event_hand == host._enemy_event_hand and not _has_private_events(guest._enemy_event_hand), "guest receives exactly its random opening hand and no host event identities")
@@ -165,7 +171,7 @@ func _check_opening_hands_over_enet() -> void:
 	var original_guest := guest._player_event_hand.duplicate(true)
 	guest._rpc_request_online_state.rpc_id(1)
 	await get_tree().create_timer(0.1).timeout
-	check(host._player_event_hand == original_host and guest._player_event_hand == original_guest and host._event_deck.size() == 18, "requesting the opening snapshot again neither rerolls nor duplicates starting events")
+	check(host._player_event_hand == original_host and guest._player_event_hand == original_guest and host._event_deck.size() == EventDeck.DECK_SIZE - 6, "requesting the opening snapshot again neither rerolls nor duplicates starting events")
 	var public_state := host._build_online_snapshot()
 	check(not public_state.has("own_event_hand") and int(public_state.get("player_event_hand_count", -1)) == 3 and int(public_state.get("enemy_event_hand_count", -1)) == 3, "public opening snapshot exposes equal hand counts without private cards")
 	NetworkManager.local_player_data = old_local
@@ -287,6 +293,163 @@ func _check_snapshot_privacy(host_uid: String) -> void:
 	NetworkManager._participants[guest_id]["role"] = "spectator"
 	check(not host._build_online_snapshot(0, guest_id).has("own_event_hand"), "connected spectator receives no fighter hand")
 	NetworkManager._participants[guest_id]["role"] = "player"
+
+
+func _check_rearrange_rpcs() -> void:
+	for caster: String in ["player", "enemy"]:
+		host._clear_match()
+		guest._clear_match()
+		host._reset_online_sync_tracking()
+		guest._reset_online_sync_tracking()
+		for table: GameTable in [host, guest]:
+			table._online_mode = true
+			table._online_is_spectator = false
+			table._table_state = GameTable.TableState.PLAYING
+			table._online_turn_sequence = 0
+		host._online_is_host = true
+		guest._online_is_host = false
+		host._current_turn = caster
+		host._online_turn_sequence = 70
+		for side: String in ["player", "enemy"]:
+			host._player_deck.clear()
+			host._enemy_deck.clear()
+			var deck := host._player_deck if side == "player" else host._enemy_deck
+			deck.assign([_combat_card("rearrange-" + side + "-a"), _combat_card("rearrange-" + side + "-b")])
+			host._draw_to_slot(side, 0, false)
+			host._draw_to_slot(side, 3, false)
+		var a := host._get_card_from_slot(caster, 0)
+		var b := host._get_card_from_slot(caster, 3)
+		a.take_damage(23)
+		host._initialize_event_deck()
+		var event := _give_event(caster, "rearrange_event")
+		host._broadcast_online_snapshot(0)
+		if not await _wait_until(func(): return guest._online_turn_sequence == 70 and not guest._online_action_in_progress):
+			check(false, "Rearrange fixture reaches the guest")
+			return
+		var mirrored := "enemy" if caster == "player" else "player"
+		var guest_a := guest._get_card_from_slot(mirrored, 0)
+		var guest_b := guest._get_card_from_slot(mirrored, 3)
+		if caster == "enemy":
+			guest._rpc_request_event.rpc_id(1, event["uid"], 0, 69, 3)
+			guest._rpc_request_event.rpc_id(1, event["uid"], 0, 70, 0)
+			await get_tree().create_timer(0.1).timeout
+			check(host._get_card_from_slot(caster, 0) == a and host._event_hand(caster).size() == 1, "Stale and identical-slot Rearrange requests are rejected")
+			guest._rpc_request_event.rpc_id(1, event["uid"], 0, 70, 3)
+		else:
+			host._submit_event(event["uid"], 0, 3)
+		var applied := await _wait_until(func(): return guest._get_card_from_slot(mirrored, 0) == guest_b and guest._get_card_from_slot(mirrored, 3) == guest_a)
+		check(applied and host._get_card_from_slot(caster, 0) == b and host._get_card_from_slot(caster, 3) == a, caster + " Rearrange swaps the same card instances on both peers")
+		await _wait_until(func(): return not host._online_action_in_progress and not guest._online_action_in_progress)
+		check(guest_a.current_hp == 77 and guest_a.global_position.is_equal_approx(guest._get_slot_marker(mirrored, 3).global_position), "Rearrange preserves health and finishes at the mirrored slot")
+		check(host._current_turn == caster and host._event_hand(caster).is_empty() and host._event_discard.size() == 1, "Online Rearrange consumes one event and leaves the attack available")
+		host._broadcast_online_snapshot(0)
+		await get_tree().create_timer(0.1).timeout
+		check(guest._get_card_from_slot(mirrored, 3) == guest_a, "Duplicate snapshots preserve the moved nodes")
+
+
+func _check_heal_rpcs() -> void:
+	for caster: String in ["player", "enemy"]:
+		host._clear_match()
+		guest._clear_match()
+		host._reset_online_sync_tracking()
+		guest._reset_online_sync_tracking()
+		for table: GameTable in [host, guest]:
+			table._online_mode = true
+			table._online_is_spectator = false
+			table._table_state = GameTable.TableState.PLAYING
+			table._online_turn_sequence = 0
+		host._online_is_host = true
+		guest._online_is_host = false
+		host._current_turn = caster
+		host._online_turn_sequence = 50
+		host._player_deck.assign([_combat_card("heal-host")])
+		host._enemy_deck.assign([_combat_card("heal-guest")])
+		host._draw_to_slot("player", 0, false)
+		host._draw_to_slot("enemy", 0, false)
+		var wounded := host._get_card_from_slot(caster, 0)
+		wounded.take_damage(99)
+		host._initialize_event_deck()
+		var event := _give_event(caster, "heal_event")
+		host._broadcast_online_snapshot(0)
+		var ready := await _wait_until(func(): return guest._online_turn_sequence == 50 and not guest._online_action_in_progress)
+		check(ready, caster + " Heal fixture synchronizes the wounded card")
+		if not ready:
+			return
+		if caster == "enemy":
+			guest._rpc_request_event.rpc_id(1, event["uid"], 0, 49)
+			await get_tree().create_timer(0.1).timeout
+			check(wounded.current_hp == 1, "A stale Heal cannot change health")
+			guest._rpc_request_event.rpc_id(1, event["uid"], 0, 50)
+		else:
+			host._submit_event(event["uid"], 0)
+		var mirrored := "enemy" if caster == "player" else "player"
+		var healed := await _wait_until(func(): return wounded.current_hp == 100 and guest._get_card_from_slot(mirrored, 0).current_hp == 100 and guest._event_presented_sequence == 1)
+		check(healed, caster + " Heal fully heals the correct mirrored card over ENet")
+		check(host._event_hand(caster).is_empty() and host._event_discard.size() == 1 and host._current_turn == caster, "Online Heal consumes one event and preserves the attack turn")
+		await _wait_until(func(): return not host._online_action_in_progress and not guest._online_action_in_progress)
+		check(host._online_pending_state_acks.is_empty(), "Heal finishes the authoritative synchronization barrier")
+
+
+func _check_piss_rpcs() -> void:
+	for caster: String in ["player", "enemy"]:
+		host._clear_match()
+		guest._clear_match()
+		host._reset_online_sync_tracking()
+		guest._reset_online_sync_tracking()
+		for table: GameTable in [host, guest]:
+			table._online_mode = true
+			table._online_is_spectator = false
+			table._table_state = GameTable.TableState.PLAYING
+			table._online_turn_sequence = 0
+		host._online_is_host = true
+		guest._online_is_host = false
+		host._current_turn = caster
+		host._online_turn_sequence = 30
+		host._player_deck.assign([_combat_card("piss-host")])
+		host._enemy_deck.assign([_combat_card("piss-guest")])
+		host._draw_to_slot("player", 0, false)
+		host._draw_to_slot("enemy", 0, false)
+		host._initialize_event_deck()
+		var event := _give_event(caster, "piss_event")
+		host._broadcast_online_snapshot(0)
+		await _wait_until(func(): return guest._online_turn_sequence == 30 and not guest._online_action_in_progress)
+		if caster == "enemy":
+			guest._rpc_request_event.rpc_id(1, event["uid"], -1, 29)
+			await get_tree().create_timer(0.1).timeout
+			check(host._piss_hidden_turns["player"] == 0 and host._enemy_event_hand.size() == 1, "stale Piss requests cannot blind either player or consume the card")
+			guest._rpc_request_event.rpc_id(1, event["uid"], -1, 30)
+		else:
+			host._submit_event(event["uid"], -1)
+		var target := "enemy" if caster == "player" else "player"
+		var arrived := await _wait_until(func(): return host._piss_hidden_turns[target] == 2 and guest._event_presented_sequence == 1)
+		check(arrived, caster + " Piss duration and public reveal arrive over real ENet")
+		check(host._player_slots[0].stats_hidden == (caster == "enemy") and host._enemy_slots[0].stats_hidden == (caster == "enemy"), "both host-side rows are concealed only when the guest casts Piss")
+		check(guest._player_slots[0].stats_hidden == (caster == "player") and guest._enemy_slots[0].stats_hidden == (caster == "player"), "both mirrored guest rows are concealed only when the host casts Piss")
+		check(host._player_slots[0].attack_value == 100 and guest._enemy_slots[0].attack_value == 100, "concealment leaves synchronized combat values intact")
+		check(host._event_piss_stream.active and guest._event_piss_stream.active, "each peer plays the public stream locally")
+		var elapsed: float = guest._event_piss_stream._elapsed
+		host._broadcast_online_snapshot(0)
+		await get_tree().create_timer(0.1).timeout
+		check(guest._event_piss_stream._elapsed > elapsed and guest._event_presented_sequence == 1, "duplicate snapshots cannot restart the Piss stream")
+		await _wait_until(func(): return not host._online_action_in_progress and not guest._online_action_in_progress)
+		await host._end_turn_to(target)
+		check(host._piss_hidden_turns[target] == 2, "ending the caster turn preserves two complete blinded turns")
+		await host._end_turn_to(caster)
+		check(host._piss_hidden_turns[target] == 1 and int(guest._piss_hidden_turns["player" if caster == "player" else "enemy"]) == 1, "the first affected turn ticks once and mirrors over ENet")
+		if caster == "player":
+			NetworkManager._participants[guest_id]["role"] = "spectator"
+			guest._online_is_spectator = true
+			host._broadcast_online_snapshot(0)
+			await get_tree().create_timer(0.1).timeout
+			check(not guest._player_slots[0].stats_hidden and not guest._enemy_slots[0].stats_hidden, "a spectator sees normal values during a fighter's Piss status")
+			NetworkManager._participants[guest_id]["role"] = "player"
+			guest._online_is_spectator = false
+			host._broadcast_online_snapshot(0)
+			await get_tree().create_timer(0.1).timeout
+			check(guest._player_slots[0].stats_hidden and guest._enemy_slots[0].stats_hidden, "returning to the affected fighter view restores concealment")
+		await host._end_turn_to(target)
+		await host._end_turn_to(caster)
+		check(host._piss_hidden_turns[target] == 0 and not host._player_slots[0].stats_hidden and not guest._player_slots[0].stats_hidden, "the second affected turn restores values on both peers")
 
 
 func _check_spectator_rejection(switch_uid: String) -> void:

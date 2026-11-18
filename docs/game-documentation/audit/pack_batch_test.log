@@ -1,0 +1,55 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS wallet rejects invalid counts and prices
+PASS wallet rejects a total exceeding funds without spending
+PASS overflow-sized count cannot produce a negative debit
+PASS eight-pack purchase charges 40 coins once and reserves seven unopened packs
+PASS synchronous coin listeners cannot purchase or refund during payment
+PASS debit and unused queue are persisted together
+PASS another screen cannot consume or refund this reservation
+PASS presenting the second pack consumes its reservation without charging again
+PASS interruption refunds only the six unused packs and preserves earned cents
+PASS repeated exit cannot refund a queue twice
+PASS pack reservation can coexist with a committed slot result
+PASS reload recovers both unused packs and the pending slot payout
+PASS queue recovery preserves level and XP
+PASS second load cannot duplicate the refund or slot payout
+PASS an old screen cannot refund a new batch after resetting progress
+PASS progress reset permanently clears an unused reservation
+PASS failed payment save rolls back the entire debit and reservation
+PASS failed handoff save keeps the next pack refundable
+PASS failed refund save preserves the complete refund for recovery
+PASS failed recovery leaves the stored refund pending
+PASS recovery retry credits unused packs exactly once
+PASS direct batch purchase is locked until level 2
+PASS screen rejects invalid quantities
+PASS screen rejects nine five-coin packs with a 41-coin balance
+PASS two-pack purchase succeeds through the existing screen API
+PASS screen rejects reentry before its synchronous payment signal completes
+PASS batch starts one continuous opening with progress 1/2
+PASS pack 1 entrance finishes
+PASS pack 1 has its own fresh sealed foil and original five-card definition
+PASS pack 1 cannot be replaced by an additional purchase
+PASS pack 1 opens through foil dragging and creates exactly five cards
+PASS pack 1 waits for collection after revealing its cards
+PASS pack 1 awards its cards exactly once even with a repeated collect callback
+PASS collecting the first pack automatically presents the next paid pack
+PASS handoff keeps the shop locked and emits progress 2/2 without another start or ready signal
+PASS second pack consumes the reservation without a second debit
+PASS pack 2 entrance finishes
+PASS pack 2 has its own fresh sealed foil and original five-card definition
+PASS pack 2 cannot be replaced by an additional purchase
+PASS pack 2 opens through foil dragging and creates exactly five cards
+PASS pack 2 waits for collection after revealing its cards
+PASS pack 2 awards its cards exactly once even with a repeated collect callback
+PASS collecting the final pack returns to the normal purchase state
+PASS complete batch unlocks once, grants ten cards, and charges only ten coins
+PASS eight-pack batch accepts the user's 41-coin example
+PASS leaving the screen refunds seven unused prepaid packs
+PASS reload after a graceful exit does not refund the queue twice
+PACK_BATCH_TESTS: PASS (47 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

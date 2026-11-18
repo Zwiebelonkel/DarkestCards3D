@@ -1,0 +1,77 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: Main owns the physical Black Market entrance and permanent room
+PASS: market provides its offer board, physical return door and camera anchor
+PASS: Black Market uses shared-camera room route 4
+PASS: market belongs to Main's existing World3D and viewport
+PASS: market creates no alternate camera or destination viewport
+PASS: Black Market no longer creates the old CanvasLayer destination screen
+PASS: fresh profile cannot bypass Black Market access
+PASS: market board is inactive from the hub
+PASS: owning the access card leaves the market entrance locked
+PASS: market fixture explicitly activates its access card
+PASS: using the access card unlocks only the physical market entrance
+PASS: outbound source opening is visible from a normal cardinal view
+PASS: outbound door is unobstructed to the actual camera ray
+PASS: outbound real mouse click begins physical travel before arrival
+PASS: outbound travel blocks turning, repeat travel and both door hitboxes
+PASS: outbound travel blocks the board and every purchase hitbox
+PASS: outbound travel rejects even an already queued offer purchase without changing the profile
+PASS: outbound both physical doors open for the flight
+PASS: outbound turn and Escape inputs cannot interrupt travel
+PASS: outbound camera physically moves through the passage
+PASS: outbound arrives at the requested physical room
+PASS: outbound retains the same Main camera and World3D throughout travel
+PASS: outbound sampled camera path crosses both physical doorway volumes
+PASS: arrival uses the room's exact physical camera anchor
+PASS: offer board uses Main's shared active camera
+PASS: entering keeps the permanent room and opens no screen
+PASS: only the current room's physical return door accepts input
+PASS: normal room turns reach the board's cardinal view
+PASS: the complete daily board is visible from the room arrival camera
+PASS: current market view enables and registers the physical board focus area
+PASS: board presents the current day's independently purchasable card offers
+PASS: actual pointer hover moves the shared camera onto the market board
+PASS: board hover visibly brings its offers closer
+PASS: board framing remains stable while the pointer stays still
+PASS: upgrade changes refresh an existing daily card preview without changing its offer
+PASS: refreshing a card preview preserves disabled card input and its clear board hitboxes
+PASS: profile upgrade refresh restores preview stats while preserving daily stock and prices
+PASS: real click on an offer directly adds its advertised card
+PASS: direct purchase charges precisely the board's advertised cents
+PASS: purchased offer is sold for the current day
+PASS: repeated click on a sold daily offer neither duplicates the card nor charges again
+PASS: daily sold state survives collection reload in the real room
+PASS: unaffordable board offer preserves money, collection and availability
+PASS: Escape opens normal Pause while visiting the physical market
+PASS: Pause disables the board and every offer hitbox
+PASS: Pause rejects even an already queued offer purchase without changing the profile
+PASS: Pause restores the normal camera before pausing the tree
+PASS: closing Pause re-enables the market board
+PASS: leaving the board with the pointer restores the normal room framing
+PASS: real room turn disables the board during camera rotation
+PASS: camera rotation rejects even an already queued offer purchase without changing the profile
+PASS: another cardinal view cannot purchase offers behind the camera
+PASS: another cardinal view rejects even an already queued offer purchase without changing the profile
+PASS: losing market access preserves the visitor's physical exit
+PASS: return source opening is visible from a normal cardinal view
+PASS: return door is unobstructed to the actual camera ray
+PASS: return real mouse click begins physical travel before arrival
+PASS: return travel blocks turning, repeat travel and both door hitboxes
+PASS: return travel blocks the board and every purchase hitbox
+PASS: return travel rejects even an already queued offer purchase without changing the profile
+PASS: return both physical doors open for the flight
+PASS: return turn and Escape inputs cannot interrupt travel
+PASS: return camera physically moves through the passage
+PASS: return arrives at the requested physical room
+PASS: return retains the same Main camera and World3D throughout travel
+PASS: return sampled camera path crosses both physical doorway volumes
+PASS: return restores the exact original hub position and cardinal view
+PASS: leaving clears board focus and restores the shared camera lens
+PASS: board cannot be purchased from after leaving its room
+PASS: lost access prevents another market entry
+PASS: round trip emits exactly one room change per arrival and returns unpaused
+BLACK_MARKET_ROOM_TESTS: PASS (71 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

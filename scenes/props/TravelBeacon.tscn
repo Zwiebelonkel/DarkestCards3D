@@ -1,0 +1,89 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="Glow"]
+shading_mode = 0
+albedo_color = Color(0.38, 0.84, 0.74, 1)
+emission_enabled = true
+emission = Color(0.25, 0.72, 0.59, 1)
+emission_energy_multiplier = 1.4
+
+[sub_resource type="StandardMaterial3D" id="BeamGlow"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.3, 0.74, 0.63, 0.2)
+emission_enabled = true
+emission = Color(0.2, 0.6, 0.48, 1)
+emission_energy_multiplier = 0.6
+
+[sub_resource type="TorusMesh" id="Ring"]
+material = SubResource("Glow")
+inner_radius = 0.46
+outer_radius = 0.5
+rings = 24
+ring_segments = 6
+
+[sub_resource type="CylinderMesh" id="Beam"]
+material = SubResource("BeamGlow")
+top_radius = 0.025
+bottom_radius = 0.12
+height = 0.7
+radial_segments = 8
+rings = 1
+
+[sub_resource type="CylinderMesh" id="GlyphTop"]
+material = SubResource("Glow")
+top_radius = 0.0
+bottom_radius = 0.14
+height = 0.16
+radial_segments = 4
+rings = 1
+
+[sub_resource type="CylinderMesh" id="GlyphBottom"]
+material = SubResource("Glow")
+top_radius = 0.14
+bottom_radius = 0.0
+height = 0.16
+radial_segments = 4
+rings = 1
+
+[sub_resource type="BoxShape3D" id="HoverBox"]
+size = Vector3(3.2, 0.9, 3.2)
+
+[node name="TravelBeacon" type="Node3D"]
+
+[node name="Visual" type="Node3D" parent="."]
+visible = false
+
+[node name="Ring" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.025, 0)
+cast_shadow = 0
+mesh = SubResource("Ring")
+
+[node name="Beam" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.37, 0)
+cast_shadow = 0
+mesh = SubResource("Beam")
+
+[node name="Glyph" type="Node3D" parent="Visual"]
+position = Vector3(0, 0.7, 0)
+
+[node name="Top" type="MeshInstance3D" parent="Visual/Glyph"]
+position = Vector3(0, 0.08, 0)
+cast_shadow = 0
+mesh = SubResource("GlyphTop")
+
+[node name="Bottom" type="MeshInstance3D" parent="Visual/Glyph"]
+position = Vector3(0, -0.08, 0)
+cast_shadow = 0
+mesh = SubResource("GlyphBottom")
+
+[node name="HoverArea" type="Area3D" parent="."]
+position = Vector3(0, 0.45, 0)
+collision_layer = 0
+collision_mask = 0
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HoverArea"]
+shape = SubResource("HoverBox")

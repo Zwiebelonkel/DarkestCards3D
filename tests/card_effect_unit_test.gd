@@ -190,16 +190,16 @@ func _check_attack_parameters() -> void:
 	seed(54321)
 	for index in range(32):
 		repeat.append(CombatResolver.get_attack_damage(random))
-	check(sequence == repeat and sequence.all(func(value: int): return value >= 10 and value <= 36) and sequence.min() != sequence.max(), "custom random-damage bounds produce a reproducible variable damage sequence")
+	check(sequence == repeat and sequence.all(func(value: int): return value in [15, 40]) and sequence.min() != sequence.max(), "legacy random-damage bounds migrate to reproducible two-sided coin results")
 	var fixed_random := _card(20, 10, [{"type": "swarm_power"}, {"type": "random_damage", "min": 0.5, "max": 0.5}])
-	check(CombatResolver.get_attack_damage(fixed_random, 3) == 30, "Random Damage multiplies the swarm total using its explicit custom parameters")
+	check(CombatResolver.get_attack_damage(fixed_random, 3, 0.75) == 45 and CombatResolver.get_attack_damage(fixed_random, 3, 2.0) == 120, "the revealed coin multiplies the swarm total without rerolling")
 	var default_random := _card(100, 10, [{"type": "random_damage"}])
 	var defaults_match := true
 	seed(3109)
 	for index in range(32):
 		var damage := CombatResolver.get_attack_damage(default_random)
-		defaults_match = defaults_match and damage >= 75 and damage <= 125
-	check(defaults_match and EffectDatabase.get_effect("random_damage")["min"] == 0.75 and EffectDatabase.get_effect("random_damage")["max"] == 1.25, "type-only random-damage bounds match the catalog")
+		defaults_match = defaults_match and damage in [75, 200]
+	check(defaults_match and EffectDatabase.get_effect("random_damage")["min"] == 0.75 and EffectDatabase.get_effect("random_damage")["max"] == 2.0, "type-only random-damage coin sides match the catalog")
 
 
 func _check_lifesteal_and_thorns() -> void:

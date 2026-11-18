@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/props/BoilerGauge.asset.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -0.219999998807907,
+        -0.219999998807907,
+        -0.0399999991059303
+      ],
+      "size": [
+        0.439999997615814,
+        0.439999997615814,
+        0.141000002622604
+      ]
+    },
+    "collision_shapes": 0,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 2,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 4,
+    "nonuniform_scales": 0,
+    "particles": 0,
+    "surfaces": 6,
+    "triangles": 8413,
+    "unique_materials": 6
+  },
+  "passed": true,
+  "target": "res://scenes/props/BoilerGauge.tscn"
+}

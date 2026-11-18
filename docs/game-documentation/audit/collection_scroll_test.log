@@ -1,0 +1,34 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS real common cards provide a long scrollable row
+PASS wheel targeting recognizes the gap between cards without a stale hover signal
+PASS inactive collection rows do not intercept wheel input from another screen
+PASS wheel input outside the card rows targets no rarity
+PASS common row scrolls across multiple card widths
+PASS several escaped cards form the left stack
+PASS common stack stays beside the visible rarity text
+PASS common escaped cards share a compact overlapping stack
+PASS common stack separates cards into distinct layers without coincident surfaces
+PASS scrolling repeatedly beyond the end leaves the stack bounded
+PASS scrolling one rarity leaves the other row in place
+PASS wheel targeting remains on the compressed stack
+PASS a stacked card lifts from its own stack layer on hover
+PASS leaving hover returns the card to its stack layer
+PASS detail view prevents background rarity-row scrolling
+PASS closing a stacked card detail restores its stack position
+PASS detail return preserves the stacked card's full scale
+PASS stack hover remains usable after detail closes
+PASS reverse scrolling stops at the original row start
+PASS rapid reverse scroll restores original card ordering and spacing
+PASS scrolling and stacking never hide cards with zero scale
+PASS legendary stack stays beside the visible rarity text
+PASS legendary escaped cards share a compact overlapping stack
+PASS legendary stack separates cards into distinct layers without coincident surfaces
+PASS all rarity rows recover their exact original positions
+PASS scroll during entrance prevents old spawn tweens from restoring stale positions
+PASS scroll during entrance finishes every card at full scale
+PASS cards whose entrance was interrupted still connect their collection input
+COLLECTION_SCROLL_TESTS: PASS (28 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

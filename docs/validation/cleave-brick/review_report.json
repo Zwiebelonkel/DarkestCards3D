@@ -1,0 +1,101 @@
+{
+  "captured_utc": "2026-11-18T13:46:26",
+  "context": "Real Main scene, normal match camera/lighting; startup blur finished, lamp flicker held at authored base energy. Actual target-hit and Cleave presentation paths; no extra lights.",
+  "junctions": {
+    "construction": "not applicable: original single mesh",
+    "table_contact": "physics tested against card-plane collider"
+  },
+  "performance": {
+    "with_three_bricks": {
+      "average_ms": 16.5209333333333,
+      "draw_calls": 752.0,
+      "frames": 30,
+      "p95_ms": 28.919,
+      "render_objects": 1270.0,
+      "video_memory_bytes": 434552534.0
+    },
+    "without_bricks": {
+      "average_ms": 16.6936,
+      "draw_calls": 746.0,
+      "frames": 30,
+      "p95_ms": 26.998,
+      "render_objects": 1264.0,
+      "video_memory_bytes": 434552534.0
+    }
+  },
+  "scene_modified": 1794962861,
+  "shots": [
+    {
+      "mean_luminance_sample": 0.312939682400121,
+      "name": "context-drop",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/cleave-brick/context-drop.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.303773771122061,
+      "name": "context-landed",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/cleave-brick/context-landed.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.198149670394661,
+      "name": "detail-front",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/cleave-brick/detail-front.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.304408070418248,
+      "name": "detail-back",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/cleave-brick/detail-back.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.224351158200529,
+      "name": "detail-left",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/cleave-brick/detail-left.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.245486621284082,
+      "name": "detail-right",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/cleave-brick/detail-right.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.307476051378135,
+      "name": "context-dissolve",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/cleave-brick/context-dissolve.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.307882638127292,
+      "name": "context-kick",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/cleave-brick/context-kick.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    }
+  ]
+}

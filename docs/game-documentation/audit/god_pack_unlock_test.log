@@ -1,0 +1,27 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS God purchase requirement comes from the shared level-10 definition
+PASS Basic and Ultra remain available at the starting level
+FAIL Locked God preview keeps its model visible and displays the level requirement
+PASS Level-9 player can select God to inspect its details
+FAIL God purchase controls explain the level-9 lock despite sufficient coins
+PASS UI handler and machine purchase entry point both reject level-9 purchases without payment
+PASS Direct purchase API rejects God below level 10
+PASS Omitting minimum_level cannot bypass the direct purchase guard
+PASS Lowering supplied minimum_level cannot bypass the canonical definition
+PASS Rejected God purchases cannot display or open a bought pack
+PASS Every rejected path preserves money, collection, rewards and rarity configuration
+PASS Actual XP level-up unlocks the selected God pack immediately without reopening the shop
+PASS Level-up clears the earlier lock message immediately
+PASS Level 10 still requires the full God pack price
+PASS Under-price direct purchase leaves the balance unchanged at level 10
+PASS Exactly the God pack price is sufficient at level 10
+FAIL Progress reset immediately re-locks God while retaining the inspected selection
+PASS Reset progression also re-locks the direct purchase API
+PASS Unlocked UI purchase charges exactly once and enters the existing paid-pack flow
+PASS Successful payment still waits for foil opening before awarding cards
+PASS Purchased God pack completes its existing entrance and enables foil interaction
+GOD_PACK_UNLOCK_TESTS: FAIL (21 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

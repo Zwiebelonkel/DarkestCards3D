@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/effects/PoisonSyringe.manifest.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -0.0876369476318359,
+        -0.046551413834095,
+        -0.118282541632652
+      ],
+      "size": [
+        0.798123717308044,
+        0.896068155765533,
+        0.438214480876923
+      ]
+    },
+    "collision_shapes": 0,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 2,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 6,
+    "nonuniform_scales": 2,
+    "particles": 0,
+    "surfaces": 3,
+    "triangles": 172,
+    "unique_materials": 3
+  },
+  "passed": true,
+  "target": "res://scenes/effects/PoisonSyringe.tscn"
+}

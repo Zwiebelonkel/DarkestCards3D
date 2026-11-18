@@ -42,6 +42,7 @@ func _run() -> void:
 	CollectionManager.collection = {"cards": {}, "instances": []}
 	CollectionManager.save_collection()
 	CollectionManager.add_card("basement_key")
+	check(CollectionManager.use_access_key("basement_key"), "discovery fixture explicitly activates basement access")
 	DeckManager.battle_deck.clear()
 	DeckManager.starting_deck_indices.clear()
 	DeckManager.deck_instance_ids.clear()
@@ -101,7 +102,7 @@ func _run() -> void:
 	await _click_at(_crate_pointer(secret))
 	check(secret._launched and CollectionManager.get_amount(KEY_ID) == 1, "clicking the secret crate automatically awards one graveyard key")
 	check(discoveries == [KEY_ID] and CollectionManager.get_instances_for_card(KEY_ID).size() == 1, "the discovery emits once and creates exactly one saved card instance")
-	check(CollectionManager.has_area_access("graveyard") and DeckManager.battle_deck.is_empty(), "the found key unlocks the graveyard without entering the battle deck")
+	check(not CollectionManager.has_area_access("graveyard") and not CollectionManager.is_access_key_used(KEY_ID) and CollectionManager.get_unused_access_key_ids().has(KEY_ID) and DeckManager.battle_deck.is_empty(), "the found key remains unused until activated in the hub and never enters the battle deck")
 	check(is_instance_valid(basement._hidden_card) and basement._hidden_card.is_visible_in_tree(), "the revealed physical card remains visible briefly without another pickup click")
 	await _settle(0.95)
 	check(basement._hidden_card.global_position.distance_to(floor_card_position) > 0.5 and not basement._hidden_card.area.input_ray_pickable and basement._hidden_card.area.collision_layer == 0, "the discovered card rises from the floor without becoming a second interactive pickup")

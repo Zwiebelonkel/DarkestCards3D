@@ -26,6 +26,7 @@ func _settle(seconds: float = 0.06) -> void:
 
 
 func _run() -> void:
+	GameCurrency._rescued_npcs["angel"] = true
 	if not str(DeckManager.SAVE_PATH).begins_with("res://test-user/"):
 		push_error("Use the isolated match-feature test runner.")
 		get_tree().quit(1)
@@ -82,7 +83,7 @@ func _run() -> void:
 	await _capture("hub-closed")
 	var hub_origin := main.camera_pivot.global_position
 	var hub_side := main._active_side
-	var hub_basis := main.camera_pivot.global_basis
+	var inward_basis := main.camera_pivot.global_basis * Basis(Vector3.UP, PI)
 	var camera_basis := main.main_camera.basis
 	var fixed_area := main.hub_door.doorway_area.global_transform
 	var fixed_frame := main.hub_door.get_node("Frame").global_transform as Transform3D
@@ -118,6 +119,12 @@ func _run() -> void:
 	table._table_state = previous_table_state
 	await _settle()
 	for round_trip in range(2):
+		if round_trip > 0:
+			await _turn(1)
+			await _turn(1)
+			await _wait_for_camera_rest()
+			_point_at(main.hub_door)
+			await _wait_for_door_hover(main.hub_door)
 		_click(main.hub_door)
 		check(main._room_transition_active, "door click starts a camera flight")
 		var steps := main._settle_step_index
@@ -162,10 +169,10 @@ func _run() -> void:
 			await _capture("empty-return-door")
 		_click(main.return_door)
 		await _wait_for_arrival()
-		check(main._active_room == 0 and main._active_side == hub_side, "return flight restores the original hub side")
+		check(main._active_room == 0 and main._active_side == posmod(hub_side + 2, MainScene.SIDE_COUNT), "return flight faces the side opposite the hub doorway")
 		check(is_zero_approx(AudioServer.get_bus_volume_db(AudioServer.get_bus_index(room_bus))) and not AudioServer.is_bus_effect_enabled(AudioServer.get_bus_index(room_bus), 0), "returning fully restores music volume and bypasses the room filter")
 		check(main.camera_pivot.global_position.is_equal_approx(hub_origin), "return flight restores the hub turning center")
-		check(main.camera_pivot.global_basis.is_equal_approx(hub_basis), "return flight restores exact hub orientation")
+		check(main.camera_pivot.global_basis.is_equal_approx(inward_basis), "return flight finishes exactly facing into the hub")
 	check(arrivals == [1, 0, 1, 0], "two round trips emit one arrival per room change")
 	await _capture("hub-returned")
 	main.queue_free()

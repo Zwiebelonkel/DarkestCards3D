@@ -12,15 +12,30 @@ bleiben die Messer ohne Karte. Fundhistorie und gespeicherte Türfreischaltung
 verhindern eine erneute Anzeige auch ohne verbliebene Kartenkopie.
 Ihr goldenes Schlüsselmotiv verwendet ein grobes Pixelraster.
 
-In ihrer Detailansicht ersetzt **Zur Tür** den Deck-Button. Die Karte fährt
-zurück, der Blick dreht sich zur Tür, und erst dann schwingt diese auf. Der
-Spieler bleibt davor stehen und kann sie anschließend anklicken, um zum
-Automaten zu gehen. Der Rückweg bleibt verfügbar. Die Karte bleibt erhalten,
-und der freigeschaltete Zugang wird mit der Sammlung gespeichert. Ein kompletter
-Spielreset entfernt Karte und Freischaltung.
+In der freien Ansicht des Hauptraums klappt am unteren Bildschirmrand eine Schlüsselablage
+hoch, entsprechend der Level-Anzeige am oberen Rand. Sie zeigt alle eigenen,
+noch unbenutzten Zugangsschlüssel. Im Hauptraum dreht ein Klick den Blick zur
+passenden Tür, die anschließend aufschwingt. Der Spieler bleibt davor stehen
+und kann sie anklicken, um den Raum zu betreten. In den Nebenräumen lässt sich
+die Schlüsselablage weder öffnen noch benutzen.
 
-Die Sammlung aus dem Hauptmenü übergibt dieselbe Aktion an Main. Dort endet
-zuerst der Aufwach-Blur, damit die anschließende Türöffnung sichtbar ist.
+Der Besitz allein öffnet keinen Zugang. Alle vier Türen bleiben gesperrt,
+bis der passende Schlüssel über die Ablage benutzt und die Freischaltung
+erfolgreich gespeichert wurde. Ein Türklick kann die Benutzung nicht ersetzen.
+
+Nach erfolgreichem Speichern verschwindet der benutzte Schlüssel aus der Ablage.
+Besitz und Karteninstanz bleiben in der Sonderkartensammlung erhalten. Die normale
+Sammlung zeigt keine Zugangsschlüssel mehr. Ein kompletter Spielreset entfernt
+Karten und Freischaltungen.
+
+Sobald alle Zugangsschlüssel benutzt sind, verschwindet die gesamte Ablage
+einschließlich Scharnier. Sie lässt sich dann auch am Bildschirmrand nicht
+mehr öffnen. Nach einem Spielreset steht sie wieder zur Verfügung.
+
+Die Ablage verwendet `metadata.slot_room_unlocked` und `metadata.area_access`
+auch für ältere Spielstände: Bereits geöffnete Zugänge gelten als benutzt,
+ein lediglich besessener Schlüssel bleibt in der Ablage. Sie ist während Kämpfen,
+Dialogen, Detailansichten, Pause und Kamerafahrten gesperrt.
 
 Die Kameradrehung kann über `Main.door_key_look_duration` angepasst werden.
 Der Status liegt in `collection.metadata.slot_room_unlocked`; die Karten-ID

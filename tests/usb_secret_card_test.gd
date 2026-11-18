@@ -41,7 +41,7 @@ func _run() -> void:
 		if secret.get("rarity") == "secret":
 			secret_ids.append(str(secret.get("id")))
 	secret_ids.sort()
-	check(secret_ids == ["cigarettes", "moewenmilch", "usb_stick"], "only the three live 3D prop cards use the Secret rarity")
+	check(secret_ids == ["cigarettes", "dman", "moewenmilch", "usb_stick"], "the three live 3D prop cards and image-based DMAN use the Secret rarity")
 	check(CardDatabase.get_card("developer").get("rarity") == "exotic" and CardDatabase.get_card("missing_texture").get("rarity") == "exotic", "Developer and Missing Texture return to Exotic")
 	_make_stage()
 	for config: Dictionary in PROP_SECRETS:

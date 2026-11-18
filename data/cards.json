@@ -60,7 +60,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":1,
-	"effects": [{ "type": "random_damage", "min": 0.5, "max": 1.8 }]
+	"effects": [{ "type": "random_damage", "min": 0.75, "max": 2.0 }]
   },
   {
 	"id": "snaker",
@@ -200,7 +200,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":1,
-	"effects": [{ "type": "random_damage", "min": 0.75, "max": 1.25 }]
+	"effects": [{ "type": "random_damage", "min": 0.75, "max": 2.0 }]
   },
   {
 	"id": "slave",
@@ -240,7 +240,7 @@
 	"rarity": "exotic",
 	"description": "This HÄNDLER accepts cash only..",
 	"image": "res://assets/cards/images/händler.png",
-	"effects": [{ "type": "draw_on_kill" }]
+	"effects": [{ "type": "draw_on_death" }]
   },
   {
 	"id": "headshot",
@@ -355,7 +355,7 @@
 	"frame_columns":6,
 	"frame_rows":1,
 	"frame_fps":7,
-	"effects": [{ "type": "draw_on_kill" }]
+	"effects": [{ "type": "draw_on_death" }]
   },
   {
 	"id": "toaster",
@@ -435,7 +435,7 @@
 	"frame_columns":2,
 	"frame_rows":1,
 	"frame_fps":2,
-	"effects": [{ "type": "random_damage", "min": 0.75, "max": 1.5 }]
+	"effects": [{ "type": "random_damage", "min": 0.75, "max": 2.0 }]
   },
   {
 	"id": "observer",
@@ -481,6 +481,23 @@
 	"frame_rows":1,
 	"frame_fps":4,
 	"effects": [{ "type": "double_strike" }]
+  },
+  {
+	"id": "dman",
+	"name": "DMAN",
+	"attack": 20,
+	"defense": 20,
+	"rarity": "secret",
+	"description": "funny streamer from america. Loves indie games. Loves me. AMERICA MENTIONED!!",
+	"image": "res://assets/cards/images/dman.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":3,
+	"random_reward": false,
+	"reward_weight": 0,
+	"effects": []
   },
   {
 	"id": "usb_stick",
@@ -579,7 +596,7 @@
 	"frame_columns":4,
 	"frame_rows":1,
 	"frame_fps":8,
-	"effects": [{ "type": "random_damage", "min": 0.25, "max": 2.0 }]
+	"effects": [{ "type": "random_damage", "min": 0.75, "max": 2.0 }]
   },
   {
 	"id": "wandering_soul",
@@ -673,17 +690,7 @@
 	"rarity": "mythic",
 	"description": "Lets you buy anything you want, someone else will cover the credit... probably.",
 	"image": "res://assets/cards/images/creditcard.png",
-	"effects": [
-	  {
-		"type": "shield_first_hit"
-	  },
-	  {
-		"type": "grave_return"
-	  },
-	  {
-		"type": "swap_stats"
-	  }
-	]
+	"effects": [{ "type": "eternal_suffering" }]
   },
   {
 	"id": "bat",
@@ -875,7 +882,7 @@
   "defense": 6,
   "rarity": "common",
   "description": "Joe used to steal golden trophies back in the day!",
-  "image": "res://assets/cards/images/cactus.png",
+  "image": "res://assets/cards/images/joe.png",
   "effects": [
 	{
 	  "type": "thorns",
@@ -1450,7 +1457,12 @@
   "defense": 2,
   "rarity": "common",
   "description": "Lives in your walls. Pays no rent.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/rat.png",
+  "animated": true,
+  "frame_count": 2,
+  "frame_columns": 2,
+  "frame_rows": 1,
+  "frame_fps": 2,
   "effects": []
 },
 {
@@ -1461,7 +1473,12 @@
   "defense": 4,
   "rarity": "common",
   "description": "He has seen things.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/streetDog.png",
+  "animated": true,
+  "frame_count": 2,
+  "frame_columns": 2,
+  "frame_rows": 1,
+  "frame_fps": 2,
   "effects": []
 },
 {
@@ -1565,7 +1582,12 @@
   "defense": 8,
   "rarity": "common",
   "description": "One wheel is always broken.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/shoppingCart.png",
+	"animated":true,
+	"frame_count":4,
+	"frame_columns":4,
+	"frame_rows":1,
+	"frame_fps":7,
   "effects": []
 },
 {
@@ -1576,7 +1598,12 @@
   "defense": 3,
   "rarity": "common",
   "description": "Nobody knows where the other one went.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/sock.png",
+	"animated":true,
+	"frame_count":3,
+	"frame_columns":3,
+	"frame_rows":1,
+	"frame_fps":5,
   "effects": []
 },
 {
@@ -1587,7 +1614,12 @@
   "defense": 3,
   "rarity": "common",
   "description": "The upgraded version nobody asked for.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/sewerRat.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":4,
   "effects": []
 },
 {
@@ -1598,7 +1630,12 @@
   "defense": 7,
   "rarity": "uncommon",
   "description": "Sideways movement. Forward aggression.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/crab.png",
+	"animated":true,
+	"frame_count":6,
+	"frame_columns":6,
+	"frame_rows":1,
+	"frame_fps":10,
   "effects": [
 	{
 	  "type": "thorns",
@@ -1614,7 +1651,12 @@
   "defense": 10,
   "rarity": "uncommon",
   "description": "He is not paid enough for this.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/bodyguard.png",
+	"animated":true,
+	"frame_count":9,
+	"frame_columns":9,
+	"frame_rows":1,
+	"frame_fps":24,
   "effects": [
 	{
 	  "type": "armor",
@@ -1639,8 +1681,8 @@
   "effects": [
 	{
 	  "type": "random_damage",
-	  "min": 0.5,
-	  "max": 1.5
+	  "min": 0.75,
+	  "max": 2.0
 	}
   ]
 },
@@ -1668,7 +1710,12 @@
   "defense": 8,
   "rarity": "uncommon",
   "description": "Error. Violence module still operational.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/brokenRobot.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
   "effects": []
 },
 {
@@ -1679,7 +1726,12 @@
   "defense": 6,
   "rarity": "uncommon",
   "description": "Business is painful.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/cactusDealer.png",
+	"animated":true,
+	"frame_count":3,
+	"frame_columns":3,
+	"frame_rows":1,
+	"frame_fps":3,
   "effects": [
 	{
 	  "type": "thorns",
@@ -1695,7 +1747,12 @@
   "defense": 9,
   "rarity": "uncommon",
   "description": "Something down there knows his name.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/sewerWorker.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":5,
   "effects": [
 	{
 	  "type": "armor",
@@ -1713,7 +1770,12 @@
   "defense": 5,
   "rarity": "uncommon",
   "description": "Peace was never an option.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/angryGoose.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":3,
   "effects": []
 },
 {
@@ -1724,12 +1786,17 @@
   "defense": 8,
   "rarity": "uncommon",
   "description": "One man's trash is another man's problem.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/trashMonster.png",
+	"animated":true,
+	"frame_count":5,
+	"frame_columns":5,
+	"frame_rows":1,
+	"frame_fps":10,
   "effects": [
 	{
 	  "type": "random_damage",
 	  "min": 0.75,
-	  "max": 1.25
+	  "max": 2.0
 	}
   ]
 },
@@ -1741,7 +1808,12 @@
   "defense": 5,
   "rarity": "uncommon",
   "description": "There are more rats than king.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/ratKing.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":15,
   "effects": [
 	{
 	  "type": "swarm_power"
@@ -1756,7 +1828,12 @@
   "defense": 8,
   "rarity": "rare",
   "description": "Fresh meat. Questionable origin.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/butcher.png",
+	"animated":true,
+	"frame_count":4,
+	"frame_columns":4,
+	"frame_rows":1,
+	"frame_fps":9,
   "effects": [
 	{
 	  "type": "cleave",
@@ -1772,7 +1849,12 @@
   "defense": 12,
   "rarity": "rare",
   "description": "He arrived eventually.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/paramedic.png",
+	"animated":true,
+	"frame_count":4,
+	"frame_columns":4,
+	"frame_rows":1,
+	"frame_fps":5,
   "effects": [
 	{
 	  "type": "neighbor_heal",
@@ -1789,7 +1871,12 @@
   "defense": 10,
   "rarity": "rare",
   "description": "You're not on the list.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/bouncer.png",
+	"animated":true,
+	"frame_count":6,
+	"frame_columns":6,
+	"frame_rows":1,
+	"frame_fps":8,
   "effects": [
 	{
 	  "type": "armor",
@@ -1823,7 +1910,12 @@
   "defense": 5,
   "rarity": "rare",
   "description": "Do not pet.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/rabidDog.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":5,
   "effects": [
 	{
 	  "type": "poison",
@@ -1840,7 +1932,12 @@
   "defense": 13,
   "rarity": "rare",
   "description": "Death is mostly administrative.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/cultist.png",
+	"animated":true,
+	"frame_count":2,
+	"frame_columns":2,
+	"frame_rows":1,
+	"frame_fps":2,
   "effects": [
 	{
 	  "type": "grave_return"
@@ -1871,7 +1968,12 @@
   "defense": 12,
   "rarity": "rare",
   "description": "Repairs everything except itself.",
-  "image": "res://assets/effects/placeholder.png",
+  "image": "res://assets/cards/images/repairBot.png",
+	"animated":true,
+	"frame_count":6,
+	"frame_columns":6,
+	"frame_rows":1,
+	"frame_fps":4,
   "effects": [
 	{
 	  "type": "neighbor_heal",
@@ -1879,5 +1981,77 @@
 	  "description": "At the start of its turn, heals adjacent allies by 1 HP."
 	}
   ]
+},
+{
+  "id": "toilet_paper",
+  "name": "Toilet Paper",
+  "category": "special",
+  "random_reward": false,
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "access_key": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Give this card to the prisoner to receive Holy Water.",
+  "flavor_text": "The most valuable roll in the basement.",
+  "requires": [],
+  "upgrade_modifiers": {},
+  "image": "res://assets/cards/images/toilet_paper.res",
+  "effects": []
+},
+{
+  "id": "holy_water",
+  "name": "Holy Water",
+  "category": "special",
+  "card_group": "story_cards",
+  "random_reward": false,
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "A special story card received from the prisoner in exchange for Toilet Paper.",
+  "flavor_text": "A small blessing behind bars.",
+  "requires": [],
+  "upgrade_modifiers": {},
+  "image": "res://assets/cards/images/holy_water.res",
+  "effects": []
+},
+{
+  "id": "jester_eye",
+  "name": "Jester Eye",
+  "category": "special",
+  "random_reward": false,
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "access_key": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "Give this card to the Jester to receive a Crucifix.",
+  "flavor_text": "An eye for the right pressure.",
+  "requires": [],
+  "upgrade_modifiers": {},
+  "image": "res://assets/cards/images/jester_eye.res",
+  "effects": []
+},
+{
+  "id": "crucifix",
+  "name": "Crucifix",
+  "category": "special",
+  "card_group": "story_cards",
+  "random_reward": false,
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "A special story card received from the Jester in exchange for the Jester Eye.",
+  "flavor_text": "A sacred gift from an unlikely keeper.",
+  "requires": [],
+  "upgrade_modifiers": {},
+  "image": "res://assets/cards/images/crucifix.res",
+  "effects": []
 }
 ]

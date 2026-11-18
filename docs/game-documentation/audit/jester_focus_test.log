@@ -1,0 +1,56 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS Jester fixture explicitly activates graveyard access
+PASS Jester is unavailable from the hub
+PASS actual door flight enters the graveyard
+PASS room turning reaches the requested view
+PASS west view registers and enables the Jester station
+PASS Jester hover preserves the current frame and its elapsed time
+PASS leaving the Jester restores idle at the same animation phase
+PASS Jester hover animation continues during camera focus
+PASS real NPC hover starts the shared station focus
+PASS same-side shop in another room remains excluded even if erroneously pickable
+PASS foreign-room mouse enter cannot replace the Jester focus
+PASS hover swings the camera closer to the NPC
+PASS station focus remains stable without pointer movement
+PASS actual NPC click opens its dialog
+PASS Jester dialog clears the hover hint
+PASS the real Jester dialogue contains no buttons
+PASS the real dialog begins by typewriting only its first localized sentence
+PASS dialog locks turning, doors and the book
+PASS dialog keeps the station framing while reading
+PASS gravestones use their localized card names in de
+PASS dialog keeps only its first localized sentence visible in de
+PASS gravestones use their localized card names in en
+PASS dialog keeps only its first localized sentence visible in en
+PASS gravestones use their localized card names in es
+PASS dialog keeps only its first localized sentence visible in es
+PASS gravestones use their localized card names in fr
+PASS dialog keeps only its first localized sentence visible in fr
+PASS gravestones use their localized card names in pl
+PASS dialog keeps only its first localized sentence visible in pl
+PASS a completed first sentence clears before the real scene starts the second on click
+FAIL Escape closes dialog without also opening pause
+PASS first gravestone offers its requested owned copy
+PASS offering preview shows the exact requested card
+FAIL outside candidate click closes without saving, consuming, or awarding any card
+PASS the canceled exact copy can be reviewed again
+PASS offering instructions are visible in the text panel
+PASS clicking inside the text panel consumes the first reviewed offering
+PASS first offering persists without granting a premature Secret
+FAIL a click inside the acknowledgement closes it
+PASS partial progress survives collection reload in the real scene
+PASS second gravestone accepts Harald independently
+PASS second offering commits the one-time reward
+PASS Jester presents the awarded Secret with its real card material
+FAIL closing the receipt by outside click cannot grant a second Secret
+FAIL the completed NPC can speak again before the pause regression
+FAIL pausing immediately closes the text dialogue and disables the station
+PASS pause restores the camera before the tree stops
+PASS room turning reaches the requested view
+PASS the player can turn and leave through the real door after the offering
+PASS leaving clears Jester focus and restores the hub camera
+JESTER_FOCUS_TESTS: FAIL (50 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

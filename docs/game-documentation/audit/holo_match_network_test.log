@@ -1,0 +1,37 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS loopback ENet server starts
+PASS joined-client ENet transport starts
+PASS separate host and joined-client peers connect
+PASS Two copies of one card type produce two battle instances
+PASS Aggregated deck selects the stored Holo occurrence first
+PASS Second deck occurrence keeps its separate normal identity
+PASS Existing type upgrades apply once to Holo and normal copies
+PASS Rebuilding a deck neither rerolls Holo nor mutates stored instances
+PASS Online handshake uses the same upgraded saved instances as the local deck
+PASS Host validation preserves Holo identity and cosmetic flag
+PASS Host validation preserves the separate normal copy
+PASS Remote cosmetic metadata accepts only a boolean and bounded text identity
+PASS Remote instance identities are bounded before becoming authoritative state
+PASS Legacy handshake cards without Holo remain normal
+PASS Authoritative deck construction retains both validated cosmetic variants
+PASS Authoritative match deck is independent of the received payload
+PASS Actual ENet snapshot mirrors Holo and normal instances to the guest
+PASS Guest sees exactly the host's Holo flags on both table sides
+PASS Board snapshots include each visible card's Holo state
+PASS Same-type replacement swaps saved Holo identities over ENet
+PASS Different occurrences replace the old card nodes instead of reusing one identity
+PASS Replacement presentation keeps the incoming Holo flag on each side
+PASS Legacy same-type cards with different Holo flags are distinct replacements
+PASS Switch accepts two saved cosmetic variants
+PASS Switch transfers whole Holo and normal instances without rerolling
+PASS Steel fixture draws the saved Holo target
+PASS Steel accepts the opponent's Holo instance
+PASS Steel puts the original Holo instance into the receiving deck
+PASS Redrawing a stolen Holo retains cosmetic identity and match health
+PASS Steel replacement draws the other saved normal instance
+REPLACEMENT_NETWORK_TESTS: PASS
+HOLO_MATCH_NETWORK_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

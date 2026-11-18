@@ -1,0 +1,92 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS unowned keys and ordinary cards cannot be activated
+PASS slot_room_key maps to its intended room
+PASS black_market_access maps to its intended room
+PASS graveyard_key maps to its intended room
+PASS basement_key maps to its intended room
+PASS all four owned keys start unused
+PASS slot_room_key save failure cannot mark the key used or permit room access
+PASS black_market_access save failure cannot mark the key used or permit room access
+PASS graveyard_key save failure cannot mark the key used or permit room access
+PASS basement_key save failure cannot mark the key used or permit room access
+PASS failed activations preserve inventory, metadata, notifications and committed save bytes
+PASS slot_room_key ownership alone cannot permit room access
+PASS black_market_access ownership alone cannot permit room access
+PASS graveyard_key ownership alone cannot permit room access
+PASS basement_key ownership alone cannot permit room access
+PASS slot_room_key successful activation grants access and removes only its unused action
+PASS slot_room_key repeated activation is a no-op
+PASS black_market_access successful activation grants access and removes only its unused action
+PASS black_market_access repeated activation is a no-op
+PASS graveyard_key successful activation grants access and removes only its unused action
+PASS graveyard_key repeated activation is a no-op
+PASS basement_key successful activation grants access and removes only its unused action
+PASS basement_key repeated activation is a no-op
+PASS all used flags and exact owned key instances survive reload
+PASS legacy persisted activation flags retain access without requiring another key use
+PASS the real 3D key tray starts folded beneath the exploration camera
+PASS combat ownership alone leaves the key tray empty
+PASS acquiring a key immediately adds only that owned unused key
+PASS all four owned unused access keys appear together
+PASS ordinary lower-screen movement does not prematurely open the tray
+PASS hovering the bottom edge fully unfolds the physical tray
+PASS all tray entries render their actual access-card artwork
+PASS moving above the panel folds it completely away
+PASS disabled tray ignores bottom-edge hover
+PASS losing window focus immediately stows the tray
+PASS Pause stows the tray before any key can be used
+PASS queued activation cannot use a key through Pause
+PASS the journal modal blocks lower-edge tray activation
+PASS starting a camera turn stows the expanded tray immediately
+PASS real shop hover still focuses its station before opening the key tray
+PASS opening the tray releases the shop focus and settles its own screen-space layout
+PASS slot_room_key room stays locked until its explicit tray action
+PASS slot_room_key right click cannot activate its tray entry
+PASS slot_room_key real left click requests exactly its own door reveal
+PASS slot_room_key remains unused until the camera finishes looking at its door
+PASS slot_room_key door reveal finishes within bounded time
+PASS slot_room_key successful reveal opens access and removes its tray tile
+PASS slot_room_key opens the intended physical doorway in the center of the camera
+PASS slot_room_key door visibly swings open without teleporting the player
+PASS slot_room_key duplicate activation cannot replay the camera sequence
+PASS black_market_access room stays locked until its explicit tray action
+PASS black_market_access right click cannot activate its tray entry
+PASS black_market_access real left click requests exactly its own door reveal
+PASS black_market_access remains unused until the camera finishes looking at its door
+PASS black_market_access door reveal finishes within bounded time
+PASS black_market_access successful reveal opens access and removes its tray tile
+PASS black_market_access opens the intended physical doorway in the center of the camera
+PASS black_market_access door visibly swings open without teleporting the player
+PASS black_market_access duplicate activation cannot replay the camera sequence
+PASS graveyard_key room stays locked until its explicit tray action
+PASS graveyard_key right click cannot activate its tray entry
+PASS graveyard_key real left click requests exactly its own door reveal
+PASS graveyard_key remains unused until the camera finishes looking at its door
+PASS graveyard_key door reveal finishes within bounded time
+PASS graveyard_key successful reveal opens access and removes its tray tile
+PASS graveyard_key opens the intended physical doorway in the center of the camera
+PASS graveyard_key door visibly swings open without teleporting the player
+PASS graveyard_key duplicate activation cannot replay the camera sequence
+PASS basement_key room stays locked until its explicit tray action
+PASS basement_key right click cannot activate its tray entry
+PASS basement_key real left click requests exactly its own door reveal
+PASS basement_key remains unused until the camera finishes looking at its door
+PASS basement_key door reveal finishes within bounded time
+PASS basement_key successful reveal opens access and removes its tray tile
+PASS basement_key opens the intended physical doorway in the center of the camera
+PASS basement_key door visibly swings open without teleporting the player
+PASS basement_key duplicate activation cannot replay the camera sequence
+PASS using all four tray actions keeps exact card instances, balance and combat deck unchanged
+PASS after all four activations the entire tray and its hinges disappear and cannot receive input
+PASS reload keeps the completed key tray hidden
+PASS all four used keys remain owned and displayed in the special wall collection
+PASS bottom-edge hover cannot reopen the tray after every key was used
+PASS an explicitly used basement key permits a normal physical doorway click
+PASS normal doorway travel reaches the basement after tray activation
+ACCESS_KEY_TRAY_TESTS: PASS (84 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

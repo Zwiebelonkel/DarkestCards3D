@@ -17,10 +17,11 @@
   {"type":"shield_first_hit","name":"Shield First Hit","rarity":"rare","description":"Der erste Treffer verursacht keinen Schaden."},
   {"type":"swarm_power","name":"Swarm Power","rarity":"exotic","description":"Schaden skaliert mit identischen Karten auf dem Feld."},
   {"type":"grave_return","name":"Grave Return","rarity":"exotic","description":"Wird nach dem Tod einmal wiederbelebt."},
-  {"type":"draw_on_kill","name":"Draw On Kill","rarity":"rare","description":"Zieht nach einem Kill eine Event-Karte vom gemeinsamen Stapel auf deine Hand. Vor dem nächsten Angriff ausspielbar."},
+  {"type":"draw_on_death","name":"Draw On Death","rarity":"rare","description":"Zieht beim Tod dieser Karte eine Event-Karte vom gemeinsamen Stapel auf deine Hand."},
   {"type":"curse","name":"Curse","rarity":"rare","value":2,"description":"Reduziert dauerhaft den Angriff des Gegners."},
   {"type":"swap_stats","name":"Swap Stats","rarity":"epic","description":"Tauscht Angriff und Verteidigung."},
-  {"type":"random_damage","name":"Random Damage","rarity":"common","min":0.75,"max":1.25,"description":"Schaden variiert zufällig."},
+  {"type":"random_damage","name":"Random Damage","rarity":"common","min":0.75,"max":2.0,"description":"Schaden variiert zufällig."},
   {"type":"bodyguard","name":"Bodyguard","rarity":"rare","percent":0.5,"description":"Übernimmt Schaden benachbarter Karten."},
-  {"type":"neighbor_heal","name":"Neighbor Heal","rarity":"common","value":2,"description":"Heilt benachbarte eigene Karten zu Beginn des eigenen Zuges."}
+  {"type":"neighbor_heal","name":"Neighbor Heal","rarity":"common","value":2,"description":"Heilt benachbarte eigene Karten zu Beginn des eigenen Zuges."},
+  {"type":"eternal_suffering","name":"Eternal Suffering","rarity":"mythic","description":"Opfert sich beim Angriff und belegt das Ziel mit Ewigem Leiden: 1 Schaden, danach pro eigenem Zug 2 mehr. Nur Nachbarheilung entfernt den Zustand."}
 ]

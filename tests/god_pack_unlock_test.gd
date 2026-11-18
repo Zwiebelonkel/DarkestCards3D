@@ -35,6 +35,7 @@ func _run() -> void:
 		push_error("Run god_pack_unlock_test.tscn through run_match_feature_tests.ps1 to isolate player saves.")
 		get_tree().quit(1)
 		return
+	Localization.set_locale("de")
 	GameCurrency.level = 9
 	GameCurrency.xp = 0
 	_set_coins(100.0)
@@ -43,20 +44,35 @@ func _run() -> void:
 	var ui := shop.ui
 	var screen := shop.pack_opening_screen
 	screen.pack_opening_started.connect(func(): purchases += 1)
+	GameCurrency.level = 4
+	_set_coins(100.0)
+	ui.pack_previews["ultra"]._gui_input(_left_click())
+	check(ui.buy_button.disabled and ui.buy_button.text == PackDefinition.get_unlock_message("ultra") and ui.pack_previews["ultra"].state_label.text == Localization.format_text("AB LEVEL %d", [5]), "Ultra preview and purchase controls show the level-5 lock")
+	ui._on_buy_button_pressed()
+	shop._on_pack_buy_pressed("ultra")
+	var ultra_data: Dictionary = PackDefinition.PACK_TYPES["ultra"].duplicate(true)
+	ultra_data["minimum_level"] = 1
+	check(not screen.buy_pack("ultra", ultra_data) and purchases == 0 and is_equal_approx(GameCurrency.coins, 100.0), "All Ultra purchase paths reject level 4 even with a forged requirement")
+	GameCurrency.add_xp(GameCurrency.get_xp_required())
+	check(GameCurrency.get_level() == 5 and not ui.buy_button.disabled and ui.pack_previews["ultra"].state_label.text == "AUSGEWÄHLT", "Level-up to 5 immediately unlocks Ultra in the open shop")
+	GameCurrency.level = 9
+	GameCurrency.xp = 0
+	_set_coins(100.0)
 	var god_data: Dictionary = PackDefinition.PACK_TYPES["god"].duplicate(true)
 	var cost := int(god_data["cost"])
 	var collection_before := CollectionManager.collection.duplicate(true)
 	var weights_before := CardDatabase._current_pack_weights.duplicate(true)
 	var preview := ui.pack_previews["god"] as PackPreviewViewport
 	check(PackDefinition.get_minimum_level("god") == 10 and PackShopMachine.PACK_TYPES["god"]["minimum_level"] == 10, "God purchase requirement comes from the shared level-10 definition")
-	check(PackDefinition.is_unlocked("basic", 1) and PackDefinition.is_unlocked("ultra", 1), "Basic and Ultra remain available at the starting level")
-	check(preview.pack_model != null and not preview._locked and preview.state_label.text == "AB LEVEL 10", "Locked God preview keeps its model visible and displays the level requirement")
+	check(PackDefinition.is_unlocked("basic", 1), "Basic remains available at the starting level")
+	check(PackDefinition.get_minimum_level("ultra") == 5 and not PackDefinition.is_unlocked("ultra", 4) and PackDefinition.is_unlocked("ultra", 5), "Ultra unlocks at level 5 using the shared pack requirement")
+	check(preview.pack_model != null and not preview._locked and preview.state_label.text == Localization.format_text("AB LEVEL %d", [10]), "Locked God preview keeps its model visible and displays the level requirement")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
 	preview._gui_input(click)
 	check(ui.selected_pack_id == "god" and ui.info_title_label.text == "GOD PACK", "Level-9 player can select God to inspect its details")
-	check(ui.buy_button.disabled and ui.buy_button.text == "AB LEVEL 10 VERFÜGBAR" and ui.message_label.text.contains("DEIN LEVEL: 9"), "God purchase controls explain the level-9 lock despite sufficient coins")
+	check(ui.buy_button.disabled and ui.buy_button.text == PackDefinition.get_unlock_message("god") and ui.message_label.text == Localization.format_text("%s  //  DEIN LEVEL: %d", [PackDefinition.get_unlock_message("god"), 9]), "God purchase controls explain the level-9 lock despite sufficient coins")
 	await _capture_ui(shop, "locked")
 	ui._on_buy_button_pressed()
 	shop._on_pack_buy_pressed("god")
@@ -80,7 +96,7 @@ func _run() -> void:
 	check(not ui.buy_button.disabled, "Exactly the God pack price is sufficient at level 10")
 	GameCurrency.reset_progression(false)
 	_set_coins(100.0)
-	check(ui.selected_pack_id == "god" and ui.buy_button.disabled and preview.state_label.text == "AB LEVEL 10", "Progress reset immediately re-locks God while retaining the inspected selection")
+	check(ui.selected_pack_id == "god" and ui.buy_button.disabled and preview.state_label.text == Localization.format_text("AB LEVEL %d", [10]), "Progress reset immediately re-locks God while retaining the inspected selection")
 	check(not screen.buy_pack("god", god_data) and is_equal_approx(GameCurrency.coins, 100.0), "Reset progression also re-locks the direct purchase API")
 	GameCurrency.level = 9
 	GameCurrency.xp = 0
@@ -98,3 +114,10 @@ func _run() -> void:
 	await get_tree().process_frame
 	print("GOD_PACK_UNLOCK_TESTS: " + ("PASS" if failures == 0 else "FAIL") + " (%d checks)" % checks)
 	get_tree().quit(0 if failures == 0 else 1)
+
+
+func _left_click() -> InputEventMouseButton:
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	return click

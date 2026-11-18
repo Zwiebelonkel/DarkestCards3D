@@ -144,6 +144,7 @@ func _check_shop_integration() -> void:
 	_set_cards({"corpse": 1})
 	CardUpgradeManager.upgrades.clear()
 	GameCurrency.reset_progression(false)
+	GameCurrency._rescued_npcs["angel"] = true
 	GameCurrency.coins = 100.0
 	check(PackDefinition.get_price("basic") == 5.0 and CardUpgradeManager.get_stat_upgrade_cost("corpse") == 5.0, "Existing prices remain unchanged without Dealer License")
 	var shop := UPGRADE_SCENE.instantiate() as UpgradeMachine

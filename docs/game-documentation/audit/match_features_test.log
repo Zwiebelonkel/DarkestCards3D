@@ -1,0 +1,83 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS pack shop updates fractional balance through the currency signal
+PASS upgrade screen updates fractional balance through the currency signal
+PASS balance labels preserve two decimal places at whole amounts
+PASS spectator deck counts preserve host sides
+PASS spectator sees host cards on host side
+PASS spectator sees guest cards on guest side
+PASS spectator attack coordinates preserve host sides
+PASS spectator retains correct current fighter state
+PASS spectator cannot authorize fighter commands or ACKs
+PASS spectator camera looks vertically down
+PASS overhead view includes /root/Main/ScenePivot/GameTable/PlayerSlots/Slot0
+PASS overhead view includes /root/Main/ScenePivot/GameTable/EnemySlots/Slot4
+PASS overhead view includes /root/Main/ScenePivot/GameTable/PlayerDeck
+PASS overhead view includes /root/Main/ScenePivot/GameTable/EnemyDeck
+PASS spectator has a leave control during combat
+PASS 3D status label has been removed
+PASS 2D match status panel has been removed
+PASS flat XP panel has been removed
+PASS 3D level visor follows active shared camera
+PASS folded 3D progress keeps its hinge visible
+PASS top-edge pointer unfolds 3D progress
+PASS spectator view: missing Clicker card locks the button
+PASS spectator view: locked clicker grants no coins
+PASS spectator view: upgrade without unlock card cannot pay
+PASS spectator view: acquiring Clicker unlocks the open visor at 0.02 Soul Coins
+PASS spectator view: coin button projects inside the screen
+PASS spectator view: coin press consumes real viewport input before table picking
+PASS spectator view: one left press grants exactly two cents
+PASS spectator view: coin release is also consumed
+PASS spectator view: releasing the button grants no extra coins
+PASS spectator view: right click cannot inspect cards behind the visor
+PASS spectator view: right clicks grant no coins
+PASS spectator view: five rapid clicks grant exactly ten cents
+PASS spectator view: clicking preserves level and XP
+PASS spectator view: clicker cents persist exactly in the isolated profile
+PASS spectator view: physical balance label immediately includes both decimal places
+PASS spectator view: the rest of the panel blocks clicks into the table
+PASS spectator view: clicking outside the coin button grants no coins
+PASS spectator view: paused visor cannot grant coins
+PASS spectator view: folded disabled visor cannot grant coins
+PASS spectator view: two owned upgrades immediately raise the click to 0.04 Soul Coins
+PASS spectator view: upgraded click credits exactly four more cents
+PASS spectator view: another unlock grant cannot increase the click payout
+PASS spectator view: changing the inventory restores the correct lock and payout
+PASS leaving the top region folds progress while preserving the hinge
+PASS spectator card clicks cannot select or attack
+PASS spectator keeps overhead view on right click
+PASS spectator gets no result XP or money
+PASS completed spectator result survives host exit
+PASS fighter client still receives mirrored deck counts
+PASS fighter client still receives its own near cards
+PASS repeated winning snapshots grant match coins, XP and level bonus exactly once
+PASS result retains match coins, XP and level bonus without a status label
+[OnlineSession 8493] leave requested: Zuschauen beendet.
+PASS spectator exits independently to table menu
+PASS host=true, win: result pays coins and XP exactly once without a level-up
+PASS host=true, win: menu cleanup during exit cannot enable a second payout
+PASS host=true, draw: result pays coins and XP exactly once without a level-up
+PASS host=true, draw: menu cleanup during exit cannot enable a second payout
+PASS host=true, loss: result pays coins and XP exactly once without a level-up
+PASS host=true, loss: menu cleanup during exit cannot enable a second payout
+PASS host=false, win: result pays coins and XP exactly once without a level-up
+PASS host=false, win: menu cleanup during exit cannot enable a second payout
+PASS host=false, draw: result pays coins and XP exactly once without a level-up
+PASS host=false, draw: menu cleanup during exit cannot enable a second payout
+PASS host=false, loss: result pays coins and XP exactly once without a level-up
+PASS host=false, loss: menu cleanup during exit cannot enable a second payout
+PASS win: offline board determines the completed result
+PASS win: offline result pays coins and XP once despite repeated completion calls
+PASS draw: offline board determines the completed result
+PASS draw: offline result pays coins and XP once despite repeated completion calls
+PASS loss: offline board determines the completed result
+PASS loss: offline result pays coins and XP once despite repeated completion calls
+[OnlineSession 8601] peer teardown completed
+PASS main menu has no remaining flat profile overlay
+PASS main menu contains no clicker visor
+PASS opening settings does not restore the main-menu clicker
+MATCH_FEATURE_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

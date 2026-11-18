@@ -1,0 +1,40 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS exactly one of 100 independent roll outcomes is Holo
+PASS plain construction and data lookup never roll a finish
+PASS legacy counts migrate as non-Holo without retroactive rolls
+PASS pre-rolled acquisition retains its exact identity and Holo flag
+PASS repeated collection of the same instance cannot duplicate rewards
+PASS save/reload preserves Holo and grouped collection prefers the owned Holo copy
+PASS deck occurrences use distinct owned finishes without promoting every copy
+PASS repeated card types resolve to distinct saved identities
+PASS display dictionaries cannot mutate persistent ownership
+PASS merging gameplay effects preserves finish metadata
+PASS ordinary cards retain their original artwork material
+PASS Holo adds the existing holo.gdshader as an extra artwork pass
+PASS card back materials stay identical and do not reveal hidden finishes
+PASS Holo retains the original rarity-independent shine pass
+PASS rarity outline and its existing color remain unchanged
+PASS different owned cards never share mutable foil materials
+PASS the Holo pass samples the original card artwork
+PASS animated artwork and foil use the exact same spritesheet frame
+PASS blood overlays coexist with the extra Holo artwork pass
+PASS blood fading never removes the persistent Holo finish
+PASS network reconstruction retains the same finish and shader
+PASS repeated setup reuses one foil pass without growing a material chain
+PASS reused Holo nodes return completely to ordinary materials
+PASS normal-to-Holo reuse restores the same additional passes
+PASS each pack card receives its finish and persistent identity before reveal
+PASS reveal queues the exact rolled instances once, including Holo
+PASS revealing alone does not yet award duplicate collection entries
+PASS pack retry fixture blocks saving before collection
+PASS failed pack save keeps every revealed copy available for a collect retry
+PASS collecting stores the visible Holo instance exactly once without another roll
+PASS the real collection screen renders the persisted Holo finish
+PASS refreshing shared card-type upgrades preserves Holo identity
+HOLO_CARDS_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

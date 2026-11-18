@@ -55,10 +55,13 @@ var _first_hit_shield_available: bool = false
 var _last_stand_available: bool = false
 var _grave_return_available: bool = false
 var _skip_next_attack: bool = false
+var _curse_penalty: int = 0
+var eternal_suffering_damage: int = 0
+var _combat_indicators: COMBAT_INDICATORS_SCRIPT
 var _disabled := false
 var event_block_turns: int = 0
+var stats_hidden := false # Local viewer presentation; never changes combat state.
 var _event_block_badge: Node3D
-var _event_block_label: Label3D
 
 # Transient match data travels with stolen cards in a battle deck. It is never
 # written back to CardDatabase, the collection, or a player's saved deck.
@@ -78,6 +81,7 @@ var _frame_timer := 0.0
 signal died(card: Card3D)
 signal card_hovered(card: Card3D)
 signal card_unhovered(card: Card3D)
+signal combat_effects_changed(card: Card3D)
 
 # Wird genau am Scheitelpunkt der Angriffsanimation ausgeloest (nach
 # dem Hinflug + "Rammstoss", bevor die Karte wieder zurueckfliegt).
@@ -108,6 +112,8 @@ const HOLO_SHADER := preload("res://assets/shader/holo.gdshader")
 const SPECIAL_AURA_SHADER := preload("res://assets/shader/special_card_aura.gdshader")
 const DEATH_DISSOLVE_SCRIPT := preload("res://scripts/card/CardDeathDissolve.gd")
 const DIORAMA_SCRIPT := preload("res://scripts/card/CardDiorama.gd")
+const COMBAT_INDICATORS_SCRIPT := preload("res://scripts/card/CardCombatIndicators.gd")
+const EVENT_BLOCK_KNIFE_SCENE := preload("res://scenes/effects/EventBlockKnife.tscn")
 var _death_dissolve: RefCounted
 var _diorama_art: CardDiorama
 var _diorama_scene_path := ""
@@ -127,7 +133,6 @@ var _select_base_position: Vector3 = Vector3.ZERO
 var _select_tween: Tween = null
 var _has_select_base_position := false
 var _is_card_hovered := false
-const EFFECT_ICON_PATH := "res://assets/effects/"
 const EFFECT_PLACEHOLDER := "res://assets/effects/placeholder.png"
 const EFFECT_ICON_HOLO_SHADER := preload("res://assets/shader/effect_icon_holo.gdshader")
 
@@ -175,6 +180,10 @@ func _ready() -> void:
 		return
 
 	_connect_card_hover_area()
+	_combat_indicators = COMBAT_INDICATORS_SCRIPT.new()
+	_combat_indicators.name = "CombatIndicators"
+	add_child(_combat_indicators)
+	_combat_indicators.configure([effect_icon_1, effect_icon_2])
 	Localization.locale_changed.connect(_on_locale_changed)
 	_refresh_localized_text()
 
@@ -203,7 +212,12 @@ func _process(delta: float) -> void:
 func begin_death_dissolve() -> void:
 	if _death_dissolve != null:
 		return
+	if is_instance_valid(_event_block_badge):
+		_event_block_badge.reset()
 	_death_dissolve = DEATH_DISSOLVE_SCRIPT.new()
+	# Stop indicator tweens before dissolve replaces the seal materials.
+	if _combat_indicators != null:
+		_combat_indicators.retire()
 	# Keep the exact currently displayed atlas frame for the whole flight.
 	_animated_image = false
 	var body := card_model.get_node_or_null("Cube") as MeshInstance3D
@@ -240,6 +254,10 @@ func _ensure_materials_resolved() -> void:
 
 
 func setup(data: Dictionary) -> void:
+	if _combat_indicators != null:
+		_combat_indicators.reset()
+	if is_instance_valid(_event_block_badge):
+		_event_block_badge.reset()
 	# Network snapshots rebuild the same card's art. They must neither clean
 	# its current stain nor restart its timer. A different card starts clean.
 	var previous_identity := str(card_data.get("instance_id", "")) + ":" + str(card_data.get("id", card_data.get("name", "")))
@@ -275,6 +293,12 @@ func setup(data: Dictionary) -> void:
 	_last_stand_available = CardData.has_effect(data, "last_stand")
 	_grave_return_available = CardData.has_effect(data, "grave_return")
 	_skip_next_attack = false
+	_curse_penalty = 0
+	eternal_suffering_damage = 0
+	if has_meta("eternal_suffering_spread"):
+		remove_meta("eternal_suffering_spread")
+	if has_meta("event_death_awarded"):
+		remove_meta("event_death_awarded")
 	event_block_turns = 0
 	_clear_poison_state()
 	if has_meta("chick_survived_turns"):
@@ -282,7 +306,7 @@ func setup(data: Dictionary) -> void:
 	if has_meta("last_survival_effect"):
 		remove_meta("last_survival_effect")
 
-	attack_label.text = str(attack)
+	attack_label.text = "?" if stats_hidden else str(attack)
 	_update_hp_label()
 	_refresh_localized_text(true)
 	effects_label.visible = false
@@ -300,9 +324,10 @@ func setup(data: Dictionary) -> void:
 	_apply_special_aura()
 	var saved_combat_state: Variant = data.get(EVENT_MATCH_STATE_KEY, {})
 	if saved_combat_state is Dictionary and not saved_combat_state.is_empty():
-		_restore_combat_state(saved_combat_state)
+		_restore_combat_state(saved_combat_state, false)
 	else:
-		_update_event_block_badge()
+		_update_event_block_badge(false)
+		_refresh_combat_indicators(false)
 
 
 func _on_locale_changed() -> void:
@@ -326,7 +351,7 @@ func _refresh_localized_text(animate_description: bool = false) -> void:
 		return
 	name_label.text = Localization.text(str(card_data.get("name", "Unknown")))
 	_fit_localized_label(name_label, 0.70)
-	var description := Localization.text(str(card_data.get("description", "")))
+	var description := "?" if stats_hidden else Localization.text(str(card_data.get("description", "")))
 	description_label.play(_wrap_text(description, 45))
 	if not animate_description:
 		description_label.skip()
@@ -427,12 +452,15 @@ func _clear_blood() -> void:
 
 
 func _update_hp_label() -> void:
-	defense_label.text = str(current_hp)
+	attack_label.text = "?" if stats_hidden else str(attack_value)
+	defense_label.text = "?" if stats_hidden else str(current_hp)
 
 
 func _build_effects_summary() -> String:
+	if stats_hidden:
+		return "?"
 	var effect_names: Array[String] = []
-	for effect in CardData.get_active_effects(card_data):
+	for effect in get_available_effects():
 		var label := _format_effect_label(effect)
 		if label != "":
 			effect_names.append(label)
@@ -474,6 +502,7 @@ func consume_first_hit_shield() -> bool:
 	if not _first_hit_shield_available:
 		return false
 	_first_hit_shield_available = false
+	_refresh_combat_indicators()
 	return true
 
 
@@ -488,12 +517,14 @@ func try_survive_death() -> bool:
 		current_hp = 1
 		_update_hp_label()
 		set_meta("last_survival_effect", "last_stand")
+		_refresh_combat_indicators()
 		return true
 	if _grave_return_available:
 		_grave_return_available = false
 		current_hp = int(max(round(float(max_hp) * 0.5), 1))
 		_update_hp_label()
 		set_meta("last_survival_effect", "grave_return")
+		_refresh_combat_indicators()
 		return true
 	return false
 
@@ -501,19 +532,111 @@ func try_survive_death() -> bool:
 func apply_curse(value: int) -> void:
 	if value <= 0:
 		return
+	_curse_penalty += mini(value, attack_value)
 	attack_value = int(max(attack_value - value, 0))
-	attack_label.text = str(attack_value)
+	_update_hp_label()
+	_refresh_combat_indicators()
 
 
 func stun_next_attack() -> void:
 	_skip_next_attack = true
+	_refresh_combat_indicators()
 
 
 func consume_stun() -> bool:
 	if not _skip_next_attack:
 		return false
 	_skip_next_attack = false
+	_refresh_combat_indicators()
 	return true
+
+
+func apply_poison(damage: int, turns: int) -> void:
+	if damage <= 0 or turns <= 0:
+		_clear_poison_state()
+	else:
+		set_meta("poison_damage", damage)
+		set_meta("poison_turns", turns)
+	_refresh_combat_indicators()
+
+
+func apply_eternal_suffering() -> void:
+	# Reapplication cannot reset the accumulated suffering.
+	eternal_suffering_damage = maxi(eternal_suffering_damage, 1)
+	_refresh_combat_indicators()
+
+
+func cleanse_eternal_suffering_from_neighbor() -> void:
+	eternal_suffering_damage = 0
+	_refresh_combat_indicators()
+
+
+func advance_eternal_suffering() -> void:
+	if eternal_suffering_damage > 0:
+		eternal_suffering_damage += 2
+		_refresh_combat_indicators()
+
+
+func tick_poison() -> void:
+	var turns := maxi(int(get_meta("poison_turns", 0)) - 1, 0)
+	if turns == 0:
+		_clear_poison_state()
+	else:
+		set_meta("poison_turns", turns)
+	_refresh_combat_indicators()
+
+
+## The printed collection data stays intact; consumed charges are battle-only.
+func get_available_effects() -> Array[Dictionary]:
+	if stats_hidden:
+		return []
+	var availability := _get_effect_availability()
+	var result: Array[Dictionary] = []
+	for effect in CardData.get_active_effects(card_data):
+		if bool(availability.get(str(effect.get("type", "")), true)):
+			result.append(effect)
+	return result
+
+
+func _get_effect_availability() -> Dictionary:
+	return {
+		"shield_first_hit": _first_hit_shield_available,
+		"last_stand": _last_stand_available,
+		"grave_return": _grave_return_available,
+	}
+
+
+func _refresh_combat_indicators(animate: bool = true) -> void:
+	if _combat_indicators == null or _death_dissolve != null:
+		return
+	var effects := CardData.get_active_effects(card_data)
+	var availability := _get_effect_availability()
+	_combat_indicators.sync_seals(effects, availability, animate)
+	var areas: Array[Area3D] = [effect_icon_area_1, effect_icon_area_2]
+	for i in range(areas.size()):
+		_set_effect_icon_area_enabled(areas[i], i < effects.size() and bool(availability.get(str(effects[i].get("type", "")), true)))
+	_combat_indicators.sync_statuses({
+		"poison": int(get_meta("poison_turns", 0)),
+		"stun": 1 if _skip_next_attack else 0,
+		"curse": _curse_penalty,
+		"eternal_suffering": eternal_suffering_damage,
+	}, animate)
+	_combat_indicators.visible = not stats_hidden
+	if stats_hidden:
+		effect_icon_1.hide()
+		effect_icon_2.hide()
+	effects_label.text = _build_effects_summary()
+	combat_effects_changed.emit(self)
+
+
+func set_stats_hidden(value: bool) -> void:
+	if stats_hidden == value:
+		return
+	stats_hidden = value
+	_update_hp_label()
+	_refresh_localized_text()
+	_update_event_block_badge()
+	_refresh_combat_indicators(false)
 
 
 ## Blocks attacks and counterattacks until the table has ticked this card at
@@ -541,42 +664,21 @@ func apply_event_strength(multiplier: float) -> void:
 	attack_value = maxi(ceili(float(attack_value) * multiplier), 0)
 	max_hp = maxi(ceili(float(max_hp) * multiplier), 1)
 	current_hp = maxi(ceili(float(current_hp) * multiplier), 1)
-	attack_label.text = str(attack_value)
 	_update_hp_label()
 
 
-func _update_event_block_badge() -> void:
+func _update_event_block_badge(animate: bool = true) -> void:
 	if not is_node_ready() or is_stack_decoration:
+		return
+	if _death_dissolve != null:
 		return
 	if _event_block_badge == null and event_block_turns <= 0:
 		return
 	if _event_block_badge == null:
-		_event_block_badge = Node3D.new()
+		_event_block_badge = EVENT_BLOCK_KNIFE_SCENE.instantiate() as Node3D
 		_event_block_badge.name = "EventBlockBadge"
-		_event_block_badge.position = Vector3(0.0, 0.24, 0.018)
 		add_child(_event_block_badge)
-		var background := MeshInstance3D.new()
-		var quad := QuadMesh.new()
-		quad.size = Vector2(0.72, 0.28)
-		background.mesh = quad
-		var material := StandardMaterial3D.new()
-		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		material.albedo_color = Color(0.015, 0.055, 0.08, 0.98)
-		background.material_override = material
-		_event_block_badge.add_child(background)
-		_event_block_label = Label3D.new()
-		_event_block_label.position.z = 0.003
-		_event_block_label.font = name_label.font
-		_event_block_label.font_size = 32
-		_event_block_label.pixel_size = 0.0035
-		_event_block_label.outline_size = 4
-		_event_block_label.modulate = Color(0.65, 0.96, 1.0)
-		_event_block_badge.add_child(_event_block_label)
-	_event_block_badge.visible = event_block_turns > 0
-	_event_block_label.text = Localization.format_text("BLOCK\n%d %s", [
-		event_block_turns, Localization.text("ZUG" if event_block_turns == 1 else "ZÜGE")
-	])
+	_event_block_badge.sync(event_block_turns, stats_hidden, animate)
 
 
 # Fuegt dieser Karte Schaden zu und gibt true zurueck, wenn die Karte
@@ -622,6 +724,8 @@ func _get_combat_state() -> Dictionary:
 		"last_stand_available": _last_stand_available,
 		"grave_return_available": _grave_return_available,
 		"skip_next_attack": _skip_next_attack,
+		"curse_penalty": _curse_penalty,
+		"eternal_suffering_damage": eternal_suffering_damage,
 		"event_block_turns": event_block_turns,
 		"poison_damage": int(get_meta("poison_damage", 0)),
 		"poison_turns": int(get_meta("poison_turns", 0)),
@@ -638,11 +742,14 @@ func _get_combat_state() -> Dictionary:
 ## replace setup's defaults.
 func apply_network_state(state: Dictionary) -> void:
 	var data := state.get("card_data", {}) as Dictionary
-	setup(data.duplicate(true))
-	_restore_combat_state(state)
+	var same_card := not card_data.is_empty() and card_data == data
+	# Repeated snapshots must not rebuild seals or restart their exit animation.
+	if not same_card:
+		setup(data.duplicate(true))
+	_restore_combat_state(state, same_card)
 
 
-func _restore_combat_state(state: Dictionary) -> void:
+func _restore_combat_state(state: Dictionary, animate_indicators: bool = true) -> void:
 	max_hp = maxi(int(state.get("max_hp", max_hp)), 1)
 	# Lifesteal can intentionally exceed max_hp; snapshots and theft must
 	# preserve that health as well as damage already received.
@@ -652,15 +759,16 @@ func _restore_combat_state(state: Dictionary) -> void:
 	_last_stand_available = bool(state.get("last_stand_available", _last_stand_available))
 	_grave_return_available = bool(state.get("grave_return_available", _grave_return_available))
 	_skip_next_attack = bool(state.get("skip_next_attack", _skip_next_attack))
+	_curse_penalty = maxi(int(state.get("curse_penalty", 0)), 0)
+	eternal_suffering_damage = maxi(int(state.get("eternal_suffering_damage", 0)), 0)
 	event_block_turns = maxi(int(state.get("event_block_turns", 0)), 0)
 	if str(card_data.get("id", "")) == "chick":
 		set_meta("chick_survived_turns", clampi(int(state.get("chick_survived_turns", 0)), 0, 10))
 	elif has_meta("chick_survived_turns"):
 		remove_meta("chick_survived_turns")
 
-	attack_label.text = str(attack_value)
 	_update_hp_label()
-	_update_event_block_badge()
+	_update_event_block_badge(animate_indicators)
 
 	var poison_turns := maxi(int(state.get("poison_turns", 0)), 0)
 	if poison_turns > 0:
@@ -668,6 +776,7 @@ func _restore_combat_state(state: Dictionary) -> void:
 		set_meta("poison_damage", maxi(int(state.get("poison_damage", 0)), 0))
 	else:
 		_clear_poison_state()
+	_refresh_combat_indicators(animate_indicators)
 
 
 func _clear_poison_state() -> void:
@@ -1214,32 +1323,9 @@ func _apply_effect_icons() -> void:
 
 
 func _get_effect_icon_path(effect: Dictionary) -> String:
-	var effect_type := str(effect.get("type", "")).strip_edges().to_lower()
-
-	if effect_type == "":
+	if str(effect.get("type", "")).strip_edges().is_empty():
 		return ""
-
-	var file_name := effect_type
-
-	if effect_type == "armor":
-		var value := float(effect.get("value", 0.25))
-
-		if is_equal_approx(value, 0.25):
-			file_name = "armor_25"
-		elif is_equal_approx(value, 0.5):
-			file_name = "armor_50"
-		elif is_equal_approx(value, 0.75):
-			file_name = "armor_75"
-
-	var path := EFFECT_ICON_PATH + file_name + ".png"
-
-	if ResourceLoader.exists(path):
-		return path
-	var vector_path := EFFECT_ICON_PATH + file_name + ".svg"
-	if ResourceLoader.exists(vector_path):
-		return vector_path
-
-	return EFFECT_PLACEHOLDER
+	return EffectPresentation.get_icon_path(effect)
 
 
 func _apply_icon_texture(slot: Sprite3D, texture_path: String) -> void:
@@ -1265,6 +1351,7 @@ func _apply_icon_texture(slot: Sprite3D, texture_path: String) -> void:
 	mat.shader = EFFECT_ICON_HOLO_SHADER
 	mat.set_shader_parameter("icon_texture", texture)
 	mat.set_shader_parameter("rarity_color", rarity_color)
+	mat.set_shader_parameter("effect_opacity", 1.0)
 
 	slot.texture = texture
 	slot.material_override = mat

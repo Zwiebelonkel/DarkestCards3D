@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/RandomDamageCoin.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/effects/coin/coin.glb" id="2_model"]
+[ext_resource type="AudioStream" path="res://assets/sounds/SFX/coin.mp3" id="3_sound"]
+
+[node name="RandomDamageCoin" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_sound")
+bus = &"SFX"
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+scale = Vector3(0.36, 0.36, 0.36)
+
+[node name="0_75" parent="Model" index="1"]
+position = Vector3(0, 0.116, 0)
+
+[node name="2" parent="Model" index="2"]
+position = Vector3(0, -0.116, 0)
+
+[editable path="Model"]

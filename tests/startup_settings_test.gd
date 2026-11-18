@@ -59,6 +59,7 @@ func _run() -> void:
 	add_child(main)
 	check(_blur(main) == 5.0 and main.wakeup_blur_duration > 0.0, "Main initializes exact blur 5 before its first rendered frame")
 	check(main.dirty_lens.material != shared_lens, "startup animation uses an instance-local material")
+	check(not main.blood_overlay.active, "ordinary startup blur does not trigger the blood border")
 	if DisplayServer.get_name() != "headless":
 		await _capture("start")
 	await get_tree().create_timer(main.wakeup_blur_duration * 0.5).timeout
@@ -104,6 +105,8 @@ func _check_death_wakeup(main: MainScene) -> void:
 	var death_wakeup_duration := maxf(main.wakeup_blur_duration * 0.5, 0.01)
 	check(_blur(main) == 5.0, "actual death reveal resets blur to 5 synchronously")
 	check(table._black_rect.visible and table._black_rect.modulate.a == 1.0, "death blur is primed before the black screen starts revealing the room")
+	check(main.blood_overlay.active and main.blood_overlay.blood_rect.visible,
+		"actual death wake starts the blood border with the reveal")
 	check(main.dirty_lens.material == local_material, "death wake reuses the isolated lens material")
 	await get_tree().create_timer(death_wakeup_duration * 0.5).timeout
 	check(_blur(main) > 1.8 and _blur(main) < 3.4, "death blur reaches its halfway value midway through its configured duration")
@@ -119,8 +122,10 @@ func _check_death_wakeup(main: MainScene) -> void:
 		await get_tree().process_frame
 	check(not table._loss_exit_running and not table._black_rect.visible, "loss cinematic completes normally after its own reveal duration")
 	var settled_tween := main._wakeup_blur_tween
+	main.blood_overlay.clear()
 	table.loss_reveal_started.emit(0.1)
 	check(main._wakeup_blur_tween == settled_tween and is_equal_approx(_blur(main), 0.265), "shared win/music reveal does not trigger a player death blur")
+	check(not main.blood_overlay.active, "shared win/music reveal does not trigger a blood border")
 	# A second wake can interrupt either the startup or another death tween.
 	main._start_wakeup_blur()
 	var interrupted_tween := main._wakeup_blur_tween

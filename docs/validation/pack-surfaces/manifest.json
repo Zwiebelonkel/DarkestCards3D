@@ -1,0 +1,38 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "pack_surface_variants",
+  "scene": "res://scenes/ui/PackOpeningScreen.tscn",
+  "units": "meters",
+  "forward": "+Z (printed front)",
+  "origin": "existing authored pack origin",
+  "footprint_m": [1.314, 0.099],
+  "height_m": 1.975,
+  "interaction_sides": ["existing peel grip"],
+  "style_references": [
+    "assets/cards/pack/basic/pack.glb: purple print and metallic wrapper",
+    "assets/cards/pack/ultra/pack.glb: red print and metallic wrapper",
+    "assets/cards/pack/god/pack.glb: gold print and metallic wrapper",
+    "assets/shader/pack_foil.gdshader: existing peeled silver lining"
+  ],
+  "collision": {"required": true, "strategy": "retain existing dynamic peel box; no geometry changes"},
+  "routes": [],
+  "budgets": {"added_nodes": 0, "added_meshes": 0, "added_triangles": 0, "added_draw_calls": 0, "heightmaps": 3, "heightmap_resolution": [512, 512], "heightmap_format": "L8 with mipmaps", "extra_texture_samples_per_fragment": 1},
+  "review": {"required_views": ["front", "back", "grazing", "shop", "opening", "partial_peel"]},
+  "evidence": {
+    "structural": ["MCP inspect_scene before and after: scenes/ui/PackOpeningScreen.tscn; no errors or geometry changes"],
+    "runtime": ["pack_surface_test.tscn: 54 checks passed, no engine errors", "pack_foil_test.tscn: 115 checks passed, no engine errors", "pack_surface_context.tscn: PASS, no engine errors"],
+    "performance": ["review_report.json: 9 draw calls and 4002 rendered primitives before and after with equal existing peel geometry"],
+    "visual": ["00-before-front.png", "01-after-front.png", "02-after-back.png", "03-after-grazing.png", "04-after-partial-peel.png", "05-shop.png", "06-hub-context.png"]
+  },
+  "measured": {"surface_checks": 54, "foil_checks": 115, "engine_errors": 0, "added_draw_calls": 0, "added_geometry": 0, "review_status": "pass after substantial reduction requested by user"},
+  "notes": [
+    "Material-only change; existing transforms, silhouette, clearances, collision and reward metadata remain authoritative.",
+    "Basic: fine noise; Ultra: domain-warped ridges; God: lunar bowls with raised rims and fine dust.",
+    "Print UVs stay unchanged. Physical pack XY coordinates keep body and peel patterns aligned.",
+    "No new emitters, particles, lighting, displacement or animation; preserve rarity readability.",
+    "Final user correction: subtle finish. Relief 0.00035/0.0006/0.0008; color modulation 0.018/0.025/0.028; clearcoat 0.18, clearcoat roughness 0.30.",
+    "Building joins, terrain contact, route and navigation probes: not applicable to this material-only change.",
+    "MCP 1.0, Godot 4.4.1: explicit project binding, loaded-scene inspection and owned bounded headless/render jobs available. Use explicit project_path because default binding belongs to another project."
+  ]
+}

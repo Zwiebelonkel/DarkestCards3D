@@ -1,0 +1,8 @@
+{
+	"camera": "[X: (0.001903, -0.043578, -0.999048), Y: (-0.25034, 0.967218, -0.042666), Z: (0.968156, 0.250183, -0.009069), O: (-0.14886, 2.0435, -0.08942)]",
+	"captured_at_utc": "2026-11-15T17:38:04",
+	"fixture": "real Main; turn left and buy Ultra; authored lighting and post effects; isolated saves",
+	"fov": 58.0,
+	"main_scene_modified": 1794763701,
+	"pack": "ultra"
+}

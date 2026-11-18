@@ -54,7 +54,7 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if _refresh_pending and not _busy:
+	if _refresh_pending and _can_interact():
 		refresh_collection()
 	var target := _hit_target(get_viewport().get_mouse_position()) if _can_interact() else ""
 	if target != _hover_target:
@@ -242,6 +242,7 @@ func _press_button(action: String) -> void:
 			selected_instance_ids.clear()
 			_click_audio.play()
 			refresh_collection()
+		"auto_fuse": start_auto_fusion()
 		"fuse":
 			if _result_mode:
 				dismiss_result()
@@ -297,6 +298,41 @@ func start_fusion() -> void:
 	_inventory_root.hide()
 
 
+func start_auto_fusion() -> void:
+	if not _can_interact() or _result_mode:
+		return
+	_busy = true
+	var result := CollectionManager.auto_fuse_card_instances()
+	if not bool(result["ok"]) or int(result.get("fusion_count", 0)) == 0:
+		_busy = false
+		refresh_collection()
+		if not bool(result["ok"]):
+			_buttons["auto_fuse"]["label"].text = "FEHLGESCHLAGEN"
+		return
+	# All exchanges are already saved, so closing or pausing the scene cannot
+	# interrupt a partially consumed cascade. Show one short forging animation.
+	selected_instance_ids.clear()
+	_rebuild_slots()
+	_inventory_root.hide()
+	_empty_label.hide()
+	_title.text = "DIE SCHMIEDE ARBEITET"
+	_model.set_forging(true)
+	_forge_audio.play()
+	_refresh_buttons()
+	fusion_completed.emit(result)
+	_fusion_tween = create_tween()
+	_fusion_tween.tween_interval(0.65)
+	await _fusion_tween.finished
+	_fusion_tween = null
+	_model.set_forging(false)
+	_busy = false
+	rarity_filter = ""
+	page_index = 0
+	_title.text = Localization.format_text("AUTO FUSE: %d FUSIONEN", [int(result["fusion_count"])])
+	_inventory_root.show()
+	refresh_collection()
+
+
 func dismiss_result() -> void:
 	if not _can_interact() or not _result_mode:
 		return
@@ -334,11 +370,27 @@ func _refresh_buttons() -> void:
 			"page_prev": enabled = enabled and page_index > 0
 			"page_next": enabled = enabled and (page_index + 1) * PAGE_SIZE < _filtered.size()
 			"clear": enabled = enabled and not selected_instance_ids.is_empty()
+			"auto_fuse":
+				enabled = enabled and _has_auto_fusion_inputs()
+				_buttons[action]["label"].text = "AUTO FUSE"
 			"fuse":
 				enabled = not _busy and (_result_mode or selected_instance_ids.size() == CollectionManager.get_fusion_requirement())
 				_buttons[action]["label"].text = "WEITER" if _result_mode else Localization.format_text("FUSIONIEREN  %d / %d", [selected_instance_ids.size(), CollectionManager.get_fusion_requirement()])
 		_buttons[action]["enabled"] = enabled
 	_update_highlights()
+
+
+func _has_auto_fusion_inputs() -> bool:
+	# Auto Fuse uses the complete inventory, independent of page and filter.
+	var amounts := {}
+	for entry: Dictionary in _candidates:
+		if not bool(entry["eligible"]):
+			continue
+		var rarity := str(entry["rarity"])
+		amounts[rarity] = int(amounts.get(rarity, 0)) + 1
+		if int(amounts[rarity]) >= CollectionManager.get_fusion_requirement():
+			return true
+	return false
 
 
 func _update_highlights() -> void:
@@ -467,8 +519,9 @@ func _build_workbench() -> void:
 	_make_button("rarity_next", ">", Vector3(-0.34, 4.35, 0.08), Vector2(0.34, 0.3))
 	_make_button("page_prev", "<", Vector3(1.0, 4.35, 0.08), Vector2(0.34, 0.3))
 	_make_button("page_next", ">", Vector3(2.50, 4.35, 0.08), Vector2(0.34, 0.3))
-	_make_button("fuse", "", Vector3(-0.45, 0.97, 2.04), Vector2(2.9, 0.42))
-	_make_button("clear", "LEEREN", Vector3(2.15, 0.97, 2.04), Vector2(1.32, 0.42))
+	_make_button("fuse", "", Vector3(-1.72, 0.97, 2.04), Vector2(2.45, 0.42))
+	_make_button("auto_fuse", "AUTO FUSE", Vector3(0.65, 0.97, 2.04), Vector2(1.78, 0.42))
+	_make_button("clear", "LEEREN", Vector3(2.50, 0.97, 2.04), Vector2(1.32, 0.42))
 	_empty_label = _label("", Vector3(0, 3.18, 0.12), 26, 0.005)
 	add_child(_empty_label)
 	_click_audio = _make_audio(CLICK_SOUND, -13.0)

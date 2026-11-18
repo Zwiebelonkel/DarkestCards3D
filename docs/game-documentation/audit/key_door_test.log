@@ -1,0 +1,35 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: fresh profile has a locked slot-room door
+PASS: hover and direct activation cannot bypass the missing key
+PASS: throwing the actual table knife grants one key
+PASS: discovering the key alone does not open the door
+PASS: secret reward creates no card popup or detail action
+PASS: the discovered key belongs to the special wall instead of the normal collection
+PASS: bottom hover unfolds the discovered key's tray entry
+PASS: real tray click begins one key cinematic and stows the keys
+PASS: A/D cannot interrupt the key cinematic
+PASS: the tray grants camera control without creating a card detail popup
+PASS: door stays locked until the camera is looking at it
+PASS: pause and duplicate activation cannot interrupt the key cinematic
+PASS: camera turns gradually toward the doorway
+PASS: looking at the door permanently unlocks access
+PASS: player sees the door fully swing open
+PASS: opened door is centered in the actual camera view
+PASS: key action leaves the player at the door with controls restored and the used key removed from the tray
+PASS: using the key neither consumes it nor adds it to the combat deck
+PASS: door unlock survives save reload
+PASS: opened door allows normal travel and exposes a return door
+PASS: return flight restores the nearest normal hub side
+PASS: A/D retains exact cardinal alignment after key view and round trip
+PASS: resetting collection also locks the slot-room door again
+PASS: standalone handoff is consumed once and takes camera control
+PASS: standalone opening waits until initial wake blur has settled
+PASS: standalone handoff completes the same visible door unlock
+PASS: scene exit cancels an interrupted key look without a stale handoff
+KEY_DOOR_TESTS: PASS (27 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

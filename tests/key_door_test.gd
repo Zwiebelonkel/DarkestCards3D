@@ -74,25 +74,26 @@ func _run() -> void:
 	check(collection._detail_card == null and not collection._deck_button.visible, "secret reward creates no card popup or detail action")
 	await _turn(1)
 	await _turn(1)
-	var key: Card3D
+	var key_in_normal_collection := false
 	for child in collection.cards_root.get_children():
 		if child is Card3D and str(child.card_data.get("id", "")) == CollectionManager.SLOT_ROOM_KEY_ID:
-			key = child
-	check(key != null, "secret key is visible among the collection cards")
-	if key == null:
+			key_in_normal_collection = true
+	check(not key_in_normal_collection and main.upgrade_collection._cards.has(CollectionManager.SLOT_ROOM_KEY_ID), "the discovered key belongs to the special wall instead of the normal collection")
+	_move_pointer(Vector2(640, 718))
+	await settle(0.5)
+	check(main.access_key_tray.is_expanded() and main.access_key_tray._key_tiles.has(CollectionManager.SLOT_ROOM_KEY_ID), "bottom hover unfolds the discovered key's tray entry")
+	if not main.access_key_tray._key_tiles.has(CollectionManager.SLOT_ROOM_KEY_ID):
 		_finish()
 		return
-	await collection._open_detail_card(key)
-	await settle(0.25)
-	check(collection._deck_button.visible and collection._deck_button.label.text == "Zur Tür" and not collection._deck_button.disabled, "key renders the usable Zur Tür button")
-	await _capture("key-card")
-	await _click_area(collection._deck_button.area)
-	check(collection._slot_room_key_request_pending, "real button click begins one key request")
+	await _capture("key-tray")
+	var key_tile := main.access_key_tray._key_tiles[CollectionManager.SLOT_ROOM_KEY_ID] as Node3D
+	await _click_point(main.main_camera.unproject_position(key_tile.global_position))
+	check(main._room_transition_active and not main.access_key_tray.is_expanded(), "real tray click begins one key cinematic and stows the keys")
 	var original_steps := main._settle_step_index
 	main._begin_turn(1)
-	check(main._settle_step_index == original_steps, "A/D cannot interrupt the closing key detail")
+	check(main._settle_step_index == original_steps, "A/D cannot interrupt the key cinematic")
 	await _wait_for_transition_start()
-	check(collection._detail_card == null and main._room_transition_active, "key detail closes before the camera takes control")
+	check(collection._detail_card == null and main._room_transition_active, "the tray grants camera control without creating a card detail popup")
 	check(main.hub_door.locked and not CollectionManager.is_slot_room_unlocked(), "door stays locked until the camera is looking at it")
 	var camera_before := main.main_camera.global_basis
 	main.pause_menu.open()
@@ -106,7 +107,7 @@ func _run() -> void:
 	var target := main.hub_door.doorway_area.global_position
 	var pointer := main.main_camera.unproject_position(target)
 	check(not main.main_camera.is_position_behind(target) and viewport.get_visible_rect().has_point(pointer) and absf(pointer.x - 640) < 50, "opened door is centered in the actual camera view")
-	check(main._active_room == 0 and not collection._slot_room_key_request_pending, "key action leaves the player looking at the door with controls restored")
+	check(main._active_room == 0 and not collection._slot_room_key_request_pending and not main.access_key_tray._key_tiles.has(CollectionManager.SLOT_ROOM_KEY_ID), "key action leaves the player at the door with controls restored and the used key removed from the tray")
 	check(DeckManager.battle_deck.is_empty() and CollectionManager.get_amount(CollectionManager.SLOT_ROOM_KEY_ID) == 1, "using the key neither consumes it nor adds it to the combat deck")
 	await _capture("door-open")
 	CollectionManager.load_collection()
@@ -142,7 +143,8 @@ func _run() -> void:
 	check(main.hub_door.locked and main._wakeup_blur_tween.is_running(), "standalone opening waits until initial wake blur has settled")
 	await _wait_for_transition_end()
 	check(CollectionManager.is_slot_room_unlocked() and not main.hub_door.locked and main._active_room == 0, "standalone handoff completes the same visible door unlock")
-	main._on_slot_room_key_requested()
+	CollectionManager.add_card("graveyard_key")
+	main._on_access_key_requested("graveyard_key")
 	await settle()
 	var pending_tween := main._door_key_tween
 	main.queue_free()
@@ -166,6 +168,10 @@ func _move_pointer(position: Vector2) -> void:
 
 func _click_area(area: Area3D) -> void:
 	var position := main.main_camera.unproject_position(area.global_position)
+	await _click_point(position)
+
+
+func _click_point(position: Vector2) -> void:
 	_move_pointer(position)
 	await settle()
 	for pressed in [true, false]:

@@ -1,0 +1,29 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS loopback ENet server starts
+PASS joined-client ENet transport starts
+PASS separate host and joined-client peers connect
+PASS authoritative initial snapshot creates the joined-client board over ENet
+PASS second replacement snapshot queues behind the real attack animation
+PASS second impact releases the defender slot
+PASS second mirrored replacements finish within 1s of death (633ms)
+PASS second queued replacement updates both remaining-card stacks
+PASS both original cards still fly after both replacements have arrived
+PASS cosmetic double death remains tracked without blocking the next turn
+PASS next authoritative turn starts before the old death flights finish
+PASS third replacement snapshot queues behind the real attack animation
+PASS third impact releases the defender slot
+PASS third mirrored replacements finish within 1s of death (633ms)
+PASS third queued replacement updates both remaining-card stacks
+PASS both consecutive double-death flights clean up without a stalled barrier
+PASS all four retired card nodes are safely freed
+PASS late packets cannot revive freed cards or disturb the following turn
+PASS joined client finishes with no stranded presentation or snapshot
+PASS late battle RPCs cannot recreate the cleared board during the online exit handshake
+PASS retired match packets do not retain freed-card contexts or queue new effects
+PASS late selection, attack and release packets cannot unlock or change the exit state
+PASS exit protocol transport stays connected while battle traffic is retired
+REPLACEMENT_NETWORK_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

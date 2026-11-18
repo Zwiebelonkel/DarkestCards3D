@@ -2,10 +2,26 @@
 
 The audit compares the effect catalog and innate card metadata with the actual
 `GameTable._resolve_duel` and `_apply_start_turn_effects` execution paths. Deck
-Burn is retired; legacy Deck Burn data is migrated to Draw On Kill. The remaining
-catalog has **22 distinct effect types** (Armor has multiple rarity/value rows).
+Burn and Draw On Kill are retired; legacy data migrates to Draw On Death. The current
+catalog has **23 distinct effect types** (Armor has multiple rarity/value rows).
 
 ## Runtime coverage
+
+Completed hit effects remain effective when the attacking card dies to the
+counterattack or Thorns. Poison already resolves at contact. Stun and Curse
+retain their attack-start parameters and apply once to surviving original
+targets even after source cleanup. A dying attacker also finishes Cleave before
+leaving its slot. Its own death can grant Draw On Death. Healing and
+additional attacks require a living source.
+
+`_check_effects_after_attacker_death` covers both sides, lethal counters and
+Thorns, visible debuff indicators, actual skipped attacks, poison's next tick,
+fully shielded hits, interrupted multi-strikes, Cleave casualties/rewards, and
+fighter/spectator snapshot reconstruction. The new cases reproduced 18 failures
+before the correction. The corrected audit passes 281 checks; damage numbers
+(83), Lava (61), card combat indicators (49), and journal localization in all five
+languages (9013) also pass. Evidence:
+`docs/validation/card-combat-indicators/attack-effects-after-death.log`.
 
 `tests/combat_effect_audit_test.tscn` uses the real table/card scenes. All listed
 groups execute for both player and enemy. Only automatic scheduling of the next
@@ -38,10 +54,11 @@ not transport authorization. Existing ENet suites below cover transport and ACKs
 | `grave_return` | First death restores rounded half max HP | `_check_survival`: ordinary, poison, execute, single-use reconstruction; `_check_revival_damage_records`: low-HP revival retains poison, thorns and redirected Cleave damage |
 | `execute` | Target reaches configured HP threshold after damage | `_check_survival`: above/below threshold, both survival types, no second lethal event after same-hit survival; `_check_revival_damage_records`: summed damage and Lifesteal after resurrection |
 | `swarm_power` | Multiply by identical living cards on the battlefield | `_check_attack_modifiers`: identical cards on both sides count |
-| `draw_on_kill` | Confirmed victim grants one shared-pile event to killer's side | `_check_lava_and_draw`: multiple kills, no reward for survival; `event_cards_test`: direct/counter/mutual kills and next-turn event availability |
+| `draw_on_death` | Actual death grants exactly one shared-pile event to the deceased card owner | `eternal_suffering_test`: ordinary, periodic and sacrifice deaths, no duplicate reward or reward for a kill/survival; `eternal_suffering_network_test`: private reward across ENet |
+| `eternal_suffering` | Credit Card alone sacrifices itself on attack; target takes escalating persistent damage until neighbor healing | `eternal_suffering_test`: both sides, defenses, 1/3/5/7 damage, cure ordering, theft and snapshots; dedicated ENet suite |
 | `curse` | Permanently reduce target attack by `value` | `_check_on_hit_status`: actual duel, clamp at zero, network state |
 | `swap_stats` | Swap initial attack and maximum/current HP on setup | `_check_attack_modifiers`: swapped real hit and health; mirrored snapshot does not swap again |
-| `random_damage` | Attack multiplier sampled between `min` and `max` | `_check_attack_modifiers`: fixed 1.5 interval through real duel |
+| `random_damage` | Equal-chance 0.75× / 2× coin, revealed before each strike | Real duel damage audit plus `random_damage_coin_test`: timing, faces, multi-strikes, cancellation and remote presentation |
 | `bodyguard` | One living adjacent guard, left before right; takes `percent` of raw hit without recursive sharing | `_check_bodyguard`: adjacency, own armor, protected shield, competing guards, counter, custom percent and lethal survival |
 | `neighbor_heal` | Owner turn start heals adjacent allies by `value` | `_check_neighbor_heal`: no damage trigger, no self/distant healing, actual Paramedic and Repair Bot metadata |
 

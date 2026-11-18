@@ -33,6 +33,7 @@ var _network_manager: Node
 var _selected_lobby_id := NO_LOBBY_ID
 var _status_source := "Steam-Verbindung wird geprüft …"
 var _status_arguments: Array = []
+var _character_row: HBoxContainer
 
 
 func _ready() -> void:
@@ -69,7 +70,8 @@ func _ready() -> void:
 	_refresh_all()
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	# Consume cancel before PauseMenu handles unhandled input.
 	if visible and event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		_on_back_pressed()
@@ -258,6 +260,7 @@ func _refresh_all() -> void:
 func _refresh_lobby_state() -> void:
 	var lobby_id := _current_lobby_id()
 	var in_lobby := lobby_id != NO_LOBBY_ID
+	_refresh_character_previews(in_lobby)
 	var host := in_lobby and _is_host()
 	var connected := in_lobby and _has_connected_opponent()
 
@@ -292,6 +295,39 @@ func _refresh_lobby_state() -> void:
 	else:
 		connection_label.text = "WARTE AUF DEN HOST"
 		connection_label.add_theme_color_override("font_color", COLOR_WAITING)
+
+
+func _refresh_character_previews(in_lobby: bool) -> void:
+	if _character_row == null:
+		_character_row = HBoxContainer.new()
+		_character_row.name = "CharacterPreviews"
+		_character_row.add_theme_constant_override("separation", 12)
+		member_list_label.get_parent().add_child(_character_row)
+		member_list_label.get_parent().move_child(_character_row, member_list_label.get_index())
+	for child in _character_row.get_children():
+		_character_row.remove_child(child)
+		child.queue_free()
+	_character_row.visible = in_lobby
+	if not in_lobby or not _network_manager.has_method("get_fighter_peer_ids"):
+		return
+	for peer_id: int in _network_manager.call("get_fighter_peer_ids"):
+		var fighter: Dictionary = _network_manager.call("get_player_data_for_peer", peer_id)
+		var column := VBoxContainer.new()
+		column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_character_row.add_child(column)
+		var portrait := TextureRect.new()
+		portrait.custom_minimum_size = Vector2(64, 80)
+		portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		portrait.texture = CharacterAppearance.resources(fighter.get("appearance"))["texture"]
+		column.add_child(portrait)
+		var player_name := Label.new()
+		player_name.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		player_name.text = str(fighter.get("name", "")).substr(0, 48)
+		player_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		player_name.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		column.add_child(player_name)
 
 
 func _populate_lobby_list(entries: Array) -> void:
@@ -352,13 +388,13 @@ func _update_controls() -> void:
 
 func _set_steam_status(ready: bool, detail: String) -> void:
 	if ready:
-		steam_status_label.text = "STEAM: BEREIT  ·  APP 480"
+		steam_status_label.text = "STEAM: BEREIT  ·  APP 5412220"
 		steam_status_label.add_theme_color_override("font_color", COLOR_STEAM_READY)
 	elif detail.to_lower().contains("prüf") or detail.to_lower().contains("initial"):
-		steam_status_label.text = "STEAM: WIRD GEPRÜFT  ·  APP 480"
+		steam_status_label.text = "STEAM: WIRD GEPRÜFT  ·  APP 5412220"
 		steam_status_label.add_theme_color_override("font_color", COLOR_STEAM_PENDING)
 	else:
-		steam_status_label.text = "STEAM: OFFLINE  ·  APP 480"
+		steam_status_label.text = "STEAM: OFFLINE  ·  APP 5412220"
 		steam_status_label.add_theme_color_override("font_color", COLOR_STEAM_ERROR)
 
 

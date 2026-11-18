@@ -24,6 +24,12 @@ var _mesh_texts: Array[Dictionary] = []
 var _atlas_labels: Array[Dictionary] = []
 
 
+func set_jackpot_brightness(brightness: float) -> void:
+	for entry: Dictionary in _atlas_labels:
+		if entry["source"] == "JACKPOT":
+			(entry["label"] as Label3D).modulate = Color("e3cfc0") * Color(brightness, brightness, brightness, 1.0)
+
+
 static func attach_neon(sign: Node3D, source: String) -> LocalizedModelText:
 	if sign == null:
 		return null

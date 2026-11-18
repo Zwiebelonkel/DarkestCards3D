@@ -12,6 +12,7 @@ const COLLECTION_CARD_WIDTH := 0.792
 const COLLECTION_CARD_TILT := -18.0
 const STARTING_HAND_VIEW := preload("res://scripts/ui/StartingHandSlots.gd")
 const ANGEL_DIALOG_SCRIPT := preload("res://scripts/rooms/AngelDialogue.gd")
+const DETAIL_ROTATION := preload("res://scripts/card/CardDetailRotation.gd")
 
 const RARITY_ORDER := [
 	"common",
@@ -124,6 +125,7 @@ var _collection_refresh_pending := false
 var _slot_room_key_request_pending := false
 var angel_dialog: ANGEL_DIALOG_SCRIPT
 var _angel_context_enabled := true
+var angel_presence_available: Callable
 
 @export var camera: Camera3D
 @onready var cards_root: Node3D = $Cards
@@ -148,6 +150,8 @@ var _detail_card: Card3D = null
 var _detail_tween_running := false
 var _detail_switch_tween: Tween = null
 var _detail_card_id := ""
+var _detail_rotation := DETAIL_ROTATION.new()
+var _view_close_requested := false
 @onready var _deck_button: Table3DButton = $AddToDeckButton
 @onready var _deck_overview_button: Table3DButton = $ShowDeckButton
 var _deck_fan_open := false
@@ -159,6 +163,7 @@ var _deck_reflow_tweens: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("collection_screens")
+	get_window().focus_exited.connect(_detail_rotation.stop)
 	if not CardUpgradeManager.upgrades_changed.is_connected(_on_card_upgrades_changed):
 		CardUpgradeManager.upgrades_changed.connect(_on_card_upgrades_changed)
 	if not CollectionManager.collection_changed.is_connected(_on_collection_changed):
@@ -175,6 +180,7 @@ func _ready() -> void:
 	clear_deck_button.visible = false
 	random_deck_button.visible = false
 	_setup_angel_dialog()
+	GameCurrency.npc_rescue_changed.connect(_sync_angel_context)
 	visibility_changed.connect(_sync_angel_context)
 
 
@@ -205,7 +211,7 @@ func _angel_context_available() -> bool:
 	# The dialog's own input lock is separate from external suspension: an
 	# already open conversation must not invalidate its own collection context.
 	return (
-		_angel_context_enabled and is_inside_tree() and is_visible_in_tree()
+		GameCurrency.is_npc_rescued("angel") and _angel_context_enabled and is_inside_tree() and is_visible_in_tree()
 		and not get_tree().paused and not _deck_input_suspended
 		and is_instance_valid(camera) and get_viewport().get_camera_3d() == camera
 		and _detail_card == null and not _detail_tween_running
@@ -218,11 +224,13 @@ func _sync_angel_context() -> void:
 	if not is_instance_valid(angel_dialog):
 		return
 	angel_dialog.camera = camera
+	angel_dialog.actor.visible = GameCurrency.is_npc_rescued("angel") and (not angel_presence_available.is_valid() or bool(angel_presence_available.call()))
 	angel_dialog.set_interaction_enabled(_angel_context_available())
 
 
 func _on_angel_modal_changed(opened: bool) -> void:
 	if opened:
+		_detail_rotation.stop()
 		_reset_collection_hover()
 		_hide_effect_overview()
 	angel_dialog_changed.emit(opened)
@@ -230,8 +238,11 @@ func _on_angel_modal_changed(opened: bool) -> void:
 
 func _process(delta: float) -> void:
 	_sync_angel_context()
+	if not _can_rotate_detail():
+		_detail_rotation.stop()
 	if is_angel_dialog_open():
 		return
+	_finish_requested_view_close()
 	if _collection_refresh_pending and _can_refresh_collection():
 		refresh_collection()
 	if _dragged_fan_card != null:
@@ -242,6 +253,11 @@ func _process(delta: float) -> void:
 	if _detail_tween_running:
 		return
 	if not is_instance_valid(_detail_card):
+		return
+	if not _can_rotate_detail():
+		return
+	if _detail_rotation.has_rotated:
+		_detail_rotation.apply(_detail_card, camera)
 		return
 
 	var mouse_pos := get_viewport().get_mouse_position()
@@ -265,6 +281,7 @@ func _process(delta: float) -> void:
 
 
 func _build_collection() -> void:
+	_detail_rotation.reset()
 	_reset_collection_hover()
 	for child in cards_root.get_children():
 		if child is Label3D:
@@ -288,11 +305,12 @@ func _build_collection() -> void:
 		_row_scroll_offsets[rarity] = 0.0
 
 	var owned := CollectionManager.get_owned_cards()
+	var display_cards := CollectionManager.get_display_cards(owned.keys())
 	empty_label.text = "Noch keine Karten in der Sammlung"
 	empty_label.visible = true
 
 	for card_id in owned.keys():
-		var data := CollectionManager.get_display_card(card_id)
+		var data: Dictionary = display_cards.get(card_id, {})
 		if data.is_empty() or CardData.is_upgrade_collection_card(data):
 			continue
 		empty_label.visible = false
@@ -323,7 +341,7 @@ func _build_collection() -> void:
 
 		for i in range(cards.size()):
 			var entry: Dictionary = cards[i]
-			var card := _create_collection_card(str(entry["id"]), rarity, i)
+			var card := _create_collection_card(str(entry["id"]), rarity, i, entry["data"])
 			var target_pos: Vector3 = _base_positions[card]
 			var target_rot: Vector3 = _base_rotations[card]
 			_spawn_card(card, target_pos, target_rot, global_index)
@@ -334,15 +352,11 @@ func _build_collection() -> void:
 		_row_cards[rarity] = cards
 
 
-func _create_collection_card(card_id: String, rarity: String, index: int) -> Card3D:
+func _create_collection_card(card_id: String, rarity: String, index: int, data: Dictionary = {}) -> Card3D:
 	var card := CARD_SCENE.instantiate() as Card3D
 	cards_root.add_child(card)
-	card.setup(CardUpgradeManager.apply_upgrades(card_id, CollectionManager.get_display_card(card_id)))
-	if CollectionManager.is_card_new(card_id):
-		var new_label := NEW_CARD_LABEL.new()
-		new_label.name = "NewLabel"
-		card.add_child(new_label)
-		new_label.watch_collection_card(card_id)
+	card.setup(CardUpgradeManager.apply_upgrades(card_id, CollectionManager.get_display_card(card_id) if data.is_empty() else data))
+	_refresh_new_card_label(card, card_id)
 	card.position = _row_card_position(rarity, index)
 	card.rotation_degrees = Vector3(COLLECTION_CARD_TILT, 0, 0)
 	_base_positions[card] = card.position
@@ -353,9 +367,22 @@ func _create_collection_card(card_id: String, rarity: String, index: int) -> Car
 	return card
 
 
+func _refresh_new_card_label(card: Card3D, card_id: String) -> void:
+	var label := card.get_node_or_null("NewLabel") as Sprite3D
+	if label != null and (label.is_queued_for_deletion() or not CollectionManager.is_card_new(card_id)):
+		card.remove_child(label)
+		label.queue_free()
+		label = null
+	if label == null and CollectionManager.is_card_new(card_id):
+		var new_label := NEW_CARD_LABEL.new()
+		new_label.name = "NewLabel"
+		card.add_child(new_label)
+		new_label.watch_collection_card(card_id)
+
+
 func _has_received_secret() -> bool:
-	for data: Dictionary in CardDatabase.get_all_cards():
-		if data.get("rarity") == "secret" and CollectionManager.has_discovered_card(str(data.get("id", ""))):
+	for card_id: String in CollectionManager.get_discovered_card_ids():
+		if CardDatabase.get_card(card_id).get("rarity") == "secret":
 			return true
 	return false
 
@@ -369,8 +396,13 @@ func _refresh_secret_cards() -> void:
 	for card: Card3D in _row_cards.get("secret", []):
 		if is_instance_valid(card):
 			existing[str(card.card_data.get("id", ""))] = card
+	var secret_ids: Array[String] = []
 	for card_id: String in CollectionManager.get_owned_cards():
-		var data := CollectionManager.get_display_card(card_id)
+		if CardDatabase.get_card(card_id).get("rarity") == "secret":
+			secret_ids.append(card_id)
+	var display_cards := CollectionManager.get_display_cards(secret_ids)
+	for card_id: String in display_cards:
+		var data: Dictionary = display_cards[card_id]
 		if data.get("rarity") != "secret" or CardData.is_upgrade_collection_card(data):
 			continue
 		if existing.has(card_id):
@@ -378,9 +410,10 @@ func _refresh_secret_cards() -> void:
 			var updated := CardUpgradeManager.apply_upgrades(card_id, data)
 			if card.card_data != updated:
 				card.setup(updated)
+			_refresh_new_card_label(card, card_id)
 			continue
 		var cards: Array = _row_cards["secret"]
-		var card := _create_collection_card(card_id, "secret", cards.size())
+		var card := _create_collection_card(card_id, "secret", cards.size(), data)
 		cards.append(card)
 		_connect_card_input(card)
 		_update_collection_amount_visibility(card)
@@ -732,6 +765,10 @@ func _on_card_input(_camera: Node, event: InputEvent, _position: Vector3, _norma
 
 	if _detail_tween_running:
 		return
+	# Pressing the open card starts rotation in _unhandled_input. A delayed
+	# physics-picking callback must never turn that press into a close action.
+	if card == _detail_card:
+		return
 
 	# Während der Deck-Button sichtbar ist, schwebt er direkt neben/vor der
 	# Detailkarte. Godots Area3D-Picking ruft input_event auf ALLEN getroffenen
@@ -762,6 +799,7 @@ func _open_detail_card(card: Card3D) -> void:
 		return
 
 	_reset_collection_hover(card)
+	_detail_rotation.reset()
 	_detail_card = card
 	_detail_tween_running = true
 	_play_card_unique_sfx(card)
@@ -775,6 +813,7 @@ func _open_detail_card(card: Card3D) -> void:
 	tween.tween_property(card, "rotation_degrees", detail_rotation, detail_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween.tween_property(card, "scale", target_scale, detail_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_detail_card_id = str(card.card_data.get("id", card.card_data.get("card_id", "")))
+	CollectionManager.mark_card_seen(_detail_card_id)
 	_show_deck_button(card)
 
 	await tween.finished
@@ -797,6 +836,7 @@ func _detail_target_scale(card: Card3D, base_scale: Vector3) -> Vector3:
 
 
 func _close_detail_card() -> void:
+	_detail_rotation.reset()
 	if _detail_switch_tween != null and _detail_switch_tween.is_valid():
 		_detail_switch_tween.kill()
 	_detail_switch_tween = null
@@ -826,6 +866,24 @@ func _close_detail_card() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Claim Escape before GUI/menu navigation or Pause can receive it. Keep
+	# claiming it during return flights, and queue a close during entry flights.
+	if event.is_action_pressed("ui_cancel", true) and _has_open_collection_view() and is_visible_in_tree() and not get_tree().paused and not _deck_input_suspended and not is_angel_dialog_open() and not _slot_room_key_request_pending and is_instance_valid(camera) and get_viewport().get_camera_3d() == camera:
+		get_viewport().set_input_as_handled()
+		_request_view_close()
+		return
+	if _detail_rotation.dragging:
+		if not _can_rotate_detail():
+			_detail_rotation.stop()
+		elif event is InputEventMouseMotion:
+			_detail_rotation.drag(_detail_card, camera, event)
+			get_viewport().set_input_as_handled()
+			return
+		elif event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+				_detail_rotation.stop()
+			get_viewport().set_input_as_handled()
+			return
 	if is_angel_dialog_open():
 		return
 	# If a GUI consumes the release, cancel after dispatch instead of leaving a
@@ -834,8 +892,30 @@ func _input(event: InputEvent) -> void:
 		_cancel_deck_drag.call_deferred()
 
 
+func _has_open_collection_view() -> bool:
+	return is_instance_valid(_detail_card) or _detail_tween_running or _deck_fan_open or _deck_fan_tween_running
+
+
+func _request_view_close() -> void:
+	_detail_rotation.stop()
+	_cancel_deck_drag()
+	_view_close_requested = true
+	_finish_requested_view_close()
+
+
+func _finish_requested_view_close() -> void:
+	if not _view_close_requested or _detail_tween_running or _deck_fan_tween_running:
+		return
+	_view_close_requested = false
+	if is_instance_valid(_detail_card):
+		_close_detail_card()
+	elif _deck_fan_open:
+		_close_deck_fan()
+
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_detail_rotation.stop()
 		_cancel_deck_drag()
 		if is_instance_valid(angel_dialog):
 			angel_dialog.close_dialog()
@@ -859,6 +939,7 @@ func _cancel_deck_drag() -> void:
 func suspend_deck_input(suspended: bool) -> void:
 	_deck_input_suspended = suspended
 	if suspended:
+		_detail_rotation.stop()
 		_cancel_deck_drag()
 	_sync_angel_context()
 
@@ -866,6 +947,12 @@ func suspend_deck_input(suspended: bool) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if is_angel_dialog_open() or not is_visible_in_tree() or get_tree().paused or _deck_input_suspended or _slot_room_key_request_pending:
 		return
+	if _can_rotate_detail() and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		# Respect the real front-most collider, including Add to Deck, before
+		# claiming a press; GUI controls have already had their input opportunity.
+		if _collection_card_under_mouse(event.position) == _detail_card and _detail_rotation.begin(_detail_card, camera, event.position):
+			get_viewport().set_input_as_handled()
+			return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if _try_remove_hovered_deck_card(event):
 			return
@@ -907,12 +994,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 				# Klick auf irgendein 3D-Objekt?
 				# Dann NICHT schließen.
-				if _mouse_hits_interactive_3d():
+				if _mouse_hits_interactive_3d(event.position):
 					return
 
 				# Wirklich daneben geklickt
 				get_viewport().set_input_as_handled()
-				_close_deck_fan()
+				_request_view_close()
 				return
 
 		return
@@ -958,10 +1045,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 
-			if _mouse_hits_interactive_3d():
+			if _mouse_hits_interactive_3d(event.position):
 				return
 
-			_close_detail_card()
+			get_viewport().set_input_as_handled()
+			_request_view_close()
+
+
+func _can_rotate_detail() -> bool:
+	return is_instance_valid(_detail_card) and not _detail_tween_running and not is_angel_dialog_open() and not _slot_room_key_request_pending and not _deck_input_suspended and is_visible_in_tree() and not get_tree().paused and is_instance_valid(camera) and get_viewport().get_camera_3d() == camera
 
 
 func _collection_card_under_mouse(mouse_position: Vector2) -> Card3D:
@@ -1448,11 +1540,10 @@ func _close_deck_fan() -> void:
 	])
 	_restore_collection_hover_under_mouse()
 	
-func _mouse_hits_interactive_3d() -> bool:
+func _mouse_hits_interactive_3d(mouse_pos: Vector2) -> bool:
 	if camera == null:
 		return false
 
-	var mouse_pos := get_viewport().get_mouse_position()
 	var from := camera.project_ray_origin(mouse_pos)
 	var to := from + camera.project_ray_normal(mouse_pos) * 100.0
 
@@ -1711,9 +1802,78 @@ func refresh_collection() -> void:
 		_collection_refresh_pending = true
 		return
 	_collection_refresh_pending = false
-	_build_collection()
+	_sync_collection_cards()
 	if _deck_fan_open:
 		_refresh_starting_hand_slots()
+
+
+func _sync_collection_cards() -> void:
+	var owned := CollectionManager.get_owned_cards()
+	var display_cards := CollectionManager.get_display_cards(owned.keys())
+	var existing := {}
+	for card: Card3D in _base_positions.keys():
+		if is_instance_valid(card):
+			existing[str(card.card_data.get("id", ""))] = card
+	var next_rows := {}
+	for rarity: String in RARITY_ORDER:
+		next_rows[rarity] = []
+	for card_id: String in display_cards:
+		var data: Dictionary = display_cards[card_id]
+		if int(owned.get(card_id, 0)) <= 0 or CardData.is_upgrade_collection_card(data):
+			continue
+		var rarity := str(data.get("rarity", "common")).to_lower()
+		if not next_rows.has(rarity):
+			rarity = "common"
+		var card := existing.get(card_id) as Card3D
+		if card == null:
+			card = _create_collection_card(card_id, rarity, next_rows[rarity].size(), data)
+			_connect_card_input(card)
+		else:
+			existing.erase(card_id)
+			var updated := CardUpgradeManager.apply_upgrades(card_id, data)
+			if card.card_data != updated:
+				card.setup(updated)
+			_refresh_new_card_label(card, card_id)
+		_card_rarities[card] = rarity
+		next_rows[rarity].append(card)
+	for card: Card3D in existing.values():
+		var tween := _card_hover_tweens.get(card) as Tween
+		if tween != null and tween.is_valid():
+			tween.kill()
+		_card_hover_tweens.erase(card)
+		_hovered_cards.erase(card)
+		_base_positions.erase(card)
+		_base_rotations.erase(card)
+		_base_scales.erase(card)
+		_card_rarities.erase(card)
+		card.hide()
+		card.area.input_ray_pickable = false
+		card.queue_free()
+	_row_cards = next_rows
+	var has_cards := not _base_positions.is_empty()
+	var secret_unlocked := _has_received_secret()
+	for rarity: String in RARITY_ORDER:
+		var label := cards_root.get_node_or_null("RarityLabel_" + rarity) as Label3D
+		var show_label := secret_unlocked if rarity == "secret" else has_cards
+		if label == null and show_label:
+			_add_rarity_label(rarity, RARITY_ORDER.find(rarity))
+		elif label != null and not show_label:
+			cards_root.remove_child(label)
+			label.queue_free()
+		_row_scroll_offsets[rarity] = clampf(float(_row_scroll_offsets.get(rarity, 0.0)), _row_min_scroll_offset(rarity), 0.0)
+		var cards: Array = _row_cards[rarity]
+		for index in range(cards.size()):
+			var card: Card3D = cards[index]
+			var position_in_row := _row_card_position(rarity, index)
+			if not (_base_positions[card] as Vector3).is_equal_approx(position_in_row):
+				_base_positions[card] = position_in_row
+				_animate_collection_hover(card, _hovered_cards.has(card), row_scroll_duration)
+			_update_collection_amount_visibility(card)
+	if not _deck_fan_open:
+		empty_label.text = "Noch keine Karten in der Sammlung"
+		empty_label.visible = not has_cards
+	_refresh_collection_amount_labels()
+	_update_deck_button_state()
 
 
 func _can_refresh_collection() -> bool:
@@ -1721,14 +1881,11 @@ func _can_refresh_collection() -> bool:
 
 
 func _on_collection_changed(card_ids: Array[String]) -> void:
+	_collection_refresh_pending = true
 	for card_id: String in card_ids:
 		if CardDatabase.get_card(card_id).get("rarity") == "secret":
 			_refresh_secret_cards.call_deferred()
 			break
-	if card_ids.has(CollectionManager.SLOT_ROOM_KEY_ID):
-		# The knife reward is discovered among the collection cards; receiving it
-		# must not open a reveal, move the camera, or interrupt an active detail.
-		_collection_refresh_pending = true
 
 
 func _stop_deck_reflow(card: Card3D) -> void:
@@ -1841,11 +1998,13 @@ func _show_next_detail_card(direction: int) -> void:
 	if old_card == new_card:
 		return
 
+	_detail_rotation.reset()
 	_hide_deck_button()
 
 	_detail_tween_running = true
 	_detail_card = new_card
 	_detail_card_id = str(new_card.card_data.get("id", new_card.card_data.get("card_id", "")))
+	CollectionManager.mark_card_seen(_detail_card_id)
 	_play_card_unique_sfx(new_card)
 
 	var detail_pos := camera.global_transform * detail_offset_from_camera

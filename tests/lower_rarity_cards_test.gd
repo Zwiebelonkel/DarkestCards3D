@@ -238,13 +238,13 @@ func _check_effect_execution() -> void:
 	check(CombatResolver.heal_from_lifesteal(cat, 10) == 1 and cat.current_hp == 3, "Stray Cat restores one HP from ten damage at 10% lifesteal")
 	check(CombatResolver.heal_from_lifesteal(cat, 2) == 0 and cat.current_hp == 3, "Small lifesteal amounts keep the existing whole-HP rounding")
 	cat.queue_free()
-	for entry: Array in [["drunk_guy", 4, 12], ["trash_monster", 5, 8]]:
+	for entry: Array in [["drunk_guy", 6, 16], ["trash_monster", 5, 12]]:
 		var card := _effect_card(str(entry[0]))
 		var within_bounds := true
 		for index in range(32):
 			var damage := CombatResolver.get_attack_damage(card)
-			within_bounds = within_bounds and damage >= int(entry[1]) and damage <= int(entry[2])
-		check(within_bounds, str(entry[0]) + " rolls damage within its configured rounded range")
+			within_bounds = within_bounds and damage in [int(entry[1]), int(entry[2])]
+		check(within_bounds, str(entry[0]) + " rolls exactly one of its two rounded coin outcomes")
 		card.queue_free()
 	var king := _effect_card("rat_king")
 	check(CombatResolver.get_attack_damage(king, 1) == 3 and CombatResolver.get_attack_damage(king, 3) == 9 and CombatResolver.get_attack_damage(king, 5) == 15, "Rat King uses the existing identical-card multiplier with restrained base attack")

@@ -67,8 +67,16 @@ func _run() -> void:
 		var fixture := {"id": "fusion_protected_" + category, "rarity": "common", "category": category, "random_reward": false}
 		CardDatabase.cards.append(fixture)
 		CardDatabase.cards_by_id[fixture["id"]] = fixture
-		var protected := _add(str(fixture["id"]), 1)
-		check(not _candidate(protected[0])["eligible"], "event and secret combat inputs are protected: " + category)
+		# Event cards cannot be acquired anymore; inject a legacy/imported copy
+		# to keep testing the forge's independent protection boundary.
+		var protected := CardData.create_instance(str(fixture["id"]))
+		CollectionManager.collection["instances"].append(protected)
+		CollectionManager.collection["cards"][str(fixture["id"])] = 1
+		var candidate := _candidate(str(protected["instance_id"]))
+		if category == "event":
+			check(candidate.is_empty(), "legacy event copies are excluded from the collectible inventory before fusion")
+		else:
+			check(not candidate.is_empty() and not candidate["eligible"], "secret combat inputs remain protected")
 	var all_candidates := CollectionManager.get_fusion_candidates()
 	check(all_candidates.size() == CollectionManager.get_card_instances().size(), "the forge can show every owned copy, including unavailable cards")
 	var holo_entry := _candidate(holo[0])

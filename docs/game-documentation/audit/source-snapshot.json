@@ -1,0 +1,844 @@
+{
+  "date": "2026-11-15",
+  "files": [
+    {
+      "path": "scripts/autoload/AchievementManager.gd",
+      "sha256": "cfd32670fc9c82db8278550f75caf6a3c7baab7aa96eee37b471e85d35ac284c"
+    },
+    {
+      "path": "scripts/autoload/CardDatabase.gd",
+      "sha256": "1c85875158cd3bb59ec2ca2119010bac88b8613a9cc4e568395b21f6fe04b4ef"
+    },
+    {
+      "path": "scripts/autoload/CollectionManager.gd",
+      "sha256": "c02a043ee23057e6cdcd4aca79128cd682517d3712d6e989f316ff3b9aff0f41"
+    },
+    {
+      "path": "scripts/autoload/DeckManager.gd",
+      "sha256": "ae4e174f85369726e757eb4bf24de5e0e31ca189e8949e33607f9948f44e263a"
+    },
+    {
+      "path": "scripts/autoload/EffectDatabase.gd",
+      "sha256": "6fdc4b3628e406d02f80dee1dc206ccae82b8ddfa705cd56c5a091a3c8eb78bb"
+    },
+    {
+      "path": "scripts/autoload/Game.gd",
+      "sha256": "ac8835abf6bfd15c32884136878bb9bc7fbfea07ca7c745d573e17100528c002"
+    },
+    {
+      "path": "scripts/autoload/Localization.gd",
+      "sha256": "f51f6b414682b47e130dd910ca93c230221c05a4ace2c4a3f36d92d2653eb735"
+    },
+    {
+      "path": "scripts/autoload/NetworkManager.gd",
+      "sha256": "823b4c389e9352e8749417192938e67015ba948ca7d8cae4a226cfe7524204c6"
+    },
+    {
+      "path": "scripts/autoload/PackManager.gd",
+      "sha256": "36185c05b81a2505c49e2a887c9a4cbaf89890d2f0f598c975a252f1bb250b3e"
+    },
+    {
+      "path": "scripts/autoload/PlayerProfile.gd",
+      "sha256": "6adf22d1884a10b8a5ef12a3fb7493493ab8e6403bd55db40072ace46eb01c44"
+    },
+    {
+      "path": "scripts/autoload/SaveManager.gd",
+      "sha256": "b066eddc753b0c88569a70aea445587f792def502e6596f20e89b09bd5164163"
+    },
+    {
+      "path": "scripts/autoload/SessionDiagnostics.gd",
+      "sha256": "ac6618210e116e3ef72988257cbb4cde2bb35033cdfe70319f05fc3408f98271"
+    },
+    {
+      "path": "scripts/autoload/SettingsManager.gd",
+      "sha256": "9eb321a29b2b595725fd9ab87225a0398876fb37ab979ca6273e85df11e3e426"
+    },
+    {
+      "path": "scripts/BloodBurst3D.gd",
+      "sha256": "d82b07bb58a57156bc7093bb8eeaac5472cf8c9c41d034a59a49e1881dec0219"
+    },
+    {
+      "path": "scripts/BloodDecal3D.gd",
+      "sha256": "bfb7f20430ce8301e486e14e1976c9dcf1480e67bb91d330894a20dd71c07036"
+    },
+    {
+      "path": "scripts/card/Card3D.gd",
+      "sha256": "49f8497fc4e3b725fd25b3f6f40462a46430620bca823a27a3d9dab48b8085ca"
+    },
+    {
+      "path": "scripts/card/CardData.gd",
+      "sha256": "029d5ed43f7567880a15e4edb879208bda8509b1b9879edcd3227e7f4291a6dc"
+    },
+    {
+      "path": "scripts/card/CardDeathDissolve.gd",
+      "sha256": "692fcc4bd87945ecc5a8de3ce7827765306cae66f64bf9ab0f193035f5fd73d7"
+    },
+    {
+      "path": "scripts/card/CardDiorama.gd",
+      "sha256": "af9017880bc3ebfdf0708fe0b2b10aca867aed16142b96a1715a33a4a2626469"
+    },
+    {
+      "path": "scripts/card/CardEffect.gd",
+      "sha256": "73835bf2432eec84468587e201977698e01fb7c7952b776976fe2595a2ee3c5d"
+    },
+    {
+      "path": "scripts/card/CardInstance.gd",
+      "sha256": "e3f7f84333a4db0bbf75d80cd89e19bf1402d155a0aca06cb8390a560674720f"
+    },
+    {
+      "path": "scripts/card/NewCardLabel.gd",
+      "sha256": "f215b6bf1269dd5e9abd27df3e00284f4f0769ede00228ce9f777b6f657ac9d6"
+    },
+    {
+      "path": "scripts/card/PropSecretRoom.gd",
+      "sha256": "19fb2cc6b3bed1beca40256ba802a62c48a6df63696684c85addd2117393d80d"
+    },
+    {
+      "path": "scripts/card/UsbSecretRoom.gd",
+      "sha256": "a31ac6da51a7bb054d33d9ea179c8419bfcfbdd43dc25ddbcd147468d0f33fb0"
+    },
+    {
+      "path": "scripts/CardEffectOverview.gd",
+      "sha256": "1e2d6322881eb1075c4f8e917b86f357a53fbd2fe04808d9de5f1f08d6dc60ec"
+    },
+    {
+      "path": "scripts/CardUpgradeManager.gd",
+      "sha256": "f4f474baf32e92da14e72015cfc2d7858de8f034299966a0c787be4a11326941"
+    },
+    {
+      "path": "scripts/collection/CollectionEntry.gd",
+      "sha256": "6f5039497831acf8c34cf36f3b4b5495b05ce2239b664d0dfd36ace91fc593fb"
+    },
+    {
+      "path": "scripts/collection/CollectionFilters.gd",
+      "sha256": "53979c0955c3f8f94c72b3cb0faa7904c0e6789bd2de7d32171cee721337b819"
+    },
+    {
+      "path": "scripts/deckbuilder/Deck.gd",
+      "sha256": "259ec9291cae2584a015cc2daaf8d0ae2cd98224d09ca67fbcb4e3707f8599ad"
+    },
+    {
+      "path": "scripts/deckbuilder/DeckRules.gd",
+      "sha256": "79ea1a768d9f2ba6bfed60eaa4aad93f5f535e9624b2c1c25f8079b5b669e51b"
+    },
+    {
+      "path": "scripts/deckbuilder/DeckValidator.gd",
+      "sha256": "a18e614eb72e036d00d038b7c20ab2e4dd3fea45530648c75e5b68b513cb90d4"
+    },
+    {
+      "path": "scripts/effects/Piss.gd",
+      "sha256": "a4070a3f9e92d00565736a7204d34a7319db46db5ee315b3beec2620f40897f6"
+    },
+    {
+      "path": "scripts/events/EventDeck.gd",
+      "sha256": "329d560c0dfdc4d5ea69b39b217d602b0a2166dfd49ebd0b6af356832dfefe32"
+    },
+    {
+      "path": "scripts/flicker.gd",
+      "sha256": "f8f93c58b673ee426ad075ff8d536790c7279e23ad6e84d394208938d459bbe4"
+    },
+    {
+      "path": "scripts/GameCurrency.gd",
+      "sha256": "a40c96175e0f3c513b8897f18ca144eefb2e33e8336499761ce59d14a348c229"
+    },
+    {
+      "path": "scripts/labelMove.gd",
+      "sha256": "48198b41dc4a640c86791c2da2cd7d25c039db62728332f586c6ddead5e4b5dd"
+    },
+    {
+      "path": "scripts/main/Main.gd",
+      "sha256": "72bdbbcd604aabc329024c7c4c02fcdc54376b02010270fda4299c119266466c"
+    },
+    {
+      "path": "scripts/main/SatanGreeting.gd",
+      "sha256": "88cd02f5c8cd3f85c4008d3df5d7dd614be648b3fbb5c4e23aba4aad7c44cd7b"
+    },
+    {
+      "path": "scripts/main/SatanJumpscare.gd",
+      "sha256": "cc7f1698af13c781be4eff910da8a00ccfafbbf9ebe8b761e7c1fb9a42a83c77"
+    },
+    {
+      "path": "scripts/match/BotPlayer.gd",
+      "sha256": "7e505d61792c23f624448a059098314a9d8625166405f9a8c46561cfdc8c8033"
+    },
+    {
+      "path": "scripts/match/CombatResolver.gd",
+      "sha256": "2b08ae8b5dc512aeb410110faaf59491164d903b6fa059e1713475d631afc97b"
+    },
+    {
+      "path": "scripts/match/MatchRewards.gd",
+      "sha256": "9346c4b529ad7a8d1a4770dadf5086dcdea1a15625cfbc1357baafd41678b1f7"
+    },
+    {
+      "path": "scripts/match/MatchState.gd",
+      "sha256": "d292ffe18e4fbd6f17fefccb55df7973888628782d914ed474361a518ff9c82e"
+    },
+    {
+      "path": "scripts/match/OfflineMatchRules.gd",
+      "sha256": "1263bccecffd45903a6159c290712c063e77eb0dbdcde1a412b65ac58ba7a0b5"
+    },
+    {
+      "path": "scripts/match/PlayerState.gd",
+      "sha256": "dfac941ed7ff813390936b7fa2648e4bb0ef792dba2b0409abb348b83a399b50"
+    },
+    {
+      "path": "scripts/match/TurnManager.gd",
+      "sha256": "b2d348ad6014bee996e59ab17b78c0e064f8fb27033ffe68bd5011444d40b93b"
+    },
+    {
+      "path": "scripts/multiplayer/LobbyManager.gd",
+      "sha256": "838694c7731f25a6fb1f78504078871bebc1410ccfb921033d9acbe5ecf91ffd"
+    },
+    {
+      "path": "scripts/multiplayer/Matchmaking.gd",
+      "sha256": "20f9d7aeda3bbbb15e2dc7e8c8484b6bb5201f51e0aff8713c4f35de012bc2d3"
+    },
+    {
+      "path": "scripts/multiplayer/MultiplayerMatch.gd",
+      "sha256": "df123dabff30f6194d81476bb605557dd504ac6b79789520826f4ea04b17d6f4"
+    },
+    {
+      "path": "scripts/multiplayer/RpcCommands.gd",
+      "sha256": "a43b454c4db58d6082edcff8915863a05a7a01fe9400bfe079bc5be212b6b2ba"
+    },
+    {
+      "path": "scripts/neon.gd",
+      "sha256": "d2020150656186ebe9d1d8634afb1a9d41061288594a7018d52a2f8103026d83"
+    },
+    {
+      "path": "scripts/PackPreviewViewport.gd",
+      "sha256": "e82589a510889803540236dbdbb55666d4e19897524de087ec19d238f2bf44b4"
+    },
+    {
+      "path": "scripts/packs/FoilAudio.gd",
+      "sha256": "49c5d268bb08fc344645a2c44cae970b0ae86c4049b56bdb27d85c3987f8faa4"
+    },
+    {
+      "path": "scripts/packs/PackDefinition.gd",
+      "sha256": "15653fef5054c882886a10d99ec3ee502d94d7ef844bf838e9f7616fdd6a9c9d"
+    },
+    {
+      "path": "scripts/packs/PackFoil.gd",
+      "sha256": "055bba02cfddb318c730855948a6fc2af937db33acf8bed9e9e8672ee8bfb391"
+    },
+    {
+      "path": "scripts/packs/PackOpeningAnimation.gd",
+      "sha256": "38394a0d3b713cca21d07f379d5d37b72d8ea86510025d843fae411cda13e522"
+    },
+    {
+      "path": "scripts/packs/PackRewardGenerator.gd",
+      "sha256": "cec8e2a1d9270ef1286993240e72d539ddf549693347f6bfcbd94268e55dc4b4"
+    },
+    {
+      "path": "scripts/ParticleBurst3D.gd",
+      "sha256": "f644f28a027c0fb6db429cb36ca4f79b8d5cfd8c450081f6548adf32a9b303b0"
+    },
+    {
+      "path": "scripts/props/BrazierFire.gd",
+      "sha256": "b412130b93e08dc28b44b3f247daa0fe6c8f828fc27b75fa9ccb8fcea1c23344"
+    },
+    {
+      "path": "scripts/props/FusionWorkbench.gd",
+      "sha256": "f68ac9ffbd5ebc4a1f597b26d1a73335198bc7464fb881a61da6363c9c97468b"
+    },
+    {
+      "path": "scripts/props/FusionWorkbenchModel.gd",
+      "sha256": "2ef7dfe94df9eae9d798cbbd05e0c009fe48badd39f9e05a3ab25f8abc92e9c3"
+    },
+    {
+      "path": "scripts/props/HospitalDoor.gd",
+      "sha256": "9060c57a2a965d1eed5df436308b57492e2d38ea31bdddbd3252fc57c89f9743"
+    },
+    {
+      "path": "scripts/props/JournalBookModel.gd",
+      "sha256": "47a44de12ba1a9fcef1aee6213b84c66d28394233adce5bd5eb205f9df40da07"
+    },
+    {
+      "path": "scripts/props/LocalizedModelText.gd",
+      "sha256": "91538214c50dbfd78ff1bfb575427fc220d0d988eec7a19d4ecd1b3f4b5a98cc"
+    },
+    {
+      "path": "scripts/props/SecretWallInput.gd",
+      "sha256": "6b22f288f681c1c6cc52268ac4c26fcca6f23044cf1492a8f9b1af013cddc154"
+    },
+    {
+      "path": "scripts/props/SlotMachine.gd",
+      "sha256": "13ad18a3a594ee5c69e4bbab26a84b244edc93ca68d8d20a33bba2f3659e02a1"
+    },
+    {
+      "path": "scripts/Rarityeffects.gd",
+      "sha256": "45e660b8f2ec61fc27adf8204db7aa25e749892aa5d6fe117e9e163db5f2eed7"
+    },
+    {
+      "path": "scripts/rooms/AngelDialogue.gd",
+      "sha256": "b98dad5c231db14d8e128fceef795f365e048b097c8c1d86e54e2df5c5615e13"
+    },
+    {
+      "path": "scripts/rooms/AngelDialogueContent.gd",
+      "sha256": "48dd591bca394abe048f27ecaccd932b80835e8c7c66c9e7dae02ed896a62d05"
+    },
+    {
+      "path": "scripts/rooms/BasementBoiler.gd",
+      "sha256": "e9a9e5f26a60d5cf3db0031233a36c2fc15a296b728d8b96e024146477bf3ca7"
+    },
+    {
+      "path": "scripts/rooms/BasementCatEncounter.gd",
+      "sha256": "7ae595f05f1973d8e9bee137188578efe73a91cb2bf882b1dd77f31eb27f8e52"
+    },
+    {
+      "path": "scripts/rooms/BasementCrate.gd",
+      "sha256": "896ccc33ff6bd3deb9c6b5c371113bd432d5fb92a1dfb27327292055fe5139c7"
+    },
+    {
+      "path": "scripts/rooms/BasementDiscovery.gd",
+      "sha256": "4454e07d6fc025c3b349b19396b573836e32bd2f1ec41c4cb79d7c8c8c5f57f6"
+    },
+    {
+      "path": "scripts/rooms/BasementPumpControl.gd",
+      "sha256": "5f89e9e6c7b7fce7c39d5079a68558f17a972fd0d5c7e24feb7f3bbc423bb1ab"
+    },
+    {
+      "path": "scripts/rooms/BlackMarketBoard.gd",
+      "sha256": "4e472607cceda6a1bf68e4ad031565cd999a6ce587f7c5bdf8f4c00f02ba335c"
+    },
+    {
+      "path": "scripts/rooms/CryptGate.gd",
+      "sha256": "a697c1fe69918872fb519a27476191c855462dc8a16cab7493bc2590c20202ed"
+    },
+    {
+      "path": "scripts/rooms/DealerDialogue.gd",
+      "sha256": "0567d1252e0549495fc73d04a9f33c187481c16d4002c0473919408dbe322c98"
+    },
+    {
+      "path": "scripts/rooms/DealerDialogueContent.gd",
+      "sha256": "0a8cd070f5fed0d6d20b15c360502473582d4a7a5998c4634369e8fd0218fc9d"
+    },
+    {
+      "path": "scripts/rooms/GraveyardJester.gd",
+      "sha256": "7ae9d76b0e2e492fd492446c662a2a5deaac0b6a494b6e4491acca8e55fb3935"
+    },
+    {
+      "path": "scripts/rooms/PrisonerDialogue.gd",
+      "sha256": "5f80a487d5297098bf2a33095be8878a956e70089080d83253ba6ec7d5818834"
+    },
+    {
+      "path": "scripts/rooms/ProgressionArea.gd",
+      "sha256": "fa7a4b9b6670373a2244be1ad7034d232b2b052e8455714ea9212de080df5e2f"
+    },
+    {
+      "path": "scripts/SatanLaughAudio.gd",
+      "sha256": "70efc733ab97b972f92454e72b1c2eebaddd62583c126c22e9d040e2d94267e8"
+    },
+    {
+      "path": "scripts/SatanVoiceChat.gd",
+      "sha256": "1be64482dbefb0c08d02627f0e0e26a8f40cdb11f775318eb77262abff2ca72b"
+    },
+    {
+      "path": "scripts/SpriteAnim.gd",
+      "sha256": "dc3882af9301bd23d7ef8ef33a46bd551658616936dc0f0b5a5cf289e0cd5017"
+    },
+    {
+      "path": "scripts/table/LocalTableProp.gd",
+      "sha256": "6e8f65db31b6d0a6a6ad8aacd1b9520865ddcb5b485403e2817c2a1c8ed8d6a7"
+    },
+    {
+      "path": "scripts/table/OfflineModeBoard.gd",
+      "sha256": "30cb5942d297c7586ea88f9c0e00be31da615f991e9f45600b87a1631765d4bc"
+    },
+    {
+      "path": "scripts/table/TableThrowMotion.gd",
+      "sha256": "4798b8d2fd29b10e814b77b7442b9eada7e4e40909fa0f1bf73786d0524db7b0"
+    },
+    {
+      "path": "scripts/Table3DButton.gd",
+      "sha256": "43c7f5974492d4955418c74543dbb0ec2aa0c14f5e996d56d38a9a9807306ea9"
+    },
+    {
+      "path": "scripts/typewriter.gd",
+      "sha256": "9b2974357c534d614085b376bd9bb912d256d160a3a3382b28b6385445ea55ec"
+    },
+    {
+      "path": "scripts/ui/AccessKeyTray.gd",
+      "sha256": "b4a3987b833f78a93da2bd1f786b0fd77272a5414d4bcc08fae26f2401bc909d"
+    },
+    {
+      "path": "scripts/ui/BloodOverlay.gd",
+      "sha256": "8d8eac504b9851d21887511fc4498fd9cf2fdf29be82e84cf98bc6a7f77ce4fa"
+    },
+    {
+      "path": "scripts/ui/CatChoicePresentation.gd",
+      "sha256": "cea4c39f9c34be0eceb128d753e64c4994cf67ec24964baeb4f46c7b3a60e743"
+    },
+    {
+      "path": "scripts/ui/CollectionScreen.gd",
+      "sha256": "07bbc2e5b739a16c752f346086e3950d52cc1966a4562797450a224382e527e9"
+    },
+    {
+      "path": "scripts/ui/DamageNumber3D.gd",
+      "sha256": "a15bbe7c09fcf534a477bb72ac297d6546c32acdb8e1db1d9540c46a76b48a9b"
+    },
+    {
+      "path": "scripts/ui/DeckBuilderScreen.gd",
+      "sha256": "0c5fff2dc3fe08f2f86bdeff9a826906f943bbf7115a584e39eee5b65a0ead25"
+    },
+    {
+      "path": "scripts/ui/DifficultyRewardLabels.gd",
+      "sha256": "588590f824bec0b724403be2884b68ba42fd785dd15c85a4313245ab956a8955"
+    },
+    {
+      "path": "scripts/ui/EffectPresentation.gd",
+      "sha256": "24d122df2e854b400457684e3a750a9f5c72cfaf890af9b60aff34b59c58f916"
+    },
+    {
+      "path": "scripts/ui/EventHandUI.gd",
+      "sha256": "0a626e6828ea54ed388f605f8d59e50c3946e949ed5a6e17f4478de1488ac512"
+    },
+    {
+      "path": "scripts/ui/InterfaceSounds.gd",
+      "sha256": "0afdeedd4a6073648a821d74791692527ea57cf387053582d842ecf30e42c1d2"
+    },
+    {
+      "path": "scripts/ui/Journal3D.gd",
+      "sha256": "058bc50de5c92f738c6354caeccfd02e5816387559a07af2c2938c175929aa37"
+    },
+    {
+      "path": "scripts/ui/JournalContent.gd",
+      "sha256": "3c572e726a5f0dfde45edf7796ef6a3f3d0726f39d71254d05272b2dfa3a7722"
+    },
+    {
+      "path": "scripts/ui/LevelProgress.gd",
+      "sha256": "02b084544d2f9621e0e54b4fcbcebd0c32b52d9c25e141f0442d0693cec26fa6"
+    },
+    {
+      "path": "scripts/ui/LoadingScreen.gd",
+      "sha256": "d0dca4a709e8a2c4a89b44890a0079552335881b29dfcccf9ec7ec77be110609"
+    },
+    {
+      "path": "scripts/ui/MainMenu.gd",
+      "sha256": "744e38503439d79f1e5bebc41070b77a71d81027bca05fa84ff1388fd2609261"
+    },
+    {
+      "path": "scripts/ui/MatchHUD.gd",
+      "sha256": "85a0a19700d933f0f3a93812bab1b2d01dce6e576fe11914d6afc741ea271899"
+    },
+    {
+      "path": "scripts/ui/MenuNavigation.gd",
+      "sha256": "10b09a9d3d1282f03abbf5220bd1f70024362c3f5ea0f214b1e92552d1accdd1"
+    },
+    {
+      "path": "scripts/ui/MicrophoneTestController.gd",
+      "sha256": "95b110beeff74e1bd6b755cab2c072d25a57561a030ee8794e74e932544a8b29"
+    },
+    {
+      "path": "scripts/ui/OfflineModeMenu.gd",
+      "sha256": "e9f9386d5f51901f86c52246b373e8215e534953fe12ee9aafdfe7900417c869"
+    },
+    {
+      "path": "scripts/ui/PackOpeningScreen.gd",
+      "sha256": "a7eefb072469ccd09fa96553d40f1294fb442b6290d5c614686f0a888876ea81"
+    },
+    {
+      "path": "scripts/ui/PackShopMachine.gd",
+      "sha256": "16e5d3fca861ed206103f791913f9b4ea8324019f00e75fab3b3209ce2912b71"
+    },
+    {
+      "path": "scripts/ui/PackShopScreen.gd",
+      "sha256": "e97b18978658ee39f4ddbc13649ed0a0692803fd926cc354e024753312bc5420"
+    },
+    {
+      "path": "scripts/ui/PackShopScreenInput.gd",
+      "sha256": "d3431885f613b232bc1f6f3ab80d207bbb4e8bc3a9cfaba1b5594bcb473bfaf3"
+    },
+    {
+      "path": "scripts/ui/PackShopUI.gd",
+      "sha256": "d4909a682f51b14db8cf64690d8e63f1829176b3ff024054003d8e5237b4c8b8"
+    },
+    {
+      "path": "scripts/ui/PauseMenu.gd",
+      "sha256": "f2c23b25d5232ee49f32efb12b5cebf13b35a62fd62841b1c936f74a2405e3fe"
+    },
+    {
+      "path": "scripts/ui/PiskelTool.gd",
+      "sha256": "6f434c8d65f5fcc2b167afbe6c2269d9ae21935e351f8fe57dbb776f88a29107"
+    },
+    {
+      "path": "scripts/ui/ProfileScreen.gd",
+      "sha256": "66cabad496d001ce14e7a58bcd4159e45a81f6a666789f1e99ac82de64ec6c86"
+    },
+    {
+      "path": "scripts/ui/RewardRevealEffect.gd",
+      "sha256": "973eaa44e0122de223f22e8cd193389cd7c615988d0acf8628bf622ef1ad2d29"
+    },
+    {
+      "path": "scripts/ui/SatanVoicePortrait.gd",
+      "sha256": "5fd85c8f4477351ada531916a448589ef869dec241620a7479061b4eb68b7d62"
+    },
+    {
+      "path": "scripts/ui/SaveSlotPicker.gd",
+      "sha256": "0863fff92f7d9660e13f3248629d6fd98a9838891231d6018148a3886d937807"
+    },
+    {
+      "path": "scripts/ui/ScreenCameraFocus.gd",
+      "sha256": "9c56ad8a6e63a74c0c4e273b78dfff4b8dbf3a59caaffd3e41ceffed0551d4e0"
+    },
+    {
+      "path": "scripts/ui/SecretCardReveal.gd",
+      "sha256": "0f25d9d099c62897273df0b23efcd011f02beac1dcac6486fa75a7e56cdea702"
+    },
+    {
+      "path": "scripts/ui/SettingsControlOutlines.gd",
+      "sha256": "ac544d57e5ea06039b242fd8aff990d6bb729fbb1a4200b656414ec58398b80c"
+    },
+    {
+      "path": "scripts/ui/SettingsMenu.gd",
+      "sha256": "219aa2da775ae9203ef3bc31b929902b8bb7e5f3befd61232b2da42e8576f275"
+    },
+    {
+      "path": "scripts/ui/StartingHandSlots.gd",
+      "sha256": "2f846850c6aee84d3606ec8a2d1ace407a5c1f123b1ef3634c0c754e1dcd8a62"
+    },
+    {
+      "path": "scripts/ui/StoryLevelMap.gd",
+      "sha256": "7acede9840e1031e5654289fc1ff01abb095725bda591d8954f35f1efb4fe604"
+    },
+    {
+      "path": "scripts/ui/TurnArrows.gd",
+      "sha256": "cb56ca12f29086653c325d33cdac068acf9772680da485d9c30a494c526a5799"
+    },
+    {
+      "path": "scripts/ui/UpgradeWallCollection.gd",
+      "sha256": "2131cb22105a11556e97bd296a2647bc52cb6e335519b826ef136f0eb8a9dc73"
+    },
+    {
+      "path": "scripts/UpgradeMachine.gd",
+      "sha256": "75c136ebb13a7296928675c870cf02290d7dfb76f4b12fdc8ff4c680f85d4c0a"
+    },
+    {
+      "path": "scripts/UpgradeScreenInput.gd",
+      "sha256": "a0558ff5fc210998f8dba47ca6ff168a81444bf0f3864a15e81e07ebd70986e7"
+    },
+    {
+      "path": "scripts/UpgradeUI.gd",
+      "sha256": "fe187fe4effb12f729c01d30f06c97085610464b312dbe4a9b9d6a2ad6be6a38"
+    },
+    {
+      "path": "scripts/Wobble.gd",
+      "sha256": "a6c04f51f43eb62f0838872ff66f411c03494c9e5e99f6d4a8ad9c75161a1681"
+    },
+    {
+      "path": "scenes/table/GameTable.gd",
+      "sha256": "a10353fe96ababd2a8a7d094cd6424add7a37f78c9e335276273ad64c4fe15ab"
+    },
+    {
+      "path": "scenes/BloodBurst3D.tscn",
+      "sha256": "4160abf2beda4d6ecc41932779c633385fae6dd307a3b8fc89cf3a878d32a902"
+    },
+    {
+      "path": "scenes/BloodDecal3D.tscn",
+      "sha256": "f3669a442fe69698889a108d737f8b9945d0891a8ff9c93dd930fc02de41c12e"
+    },
+    {
+      "path": "scenes/CardEffectOverview.tscn",
+      "sha256": "29afbadc9247d243930767c2cda42a17dfad451545f13459e5a08f975c933a08"
+    },
+    {
+      "path": "scenes/cards/CardInspect.tscn",
+      "sha256": "5f97bfb87cf3e319e6093182fa398c4f939dabf7f4d54003f0db8ed0470279f3"
+    },
+    {
+      "path": "scenes/cards/CardPreview.tscn",
+      "sha256": "0c26a82f18885e60736a55c30fe169acf067f712b645d1bfe0190615e22a9162"
+    },
+    {
+      "path": "scenes/cards/CigarettesSecretRoom.tscn",
+      "sha256": "3c9174326d5dff4026879eb20e7b59f09dd970b5f7b6300cab4c2bbadcfaadf8"
+    },
+    {
+      "path": "scenes/cards/PackOpeningCard.tscn",
+      "sha256": "c647bdccd9893a3ae450e91e3c6f7bf4cba822f89864cfd62a170377448f9741"
+    },
+    {
+      "path": "scenes/cards/SeagullMilkSecretRoom.tscn",
+      "sha256": "5ed3a725ba2f3bfc0a8cacfe8c1fe2ba6f2b4bb2acad017f66a6c23881d80b50"
+    },
+    {
+      "path": "scenes/cards/UsbSecretRoom.tscn",
+      "sha256": "3efcb655a54dbdb1ef73682944c8838f96bf7e33b0178f59147cf4a095734599"
+    },
+    {
+      "path": "scenes/crt.tscn",
+      "sha256": "dff9907f7d4f680fe2e1d79f02f0f6f609957ef5a7ea123cf6fe1ab97a0b9d0b"
+    },
+    {
+      "path": "scenes/Curse.tscn",
+      "sha256": "3f5a09430d3eb59afdc8727a0349762da8a63206621bedfe53e780d32b517632"
+    },
+    {
+      "path": "scenes/effects/Piss.tscn",
+      "sha256": "28b9cd246520696162efc00baae50ced8338a62e97d233d672a132c4fa7f8d6a"
+    },
+    {
+      "path": "scenes/Heal.tscn",
+      "sha256": "a4f6037db694d3e02d5ab80e647a8b53317a5635ad024a7f360e8ebbc3baccd8"
+    },
+    {
+      "path": "scenes/LastStand.tscn",
+      "sha256": "76c92ddf589980e726dad06c85847537987692fade7fdb5c3ba90b8f8dce65b9"
+    },
+    {
+      "path": "scenes/main/LoadingScreen.tscn",
+      "sha256": "a1b12e4b5e792cc5caa1d0f4d660104e892fd5abcab05352cc4a1e027e17e567"
+    },
+    {
+      "path": "scenes/main/Main.tscn",
+      "sha256": "f35fc3f7d11829b57e6b2e984b33df9ff682bc5c258a19e507d2fa1288f10292"
+    },
+    {
+      "path": "scenes/main/MainMenu.tscn",
+      "sha256": "9f35a79fc6700b484d36323e6fff80ce3c83341cab81bccd34ca22a2eed95c1d"
+    },
+    {
+      "path": "scenes/main/SplashScreen.tscn",
+      "sha256": "bf05e6ed9cc399e8f9c4d038b53bc7d5d2ac0108ba3441c02a0ecedb2978bbb6"
+    },
+    {
+      "path": "scenes/match/BotMatch.tscn",
+      "sha256": "41f11dd23a03f4752da1ee9393f9f7390dab6cccac136370b6f5146d3a93b9f3"
+    },
+    {
+      "path": "scenes/match/MultiplayerMatch.tscn",
+      "sha256": "8dc1a37dfc5d1e1ab3d530d46e9443eddc22926ba2cfa838752d8c85403d1db2"
+    },
+    {
+      "path": "scenes/match/OfflineMatch.tscn",
+      "sha256": "36e490b170d4a3753bf9d20624436f1c8fdeb00b65c74cbf61e40bea03fdb4bb"
+    },
+    {
+      "path": "scenes/multiplayer/FriendInviteScreen.tscn",
+      "sha256": "17e8f12459c8bd07091a84e3ca48bc8fb9db17ea618d7e042ae7dd1f91bc6fc4"
+    },
+    {
+      "path": "scenes/multiplayer/LobbyScreen.tscn",
+      "sha256": "a24368555189d90916ab2aa9673d57abd1d532c0210d7bac89e4659fc62b3bfe"
+    },
+    {
+      "path": "scenes/multiplayer/MatchmakingScreen.tscn",
+      "sha256": "9dcec3a864b707c5ef075f22a7996ed67874d35dfe713a107b6f49c0ef08d442"
+    },
+    {
+      "path": "scenes/Neon.tscn",
+      "sha256": "233cdf5dc2a1143a4305992aedc23bbac550a422974268f0f743ff3ab4e64dd5"
+    },
+    {
+      "path": "scenes/PackPreviewViewport.tscn",
+      "sha256": "3f8f0c8cffc721d41e744f74c46e13ff38a82dde75a5b9e97329968a1b18b3d6"
+    },
+    {
+      "path": "scenes/PackShopMachine.tscn",
+      "sha256": "ec95c47d67d993aabd5c9875b3ebc21d073b8605f1cfd4f07446f447dcbd34af"
+    },
+    {
+      "path": "scenes/PackShopUI.tscn",
+      "sha256": "d182cfa1daa4e638137bff22ceb006e50ca7ef255cb1340d7aaf04a1825afa78"
+    },
+    {
+      "path": "scenes/Poison.tscn",
+      "sha256": "db7a17bb1a321fd1b10605ce6c2d5cdbb8a01ab34302daf64195b34bb1456e62"
+    },
+    {
+      "path": "scenes/props/FusionWorkbench.tscn",
+      "sha256": "e8d00a76af16911328e4794ec10125e44bbde7d304fc53b43892818601df77ba"
+    },
+    {
+      "path": "scenes/props/GraveyardBrazier.tscn",
+      "sha256": "d60507230366654983bfdec6b7c6dfa7a85f36e3153d4e9723fac024e36ee6ed"
+    },
+    {
+      "path": "scenes/props/HospitalDoor.tscn",
+      "sha256": "90ffe99849addbae3bfd26ae04308b903e80ec8dd6c1c108fd8315350dcceaa5"
+    },
+    {
+      "path": "scenes/props/Journal3D.tscn",
+      "sha256": "aa4c6f6151fdd26c7d97e3859a594636aeb3c4467d02b290b19354657b680d0f"
+    },
+    {
+      "path": "scenes/props/ProgressionArea.tscn",
+      "sha256": "9675b39797422dfea85824d285deed078e0434abdf39c261bcb28f312eebec16"
+    },
+    {
+      "path": "scenes/props/SecretWallInput.tscn",
+      "sha256": "dd2232125cb7beda05ae99d098b548596d05a42635d8b28ab194531933e9c805"
+    },
+    {
+      "path": "scenes/props/SlotMachine.tscn",
+      "sha256": "12f052a34d273839adc41cc3064027b31899e947c1ee43cdaa631aa5253bf9e1"
+    },
+    {
+      "path": "scenes/props/TravelBeacon.tscn",
+      "sha256": "35f7cbea8e90e9c5292754ffbad6f0e7999f61f9b78be9f453f3d04f083ab032"
+    },
+    {
+      "path": "scenes/props/UpgradeWallCollection.tscn",
+      "sha256": "8e980df34814ade376d443693a93915a942fe68852fb1ed883c8bb461b857a0a"
+    },
+    {
+      "path": "scenes/rooms/Basement.tscn",
+      "sha256": "ffb86e0914e1f0a6f14d85dbacd7ba4a7ebf4f0a1437060db1c140c318d0e421"
+    },
+    {
+      "path": "scenes/rooms/BasementCatEncounter.tscn",
+      "sha256": "674b655e7d084cfbbc6fbeccdb72c977757136e673b561e04c121eff985d7edb"
+    },
+    {
+      "path": "scenes/rooms/BlackMarket.tscn",
+      "sha256": "3af6a91dc681c9cde06777aa9473fbbf146a2eaefd840c7ebf1976f58da8c2b9"
+    },
+    {
+      "path": "scenes/rooms/ConnectedHospitalRoomShell.tscn",
+      "sha256": "60ce89033e9e75720d8b9631120a09cc31889af14f7d5b571e08f889599db272"
+    },
+    {
+      "path": "scenes/rooms/EmptyHospitalRoom.tscn",
+      "sha256": "d62d120d803bdf9f91a5a9bb7fbefe0c2391b47a22e3e557c30d2a7a2b331588"
+    },
+    {
+      "path": "scenes/rooms/Graveyard.tscn",
+      "sha256": "70f87d097894dfc2250140bdb51d2e69682a92837013d1250c6543bbb37eaeda"
+    },
+    {
+      "path": "scenes/rooms/HospitalRoomShell.tscn",
+      "sha256": "a68ae0f5445d9b2498295c6945d7b9b34b2037159d23bb4c2f2ac4d6a3eaa1cc"
+    },
+    {
+      "path": "scenes/ShieldBurst3D.tscn",
+      "sha256": "df4e3c55378b2fb203e51034e80d261f17a72b48e07f79c9685170457e1b7a25"
+    },
+    {
+      "path": "scenes/Stun.tscn",
+      "sha256": "199691ebfa27dd12a2c4677614126f4a8454c25fb5b454ef8cb612b15fe9b67d"
+    },
+    {
+      "path": "scenes/table/Card3D.tscn",
+      "sha256": "06791e5a61fc6ea08042e65478998a9fba76a0d9c49de63ccc7c0958c3a0b259"
+    },
+    {
+      "path": "scenes/table/DeckPile.tscn",
+      "sha256": "122ff6bb5d587e5651edb656d780318e1e0abd177b1e7e0fb1b244e48e6b6a28"
+    },
+    {
+      "path": "scenes/table/GameTable.tscn",
+      "sha256": "cb4c696908d62ca63d35383228a8e98c719e82926406ac4f1e212589acf9eb2f"
+    },
+    {
+      "path": "scenes/table/GraveyardPile.tscn",
+      "sha256": "44662f48a52333a0996a9e3b1c89f26baaff05daa3aed04200809154bb3a85d3"
+    },
+    {
+      "path": "scenes/table/OpponentSeat.tscn",
+      "sha256": "5c8c8e20f3771d7f618da1e99bdf2250350ded3385c3acb7aaa3c6976cecd721"
+    },
+    {
+      "path": "scenes/table/PlayerSeat.tscn",
+      "sha256": "e2ad8e5f41a7aeb7bd133b11b70520ea43fc5155f1bc4d94f810994d4908475b"
+    },
+    {
+      "path": "scenes/Table3DButton.tscn",
+      "sha256": "fadd98bf7dea5b6e0c77bdaaa1f4a59a0741c93831c711e033b87c964a62b004"
+    },
+    {
+      "path": "scenes/Thorns.tscn",
+      "sha256": "033a5793f754b11872fdb4825c22ee35381eebfcd47d8a47456c16d0e5000b92"
+    },
+    {
+      "path": "scenes/ui/AccessKeyTray.tscn",
+      "sha256": "92e5fb5b358036723ae4b81c415f918678cd3de2f6bf72186daa6965b103978c"
+    },
+    {
+      "path": "scenes/ui/BloodOverlay.tscn",
+      "sha256": "63a6303975bf495c2ef3ed8c0ae61668b14db58eaca1e60fa2f0d9a59a1525b9"
+    },
+    {
+      "path": "scenes/ui/CollectionScreen.tscn",
+      "sha256": "a6ee7aeb9d6ad881edb9a19b52af59b38dc93f2892ab2cef87404c413d4c3e28"
+    },
+    {
+      "path": "scenes/ui/DeckBuilderScreen.tscn",
+      "sha256": "53bdc73e4d292d5817022aae8fcba8cf60312596e8a94e96437fcb646f145a0f"
+    },
+    {
+      "path": "scenes/ui/LevelProgress.tscn",
+      "sha256": "060d48990cc35e35b8c7cba60960f886f4c9e5d51a8e10dde52ffc39e70dec77"
+    },
+    {
+      "path": "scenes/ui/MatchHUD.tscn",
+      "sha256": "c9931b99041974289512089551f030837daf934d109717f23549fe7e47d5afd8"
+    },
+    {
+      "path": "scenes/ui/PackOpeningScreen.tscn",
+      "sha256": "e850285f63f8aaecdd011d7fffb22ec49bf0fc1b1ac947d3766764db7ce88591"
+    },
+    {
+      "path": "scenes/ui/PackShopScreen.tscn",
+      "sha256": "90fec980e1753e80ea6a36cb227f280fe3f3a66d24e71c3b2a0328cbeb18172c"
+    },
+    {
+      "path": "scenes/ui/PauseMenu.tscn",
+      "sha256": "d102fe44c8e53081d395b1d7e23efbaeb5b04d5d88518c45aca302d3fb829742"
+    },
+    {
+      "path": "scenes/ui/PiskelTool.tscn",
+      "sha256": "d875494cce48643aa029039e1e98cb67800cf84237e01d27584fa0410a6281e2"
+    },
+    {
+      "path": "scenes/ui/ProfileScreen.tscn",
+      "sha256": "a472fe5604b9e0559851255ee54fe051e6df4561fbc37b502685790be9b8a732"
+    },
+    {
+      "path": "scenes/ui/SatanVoicePortrait.tscn",
+      "sha256": "7d9dac52189fcd0fb9e22598b70bfef42281027cd5eb16bdcb69e2f55763ce0d"
+    },
+    {
+      "path": "scenes/ui/SettingsMenu.tscn",
+      "sha256": "67a841c307bdb8480cbba69f1c6f66c4a345cac6505dd17b58d81ba2deb14f97"
+    },
+    {
+      "path": "scenes/ui/SettingsScreen.tscn",
+      "sha256": "64a52fa590cd56ca0085ba9d68a8992f555ad6d0fff3382f87e5a506627bc724"
+    },
+    {
+      "path": "scenes/UpgradeShop.tscn",
+      "sha256": "bf75f70cee8097a0e95ad32ae11a43304ae2939699e34c7df9f66b7cae158c89"
+    },
+    {
+      "path": "scenes/UpgradeUI.tscn",
+      "sha256": "406571871517c9bf8d8f2c711609ee93a6aa87e2ec4fbf79927e2526b338abc3"
+    },
+    {
+      "path": "data/card_effects.json",
+      "sha256": "47a642d10e9362d320f94022d165e52d53fc26468f3d42e41a37f4e29b003b7b"
+    },
+    {
+      "path": "data/cards.json",
+      "sha256": "59ab36410e26379d7a3e2e2daf4a1d5735e092b6a3d77557c71e2be17e0e9b6f"
+    },
+    {
+      "path": "data/effects.json",
+      "sha256": "cd3b8248366eff231efdbf33db79c90a0505395fb85f37000dc2ec48768138da"
+    },
+    {
+      "path": "data/packs.json",
+      "sha256": "932dd3e992cb314e438b88d5f894118047d30da3a23e758fb5789f179597f3a6"
+    },
+    {
+      "path": "data/rarities.json",
+      "sha256": "1d35da62b67fec7f7ce1a35268923e9e3cd965f14aa893dc38ec51491b80c6e7"
+    },
+    {
+      "path": "data/starter_decks.json",
+      "sha256": "de1792f2860b6f44254ede37a93a32f4adb1b73fe21cec350d9897c17ef6fa74"
+    }
+  ],
+  "cards": 118,
+  "combat_cards": 93,
+  "special_cards": 25
+}

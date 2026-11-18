@@ -7,12 +7,17 @@ $testExitCode = 1
 try {
     New-Item -ItemType Directory -Path (Join-Path $testRoot 'scripts/ui'), (Join-Path $testRoot 'scenes/ui'), (Join-Path $testRoot 'tests'), (Join-Path $testRoot 'assets/sounds/SFX') -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $projectRoot 'scripts/ui/LevelProgress.gd') -Destination (Join-Path $testRoot 'scripts/ui/LevelProgress.gd')
+    Copy-Item -LiteralPath (Join-Path $projectRoot 'scripts/ui/InterfaceSounds.gd') -Destination (Join-Path $testRoot 'scripts/ui/InterfaceSounds.gd')
+    foreach ($sound in @('button.mp3', 'PanelFlip.mp3')) {
+        Copy-Item -LiteralPath (Join-Path $projectRoot "assets/sounds/SFX/$sound") -Destination (Join-Path $testRoot "assets/sounds/SFX/$sound")
+    }
     Copy-Item -LiteralPath (Join-Path $projectRoot 'scenes/ui/LevelProgress.tscn') -Destination (Join-Path $testRoot 'scenes/ui/LevelProgress.tscn')
     Copy-Item -LiteralPath (Join-Path $projectRoot 'fonts') -Destination (Join-Path $testRoot 'fonts') -Recurse
     Copy-Item -LiteralPath (Join-Path $projectRoot 'assets/sounds/SFX/button.mp3') -Destination (Join-Path $testRoot 'assets/sounds/SFX/button.mp3')
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'progression_test.gd') -Destination (Join-Path $testRoot 'tests/progression_test.gd')
     New-Item -ItemType Directory -Path (Join-Path $testRoot 'scripts/autoload'), (Join-Path $testRoot 'scripts/card'), (Join-Path $testRoot 'test-user') -Force | Out-Null
-    foreach ($sourcePath in @('scripts/GameCurrency.gd', 'scripts/autoload/Localization.gd', 'scripts/autoload/CardDatabase.gd', 'scripts/autoload/CollectionManager.gd', 'scripts/autoload/EffectDatabase.gd', 'scripts/card/CardData.gd')) {
+    New-Item -ItemType Directory -Path (Join-Path $testRoot 'scripts/match') -Force | Out-Null
+    foreach ($sourcePath in @('scripts/GameCurrency.gd', 'scripts/match/OfflineMatchRules.gd', 'scripts/autoload/Localization.gd', 'scripts/autoload/CardDatabase.gd', 'scripts/autoload/CollectionManager.gd', 'scripts/autoload/EffectDatabase.gd', 'scripts/card/CardData.gd')) {
         $source = Get-Content -LiteralPath (Join-Path $projectRoot $sourcePath) -Raw
         Set-Content -LiteralPath (Join-Path $testRoot $sourcePath) -Value $source.Replace('user://', 'res://test-user/') -Encoding utf8
     }

@@ -1,0 +1,59 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS easy win has the exact pre-boost XP/coin reward
+PASS easy win awards rounded XP and preserves fractional coins
+PASS easy draw has the exact pre-boost XP/coin reward
+PASS easy draw awards rounded XP and preserves fractional coins
+PASS easy loss has the exact pre-boost XP/coin reward
+PASS easy loss awards rounded XP and preserves fractional coins
+PASS normal win has the exact pre-boost XP/coin reward
+PASS normal win awards rounded XP and preserves fractional coins
+PASS normal draw has the exact pre-boost XP/coin reward
+PASS normal draw awards rounded XP and preserves fractional coins
+PASS normal loss has the exact pre-boost XP/coin reward
+PASS normal loss awards rounded XP and preserves fractional coins
+PASS hard win has the exact pre-boost XP/coin reward
+PASS hard win awards rounded XP and preserves fractional coins
+PASS hard draw has the exact pre-boost XP/coin reward
+PASS hard draw awards rounded XP and preserves fractional coins
+PASS hard loss has the exact pre-boost XP/coin reward
+PASS hard loss awards rounded XP and preserves fractional coins
+PASS insane win has the exact pre-boost XP/coin reward
+PASS insane win awards rounded XP and preserves fractional coins
+PASS insane draw has the exact pre-boost XP/coin reward
+PASS insane draw awards rounded XP and preserves fractional coins
+PASS insane loss has the exact pre-boost XP/coin reward
+PASS insane loss awards rounded XP and preserves fractional coins
+PASS omitting difficulty preserves existing normal rewards
+PASS an unknown difficulty safely uses the normal factor
+PASS unknown outcomes grant nothing even at the highest difficulty
+PASS preview getters remain pre-boost when permanent boosts are owned
+PASS difficulty rounds base XP before applying the existing two-percent boosts
+PASS saved XP remainders survive between difficulty-scaled match rewards
+PASS the coin boost applies after the fractional easy-draw payout without integer truncation
+PASS boosted fractional reward and XP persist together
+PASS insane match XP can cross levels without multiplying separate level-up coin bonuses
+PASS the real KI start captures the selected difficulty for this match
+PASS an exhausted opponent resolves the actual offline game-over path
+PASS the result retains its captured hard reward after menu-selection changes and board cleanup
+PASS repeat result and cleanup callbacks cannot grant the same difficulty reward again
+PASS online startup discards the previous KI match's reward difficulty
+PASS host receives normal win rewards despite a previous insane KI selection
+PASS duplicate authoritative result remains guarded for host
+PASS host receives normal loss rewards despite a previous insane KI selection
+PASS duplicate authoritative result remains guarded for host
+PASS host receives normal draw rewards despite a previous insane KI selection
+PASS duplicate authoritative result remains guarded for host
+PASS guest receives normal loss rewards despite a previous insane KI selection
+PASS duplicate authoritative result remains guarded for guest
+PASS guest receives normal win rewards despite a previous insane KI selection
+PASS duplicate authoritative result remains guarded for guest
+PASS guest receives normal draw rewards despite a previous insane KI selection
+PASS duplicate authoritative result remains guarded for guest
+PASS spectator receives no reward for canonical result player
+PASS spectator receives no reward for canonical result enemy
+PASS spectator receives no reward for canonical result draw
+DIFFICULTY_REWARDS_TESTS: PASS (53 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

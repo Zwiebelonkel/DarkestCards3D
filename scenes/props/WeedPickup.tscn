@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/environments/props/weed/weed.glb" id="1_model"]
+[ext_resource type="Script" path="res://scripts/props/WeedPickup.gd" id="2_script"]
+[ext_resource type="Shader" path="res://assets/shader/lsd.gdshader" id="3_shader"]
+[ext_resource type="PackedScene" path="res://scenes/props/CocainePackage.tscn" id="4_cocaine"]
+
+[sub_resource type="BoxShape3D" id="BoxShape_pick"]
+size = Vector3(0.51, 0.13, 0.7)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_effect"]
+shader = ExtResource("3_shader")
+shader_parameter/effect_mix = 0.0
+
+[node name="WeedPickup" type="Node3D"]
+script = ExtResource("2_script")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+position = Vector3(0, 0.0552, 0)
+scale = Vector3(0.22, 0.22, 0.22)
+
+[node name="CocaineModel" parent="." instance=ExtResource("4_cocaine")]
+visible = false
+position = Vector3(0, 0.0552, 0)
+scale = Vector3(0.22, 0.22, 0.22)
+
+[node name="PickArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 0
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickArea"]
+position = Vector3(0, 0.0552, 0)
+shape = SubResource("BoxShape_pick")
+
+[node name="PsychedelicOverlay" type="CanvasLayer" parent="." groups=["screen_overlay_effects"]]
+layer = 127
+visible = false
+
+[node name="ScreenCopy" type="BackBufferCopy" parent="PsychedelicOverlay"]
+copy_mode = 2
+
+[node name="EffectRect" type="ColorRect" parent="PsychedelicOverlay"]
+material = SubResource("ShaderMaterial_effect")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

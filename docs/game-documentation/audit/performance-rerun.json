@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "output_overflow": false,
+  "completion_marker_found": true,
+  "engine_errors": [],
+  "elapsed_ms": 2602,
+  "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 118 Karten\r\nBENCH initial_collection_ms=424.985 instances=5000 types=89\r\nBENCH unchanged_refresh_ms=16.098\r\nPASS unchanged refresh reuses every 3D card\r\nPASS batch stores all five exact rolled instances\r\nBENCH collect_five_ms=46.723\r\nBENCH acquired_refresh_ms=18.196\r\nPASS one pack publishes one change notification\r\nPASS one pack writes one collection snapshot\r\nPASS additional copies preserve all collection nodes\r\nPASS replaying a collected pack is a successful no-op without another notification\r\nPASS all awarded copies are persisted before the batch returns\r\nPASS bulk display preserves Holo selection for every card type\r\nPASS bulk display dictionaries cannot change saved Holo flags\r\nPASS deck occurrences retain distinct copies in Holo-first acquisition order\r\nPASS failure fixture blocks the temporary save destination\r\nPASS a failed batch awards no cards and reports the storage failure\r\nPASS a failed save preserves ownership, discoveries, file contents and notifications\r\nPASS retry stores the original rolled copies once after storage recovers\r\nPASS a new card type appends without rebuilding existing types\r\nPASS acquisition preserves the row scroll offset and existing card pose\r\nPASS losing the last copy removes only that card's node\r\nCOLLECTION_PERFORMANCE_TESTS: PASS\r\n",
+  "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n",
+  "pid": 1068
+}

@@ -1,0 +1,49 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: fresh profile starts with an undecided living cat
+PASS: invalid choice '' is rejected
+PASS: invalid choice 'dead' is rejected
+PASS: invalid choice 'SHOt' is rejected
+PASS: invalid choice 'spare' is rejected
+PASS: invalid choices change neither cat nor balance
+PASS: fixture exercises a real active regular-income multiplier
+PASS: shot result reports the exact advertised reward
+PASS: shot awards exactly 1000 Soul Coins despite active income boost
+PASS: fixed reward leaves fractional income and XP carry unchanged
+PASS: wallet and choice callbacks cannot reenter the transaction
+PASS: signals only publish after choice and balance are durable together
+PASS: double clicking cannot pay a second reward
+PASS: a completed shot cannot change to spared
+PASS: repeated reloads retain cat death without granting more coins
+PASS: repeat after reload reports no reward
+PASS: sparing reports success without a monetary reward
+PASS: sparing emits its choice once without a wallet change
+PASS: a spared cat cannot later be shot through the backend
+PASS: sparing persists with the original balance
+PASS: clearing profile memory discards the previous cat choice
+PASS: clearing memory does not overwrite the persisted decision
+PASS: explicit progression reset permits a fresh encounter
+PASS: shot returns actionable failure when persistence fails
+PASS: shot save failure rolls back both memory changes
+PASS: shot failure publishes no choice and leaves the original save intact
+PASS: shot failed choice remains undecided after restart
+PASS: shot can retry after storage recovers
+PASS: shot successful retry commits its reward only once
+PASS: spared returns actionable failure when persistence fails
+PASS: spared save failure rolls back both memory changes
+PASS: spared failure publishes no choice and leaves the original save intact
+PASS: spared failed choice remains undecided after restart
+PASS: spared can retry after storage recovers
+PASS: spared successful retry commits its reward only once
+PASS: legacy currency-only saves preserve their balance and begin undecided
+PASS: unknown saved choice does not invent a completed outcome or reward
+PASS: isolated profile test starts on slot one
+PASS: switching to a second slot succeeds
+PASS: second slot starts with its own undecided cat and balance
+PASS: returning to first slot succeeds
+PASS: first slot retains its dead cat and single reward
+PASS: returning to second slot succeeds
+PASS: second slot retains its spared cat without leaking another slot's reward
+BASEMENT_CAT_BACKEND_TESTS: PASS (44 checks)
+Isolated test output: C:\Users\Luca\AppData\Local\Temp\darkestcards-basement-cat-8a0a050869ad42fbb175cbee9776a247

@@ -1,0 +1,73 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS no scene without the story item
+PASS fixture leaves the hub while facing the collection
+PASS acquisition outside does not start the scene
+PASS real return opens Satan dialogue after the swing
+PASS movement stays locked throughout the conversation
+PASS camera zooms in slightly
+PASS music is paused during the sequence
+PASS camera points at Satan
+PASS camera approaches Satan's face only a small distance
+PASS the return conversation has four sentences
+PASS Satan laughs only in the fourth dialogue part
+PASS ordered sentence 1
+PASS live language refresh de part 1
+PASS live language refresh en part 1
+PASS translated en part 1
+PASS live language refresh es part 1
+PASS translated es part 1
+PASS live language refresh fr part 1
+PASS translated fr part 1
+PASS live language refresh pl part 1
+PASS translated pl part 1
+PASS Satan laughs only in the fourth dialogue part
+PASS ordered sentence 2
+PASS live language refresh de part 2
+PASS live language refresh en part 2
+PASS translated en part 2
+PASS live language refresh es part 2
+PASS translated es part 2
+PASS live language refresh fr part 2
+PASS translated fr part 2
+PASS live language refresh pl part 2
+PASS translated pl part 2
+PASS Satan laughs only in the fourth dialogue part
+PASS ordered sentence 3
+PASS live language refresh de part 3
+PASS live language refresh en part 3
+PASS translated en part 3
+PASS live language refresh es part 3
+PASS translated es part 3
+PASS live language refresh fr part 3
+PASS translated fr part 3
+PASS live language refresh pl part 3
+PASS translated pl part 3
+PASS Satan laughs only in the fourth dialogue part
+PASS ordered sentence 4
+PASS live language refresh de part 4
+PASS live language refresh en part 4
+PASS translated en part 4
+PASS live language refresh es part 4
+PASS translated es part 4
+PASS live language refresh fr part 4
+PASS translated fr part 4
+PASS live language refresh pl part 4
+PASS translated pl part 4
+PASS slow return completes and releases movement
+PASS normal hub position and lens restored
+PASS the item sequence ends facing the game table instead of the previous collection view
+PASS the turn state agrees with the visible table view
+PASS idle frames do not turn the camera back to the collection
+PASS music resumes after the return swing
+PASS Satan stops laughing after the dialogue
+PASS the return sequence preserves the item, other cards and money
+PASS the next normal turn starts from the table side
+PASS turning back returns to the table without a jump to the old collection heading
+PASS saved one-time flag survives reload
+PASS second return does not replay
+HOLY_WATER_RETURN_TESTS: 66 checks, 0 failures
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

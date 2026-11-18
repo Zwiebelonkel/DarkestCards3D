@@ -51,6 +51,7 @@ func _settle(seconds: float = 0.06) -> void:
 
 
 func _run() -> void:
+	GameCurrency._rescued_npcs["angel"] = true
 	if not CollectionManager.SAVE_PATH.begins_with("res://test-user/"):
 		push_error("Use the isolated runner to protect player saves.")
 		get_tree().quit(1)
@@ -123,8 +124,10 @@ func _check_room(specification: Dictionary) -> void:
 	var label := str(specification.area)
 	var permanent_room_id := room.get_instance_id()
 	CollectionManager.add_card(specification.card)
+	check(not CollectionManager.has_area_access(specification.area), label + " ownership waits for explicit key use")
+	check(CollectionManager.use_access_key(specification.card), label + " fixture explicitly activates its access key")
 	await _settle()
-	check(not area.door.locked, label + " key immediately unlocks the existing physical entrance")
+	check(not area.door.locked, label + " key activation unlocks the existing physical entrance")
 	check(area.room_index == room_index and not area.is_open(), label + " entrance requests Main travel without opening a screen")
 	await _face_door(area.door)
 	var hub_pose := main.camera_pivot.global_transform
@@ -138,7 +141,18 @@ func _check_room(specification: Dictionary) -> void:
 	check(main.main_camera.basis.is_equal_approx(camera_local_basis), label + " arrival preserves Main's camera lens orientation")
 	check(room.get_instance_id() == permanent_room_id and not area.is_open(), label + " arrival retains the existing room and creates no overlay")
 	check(destination.doorway_area.input_ray_pickable and not main.hub_door.doorway_area.input_ray_pickable and not main.return_door.doorway_area.input_ray_pickable, label + " accepts its return door while remote doors stay inactive")
-	check(not main.screen_camera_focus._interaction_allowed, label + " disables distant hub screen camera focus")
+	# Local stations such as the basement boilers may focus the camera; a
+	# remote hub screen must never replace that room's current focus target.
+	var focus := main.screen_camera_focus
+	var focused_before := focus._focused_screen
+	var hovered_before := focus._hovered_screen
+	var distant_focus_blocked := focus._active_room == room_index
+	for screen_path in ["PackShopMachine/ScreenArea", "UpgradeMachine/ScreenArea"]:
+		var hub_screen := main.scene_pivot.get_node(screen_path) as Area3D
+		distant_focus_blocked = distant_focus_blocked and not focus._is_screen_available_for_active_side(hub_screen)
+		hub_screen.mouse_entered.emit()
+		distant_focus_blocked = distant_focus_blocked and focus._focused_screen == focused_before and focus._hovered_screen == hovered_before
+	check(distant_focus_blocked, label + " rejects distant hub screen hover while preserving its own room focus")
 	await _capture(label + "-arrival")
 	var room_pose := main.camera_pivot.global_transform
 	for key in [KEY_A, KEY_A, KEY_A, KEY_A, KEY_D, KEY_D, KEY_D, KEY_D]:

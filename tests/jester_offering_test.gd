@@ -22,6 +22,7 @@ func check(condition: bool, description: String) -> void:
 
 
 func _reset() -> void:
+	GameCurrency._rescued_npcs["jester"] = true
 	CollectionManager.clear_profile_state()
 	DeckManager.clear_profile_state()
 	CardUpgradeManager.clear_profile_state()
@@ -214,10 +215,14 @@ func _check_save_failures() -> void:
 
 func _check_slots() -> void:
 	check(SaveSlots.select_slot(1) == OK and SaveSlots.reset_slot(1) == OK, "slot-one fixture uses the public profile controller")
+	GameCurrency._rescued_npcs["jester"] = true
+	GameCurrency.save()
 	_add("chick", "slot-one-chick")
 	_add("harald", "slot-one-harald")
 	check(CollectionManager.offer_jester_card("chick", "slot-one-chick")["ok"], "slot one can persist a partial offering")
 	check(SaveSlots.reset_slot(2) == OK and SaveSlots.select_slot(2) == OK and CollectionManager.get_jester_offering_state()["offered"].is_empty(), "slot two starts without inheriting slot one's grave progress")
+	GameCurrency._rescued_npcs["jester"] = true
+	GameCurrency.save()
 	_add("chick", "slot-two-chick")
 	_add("harald", "slot-two-harald")
 	CollectionManager.offer_jester_card("harald", "slot-two-harald")

@@ -1,7 +1,7 @@
 extends Node
 
 const LEGACY := {"type": "deck_burn", "amount": 4, "name": "Deck Burn", "description": "Legacy deck removal"}
-const MAILMAN := {"type": "draw_on_kill"}
+const MAILMAN := {"type": "draw_on_death"}
 const POISON := {"type": "poison", "damage": 3, "turns": 2}
 const REGEN := {"type": "regeneration", "value": 3}
 var checks := 0
@@ -55,12 +55,12 @@ func _check_normalization() -> void:
 	check(CardData.get_active_effects(merged) == [MAILMAN, POISON] and merged["effects"] == merged["active_effects"], "innate Mailman and migrated instance effect merge once while retaining the second distinct effect")
 	check(input == before and merged["instance_id"] == "merged-old-copy" and merged["level"] == 4 and CardData.is_holo(merged), "merge preserves exact copy metadata without rewriting preview inputs")
 	var lava_card := CardData.merge_card_and_instance(CardDatabase.get_card("piss"), {"effects":[LEGACY, {"type":"lava"}]})
-	check(CardData.has_effect(lava_card, "lava") and CardData.has_effect(lava_card, "draw_on_kill") and CardData.get_active_effects(lava_card).size() == 2, "innate Lava survives while the instance contributes only the migrated Mailman")
+	check(CardData.has_effect(lava_card, "lava") and CardData.has_effect(lava_card, "draw_on_death") and CardData.get_active_effects(lava_card).size() == 2, "innate Lava survives while the instance contributes only the migrated Mailman")
 	check(CardData.get_active_effects({"category":"special", "effects":[LEGACY]}).is_empty(), "migration cannot turn a special card into a combat-effect carrier")
 
 
 func _check_catalog() -> void:
-	check(EffectDatabase.get_effect("deck_burn").is_empty() and not EffectDatabase.get_effect("draw_on_kill").is_empty(), "retired effect is no longer retrievable and canonical Mailman remains catalogued")
+	check(EffectDatabase.get_effect("deck_burn").is_empty() and not EffectDatabase.get_effect("draw_on_death").is_empty(), "retired effect is no longer retrievable and canonical Mailman remains catalogued")
 	check(EffectDatabase.get_all_effects().all(func(effect: Dictionary): return str(effect.get("type", "")) != "deck_burn"), "complete effect catalog contains no retired entry")
 	check(EffectDatabase.get_rollable_effects().all(func(effect: Dictionary): return str(effect.get("type", "")) not in ["deck_burn", "lava"]), "random pool contains neither retired effect nor innate-only Lava")
 	var original := EffectDatabase.effects.duplicate(true)

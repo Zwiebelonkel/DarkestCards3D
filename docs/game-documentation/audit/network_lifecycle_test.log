@@ -1,0 +1,78 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS Lifecycle fixture redirects player saves before autoload startup
+PASS Native teardown fixture creates an attached transport
+PASS Native peer remains alive until all disconnect callbacks return
+PASS Reentrant closing observer schedules only one teardown
+PASS Closing invalidates session traffic synchronously
+PASS Production reset closes once outside the callback stack
+PASS MultiplayerAPI detaches and owner clears before native close
+PASS Last native peer reference releases before session_closed
+PASS Deferred teardown completes once and unlocks future sessions
+PASS Canceled create blocks a new request until its unidentifiable result arrives
+PASS Early enter cannot consume the canceled-create barrier
+PASS Retired create callback releases admission without starting its stale peer
+PASS Cancel -1 immediately retires its pending operation
+PASS Canceled -1 cannot start a peer from late create or join callbacks
+PASS Late successful lobby callback explicitly retires its Steam lobby
+PASS Cancel 701 immediately retires its pending operation
+PASS Canceled 701 cannot start a peer from late create or join callbacks
+PASS Late successful lobby callback explicitly retires its Steam lobby
+PASS A stale join callback preserves a different pending lobby
+PASS Early own-lobby enter cannot consume the pending create request
+PASS Canceled join remains pending after local teardown until its Steam result
+PASS Retry of the same lobby is blocked before the canceled join result
+PASS A different lobby callback cannot release the canceled join barrier
+PASS Old failed join releases admission without starting a peer or consuming a retry
+PASS Fresh successful retry reaches lobby validation instead of being discarded after the old failure
+PASS Diagnostics preserve the Steam enter response while excluding payloads
+PASS Invite during pending -1 retires that request and keeps the invited lobby
+PASS Invite waits beyond local teardown for canceled -1 Steam result
+PASS Latest invite remains queued while canceled -1 barrier is active
+PASS Settled canceled -1 resumes the latest invitation exactly once
+PASS Invite during pending 750 retires that request and keeps the invited lobby
+PASS Invite waits beyond local teardown for canceled 750 Steam result
+PASS Latest invite remains queued while canceled 750 barrier is active
+PASS Settled canceled 750 resumes the latest invitation exactly once
+PASS Native peer callback only queues work while its callback stack is active
+PASS Queued callback dispatches once for the current session
+PASS Leave invalidates an already queued native callback
+PASS Old transport generation cannot dispatch into a newly opened lobby
+PASS Fresh generation continues receiving native events
+PASS Another lobby or member departure cannot close the guest lobby
+PASS Original host leaving closes a waiting guest even before P2P connects
+PASS Lobby departure and native disconnect produce one completed teardown
+PASS Pending lobby operation keeps its visible Cancel control enabled
+[OnlineSession 5971] leave requested: Lobby verlassen.
+PASS Lobby Back cancels a pending create even without an active lobby ID
+[OnlineSession 5974] peer teardown completed
+[OnlineSession 6022] ignored callback for a retired lobby
+PASS Late canceled create leaves lobby UI closed and permits another operation
+PASS loopback ENet server starts
+PASS joined-client ENet transport starts
+PASS separate host and joined-client peers connect
+[OnlineSession 6666] local exit finalization started
+PASS Old finalizer really waits for an in-flight cinematic
+PASS Retired cinematic finalizer returns when its generation changes
+PASS Old exit sequence 1 cannot close the next session's exit sequence 1
+PASS Retired finalizer leaves new session UI and finalization flags intact
+PASS Old exit request really awaits its response
+PASS Retired exit request cannot unlock or overwrite a later turn 1
+PASS Actual host RPC constructs client cards before disconnect regression
+PASS Real attack coroutine and replacement snapshot are pending at disconnect
+[OnlineSession 6886] leave requested: Verbindung zum Host wurde getrennt.
+[OnlineSession 6899] peer teardown completed
+PASS Remote host departure reaches production teardown through ENet server_disconnected
+PASS Session closing retires attack and queued replacement before native teardown
+PASS Guest transport is detached after actual server loss
+PASS Disconnect during attack leaves a usable result and Exit control
+PASS Late animation completion cannot resurrect retired contexts or replacements
+PASS Queued replacement never overwrites disconnected result cards
+PASS Exit safely clears all cards and pending animation jobs
+REPLACEMENT_NETWORK_TESTS: PASS
+NETWORK_LIFECYCLE_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

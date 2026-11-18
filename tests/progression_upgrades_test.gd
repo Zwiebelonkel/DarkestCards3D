@@ -66,7 +66,8 @@ func _ready() -> void:
 		check(not CollectionManager.has_area_access(area_id) and not CollectionManager.unlock_area(area_id), "Area starts locked: " + area_id)
 		var key_id := CollectionManager.get_area_unlock_card_id(area_id)
 		CollectionManager.add_card(key_id)
-		check(CollectionManager.has_area_access(area_id) and CollectionManager.unlock_area(area_id), "Matching permanent card opens area: " + area_id)
+		check(not CollectionManager.has_area_access(area_id), "Owning an unused key does not open its area: " + area_id)
+		check(CollectionManager.use_access_key(key_id) and CollectionManager.has_area_access(area_id), "Explicit key use opens its matching area: " + area_id)
 		check(CollectionManager.get_amount(key_id) == 1, "Area access keeps its key")
 	check(not CollectionManager.has_area_access("unknown") and not CollectionManager.unlock_area("unknown"), "Unknown areas fail closed")
 	CollectionManager.collection["metadata"]["unrelated"] = "preserved"

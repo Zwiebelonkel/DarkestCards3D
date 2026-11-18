@@ -1,0 +1,46 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS hub starts with the distant wall focus disabled
+PASS door flight reaches the room with the wall collection
+PASS looking toward the collection enables its whole backing as a hover target
+PASS wall shares the PackShop camera-focus controller
+PASS projected hover point is a visible backing gap rather than a card
+PASS real pointer hover over the backing gap starts wall focus
+PASS hover moves the camera visibly closer to the collection
+PASS wall hover applies the same closer field of view as the PackShop
+PASS a stationary pointer never makes the camera oscillate while its projected hover position moves
+PASS the real clicked Card3D starts flying from its exact captured wall transform
+PASS opening creates no second copy of the selected wall card
+PASS the card visibly travels between its wall slot and the detail view
+PASS entry flight locks room controls and holds camera focus
+PASS a real card click still opens the intended detail after camera movement
+PASS entry ends at a fully framed detail position after passing through its intermediate position
+PASS the detail displays no Back or Escape button
+PASS open camera-relative detail keeps its focus even when the pointer leaves the wall
+PASS detail retains the existing room-travel guard
+PASS closing starts a return flight without prematurely unlocking controls or camera
+PASS turning remains blocked while the card flies back
+PASS return flight visibly passes between the detail and its original wall slot
+PASS camera stays still throughout the unfinished return flight
+PASS repeated close requests do not snap or restart the returning card
+PASS Escape closes the focused detail without opening Pause
+PASS return restores the same card to its original wall slot without leaving a duplicate
+PASS closing detail after a real pointer exit restores the original camera position and field of view
+PASS another card can be opened after returning from the first detail
+PASS an actual background click returns the card without a visible close button
+PASS leaving after the background click returns smoothly to the room view
+PASS a background click during entry reverses the current card without teleporting
+PASS rapid open-close finishes with one card in the correct slot
+PASS Pause interrupts collection hover and leaves no displaced camera
+PASS resuming restores wall input without resuming an obsolete camera tween
+PASS turning away cancels wall focus and makes the wall inactive
+PASS turning away leaves no camera position, field-of-view or rotation drift
+PASS return door accepts travel after hovering the collection
+PASS return flight restores the hub camera with no leaked wall focus
+PASS collection focus stays disabled in the other room
+PASS the existing PackShop hover still focuses correctly after a wall visit
+PASS PackShop mouse exit still restores the same camera baseline
+WALL_COLLECTION_FOCUS_TESTS: PASS (40 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

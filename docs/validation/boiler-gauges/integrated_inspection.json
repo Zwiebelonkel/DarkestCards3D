@@ -1,0 +1,183 @@
+{
+  "success": true,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "output_overflow": false,
+  "completion_marker_found": true,
+  "engine_errors": [],
+  "elapsed_ms": 1569,
+  "stderr": "",
+  "pid": 31096,
+  "gauges": [
+    {
+      "path": "BoilerEquipment/MainBoiler_2/PressureGauge",
+      "scale": "(1.0, 1.0, 1.0)",
+      "transform": "[X: (0.0, 0.0, -1.0), Y: (0.0, 1.0, 0.0), Z: (1.0, 0.0, 0.0), O: (0.895, 1.75, 0.12)]",
+      "type": "Node3D"
+    },
+    {
+      "aabb": "[P: (-0.22, -0.22, -0.04), S: (0.44, 0.44, 0.141)]",
+      "materials": [
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_q7ttq",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_s8qim",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_sm8to",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_fkr4q",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_q7wdx"
+      ],
+      "mesh_present": true,
+      "path": "BoilerEquipment/MainBoiler_2/PressureGauge/HousingAndScale",
+      "scale": "(1.0, 1.0, 1.0)",
+      "surfaces": 5,
+      "transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+      "triangles": 8389,
+      "type": "MeshInstance3D"
+    },
+    {
+      "aabb": "[P: (-0.014, -0.05, 0.0), S: (0.028, 0.21, 0.0035)]",
+      "materials": [
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_tqo6b"
+      ],
+      "mesh_present": true,
+      "path": "BoilerEquipment/MainBoiler_2/PressureGauge/GaugeNeedle",
+      "scale": "(1.0, 1.0, 1.0)",
+      "surfaces": 1,
+      "transform": "[X: (0.987688, 0.156434, 0.0), Y: (-0.156434, 0.987688, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.084)]",
+      "triangles": 24,
+      "type": "MeshInstance3D"
+    },
+    {
+      "path": "BoilerEquipment/MainBoiler_2/PressureGauge/PressureDigits",
+      "scale": "(1.0, 1.0, 1.0)",
+      "transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, -0.072, 0.083)]",
+      "type": "Label3D"
+    },
+    {
+      "path": "BoilerEquipment/MainBoiler_1/PressureGauge",
+      "scale": "(1.0, 1.0, 1.0)",
+      "transform": "[X: (0.0, 0.0, -1.0), Y: (0.0, 1.0, 0.0), Z: (1.0, 0.0, 0.0), O: (0.895, 1.75, 0.12)]",
+      "type": "Node3D"
+    },
+    {
+      "aabb": "[P: (-0.22, -0.22, -0.04), S: (0.44, 0.44, 0.141)]",
+      "materials": [
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_q7ttq",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_s8qim",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_sm8to",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_fkr4q",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_q7wdx"
+      ],
+      "mesh_present": true,
+      "path": "BoilerEquipment/MainBoiler_1/PressureGauge/HousingAndScale",
+      "scale": "(1.0, 1.0, 1.0)",
+      "surfaces": 5,
+      "transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+      "triangles": 8389,
+      "type": "MeshInstance3D"
+    },
+    {
+      "aabb": "[P: (-0.014, -0.05, 0.0), S: (0.028, 0.21, 0.0035)]",
+      "materials": [
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_tqo6b"
+      ],
+      "mesh_present": true,
+      "path": "BoilerEquipment/MainBoiler_1/PressureGauge/GaugeNeedle",
+      "scale": "(1.0, 1.0, 1.0)",
+      "surfaces": 1,
+      "transform": "[X: (0.987688, 0.156434, 0.0), Y: (-0.156434, 0.987688, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.084)]",
+      "triangles": 24,
+      "type": "MeshInstance3D"
+    },
+    {
+      "path": "BoilerEquipment/MainBoiler_1/PressureGauge/PressureDigits",
+      "scale": "(1.0, 1.0, 1.0)",
+      "transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, -0.072, 0.083)]",
+      "type": "Label3D"
+    },
+    {
+      "path": "BoilerEquipment/MainBoiler_4/PressureGauge",
+      "scale": "(1.0, 1.0, 1.0)",
+      "transform": "[X: (0.0, 0.0, -1.0), Y: (0.0, 1.0, 0.0), Z: (1.0, 0.0, 0.0), O: (0.895, 1.75, 0.12)]",
+      "type": "Node3D"
+    },
+    {
+      "aabb": "[P: (-0.22, -0.22, -0.04), S: (0.44, 0.44, 0.141)]",
+      "materials": [
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_q7ttq",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_s8qim",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_sm8to",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_fkr4q",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_q7wdx"
+      ],
+      "mesh_present": true,
+      "path": "BoilerEquipment/MainBoiler_4/PressureGauge/HousingAndScale",
+      "scale": "(1.0, 1.0, 1.0)",
+      "surfaces": 5,
+      "transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+      "triangles": 8389,
+      "type": "MeshInstance3D"
+    },
+    {
+      "aabb": "[P: (-0.014, -0.05, 0.0), S: (0.028, 0.21, 0.0035)]",
+      "materials": [
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_tqo6b"
+      ],
+      "mesh_present": true,
+      "path": "BoilerEquipment/MainBoiler_4/PressureGauge/GaugeNeedle",
+      "scale": "(1.0, 1.0, 1.0)",
+      "surfaces": 1,
+      "transform": "[X: (0.987688, 0.156434, 0.0), Y: (-0.156434, 0.987688, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.084)]",
+      "triangles": 24,
+      "type": "MeshInstance3D"
+    },
+    {
+      "path": "BoilerEquipment/MainBoiler_4/PressureGauge/PressureDigits",
+      "scale": "(1.0, 1.0, 1.0)",
+      "transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, -0.072, 0.083)]",
+      "type": "Label3D"
+    },
+    {
+      "path": "BoilerEquipment/MainBoiler_3/PressureGauge",
+      "scale": "(1.0, 1.0, 1.0)",
+      "transform": "[X: (0.0, 0.0, -1.0), Y: (0.0, 1.0, 0.0), Z: (1.0, 0.0, 0.0), O: (0.895, 1.75, 0.12)]",
+      "type": "Node3D"
+    },
+    {
+      "aabb": "[P: (-0.22, -0.22, -0.04), S: (0.44, 0.44, 0.141)]",
+      "materials": [
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_q7ttq",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_s8qim",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_sm8to",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_fkr4q",
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_q7wdx"
+      ],
+      "mesh_present": true,
+      "path": "BoilerEquipment/MainBoiler_3/PressureGauge/HousingAndScale",
+      "scale": "(1.0, 1.0, 1.0)",
+      "surfaces": 5,
+      "transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+      "triangles": 8389,
+      "type": "MeshInstance3D"
+    },
+    {
+      "aabb": "[P: (-0.014, -0.05, 0.0), S: (0.028, 0.21, 0.0035)]",
+      "materials": [
+        "res://scenes/props/BoilerGauge.tscn::StandardMaterial3D_tqo6b"
+      ],
+      "mesh_present": true,
+      "path": "BoilerEquipment/MainBoiler_3/PressureGauge/GaugeNeedle",
+      "scale": "(1.0, 1.0, 1.0)",
+      "surfaces": 1,
+      "transform": "[X: (0.987688, 0.156434, 0.0), Y: (-0.156434, 0.987688, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.084)]",
+      "triangles": 24,
+      "type": "MeshInstance3D"
+    },
+    {
+      "path": "BoilerEquipment/MainBoiler_3/PressureGauge/PressureDigits",
+      "scale": "(1.0, 1.0, 1.0)",
+      "transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, -0.072, 0.083)]",
+      "type": "Label3D"
+    }
+  ],
+  "warnings": []
+}

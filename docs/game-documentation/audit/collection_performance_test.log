@@ -1,0 +1,8 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+BENCH initial_collection_ms=481.177 instances=5000 types=89
+BENCH unchanged_refresh_ms=16.041
+PASS unchanged refresh reuses every 3D card
+SCRIPT ERROR: Invalid call. Nonexistent 'int' constructor.
+   at: _run (res://tests/collection_performance_test.gd:56)

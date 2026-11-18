@@ -148,8 +148,6 @@ func _on_input_event(_camera: Node, event: InputEvent, _position: Vector3, _norm
 	if locked or not interaction_enabled or not doorway_area.input_ray_pickable or not is_visible_in_tree() or get_tree().paused:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		if not area_id.is_empty() and not CollectionManager.unlock_area(area_id):
-			return
 		get_viewport().set_input_as_handled()
 		activated.emit(self)
 

@@ -1,0 +1,52 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: discovery fixture explicitly activates basement access
+PASS: all fourteen basement crates use the shared throw mechanic
+PASS: the floor crate covers the single authored discovery
+PASS: each crate has mesh-shaped physics picking and the basement group
+PASS: the actual basement shell supplies a dedicated non-pickable collision body
+PASS: the floor beneath the secret crate collides at the visible basement floor height
+PASS: the real eastern wall blocks outgoing crate movement
+PASS: all basement crate ray layers and hitboxes are inactive in the hub
+PASS: even a queued crate input cannot reveal a card while outside the basement
+PASS: the secret is represented by a real graveyard-key Card3D
+PASS: the floor card stays independent of the thrown crate and cannot intercept clicks
+PASS: the actual card lies paper-thin on the floor beneath the crate
+PASS: looking at the unopened secret does not unlock the graveyard
+PASS: camera flight keeps basement crates inactive until arrival
+PASS: entering the basement enables its unthrown crates through Main
+PASS: Pause disables the basement's picking layers as well as its input
+PASS: paused crate input cannot throw or award the hidden card
+PASS: closing Pause restores the remaining crate interactions
+PASS: an active modal removes all basement crate ray targets
+PASS: modal-blocked crate input cannot reveal the secret
+PASS: clearing the modal restores unopened crates
+PASS: a normal crate is reachable by the real camera and physics ray
+PASS: actual mouse input throws the ordinary crate with visible motion
+PASS: throwing an ordinary crate gives no secret reward
+PASS: a flying crate immediately stops absorbing later clicks
+PASS: the secret floor crate is reachable from a normal cardinal camera view
+PASS: clicking the secret crate automatically awards one graveyard key
+PASS: the discovery emits once and creates exactly one saved card instance
+PASS: the found key remains unused until activated in the hub and never enters the battle deck
+PASS: the revealed physical card remains visible briefly without another pickup click
+PASS: the discovered card rises from the floor without becoming a second interactive pickup
+PASS: duplicate click delivery neither rethrows the secret crate nor duplicates its reward
+PASS: the thrown crate remains present before its delayed dissolve
+PASS: the delayed dissolve removes the physical body and leaves the thrown crate hidden
+PASS: the return flight immediately disables basement crate input
+PASS: leaving the basement disables every remaining crate ray layer
+PASS: camera flight keeps basement crates inactive until arrival
+PASS: reentering the same room does not restore an already thrown crate
+PASS: room reentry does not award another discovery
+PASS: save/load preserves the exact discovered card instance
+PASS: a new Main with an owned key has no second hidden reward to reveal
+PASS: camera flight keeps basement crates inactive until arrival
+PASS: already owning the key does not disable ordinary crate throwing
+PASS: throwing the secret crate after reload preserves ownership without another award or signal
+BASEMENT_DISCOVERY_TESTS: PASS (44 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

@@ -15,10 +15,11 @@ const MAX_COMPRESSED_RECOVERY_BYTES := 1024 * 1024
 const STOP_DRAIN_BUFFER_BYTES := 8192
 const STOP_DRAIN_TIMEOUT_SECONDS := 1.0
 const VOICE_ENVELOPE_MAGIC := 0x43564344 # "DCVC" in little-endian byte order.
-const VOICE_ENVELOPE_VERSION := 1
-const VOICE_ENVELOPE_HEADER_BYTES := 6
+const VOICE_ENVELOPE_VERSION := 2
+const VOICE_ENVELOPE_HEADER_BYTES := 7
+const LEGACY_VOICE_ENVELOPE_HEADER_BYTES := 6
 const DEFAULT_MICROPHONE_GAIN_PERCENT := 100
-const MAX_MICROPHONE_GAIN_PERCENT := 200
+const MAX_MICROPHONE_GAIN_PERCENT := 2000
 const MAX_PENDING_PACKETS := 8
 const MAX_SEQUENCE_LEAD := 64
 const MAX_PACKETS_DECODED_PER_FRAME := 8
@@ -442,15 +443,17 @@ func _pack_voice_payload(
 	steam_payload: PackedByteArray,
 	microphone_gain_percent: int
 ) -> PackedByteArray:
+	microphone_gain_percent = clampi(microphone_gain_percent, 0, MAX_MICROPHONE_GAIN_PERCENT)
+	# Keep the original format for its supported range; larger gains need two bytes.
+	var use_legacy := microphone_gain_percent <= 200
 	var network_payload := PackedByteArray()
-	network_payload.resize(VOICE_ENVELOPE_HEADER_BYTES)
+	network_payload.resize(LEGACY_VOICE_ENVELOPE_HEADER_BYTES if use_legacy else VOICE_ENVELOPE_HEADER_BYTES)
 	network_payload.encode_u32(0, VOICE_ENVELOPE_MAGIC)
-	network_payload[4] = VOICE_ENVELOPE_VERSION
-	network_payload[5] = clampi(
-		microphone_gain_percent,
-		0,
-		MAX_MICROPHONE_GAIN_PERCENT
-	)
+	network_payload[4] = 1 if use_legacy else VOICE_ENVELOPE_VERSION
+	if use_legacy:
+		network_payload[5] = microphone_gain_percent
+	else:
+		network_payload.encode_u16(5, microphone_gain_percent)
 	network_payload.append_array(steam_payload)
 	return network_payload
 
@@ -470,18 +473,24 @@ func _unpack_voice_payload(network_payload: PackedByteArray) -> Dictionary:
 
 	# Once the magic matches, malformed or future envelope versions must not be
 	# passed to Steam as compressed audio.
-	if (
-		network_payload.size() <= VOICE_ENVELOPE_HEADER_BYTES
-		or int(network_payload[4]) != VOICE_ENVELOPE_VERSION
-	):
+	if network_payload.size() <= LEGACY_VOICE_ENVELOPE_HEADER_BYTES:
 		return {"valid": false}
+	var version := int(network_payload[4])
+	var header_bytes := LEGACY_VOICE_ENVELOPE_HEADER_BYTES
 	var microphone_gain_percent := int(network_payload[5])
-	if microphone_gain_percent > MAX_MICROPHONE_GAIN_PERCENT:
+	if version == VOICE_ENVELOPE_VERSION:
+		header_bytes = VOICE_ENVELOPE_HEADER_BYTES
+		if network_payload.size() <= header_bytes:
+			return {"valid": false}
+		microphone_gain_percent = network_payload.decode_u16(5)
+	elif version != 1:
+		return {"valid": false}
+	if microphone_gain_percent > (200 if version == 1 else MAX_MICROPHONE_GAIN_PERCENT):
 		return {"valid": false}
 	return {
 		"valid": true,
 		"microphone_gain": float(microphone_gain_percent) / 100.0,
-		"payload": network_payload.slice(VOICE_ENVELOPE_HEADER_BYTES),
+		"payload": network_payload.slice(header_bytes),
 	}
 
 
@@ -963,7 +972,9 @@ func _apply_pcm_gain(
 	frames: PackedVector2Array,
 	microphone_gain: float
 ) -> PackedVector2Array:
-	microphone_gain = clampf(microphone_gain, 0.0, 2.0)
+	microphone_gain = clampf(
+		microphone_gain, SettingsManager.MIN_MICROPHONE_GAIN, SettingsManager.MAX_MICROPHONE_GAIN
+	)
 	if is_equal_approx(microphone_gain, 1.0):
 		return frames
 	for frame_index in range(frames.size()):
@@ -1108,7 +1119,7 @@ func _apply_voice_volume() -> void:
 	var voice_bus := AudioServer.get_bus_index(VOICE_BUS_NAME)
 	if voice_bus < 0:
 		return
-	var volume := clampf(SettingsManager.satan_voice_volume, 0.0, 1.0)
+	var volume := clampf(SettingsManager.satan_voice_volume, 0.0, SettingsManager.MAX_SATAN_VOICE_VOLUME)
 	AudioServer.set_bus_volume_db(voice_bus, linear_to_db(maxf(volume, 0.0001)))
 	AudioServer.set_bus_mute(voice_bus, volume <= 0.0)
 

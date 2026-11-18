@@ -1,0 +1,38 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS second room owns its independent wall collection
+PASS hub collection shows combat cards without access keys or upgrade cards
+PASS wall retains the used access key alongside seven owned upgrade types
+PASS using the slot-room key preserves its special-card display in the access group
+PASS duplicate upgrades display their owned quantity
+PASS wall ignores input while player is in the hub
+PASS hidden-room upgrade cannot be opened through its direct interaction entry point
+PASS separating displays preserves starting slots and clicker upgrades
+PASS camera flight keeps wall input disabled
+PASS normal door transition arrives in second room
+PASS turning toward mounted collection enables it and updates the room hint
+PASS separate Clicker and Starting Hand rows show six cards with the final tier below
+PASS scrolling reaches the last tier with the real camera ray
+PASS actual wall click opens the chosen real card's detail
+PASS card detail blocks room travel and other room interactions
+PASS A/D cannot rotate away with an upgrade detail open
+PASS detail overlay covers the viewport to prevent click-through
+PASS detail has no visible Back or Escape button
+PASS Escape starts a return flight that keeps room controls locked
+PASS Escape closes only the upgrade detail and restores room controls
+PASS opening Pause closes the detail and disables wall input
+PASS Pause immediately returns the same card to the wall before freezing the tree
+PASS resuming restores wall interaction
+PASS newly acquired copies update both wall count and open detail immediately
+PASS collection refresh preserves the exact flying card instead of cloning or replacing it
+PASS actual background click returns the existing card to its wall slot
+PASS reading wall details never consumes or changes combat cards, key or unlocks
+PASS turning away disables wall hover and card clicks
+PASS return door still brings player back to hub
+PASS returning keeps combat cards and special access keys in their separate collections
+PASS removing all upgrades and access keys refreshes the wall to its empty state
+PASS a new upgrade appears on the separate wall without rebuilding Main
+UPGRADE_ROOM_COLLECTION_TESTS: PASS (32 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

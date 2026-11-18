@@ -1,5 +1,6 @@
 extends Control
 class_name PackShopUI
+const UI_AUDIO := preload("res://scripts/ui/InterfaceSounds.gd")
 
 signal pack_buy_pressed(pack_id: String)
 
@@ -34,6 +35,7 @@ var _purchase_quantity := 1
 
 func _ready() -> void:
 	_create_quantity_controls()
+	UI_AUDIO.connect_buttons(self)
 	Localization.locale_changed.connect(_refresh_localized_text)
 	if GameCurrency.has_signal("coins_changed"):
 		var coins_callback := Callable(self, "_on_coins_changed")
@@ -187,6 +189,7 @@ func _get_ordered_pack_ids(packs: Dictionary) -> Array[String]:
 func _on_pack_preview_pressed(pack_id: String) -> void:
 	if locked:
 		return
+	UI_AUDIO.play_click(self)
 
 	_select_pack(pack_id)
 

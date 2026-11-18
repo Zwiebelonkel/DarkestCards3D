@@ -3,6 +3,8 @@ class_name PackPreviewViewport
 
 signal pressed(pack_id: String)
 
+const SURFACE_SCRIPT := preload("res://scripts/packs/PackSurface.gd")
+
 const SURFACE_COLOR := Color(0.0784314, 0.0666667, 0.0941176, 1.0)
 const SURFACE_ACTIVE_COLOR := Color(0.113725, 0.0901961, 0.121569, 1.0)
 const SURFACE_LOCKED_COLOR := Color(0.0588235, 0.054902, 0.0705882, 1.0)
@@ -86,6 +88,7 @@ func _spawn_pack_model() -> void:
 		return
 
 	pack_model = pack_scene.instantiate() as Node3D
+	SURFACE_SCRIPT.apply_to_pack(pack_model, pack_id)
 	model_root.add_child(pack_model)
 	pack_model.position = Vector3.ZERO
 	pack_model.rotation_degrees = Vector3.ZERO

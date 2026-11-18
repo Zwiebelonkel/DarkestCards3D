@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-18",
+  "animation_seconds": 1.0,
+  "project_snapshot": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-weed-c52e2dc5f1cf4deaa5e474462f9e1e96",
+  "checks": [
+    {
+      "name": "test",
+      "success": true,
+      "engine_errors": [],
+      "stdout": "POISON_SYRINGE_TESTS: PASS (38 checks)",
+      "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n"
+    },
+    {
+      "name": "audit",
+      "success": true,
+      "engine_errors": [],
+      "stdout": "COMBAT_EFFECT_AUDIT_TESTS: PASS (283 checks)\r",
+      "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n"
+    },
+    {
+      "name": "contract",
+      "success": true,
+      "engine_errors": [],
+      "stdout": "asset_contract_test PASSED\r",
+      "stderr": ""
+    }
+  ],
+  "targeted_check_count": 321,
+  "visual_review": "Main scene, authored base light energy, normal match camera plus four detail angles; original materials preserved.",
+  "limitations": [
+    "Live Steam and exported builds were not tested."
+  ]
+}

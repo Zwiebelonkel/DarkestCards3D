@@ -1,0 +1,25 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: unthrown crates remain authored decorations until an enabled click
+PASS: throwing a crate leaves the global battle RNG untouched
+PASS: the actual Area3D input creates a live RigidBody3D
+PASS: thrown bodies collide with the room and enable continuous collision detection without becoming mouse targets
+PASS: rigid-body adoption preserves the scaled authored crate without scaling its physics body or teleporting it
+PASS: launch emits once and removes its former click collider
+PASS: duplicate input and room gating cannot create a second body or reset a thrown crate
+PASS: a normal throw strikes the thin wall and rebounds into the room
+PASS: a high-speed throw cannot tunnel through an eight-centimeter wall
+PASS: the complete crate lands on the floor without falling or tunneling below it
+PASS: crate geometry remains visible for several seconds after the impact
+PASS: the neighboring unthrown crate retains its authored pose and static state
+PASS: cleanup begins with a gradual visible dissolve rather than an immediate hide
+PASS: Pause freezes the physics body and dissolve together
+PASS: dissolve resumes smoothly when Pause closes
+PASS: dissolve covers every authored wood, corner and metal-band surface with private materials
+PASS: all component surfaces dissolve together while retaining their authored colors
+PASS: starting the dissolve leaves the neighboring crate's shared materials intact
+PASS: finished dissolve hides every mesh and frees the rigid-body resources
+PASS: cleanup keeps the spent crate node valid under its original parent without enabling another throw
+PASS: dissolve never mutates shared materials or transforms on an untouched crate
+BASEMENT_CRATE_PHYSICS_TESTS: PASS (21 checks)

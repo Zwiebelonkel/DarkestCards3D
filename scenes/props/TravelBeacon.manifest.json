@@ -1,0 +1,106 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "Graveyard return beacon",
+  "scene": "res://scenes/props/TravelBeacon.tscn",
+  "units": "graveyard_local_meters_scaled_1.825_in_Main",
+  "forward": "-Z",
+  "origin": "ground_center",
+  "footprint_m": [
+    1.0,
+    1.0
+  ],
+  "height_m": 0.9,
+  "interaction_sides": [
+    "front",
+    "back",
+    "left",
+    "right"
+  ],
+  "style_references": [
+    "Graveyard.tscn/Paths: muted teal path stones and unobstructed crossing",
+    "GraveyardBrazier.tscn: compact circular metal silhouettes",
+    "Graveyard.tscn/Crypt: restrained geometry and dark surrounding stone"
+  ],
+  "collision": {
+    "required": true,
+    "strategy": "nonblocking_box_read_by_camera_ray"
+  },
+  "routes": [
+    "crypt viewpoint -> original crossing viewpoint"
+  ],
+  "budgets": {
+    "nodes": 10,
+    "mesh_instances": 4,
+    "multimesh_instances": 0,
+    "multimesh_elements": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "collision_shapes": 1,
+    "concave_collision_shapes": 0,
+    "collision_triangles": 0,
+    "surfaces": 4,
+    "triangles": 1200,
+    "unique_materials": 2,
+    "lights": 0,
+    "particles": 0,
+    "nonuniform_scales": 0
+  },
+  "review": {
+    "required_views": [
+      "front",
+      "back",
+      "left",
+      "right",
+      "context"
+    ]
+  },
+  "evidence": {
+    "structural": [
+      "docs/validation/crypt-gate/crypt-beacon-audit.json"
+    ],
+    "runtime": [
+      "tests/crypt_gate_test.tscn"
+    ],
+    "performance": [
+      "docs/validation/crypt-gate/crypt-beacon-cost.json"
+    ],
+    "visual": [
+      "docs/validation/crypt-gate/review_report.json"
+    ]
+  },
+  "measured": {
+    "bounds": {
+      "position": [
+        -0.5,
+        0.00767949409782887,
+        -0.5
+      ],
+      "size": [
+        1.0,
+        0.852320432662964,
+        1.0
+      ]
+    },
+    "collision_shapes": 1,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 4,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 9,
+    "nonuniform_scales": 0,
+    "particles": 0,
+    "surfaces": 4,
+    "triangles": 376,
+    "unique_materials": 2
+  },
+  "notes": [
+    "Appears only while hovering the crossing from the crypt viewpoint; no physical blocking, lights or particles.",
+    "Ring rests above the crossing slabs; animated glyph is deliberately suspended."
+  ]
+}

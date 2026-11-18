@@ -1,0 +1,211 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: select fixture save slot 1 through its public API
+PASS: clear isolated fixture slot 1
+PASS: clear isolated fixture slot 2
+PASS: own fixture card corpse
+PASS: own fixture card corpse
+PASS: own fixture card jd
+PASS: own fixture card piss
+PASS: own fixture card clicker
+PASS: persist the isolated test balance
+PASS: catalog supplies a genuine non-Lava roll candidate
+PASS: a bounded seed search finds a deterministic successful roll
+PASS: new ordinary card: manager prices
+PASS: new ordinary card: all three visible button prices
+PASS: real attack button purchases its five-coin stat upgrade
+PASS: stat purchase leaves the roll price unchanged: manager prices
+PASS: stat purchase leaves the roll price unchanged: all three visible button prices
+PASS: corpse roll is offered at 12.00 coins
+PASS: corpse successful UI roll charges exactly 12.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: corpse roll is offered at 24.00 coins
+PASS: corpse successful UI roll charges exactly 24.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: corpse roll is offered at 36.00 coins
+PASS: corpse successful UI roll charges exactly 36.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: copies of the same card share one card-id roll streak
+PASS: three successful rolls do not advance stat progression: manager prices
+PASS: three successful rolls do not advance stat progression: all three visible button prices
+PASS: deferred upgrade refresh cannot replace a newer card selection
+PASS: another card keeps its initial prices: manager prices
+PASS: another card keeps its initial prices: all three visible button prices
+PASS: corpse roll is offered at 48.00 coins
+PASS: corpse successful UI roll charges exactly 48.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: the real second effect fills the card and disables further rolls
+PASS: full effect slots changes neither money, progression, ownership nor saved bytes
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: paid empty roll charges its previous price without granting an effect
+PASS: paid empty roll resets its own effect streak and preserves stat progression
+PASS: empty roll refreshes the cheaper next price immediately: manager prices
+PASS: empty roll refreshes the cheaper next price immediately: all three visible button prices
+PASS: paid miss resets only the effect streak: manager prices
+PASS: paid miss resets only the effect streak: all three visible button prices
+PASS: corpse roll is offered at 12.00 coins
+PASS: corpse successful UI roll charges exactly 12.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: persist the isolated test balance
+PASS: one cent below the current price disables rolling
+PASS: insufficient coins changes neither money, progression, ownership nor saved bytes
+PASS: exact-price balance immediately enables rolling
+PASS: corpse roll is offered at 24.00 coins
+PASS: corpse successful UI roll charges exactly 24.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: exact-price roll leaves a zero balance
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: persist the isolated test balance
+WARNING: Karte nicht gefunden: 
+   at: push_warning (core/variant/variant_utility.cpp:1118)
+PASS: invalid or unowned selection disables its roll button: 
+PASS: invalid or unowned card:  changes neither money, progression, ownership nor saved bytes
+WARNING: Karte nicht gefunden: missing_card
+   at: push_warning (core/variant/variant_utility.cpp:1118)
+PASS: invalid or unowned selection disables its roll button: missing_card
+PASS: invalid or unowned card: missing_card changes neither money, progression, ownership nor saved bytes
+PASS: invalid or unowned selection disables its roll button: clicker
+PASS: invalid or unowned card: clicker changes neither money, progression, ownership nor saved bytes
+PASS: invalid or unowned selection disables its roll button: mailman
+PASS: invalid or unowned card: mailman changes neither money, progression, ownership nor saved bytes
+PASS: jd roll is offered at 12.00 coins
+PASS: jd successful UI roll charges exactly 12.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: jd roll is offered at 24.00 coins
+PASS: jd successful UI roll charges exactly 24.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: Pisse-Eimer starts at five times both ordinary prices: manager prices
+PASS: Pisse-Eimer starts at five times both ordinary prices: all three visible button prices
+PASS: Pisse-Eimer stat button charges 25.00
+PASS: Pisse-Eimer shares its attack/health progression only: manager prices
+PASS: Pisse-Eimer shares its attack/health progression only: all three visible button prices
+PASS: Pisse-Eimer stat button charges 50.00
+PASS: Pisse-Eimer shares its attack/health progression only: manager prices
+PASS: Pisse-Eimer shares its attack/health progression only: all three visible button prices
+PASS: piss roll is offered at 60.00 coins
+PASS: piss successful UI roll charges exactly 60.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: piss roll is offered at 120.00 coins
+PASS: piss successful UI roll charges exactly 120.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: acquire the real ten-percent shop discount
+PASS: discount applies once after both Pisse-Eimer progressions: manager prices
+PASS: discount applies once after both Pisse-Eimer progressions: all three visible button prices
+PASS: discounted Pisse-Eimer stat purchase keeps its half-coin amount
+PASS: piss roll is offered at 162.00 coins
+PASS: piss successful UI roll charges exactly 162.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: paid empty roll charges its previous price without granting an effect
+PASS: paid empty roll resets its own effect streak and preserves stat progression
+PASS: empty roll refreshes the cheaper next price immediately: manager prices
+PASS: empty roll refreshes the cheaper next price immediately: all three visible button prices
+PASS: Pisse-Eimer miss keeps its multiplier and discount but resets the streak: manager prices
+PASS: Pisse-Eimer miss keeps its multiplier and discount but resets the streak: all three visible button prices
+PASS: piss roll is offered at 54.00 coins
+PASS: piss successful UI roll charges exactly 54.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: an actual upgrade effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: Lava remains available in the effect catalog
+PASS: Lava-only catalog has no random candidates or fallback
+PASS: a normally successful random roll cannot grant Lava
+PASS: direct upgrade admission rejects Lava without persisting or changing progression
+PASS: Pisse-Eimer retains innate Lava after purchases, removals and a miss
+PASS: an actual base effect is available for UI removal
+PASS: selecting its effect slot enables the remove button
+PASS: effect removal is free and does not reset or advance the roll streak
+PASS: removing innate Lava opens both Pisse-Eimer effect slots
+PASS: piss roll is offered at 108.00 coins
+PASS: piss successful UI roll charges exactly 108.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: piss roll is offered at 162.00 coins
+PASS: piss successful UI roll charges exactly 162.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: reload restores removed innate indices before limiting both purchased effects
+PASS: network presentation preserves both replacement effects without resurrecting Lava
+PASS: an explicitly empty remote Pisse-Eimer remains without Lava
+PASS: removed innate effect and both rolls preserve their reloaded progression: manager prices
+PASS: removed innate effect and both rolls preserve their reloaded progression: all three visible button prices
+PASS: save the completed independent upgrade counters
+PASS: reload preserves effects, stat counts and effect-roll streaks exactly
+PASS: reloaded ordinary card retains its discounted independent prices: manager prices
+PASS: reloaded ordinary card retains its discounted independent prices: all three visible button prices
+PASS: select fixture save slot 2 through its public API
+PASS: fresh slot inherits neither streak, stat progress nor discount
+PASS: own the same combat id in the second slot
+PASS: persist the isolated test balance
+PASS: corpse roll is offered at 12.00 coins
+PASS: corpse successful UI roll charges exactly 12.00 and grants one effect
+PASS: successful roll advances only this card's effect counter once
+PASS: successful roll updates its next price immediately: manager prices
+PASS: successful roll updates its next price immediately: all three visible button prices
+PASS: select fixture save slot 1 through its public API
+PASS: returning restores the first slot's full counters and discounted Pisse-Eimer price
+PASS: select fixture save slot 2 through its public API
+PASS: second slot preserves its own one-roll streak across switch and reload
+EFFECT_UPGRADE_COST_TESTS: PASS (199 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

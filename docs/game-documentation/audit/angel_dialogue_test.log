@@ -1,0 +1,98 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS standalone collection exposes its existing angel actor and click area
+PASS standalone angel click area projects into the viewport
+PASS angel hover swaps to its matching sheet without restarting the current frame or timer
+PASS repeated angel hover updates retain animation progress
+PASS leaving the angel restores idle at the same animation phase
+PASS angel hover animation continues advancing
+PASS standalone hover keeps camera transform, FOV and angel scale unchanged
+PASS a real foreground Card3D wins the nearest ray in front of the angel
+PASS a pointer click on the overlapping card reaches it once without opening the rear angel
+PASS removing the foreground card restores the same angel ray target
+PASS actual standalone pointer click opens one modal
+PASS the angel hover hint clears while its dialog owns input
+PASS opening preserves the original collection framing
+PASS the sentence reveals gradually while the dialog processes
+PASS typing uses the existing Satan voice on the SFX bus
+FAIL Escape closes exactly one standalone modal
+FAIL a fresh sentence can open after Escape
+PASS the angel has no sentenceEnd audio node or player
+FAIL a fresh sentence starts unrevealed and unfinished
+FAIL a short typewriter step advances only part of the sentence
+FAIL natural sentence completion reveals all text and stops the voice without an ending sound
+FAIL further typewriter updates keep the completed sentence silent
+FAIL changing the completed sentence language retains its identity without replaying audio
+PASS the angel dialog contains no buttons, including hidden controls
+FAIL clicking naturally completed text dismisses its sentence after a locale change
+FAIL a new sentence opens for the title click test
+FAIL a release over title cannot reveal or close fresh text
+FAIL one press over title reveals all text and stops the voice without an ending sound or closing
+PASS the reveal release over title cannot also close the dialog
+FAIL the next press over title closes once and leaves the voice stopped
+FAIL the close release over title cannot reopen or emit another transition
+FAIL a new sentence opens for the text click test
+FAIL a release over text cannot reveal or close fresh text
+FAIL one press over text reveals all text and stops the voice without an ending sound or closing
+PASS the reveal release over text cannot also close the dialog
+FAIL the next press over text closes once and leaves the voice stopped
+FAIL the close release over text cannot reopen or emit another transition
+FAIL a new sentence opens for the padding click test
+FAIL a release over padding cannot reveal or close fresh text
+FAIL one press over padding reveals all text and stops the voice without an ending sound or closing
+PASS the reveal release over padding cannot also close the dialog
+FAIL the next press over padding closes once and leaves the voice stopped
+FAIL the close release over padding cannot reopen or emit another transition
+FAIL a new sentence opens for the outside click test
+FAIL a release over outside cannot reveal or close fresh text
+FAIL one press over outside reveals all text and stops the voice without an ending sound or closing
+PASS the reveal release over outside cannot also close the dialog
+FAIL the next press over outside closes once and leaves the voice stopped
+FAIL the close release over outside cannot reopen or emit another transition
+FAIL a mixed text-to-outside sequence first reveals the sentence and stops its voice
+FAIL a mixed text-to-outside sequence then closes the sentence
+FAIL a mixed outside-to-title sequence first reveals the sentence and stops its voice
+FAIL a mixed outside-to-title sequence then closes the sentence
+FAIL a locale change during typing preserves the selected source sentence
+PASS locale changes preserve partial progress without an early ending
+PASS the authored conversation catalog contains exactly twenty sentences
+PASS all twenty source sentences are distinct
+FAIL three hundred openings select exactly one catalog sentence without adjacent repeats
+FAIL the deterministic private-RNG fixture reaches every authored sentence
+PASS sentence choice and voice startup do not consume gameplay's global RNG
+PASS sentence 01 is translated as one sentence in de
+PASS sentence 01 fits the actual de dialog text area
+FAIL all twenty de sentences receive a real dialog layout check
+PASS sentence 01 is translated as one sentence in en
+FAIL sentence 01 fits the actual en dialog text area
+FAIL all twenty en sentences receive a real dialog layout check
+PASS sentence 01 is translated as one sentence in es
+FAIL sentence 01 fits the actual es dialog text area
+FAIL all twenty es sentences receive a real dialog layout check
+PASS sentence 01 is translated as one sentence in fr
+FAIL sentence 01 fits the actual fr dialog text area
+PASS sentence 08 is translated as one sentence in fr
+PASS sentence 08 fits the actual fr dialog text area
+FAIL all twenty fr sentences receive a real dialog layout check
+PASS sentence 08 is translated as one sentence in pl
+FAIL sentence 08 fits the actual pl dialog text area
+FAIL all twenty pl sentences receive a real dialog layout check
+PASS an explicitly disabled collection context cannot open or receive angel clicks
+FAIL the standalone context can be enabled again
+PASS a repeated valid context refresh retains the current sentence
+FAIL suspended collection input closes and disables the angel
+FAIL hiding the collection closes its modal and silences its voice
+FAIL an open card detail disables angel interaction
+PASS an open deck fan disables angel interaction
+FAIL normal collection interaction recovers after closing detail and fan
+FAIL an externally started detail transition closes an existing conversation
+FAIL an externally started deck fan transition closes an existing conversation
+PASS losing the collection camera closes and disables the dialog
+PASS restoring the collection camera restores angel interaction
+FAIL a different active camera closes and disables the original angel
+PASS all angel conversations preserve inventory, discovery, upgrades, deck, currency and progression
+PASS angel interactions and locale changes preserve every isolated profile and settings file byte
+ANGEL_DIALOGUE_TESTS: FAIL (92 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

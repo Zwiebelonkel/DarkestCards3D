@@ -1,0 +1,1957 @@
+{
+  "recorded_at_utc": "2026-11-15T01:07:24.133271+00:00",
+  "source": "C:\\Users\\Luca\\Documents\\DarkestCards3D",
+  "scope": "121 original suites plus one targeted dialog timing probe",
+  "results": [
+    {
+      "suite": "access_key_tray_test",
+      "status": "passed",
+      "checks": 84,
+      "seconds": 24.48,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 2 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-access_key_tray_test-18e24f7fad914dffae6c9d110e890bf8",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\access_key_tray_test.log",
+      "marker": "ACCESS_KEY_TRAY_TESTS: PASS"
+    },
+    {
+      "suite": "angel_dialogue_test",
+      "status": "failed",
+      "checks": 92,
+      "seconds": 6.26,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL Escape closes exactly one standalone modal",
+        "FAIL a fresh sentence can open after Escape",
+        "FAIL a fresh sentence starts unrevealed and unfinished",
+        "FAIL a short typewriter step advances only part of the sentence",
+        "FAIL natural sentence completion reveals all text and stops the voice without an ending sound",
+        "FAIL further typewriter updates keep the completed sentence silent",
+        "FAIL changing the completed sentence language retains its identity without replaying audio",
+        "FAIL clicking naturally completed text dismisses its sentence after a locale change",
+        "FAIL a new sentence opens for the title click test",
+        "FAIL a release over title cannot reveal or close fresh text",
+        "FAIL one press over title reveals all text and stops the voice without an ending sound or closing",
+        "FAIL the next press over title closes once and leaves the voice stopped",
+        "FAIL the close release over title cannot reopen or emit another transition",
+        "FAIL a new sentence opens for the text click test",
+        "FAIL a release over text cannot reveal or close fresh text",
+        "FAIL one press over text reveals all text and stops the voice without an ending sound or closing",
+        "FAIL the next press over text closes once and leaves the voice stopped",
+        "FAIL the close release over text cannot reopen or emit another transition",
+        "FAIL a new sentence opens for the padding click test",
+        "FAIL a release over padding cannot reveal or close fresh text",
+        "FAIL one press over padding reveals all text and stops the voice without an ending sound or closing",
+        "FAIL the next press over padding closes once and leaves the voice stopped",
+        "FAIL the close release over padding cannot reopen or emit another transition",
+        "FAIL a new sentence opens for the outside click test",
+        "FAIL a release over outside cannot reveal or close fresh text",
+        "FAIL one press over outside reveals all text and stops the voice without an ending sound or closing",
+        "FAIL the next press over outside closes once and leaves the voice stopped",
+        "FAIL the close release over outside cannot reopen or emit another transition",
+        "FAIL a mixed text-to-outside sequence first reveals the sentence and stops its voice",
+        "FAIL a mixed text-to-outside sequence then closes the sentence"
+      ],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-angel_dialogue_test-10de68f86ec041d885cbd2ff51f35971",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\angel_dialogue_test.log",
+      "marker": "ANGEL_DIALOGUE_TESTS: PASS"
+    },
+    {
+      "suite": "angel_integration_test",
+      "status": "failed",
+      "checks": 41,
+      "seconds": 11.78,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL Escape closes the angel without also opening Pause",
+        "FAIL closing restores normal hub navigation and progression input",
+        "FAIL the angel can open again after Escape",
+        "FAIL dismissing over a card never also opens its detail",
+        "FAIL a new sentence can be read by clicking inside its panel",
+        "FAIL a following text click closes without triggering the collection behind it",
+        "FAIL opening Pause immediately closes the dialog and disables and silences the angel",
+        "FAIL a room-flight context closes and disables the dialog",
+        "FAIL the same facing direction in another room cannot retain the hub angel",
+        "FAIL an open-dialog scene exit can be exercised",
+        "ANGEL_INTEGRATION_TESTS: FAIL (41 checks)"
+      ],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-angel_integration_test-d85f4b4d859e4bb798e7ec459ab98348",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\angel_integration_test.log",
+      "marker": "ANGEL_INTEGRATION_TESTS: PASS"
+    },
+    {
+      "suite": "auto_fusion_test",
+      "status": "passed",
+      "checks": 293,
+      "seconds": 3.84,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-auto_fusion_test-3b3ee3d10e1744459985212cf820413a",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\auto_fusion_test.log",
+      "marker": "AUTO_FUSION_TESTS: PASS"
+    },
+    {
+      "suite": "auto_fusion_workbench_test",
+      "status": "passed",
+      "checks": 22,
+      "seconds": 10.09,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-auto_fusion_workbench_test-a2aba0f93a6242ff8962e0a5eaa8268b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\auto_fusion_workbench_test.log",
+      "marker": "AUTO_FUSION_WORKBENCH_TESTS: PASS"
+    },
+    {
+      "suite": "basement_boiler_test",
+      "status": "passed",
+      "checks": 91,
+      "seconds": 31.19,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-basement_boiler_test-887e51d6dd8b414b967e6a966a6bc06b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\basement_boiler_test.log",
+      "marker": "BASEMENT_BOILER_TESTS: PASS"
+    },
+    {
+      "suite": "basement_cat_backend_test",
+      "status": "passed",
+      "reason": "special runner or custom completion contract",
+      "checks": 44,
+      "special_runner": "run_basement_cat_backend_tests",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\run_basement_cat_backend_tests.log"
+    },
+    {
+      "suite": "basement_cat_test",
+      "status": "passed",
+      "checks": 92,
+      "seconds": 45.49,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: Could not save currency and level progress: File not found"
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-basement_cat_test-3f52e97d66864979b39135c954bec3c6",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\basement_cat_test.log",
+      "marker": "BASEMENT_CAT_TESTS: PASS"
+    },
+    {
+      "suite": "basement_crate_physics_test",
+      "status": "passed",
+      "checks": 21,
+      "seconds": 10.2,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-basement_crate_physics_test-4442cfeb4206444eb4637c7c645be031",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\basement_crate_physics_test.log",
+      "marker": "BASEMENT_CRATE_PHYSICS_TESTS: PASS"
+    },
+    {
+      "suite": "basement_discovery_test",
+      "status": "passed",
+      "checks": 44,
+      "seconds": 23.14,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 1 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-basement_discovery_test-88e67de95ff14211abea43f6d194bbc9",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\basement_discovery_test.log",
+      "marker": "BASEMENT_DISCOVERY_TESTS: PASS"
+    },
+    {
+      "suite": "basement_pump_control_test",
+      "status": "passed",
+      "checks": 65,
+      "seconds": 25.27,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-basement_pump_control_test-d06a790bb3ee42628206e4945a6736c7",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\basement_pump_control_test.log",
+      "marker": "BASEMENT_PUMP_CONTROL_TESTS: PASS"
+    },
+    {
+      "suite": "black_market_backend_test",
+      "status": "passed",
+      "reason": "special runner or custom completion contract",
+      "checks": 35,
+      "special_runner": "run_black_market_backend_tests",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\run_black_market_backend_tests.log"
+    },
+    {
+      "suite": "black_market_room_test",
+      "status": "passed",
+      "checks": 71,
+      "seconds": 19.69,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-black_market_room_test-a49325bed87646d0a70c339a7a6e0a77",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\black_market_room_test.log",
+      "marker": "BLACK_MARKET_ROOM_TESTS: PASS"
+    },
+    {
+      "suite": "blood_overlay_test",
+      "status": "passed",
+      "checks": 9,
+      "seconds": 4.08,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-blood_overlay_test-b4aae4425e704ea58ce03525ce98b6e0",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\blood_overlay_test.log",
+      "marker": "BLOOD_OVERLAY_TESTS: PASS"
+    },
+    {
+      "suite": "bodyguard_online_impact_test",
+      "status": "passed",
+      "checks": 78,
+      "seconds": 10.39,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-bodyguard_online_impact_test-7718b3e9f8364bb8b7a231847b6be413",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\bodyguard_online_impact_test.log",
+      "marker": "BODYGUARD_ONLINE_IMPACT_TESTS: PASS"
+    },
+    {
+      "suite": "card_blood_test",
+      "status": "failed",
+      "checks": null,
+      "seconds": 11.27,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL last-stand counter hit stains the attacker despite unchanged final HP",
+        "FAIL last-stand thorns hit stains the attacker before HP restoration"
+      ],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-card_blood_test-cb30d77bb8324472a136347cb9f34667",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\card_blood_test.log",
+      "marker": "CARD_BLOOD_TESTS: PASS"
+    },
+    {
+      "suite": "card_death_test",
+      "status": "passed",
+      "checks": 56,
+      "seconds": 11.12,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 5 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-card_death_test-90d13d3f6fdf4892a9dec0db9c7a62ba",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\card_death_test.log",
+      "marker": "CARD_DEATH_TESTS: PASS"
+    },
+    {
+      "suite": "card_effect_unit_test",
+      "status": "passed",
+      "checks": 106,
+      "seconds": 4.38,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-card_effect_unit_test-a2255725dcd84e4da37ffedb960997fb",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\card_effect_unit_test.log",
+      "marker": "CARD_EFFECT_UNIT_TESTS: PASS"
+    },
+    {
+      "suite": "card_fusion_test",
+      "status": "passed",
+      "checks": 112,
+      "seconds": 3.8,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-card_fusion_test-cdfb8b6e32194876884ebbef1400ef4e",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\card_fusion_test.log",
+      "marker": "CARD_FUSION_TESTS: PASS"
+    },
+    {
+      "suite": "card_localization_test",
+      "status": "failed",
+      "checks": 4435,
+      "seconds": 4.2,
+      "exit_code": 1,
+      "failure_lines": [
+        "CARD_LOCALIZATION_TESTS: FAIL (121 / 4435 checks)"
+      ],
+      "engine_errors": [
+        "ERROR: authored name and description covered: dman",
+        "ERROR: effect title and description use en",
+        "ERROR: effect title and description use de",
+        "ERROR: effect title and description use es",
+        "ERROR: effect title and description use fr",
+        "ERROR: effect title and description use pl"
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-card_localization_test-5c602c16388f4b139424a18241ac358d",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\card_localization_test.log",
+      "marker": "CARD_LOCALIZATION_TESTS: PASS"
+    },
+    {
+      "suite": "cat_clicker_backend_test",
+      "status": "passed",
+      "reason": "special runner or custom completion contract",
+      "checks": 42,
+      "special_runner": "run_cat_clicker_backend_tests",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\run_cat_clicker_backend_tests.log"
+    },
+    {
+      "suite": "cat_clicker_integration_test",
+      "status": "passed",
+      "checks": 64,
+      "seconds": 31.03,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-cat_clicker_integration_test-e3d9f8ce09fc4dcca33369a42d191c1e",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\cat_clicker_integration_test.log",
+      "marker": "CAT_CLICKER_INTEGRATION_TESTS: PASS"
+    },
+    {
+      "suite": "character_eye_glow_test",
+      "status": "passed",
+      "checks": 269,
+      "seconds": 5.48,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-character_eye_glow_test-fd40a4b959db4acbb936b3c9c06a3bc1",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\character_eye_glow_test.log",
+      "marker": "CHARACTER_EYE_GLOW_TESTS: PASS"
+    },
+    {
+      "suite": "cheat_rarity_rewards_test",
+      "status": "passed",
+      "checks": 367,
+      "seconds": 4.28,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-cheat_rarity_rewards_test-7ca1ca3de7b849d78db4d4ccb1d65176",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\cheat_rarity_rewards_test.log",
+      "marker": "CHEAT_RARITY_REWARDS_TESTS: PASS"
+    },
+    {
+      "suite": "collection_discovery_test",
+      "status": "passed",
+      "checks": 72,
+      "seconds": 3.97,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-collection_discovery_test-fcaddc33f9e9409d8eec34741617868e",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\collection_discovery_test.log",
+      "marker": "COLLECTION_DISCOVERY_TESTS: PASS"
+    },
+    {
+      "suite": "collection_filter_test",
+      "status": "passed",
+      "checks": 15,
+      "seconds": 5.22,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-collection_filter_test-8a0721809ee54b5bba191ab862aa0b2d",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\collection_filter_test.log",
+      "marker": "COLLECTION_FILTER_TESTS: PASS"
+    },
+    {
+      "suite": "collection_interaction_test",
+      "status": "passed",
+      "checks": 29,
+      "seconds": 7.28,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-collection_interaction_test-4884377c237e470da330116ffe58d424",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\collection_interaction_test.log",
+      "marker": "COLLECTION_INTERACTION_TESTS: PASS"
+    },
+    {
+      "suite": "collection_new_label_test",
+      "status": "passed",
+      "checks": 46,
+      "seconds": 8.42,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 4 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-collection_new_label_test-d8be1eba75b34c3294111e453a8eb5c3",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\collection_new_label_test.log",
+      "marker": "COLLECTION_NEW_LABEL_TESTS: PASS"
+    },
+    {
+      "suite": "collection_performance_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 57.52,
+      "exit_code": null,
+      "failure_lines": [
+        "SCRIPT ERROR: Invalid call. Nonexistent 'int' constructor."
+      ],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-collection_performance_test-ee759538e62f452b9bf7fc258a0bfc7f",
+      "log": "performance-rerun.json",
+      "marker": "COLLECTION_PERFORMANCE_TESTS: PASS",
+      "rerun_note": "uses required collection_performance_manager fixture"
+    },
+    {
+      "suite": "collection_scroll_test",
+      "status": "passed",
+      "checks": 28,
+      "seconds": 6.61,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-collection_scroll_test-bde690927add49f286b5c47d0b5b5aa3",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\collection_scroll_test.log",
+      "marker": "COLLECTION_SCROLL_TESTS: PASS"
+    },
+    {
+      "suite": "combat_effect_audit_test",
+      "status": "passed",
+      "checks": 237,
+      "seconds": 13.17,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-combat_effect_audit_test-ecc5c610ec6e4a26ab182bb39b150292",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\combat_effect_audit_test.log",
+      "marker": "COMBAT_EFFECT_AUDIT_TESTS: PASS"
+    },
+    {
+      "suite": "crypt_gate_test",
+      "status": "passed",
+      "checks": 49,
+      "seconds": 15.84,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-crypt_gate_test-2f78dc7d0b934bdfbc1d49889b49c792",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\crypt_gate_test.log",
+      "marker": "CRYPT_GATE_TESTS: PASS"
+    },
+    {
+      "suite": "damage_number_visual_test",
+      "status": "passed",
+      "checks": 23,
+      "seconds": 3.8,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-damage_number_visual_test-0a84f9703ac241e59453e8f48da9c57a",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\damage_number_visual_test.log",
+      "marker": "DAMAGE_NUMBER_VISUAL_TESTS: PASS"
+    },
+    {
+      "suite": "damage_numbers_test",
+      "status": "passed",
+      "checks": 83,
+      "seconds": 7.03,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 7 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-damage_numbers_test-f373d7e2276444d88fc05ed99815380f",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\damage_numbers_test.log",
+      "marker": "DAMAGE_NUMBERS_TESTS: PASS"
+    },
+    {
+      "suite": "dealer_dialogue_test",
+      "status": "failed",
+      "checks": 36,
+      "seconds": 11.58,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL second dialog click restores shopping and navigation",
+        "FAIL private random dialog selection covers all lines without immediate repeats",
+        "FAIL dealer sentence is translated in en",
+        "FAIL dealer sentence is translated in es",
+        "FAIL dealer sentence is translated in fr",
+        "FAIL dealer sentence is translated in pl",
+        "FAIL Escape closes only the dialog",
+        "FAIL pause immediately closes dialog and stops voice",
+        "FAIL other market facing cannot activate the dealer",
+        "FAIL returning to the kiosk restores dealer and board",
+        "FAIL offer-board hover still focuses the shared camera",
+        "FAIL leaving the market disables remote dealer interaction",
+        "DEALER_DIALOGUE_TESTS: FAIL (36 checks)"
+      ],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-dealer_dialogue_test-7f56240f90d341a890fd4e7fa82b93af",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\dealer_dialogue_test.log",
+      "marker": "DEALER_DIALOGUE_TESTS: PASS"
+    },
+    {
+      "suite": "deck_burn_migration_test",
+      "status": "passed",
+      "checks": 44,
+      "seconds": 3.58,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-deck_burn_migration_test-aed5c7dcbbd14ffca42e8279be25f0a2",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\deck_burn_migration_test.log",
+      "marker": "DECK_BURN_MIGRATION_TESTS: PASS"
+    },
+    {
+      "suite": "deck_fan_depth_test",
+      "status": "passed",
+      "checks": 29,
+      "seconds": 9.14,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-deck_fan_depth_test-3c732deff9704559b708cb1bf1eca342",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\deck_fan_depth_test.log",
+      "marker": "DECK_FAN_DEPTH_TESTS: PASS"
+    },
+    {
+      "suite": "deck_stack_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 8.17,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-deck_stack_test-f28205bba40e4743875330890a507dc2",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\deck_stack_test.log",
+      "marker": "DECK_STACK_TESTS: PASS"
+    },
+    {
+      "suite": "difficulty_rewards_test",
+      "status": "passed",
+      "checks": 53,
+      "seconds": 5.05,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-difficulty_rewards_test-98b87ab05ef7470fa3348774fec54b0a",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\difficulty_rewards_test.log",
+      "marker": "DIFFICULTY_REWARDS_TESTS: PASS"
+    },
+    {
+      "suite": "dman_secret_test",
+      "status": "passed",
+      "checks": 27,
+      "seconds": 13.91,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-dman_secret_test-1f07ec2e67fd4bbba19181b048700e96",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\dman_secret_test.log",
+      "marker": "DMAN_SECRET_TESTS: PASS"
+    },
+    {
+      "suite": "documentation_dialog_close_test",
+      "status": "passed",
+      "checks": 4,
+      "log": "supplemental-results.json"
+    },
+    {
+      "suite": "effect_upgrade_cost_test",
+      "status": "passed",
+      "checks": 199,
+      "seconds": 4.49,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 1 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: Karte nicht gefunden: ",
+        "WARNING: Karte nicht gefunden: missing_card",
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-effect_upgrade_cost_test-ef77bbde673c40f89b0f26d757fb55a9",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\effect_upgrade_cost_test.log",
+      "marker": "EFFECT_UPGRADE_COST_TESTS: PASS"
+    },
+    {
+      "suite": "egg_hatch_network_test",
+      "status": "passed",
+      "checks": 68,
+      "seconds": 12.89,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-egg_hatch_network_test-892d6b4fc4bf472590eb9c0917439a6d",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\egg_hatch_network_test.log",
+      "marker": "EGG_HATCH_NETWORK_TESTS: PASS"
+    },
+    {
+      "suite": "egg_hatch_test",
+      "status": "passed",
+      "checks": 183,
+      "seconds": 9.26,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 7 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-egg_hatch_test-6a988e3dc5c642b7af05282f26ea890b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\egg_hatch_test.log",
+      "marker": "EGG_HATCH_TESTS: PASS"
+    },
+    {
+      "suite": "eimer_card_test",
+      "status": "passed",
+      "checks": 29,
+      "seconds": 4.09,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-eimer_card_test-5de9c4f1fceb40df9767617f2aafac5b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\eimer_card_test.log",
+      "marker": "EIMER_CARD_TESTS: PASS"
+    },
+    {
+      "suite": "event_cards_network_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 10.8,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 2 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-event_cards_network_test-665a0ed1f12348dcbc58ca66b661973b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\event_cards_network_test.log",
+      "marker": "EVENT_CARDS_NETWORK_TESTS: PASS"
+    },
+    {
+      "suite": "event_cards_test",
+      "status": "passed",
+      "checks": 88,
+      "seconds": 14.3,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 3 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-event_cards_test-176b456175fd409a9cb55f47ad111667",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\event_cards_test.log",
+      "marker": "EVENT_CARD_TESTS: PASS"
+    },
+    {
+      "suite": "event_cards_visual_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 10.5,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 2 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-event_cards_visual_test-43d53a4001cb4e9aacb75dc7507e5293",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\event_cards_visual_test.log",
+      "marker": "EVENT_CARDS_VISUAL_TESTS: PASS"
+    },
+    {
+      "suite": "exploration_rooms_test",
+      "status": "passed",
+      "checks": 102,
+      "seconds": 20.94,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-exploration_rooms_test-4d643f3757bb4f8c9a8935bba3870182",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\exploration_rooms_test.log",
+      "marker": "EXPLORATION_ROOMS_TESTS: PASS"
+    },
+    {
+      "suite": "fusion_workbench_test",
+      "status": "passed",
+      "checks": 55,
+      "seconds": 17.59,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 2 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-fusion_workbench_test-e31df14dfcc94617b88d4985b18966c9",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\fusion_workbench_test.log",
+      "marker": "FUSION_WORKBENCH_TESTS: PASS"
+    },
+    {
+      "suite": "god_pack_unlock_test",
+      "status": "failed",
+      "checks": 21,
+      "seconds": 4.66,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL Locked God preview keeps its model visible and displays the level requirement",
+        "FAIL God purchase controls explain the level-9 lock despite sufficient coins",
+        "FAIL Progress reset immediately re-locks God while retaining the inspected selection",
+        "GOD_PACK_UNLOCK_TESTS: FAIL (21 checks)"
+      ],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-god_pack_unlock_test-2b478c7f09e04b72961e7f46065b109f",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\god_pack_unlock_test.log",
+      "marker": "GOD_PACK_UNLOCK_TESTS: PASS"
+    },
+    {
+      "suite": "holo_cards_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 9.95,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 2 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-holo_cards_test-b9c5303dbc1f421a83d1d45f492e0d34",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\holo_cards_test.log",
+      "marker": "HOLO_CARDS_TESTS: PASS"
+    },
+    {
+      "suite": "holo_match_network_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 8.0,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-holo_match_network_test-ed15e78f61994a4ab202f0fc9d9272ed",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\holo_match_network_test.log",
+      "marker": "HOLO_MATCH_NETWORK_TESTS: PASS"
+    },
+    {
+      "suite": "jester_focus_test",
+      "status": "failed",
+      "checks": 50,
+      "seconds": 17.06,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL Escape closes dialog without also opening pause",
+        "FAIL outside candidate click closes without saving, consuming, or awarding any card",
+        "FAIL a click inside the acknowledgement closes it",
+        "FAIL closing the receipt by outside click cannot grant a second Secret",
+        "FAIL the completed NPC can speak again before the pause regression",
+        "FAIL pausing immediately closes the text dialogue and disables the station",
+        "JESTER_FOCUS_TESTS: FAIL (50 checks)"
+      ],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-jester_focus_test-67b992de207c4dfc864b363032be5b8f",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\jester_focus_test.log",
+      "marker": "JESTER_FOCUS_TESTS: PASS"
+    },
+    {
+      "suite": "jester_offering_test",
+      "status": "passed",
+      "checks": 49,
+      "seconds": 4.06,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-jester_offering_test-9d686525410e4a89989a3aac34b90d57",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\jester_offering_test.log",
+      "marker": "JESTER_OFFERING_TESTS: PASS"
+    },
+    {
+      "suite": "jester_station_test",
+      "status": "timeout",
+      "checks": null,
+      "seconds": 57.69,
+      "exit_code": null,
+      "failure_lines": [
+        "FAIL: Escape immediately closes the modal through viewport input",
+        "FAIL: open and close emit exactly one modal transition each",
+        "FAIL: sentence 1 starts in a cleared dialog field with its own typewriter",
+        "FAIL: a click while sentence 1 is typing reveals only that sentence and consumes the event",
+        "FAIL: a click after sentence 1 clears it before starting sentence 2",
+        "FAIL: sentence 2 starts in a cleared dialog field with its own typewriter",
+        "FAIL: a click while sentence 2 is typing reveals only that sentence and consumes the event",
+        "FAIL: a click after sentence 2 clears it before starting sentence 3",
+        "FAIL: sentence 3 starts in a cleared dialog field with its own typewriter",
+        "FAIL: a click while sentence 3 is typing reveals only that sentence and consumes the event",
+        "FAIL: a click after sentence 3 clears it before starting sentence 4",
+        "FAIL: sentence 4 starts in a cleared dialog field with its own typewriter",
+        "FAIL: a click while sentence 4 is typing reveals only that sentence and consumes the event",
+        "FAIL: only the click after the fourth sentence closes the dialogue without input fallthrough",
+        "FAIL: an unowned grave explains why no copy can be offered",
+        "FAIL: clicking inside an unavailable offering closes it without passing the click through",
+        "FAIL: clicking outside an unavailable offering also closes it",
+        "FAIL: rear NPC callback cannot steal a click aimed at a front grave",
+        "FAIL: grave picks the concrete unprotected Holo copy",
+        "FAIL: the reviewed copy retains its Holo preview and explicit warning",
+        "SCRIPT ERROR: Cannot call method 'find_children' on a null value.",
+        "FAIL: a valid candidate explains inside confirmation and outside cancellation",
+        "FAIL: review a currently free Harald before its reservation changes",
+        "FAIL: a stale protected candidate is rejected without consumption or automatic substitution",
+        "FAIL: the stale confirmation explains its protection failure",
+        "FAIL: another click closes the rejected candidate without trying a substitute",
+        "FAIL: the same free copy can be reviewed again",
+        "FAIL: first confirmation commits the offering before its cosmetic flight",
+        "FAIL: only the reviewed Holo is consumed, preserving the pinned normal copy",
+        "FAIL: the offering uses the existing card dissolve presentation"
+      ],
+      "engine_errors": [
+        "ERROR: Escape immediately closes the modal through viewport input",
+        "ERROR: open and close emit exactly one modal transition each",
+        "ERROR: sentence 1 starts in a cleared dialog field with its own typewriter",
+        "ERROR: a click while sentence 1 is typing reveals only that sentence and consumes the event",
+        "ERROR: a click after sentence 1 clears it before starting sentence 2",
+        "ERROR: sentence 2 starts in a cleared dialog field with its own typewriter",
+        "ERROR: a click while sentence 2 is typing reveals only that sentence and consumes the event",
+        "ERROR: a click after sentence 2 clears it before starting sentence 3",
+        "ERROR: sentence 3 starts in a cleared dialog field with its own typewriter",
+        "ERROR: a click while sentence 3 is typing reveals only that sentence and consumes the event",
+        "ERROR: a click after sentence 3 clears it before starting sentence 4",
+        "ERROR: sentence 4 starts in a cleared dialog field with its own typewriter",
+        "ERROR: a click while sentence 4 is typing reveals only that sentence and consumes the event",
+        "ERROR: only the click after the fourth sentence closes the dialogue without input fallthrough",
+        "ERROR: an unowned grave explains why no copy can be offered"
+      ],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-jester_station_test-e568cbbe7cec4e91a0f0df0f116ca03d",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\jester_station_test.log",
+      "marker": "JESTER_STATION_TESTS: PASS"
+    },
+    {
+      "suite": "journal_collection_test",
+      "status": "failed",
+      "checks": 562,
+      "seconds": 12.88,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL collection contains only the 117 collectible definitions and no event slots",
+        "FAIL legacy event discovery and seen flags cannot create collection slots",
+        "JOURNAL_COLLECTION_TESTS: FAIL (562 checks)"
+      ],
+      "engine_errors": [
+        "ERROR: collection contains only the 117 collectible definitions and no event slots",
+        "ERROR: legacy event discovery and seen flags cannot create collection slots"
+      ],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-journal_collection_test-037550962e7d4d61aaddf79e77af79a2",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\journal_collection_test.log",
+      "marker": "JOURNAL_COLLECTION_TESTS: PASS"
+    },
+    {
+      "suite": "journal_content_test",
+      "status": "passed",
+      "checks": 1219,
+      "seconds": 4.27,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-journal_content_test-7e45f2ea7b734c2e9ec20182ad1d89bb",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\journal_content_test.log",
+      "marker": "JOURNAL_CONTENT_TESTS: PASS"
+    },
+    {
+      "suite": "journal_localization_test",
+      "status": "passed",
+      "checks": 8841,
+      "seconds": 7.44,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-journal_localization_test-5805a8573ea94fdfb22c54b49a473e3f",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\journal_localization_test.log",
+      "marker": "JOURNAL_LOCALIZATION_TESTS: PASS"
+    },
+    {
+      "suite": "journal_profile_test",
+      "status": "passed",
+      "checks": 141,
+      "seconds": 7.3,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-journal_profile_test-f09660cea9cf40348fd877ab2e3a8487",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\journal_profile_test.log",
+      "marker": "JOURNAL_PROFILE_TESTS: PASS"
+    },
+    {
+      "suite": "journal_test",
+      "status": "passed",
+      "checks": 150,
+      "seconds": 21.42,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-journal_test-25ccfaec5d444b44a6ac6627fc20cf53",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\journal_test.log",
+      "marker": "JOURNAL_TESTS: PASS"
+    },
+    {
+      "suite": "key_door_test",
+      "status": "passed",
+      "checks": 27,
+      "seconds": 14.91,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 1 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-key_door_test-256e39df9a264a6aaf10f11af3977174",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\key_door_test.log",
+      "marker": "KEY_DOOR_TESTS: PASS"
+    },
+    {
+      "suite": "knife_card_test",
+      "status": "passed",
+      "checks": 20,
+      "seconds": 10.64,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-knife_card_test-a0e7f522c2b848a98b070240d69ccf13",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\knife_card_test.log",
+      "marker": "KNIFE_CARD_TESTS: PASS"
+    },
+    {
+      "suite": "lava_effect_test",
+      "status": "passed",
+      "checks": 61,
+      "seconds": 14.28,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 6 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-lava_effect_test-f49fa9384c7944fa8e9798a74fb53e3b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\lava_effect_test.log",
+      "marker": "LAVA_EFFECT_TESTS: PASS"
+    },
+    {
+      "suite": "lava_reward_boundary_test",
+      "status": "passed",
+      "checks": 26,
+      "seconds": 3.53,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-lava_reward_boundary_test-4e53e36a4a5d425bbf7b846fd692c770",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\lava_reward_boundary_test.log",
+      "marker": "LAVA_REWARD_BOUNDARY_TESTS: PASS"
+    },
+    {
+      "suite": "loading_screen_test",
+      "status": "passed",
+      "checks": 14,
+      "seconds": 9.01,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-loading_screen_test-ff76a22f6fda45d8956a0ad501e00b75",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\loading_screen_test.log",
+      "marker": "LOADING_SCREEN_TESTS: PASS"
+    },
+    {
+      "suite": "localization_table_test",
+      "status": "passed",
+      "checks": 39,
+      "seconds": 5.49,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-localization_table_test-f2961fab114741a89423c762af7931ee",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\localization_table_test.log",
+      "marker": "LOCALIZATION_TABLE_TESTS: PASS"
+    },
+    {
+      "suite": "localization_ui_test",
+      "status": "passed",
+      "checks": 55,
+      "seconds": 4.08,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-localization_ui_test-b4b7c2a57e4849dc8785f10f28af564e",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\localization_ui_test.log",
+      "marker": "LOCALIZATION_UI_TESTS: PASS"
+    },
+    {
+      "suite": "lower_rarity_cards_test",
+      "status": "failed",
+      "checks": 1250,
+      "seconds": 4.84,
+      "exit_code": 1,
+      "failure_lines": [
+        "LOWER_RARITY_CARDS_TESTS: FAIL (1250 checks)"
+      ],
+      "engine_errors": [
+        "ERROR: rat reuses the common placeholder",
+        "ERROR: rat does not introduce animated",
+        "ERROR: rat does not introduce frame_count",
+        "ERROR: rat does not introduce frame_columns",
+        "ERROR: rat does not introduce frame_rows",
+        "ERROR: rat does not introduce frame_fps",
+        "ERROR: street_dog reuses the common placeholder",
+        "ERROR: street_dog does not introduce animated",
+        "ERROR: street_dog does not introduce frame_count",
+        "ERROR: street_dog does not introduce frame_columns",
+        "ERROR: street_dog does not introduce frame_rows",
+        "ERROR: street_dog does not introduce frame_fps",
+        "ERROR: brick reuses the common placeholder",
+        "ERROR: brick does not introduce animated",
+        "ERROR: brick does not introduce frame_count"
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-lower_rarity_cards_test-8b2d564296a3419fa460928a70838276",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\lower_rarity_cards_test.log",
+      "marker": "LOWER_RARITY_CARDS_TESTS: PASS"
+    },
+    {
+      "suite": "main_menu_emission_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 5.45,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-main_menu_emission_test-31e6bb3d6d8540ef97e21cc9fd6f441b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\main_menu_emission_test.log",
+      "marker": "MAIN_MENU_EMISSION_TESTS: PASS"
+    },
+    {
+      "suite": "match_features_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 11.67,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-match_features_test-6f2da1a2d1a84111bd671ffb821540bc",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\match_features_test.log",
+      "marker": "MATCH_FEATURE_TESTS: PASS"
+    },
+    {
+      "suite": "model_localization_test",
+      "status": "passed",
+      "checks": 114,
+      "seconds": 3.88,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-model_localization_test-64406fdd14cf43db8cf63e040dd82391",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\model_localization_test.log",
+      "marker": "MODEL_LOCALIZATION_TESTS: PASS"
+    },
+    {
+      "suite": "multiplayer_exit_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 7.88,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-multiplayer_exit_test-6207428fe67f44c29a4016c8b188e8a4",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\multiplayer_exit_test.log",
+      "marker": "MULTIPLAYER_EXIT_TESTS: PASS"
+    },
+    {
+      "suite": "native_peer_lifetime_test",
+      "status": "not_run",
+      "reason": "special runner or custom completion contract"
+    },
+    {
+      "suite": "network_lifecycle_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 10.86,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 2 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-network_lifecycle_test-5e1a5adaf71f488aae70408c76c37683",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\network_lifecycle_test.log",
+      "marker": "NETWORK_LIFECYCLE_TESTS: PASS"
+    },
+    {
+      "suite": "offline_exit_skip_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 29.89,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-offline_exit_skip_test-fc45970d3a394ba4b4effb9a8ae4af70",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\offline_exit_skip_test.log",
+      "marker": "OFFLINE_EXIT_SKIP_TESTS: PASS"
+    },
+    {
+      "suite": "offline_modes_test",
+      "status": "passed",
+      "checks": 2299,
+      "seconds": 38.97,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: Could not save currency and level progress: File not found"
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-offline_modes_test-64371845d9ad4277a3156a4c204f058c",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\offline_modes_test.log",
+      "marker": "OFFLINE_MODES_TESTS: PASS"
+    },
+    {
+      "suite": "pack_batch_test",
+      "status": "passed",
+      "checks": 47,
+      "seconds": 6.3,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 3 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-pack_batch_test-6f2ce52b06164fe0bda1e53e5d1f580e",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\pack_batch_test.log",
+      "marker": "PACK_BATCH_TESTS: PASS"
+    },
+    {
+      "suite": "pack_foil_test",
+      "status": "passed",
+      "checks": 100,
+      "seconds": 23.19,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-pack_foil_test-ba6e07a6552246f1afb417ef3b995023",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\pack_foil_test.log",
+      "marker": "PACK_FOIL_TESTS: PASS"
+    },
+    {
+      "suite": "pack_new_label_test",
+      "status": "passed",
+      "checks": 48,
+      "seconds": 15.14,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-pack_new_label_test-16899e8cf58a470095c5ba440831a4ff",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\pack_new_label_test.log",
+      "marker": "PACK_NEW_LABEL_TESTS: PASS"
+    },
+    {
+      "suite": "pack_quantity_test",
+      "status": "passed",
+      "checks": 40,
+      "seconds": 12.33,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-pack_quantity_test-01938df3cdf748598218d527bfd07927",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\pack_quantity_test.log",
+      "marker": "PACK_QUANTITY_TESTS: PASS"
+    },
+    {
+      "suite": "presentation_settings_test",
+      "status": "passed",
+      "checks": 56,
+      "seconds": 4.28,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-presentation_settings_test-d6bcbd5a01b140eba969d3d31c79183b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\presentation_settings_test.log",
+      "marker": "PRESENTATION_SETTINGS_TESTS: PASS"
+    },
+    {
+      "suite": "prisoner_dialogue_test",
+      "status": "passed",
+      "checks": 70,
+      "seconds": 10.74,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-prisoner_dialogue_test-a21d4705e247408a9bd2e0dcab684d2c",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\prisoner_dialogue_test.log",
+      "marker": "PRISONER_DIALOGUE_TESTS: PASS"
+    },
+    {
+      "suite": "progression_areas_test",
+      "status": "passed",
+      "checks": 47,
+      "seconds": 11.03,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-progression_areas_test-1220b8102c934b75915ac0cc745d5d71",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\progression_areas_test.log",
+      "marker": "PROGRESSION_AREAS_TESTS: PASS"
+    },
+    {
+      "suite": "progression_economy_test",
+      "status": "passed",
+      "checks": 29,
+      "seconds": 4.62,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-progression_economy_test-98eedebdd9fb4a379977e577e0cf5521",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\progression_economy_test.log",
+      "marker": "PROGRESSION_ECONOMY_TESTS: PASS"
+    },
+    {
+      "suite": "progression_rewards_test",
+      "status": "passed",
+      "checks": 135,
+      "seconds": 3.98,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-progression_rewards_test-14ca17b5f41f4e11b490451461e3a656",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\progression_rewards_test.log",
+      "marker": "PROGRESSION_REWARD_TESTS: PASS"
+    },
+    {
+      "suite": "progression_upgrades_test",
+      "status": "passed",
+      "checks": 89,
+      "seconds": 4.34,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-progression_upgrades_test-a9660e28af92433ba9a505b311305e01",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\progression_upgrades_test.log",
+      "marker": "PROGRESSION_UPGRADES_TESTS: PASS"
+    },
+    {
+      "suite": "replacement_network_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 11.94,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-replacement_network_test-a0bbea916b0b471080e32f878a13364d",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\replacement_network_test.log",
+      "marker": "REPLACEMENT_NETWORK_TESTS: PASS"
+    },
+    {
+      "suite": "rolling_audio_audibility_test",
+      "status": "passed",
+      "reason": "special runner or custom completion contract",
+      "log": "supplemental-results.json",
+      "mode": "render with Dummy audio"
+    },
+    {
+      "suite": "room_travel_test",
+      "status": "passed",
+      "checks": 71,
+      "seconds": 25.84,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-room_travel_test-3750230cc9184d4286665b09e6f7331c",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\room_travel_test.log",
+      "marker": "ROOM_TRAVEL_TESTS: PASS"
+    },
+    {
+      "suite": "satan_greeting_test",
+      "status": "passed",
+      "checks": null,
+      "seconds": 22.78,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: Could not save currency and level progress: File not found"
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-satan_greeting_test-f48584bdb13c4b83b06a4a71c9065f54",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\satan_greeting_test.log",
+      "marker": "SATAN_GREETING_TESTS: PASS"
+    },
+    {
+      "suite": "satan_jumpscare_test",
+      "status": "passed",
+      "checks": 51,
+      "seconds": 17.62,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-satan_jumpscare_test-9d25aa9d12a345d0804116400f2ea5c9",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\satan_jumpscare_test.log",
+      "marker": "SATAN_JUMPSCARE_TESTS: PASS"
+    },
+    {
+      "suite": "satan_stream_test",
+      "status": "passed",
+      "checks": 22,
+      "seconds": 13.48,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-satan_stream_test-b2209eb953a8421f9614b95b09ccdc30",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\satan_stream_test.log",
+      "marker": "SATAN_STREAM_TESTS: PASS"
+    },
+    {
+      "suite": "save_slots_test",
+      "status": "passed",
+      "checks": 174,
+      "seconds": 3.91,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-save_slots_test-e6c33f265b3044779511415844ddc541",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\save_slots_test.log",
+      "marker": "SAVE_SLOTS_TESTS: PASS"
+    },
+    {
+      "suite": "screen_input_test",
+      "status": "passed",
+      "checks": 154,
+      "seconds": 4.56,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-screen_input_test-ce969da9181948c2ae6fd87256bee716",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\screen_input_test.log",
+      "marker": "SCREEN_INPUT_TESTS: PASS"
+    },
+    {
+      "suite": "secret_collection_refresh_test",
+      "status": "passed",
+      "checks": 13,
+      "seconds": 4.67,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-secret_collection_refresh_test-8750db9582584f189af62bb2b8e03985",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\secret_collection_refresh_test.log",
+      "marker": "SECRET_COLLECTION_REFRESH_TESTS: PASS"
+    },
+    {
+      "suite": "secret_integration_test",
+      "status": "failed",
+      "checks": 65,
+      "seconds": 8.59,
+      "exit_code": 1,
+      "failure_lines": [
+        "SECRET_INTEGRATION_TESTS: FAIL (65 checks)"
+      ],
+      "engine_errors": [
+        "ERROR: Both new mechanics pages exist in de",
+        "ERROR: Both new mechanics pages exist in en",
+        "ERROR: Both new mechanics pages exist in es",
+        "ERROR: Both new mechanics pages exist in fr",
+        "ERROR: Both new mechanics pages exist in pl",
+        "ERROR: 3 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-secret_integration_test-e1176128e2bc41a3b8600d4ee55cf08f",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\secret_integration_test.log",
+      "marker": "SECRET_INTEGRATION_TESTS: PASS"
+    },
+    {
+      "suite": "secret_reward_test",
+      "status": "passed",
+      "checks": 70,
+      "seconds": 3.56,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-secret_reward_test-71adbd4963bf49c3a69c63633dc4377b",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\secret_reward_test.log",
+      "marker": "SECRET_REWARD_TESTS: PASS"
+    },
+    {
+      "suite": "secret_visual_test",
+      "status": "failed",
+      "checks": 23,
+      "seconds": 4.01,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL: actual catalog card uses Secret: developer",
+        "FAIL: actual catalog card uses Secret: missing_texture",
+        "SECRET_VISUAL_TESTS: FAIL (23 checks)"
+      ],
+      "engine_errors": [
+        "ERROR: actual catalog card uses Secret: developer",
+        "ERROR: actual catalog card uses Secret: missing_texture"
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-secret_visual_test-32cb38e293c34cd190e3a5e514755d2e",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\secret_visual_test.log",
+      "marker": "SECRET_VISUAL_TESTS: PASS"
+    },
+    {
+      "suite": "settings_cheats_test",
+      "status": "passed",
+      "checks": 33,
+      "seconds": 10.55,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-settings_cheats_test-39959221a4c346ca8d6bb086eedbcd84",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\settings_cheats_test.log",
+      "marker": "SETTINGS_CHEATS_TESTS: PASS"
+    },
+    {
+      "suite": "settings_outlines_test",
+      "status": "failed",
+      "checks": 47,
+      "seconds": 5.12,
+      "exit_code": 1,
+      "failure_lines": [
+        "FAIL: All seven settings sliders and all four checkboxes are covered",
+        "SETTINGS_OUTLINES_TESTS: FAIL (47 checks)"
+      ],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-settings_outlines_test-94a8bf0882b54152a00724da70f5b477",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\settings_outlines_test.log",
+      "marker": "SETTINGS_OUTLINES_TESTS: PASS"
+    },
+    {
+      "suite": "slot_currency_test",
+      "status": "passed",
+      "checks": 27,
+      "seconds": 3.67,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-slot_currency_test-b6e9a7e99fd04414a6d862aac300b19c",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\slot_currency_test.log",
+      "marker": "SLOT_CURRENCY_TESTS: PASS"
+    },
+    {
+      "suite": "slot_machine_test",
+      "status": "passed",
+      "checks": 130,
+      "seconds": 15.34,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 3 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-slot_machine_test-6787bc20c0dc485295f5065569eb29b5",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\slot_machine_test.log",
+      "marker": "SLOT_MACHINE_TESTS: PASS"
+    },
+    {
+      "suite": "slot_room_key_backend_test",
+      "status": "passed",
+      "checks": 41,
+      "seconds": 7.45,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-slot_room_key_backend_test-57fc017e10c04c70b92f3a01d799ec8d",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\slot_room_key_backend_test.log",
+      "marker": "SLOT_ROOM_KEY_BACKEND_TESTS: PASS"
+    },
+    {
+      "suite": "slot_room_key_ui_test",
+      "status": "passed",
+      "checks": 17,
+      "seconds": 5.27,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-slot_room_key_ui_test-179aa68742504c3fb27ff79ad133c799",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\slot_room_key_ui_test.log",
+      "marker": "SLOT_ROOM_KEY_UI_TESTS: PASS"
+    },
+    {
+      "suite": "special_cards_test",
+      "status": "passed",
+      "checks": 39,
+      "seconds": 4.88,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-special_cards_test-47d763d9e45544f79d920eb61f1f600d",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\special_cards_test.log",
+      "marker": "SPECIAL_CARD_TESTS: PASS"
+    },
+    {
+      "suite": "starting_events_test",
+      "status": "passed",
+      "checks": 52,
+      "seconds": 5.75,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [
+        "ERROR: 27 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-starting_events_test-c9956f741b5b49bab9f55021e358b122",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\starting_events_test.log",
+      "marker": "STARTING_EVENTS_TESTS: PASS"
+    },
+    {
+      "suite": "starting_hand_progression_test",
+      "status": "passed",
+      "checks": 108,
+      "seconds": 7.61,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-starting_hand_progression_test-44db962e322b40ce82ff07c17f7312a4",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\starting_hand_progression_test.log",
+      "marker": "STARTING_HAND_PROGRESSION_TESTS: PASS"
+    },
+    {
+      "suite": "starting_hand_test",
+      "status": "passed",
+      "checks": 79,
+      "seconds": 6.11,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-starting_hand_test-06674ef66d1841b29786afff92a3eeda",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\starting_hand_test.log",
+      "marker": "STARTING_HAND_TESTS: PASS"
+    },
+    {
+      "suite": "starting_hand_ui_test",
+      "status": "passed",
+      "checks": 47,
+      "seconds": 14.84,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-starting_hand_ui_test-2f317978e79c49bf8b5e9794f758d771",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\starting_hand_ui_test.log",
+      "marker": "STARTING_HAND_UI_TESTS: PASS"
+    },
+    {
+      "suite": "startup_settings_test",
+      "status": "passed",
+      "checks": 30,
+      "seconds": 20.24,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-startup_settings_test-aab2b7ede1954ff7a89504534dcf7b70",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\startup_settings_test.log",
+      "marker": "STARTUP_SETTINGS_TESTS: PASS"
+    },
+    {
+      "suite": "story_rarity_test",
+      "status": "passed",
+      "checks": 13105,
+      "seconds": 4.3,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-story_rarity_test-a9d66f8dc624413b80b934e7a06751e2",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\story_rarity_test.log",
+      "marker": "STORY_RARITY_TESTS: PASS"
+    },
+    {
+      "suite": "turn_arrows_test",
+      "status": "passed",
+      "checks": 110,
+      "seconds": 11.06,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-turn_arrows_test-7e063e83e78c465291d086f86a675c74",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\turn_arrows_test.log",
+      "marker": "TURN_ARROWS_TESTS: PASS"
+    },
+    {
+      "suite": "upgrade_cost_test",
+      "status": "passed",
+      "checks": 26,
+      "seconds": 4.03,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-upgrade_cost_test-95e8744da60d416e850294eca3bb09c6",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\upgrade_cost_test.log",
+      "marker": "UPGRADE_COST_TESTS: PASS"
+    },
+    {
+      "suite": "upgrade_deck_filter_test",
+      "status": "passed",
+      "checks": 20,
+      "seconds": 4.56,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-upgrade_deck_filter_test-8c155a016cfa46b6978393d1f1f4dc24",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\upgrade_deck_filter_test.log",
+      "marker": "UPGRADE_DECK_FILTER_TESTS: PASS"
+    },
+    {
+      "suite": "upgrade_room_collection_test",
+      "status": "passed",
+      "checks": 32,
+      "seconds": 12.77,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-upgrade_room_collection_test-ed69b11ce7c34675972bdf83cdd6cd7f",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\upgrade_room_collection_test.log",
+      "marker": "UPGRADE_ROOM_COLLECTION_TESTS: PASS"
+    },
+    {
+      "suite": "upgrade_wall_collection_test",
+      "status": "passed",
+      "checks": 21,
+      "seconds": 7.97,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-upgrade_wall_collection_test-a85130a4257047d5a70c4ee4119359f1",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\upgrade_wall_collection_test.log",
+      "marker": "UPGRADE_WALL_COLLECTION_TESTS: PASS"
+    },
+    {
+      "suite": "usb_secret_backend_test",
+      "status": "passed",
+      "checks": 94,
+      "seconds": 5.45,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-usb_secret_backend_test-9b227c50f9e842c693c0ec4f299142e5",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\usb_secret_backend_test.log",
+      "marker": "USB_SECRET_BACKEND_TESTS: PASS"
+    },
+    {
+      "suite": "usb_secret_card_test",
+      "status": "passed",
+      "checks": 105,
+      "seconds": 7.45,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-usb_secret_card_test-075c4a54e8dd499f831e897487c401a4",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\usb_secret_card_test.log",
+      "marker": "USB_SECRET_CARD_TESTS: PASS"
+    },
+    {
+      "suite": "usb_secret_discovery_test",
+      "status": "passed",
+      "checks": 46,
+      "seconds": 16.34,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-usb_secret_discovery_test-2b730aeec2dc4118ada868bbc21f4243",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\usb_secret_discovery_test.log",
+      "marker": "USB_SECRET_DISCOVERY_TESTS: PASS"
+    },
+    {
+      "suite": "wall_collection_focus_test",
+      "status": "passed",
+      "checks": 40,
+      "seconds": 22.25,
+      "exit_code": 0,
+      "failure_lines": [],
+      "engine_errors": [],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-wall_collection_focus_test-a19c6917ac054643b43649b941f1ed56",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\wall_collection_focus_test.log",
+      "marker": "WALL_COLLECTION_FOCUS_TESTS: PASS"
+    },
+    {
+      "suite": "world_localization_test",
+      "status": "failed",
+      "checks": 3043,
+      "seconds": 7.8,
+      "exit_code": 1,
+      "failure_lines": [
+        "WORLD_LOCALIZATION_TESTS: FAIL (3043 checks)"
+      ],
+      "engine_errors": [
+        "ERROR: forge filter/selection in de",
+        "ERROR: forge filter/selection in es",
+        "ERROR: forge filter/selection in fr",
+        "ERROR: forge filter/selection in pl",
+        "ERROR: 2 resources still in use at exit (run with --verbose for details)."
+      ],
+      "warnings": [
+        "WARNING: ObjectDB instances leaked at exit (run with --verbose for details)."
+      ],
+      "fixture": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-world_localization_test-a76181f0c3444704a66b028457c3723d",
+      "log": "C:\\Users\\Luca\\Documents\\DarkestCards3D\\docs\\game-documentation\\audit\\world_localization_test.log",
+      "marker": "WORLD_LOCALIZATION_TESTS: PASS"
+    }
+  ]
+}

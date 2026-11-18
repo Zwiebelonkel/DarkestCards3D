@@ -174,7 +174,7 @@ func _limit_upgrade_effects_for_card(card_id: String, effects: Variant) -> Array
 		return limited
 	var base_effects := get_base_effects(card_id)
 	var max_upgrade_count :int= max(CardData.MAX_EFFECTS_PER_CARD - base_effects.size(), 0)
-	var has_mailman := base_effects.any(func(effect: Dictionary): return str(effect.get("type", "")) == "draw_on_kill")
+	var has_mailman := base_effects.any(func(effect: Dictionary): return str(effect.get("type", "")) == "draw_on_death")
 
 	if not (effects is Array):
 		return limited
@@ -184,7 +184,7 @@ func _limit_upgrade_effects_for_card(card_id: String, effects: Variant) -> Array
 			break
 
 		if effect is Dictionary and _is_allowed_upgrade_effect(effect):
-			if str(effect.get("type", "")) == "draw_on_kill":
+			if str(effect.get("type", "")) == "draw_on_death":
 				if has_mailman:
 					continue
 				has_mailman = true

@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-18",
+  "coin_checks": 66,
+  "combat_audit_checks": 283,
+  "card_effect_unit_checks": 106,
+  "total_targeted_checks": 455,
+  "asset_contract": "pass",
+  "visual": "pass",
+  "legacy_lower_rarity": "Failed on outdated placeholder/static-image and armor-text expectations; coin outcome assertions passed.",
+  "limitations": [
+    "Live Steam multiplayer and exported build not tested.",
+    "Headless coin/combat tests emit ObjectDB leak warning at exit."
+  ]
+}

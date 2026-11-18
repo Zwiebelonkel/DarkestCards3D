@@ -465,14 +465,15 @@ func _build_spread() -> void:
 	subtitle.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	_fit_heading(subtitle, 2.75, 28)
 	var profile_overview := entry.has("profile_strength")
+	var combat_preview := entry.has("card_data") and CardData.is_combat_card(entry["card_data"])
 	var illustrated := entry.has("card_data") or not str(entry.get("icon_path", "")).is_empty() or profile_overview
 	if entry.has("card_data"):
 		var card := CARD_SCENE.instantiate() as Card3D
 		_paper_contents.add_child(card)
 		card.setup(CardData.merge_card_and_instance(entry["card_data"]))
 		card.description_label.skip()
-		card.position = Vector3(1.66, 0.82, 0.15)
-		card.scale = Vector3.ONE * 0.90
+		card.position = Vector3(1.66, 0.40 if combat_preview else 0.82, 0.15)
+		card.scale = Vector3.ONE * (1.45 if combat_preview else 0.90)
 		_disable_card_input(card)
 	elif profile_overview:
 		var strength_caption := _label(Localization.text("GESAMTSTÄRKE"), Vector3(1.66, 1.04, 0.13), 36, false)
@@ -483,6 +484,7 @@ func _build_spread() -> void:
 		_fit_heading(strength_value, 2.70, 36)
 	elif illustrated:
 		var icon := Sprite3D.new()
+		icon.shaded = true
 		icon.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 		icon.texture = load(str(entry["icon_path"])) as Texture2D
 		if icon.texture != null:
@@ -490,9 +492,11 @@ func _build_spread() -> void:
 		icon.position = Vector3(1.66, 0.84, 0.14)
 		_box(_paper_contents, Vector3(1.04, 1.04, 0.009), Vector3(1.66, 0.84, 0.12), INK)
 		_paper_contents.add_child(icon)
-	_body_pages = _paginate(str(entry.get("body", "")), 36, 12 if illustrated else 20)
+	# Larger combat cards get more page space; their text continues below them.
+	var body_top := -0.60 if combat_preview else (0.12 if illustrated else 1.14)
+	_body_pages = _paginate(str(entry.get("body", "")), 36, 12 if illustrated else 20, body_top + 1.71)
 	body_page = clampi(body_page, 0, maxi(_body_pages.size() - 1, 0))
-	_body_label = _label(_body_pages[body_page], Vector3(0.28, 0.12 if illustrated else 1.14, 0.12), 46)
+	_body_label = _label(_body_pages[body_page], Vector3(0.28, body_top, 0.12), 46)
 	_body_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	if _body_pages.size() > 1:
 		_button("body_prev", "<", Vector3(0.53, -1.86, 0.11), Vector2(0.34, 0.28), body_page > 0)
@@ -595,11 +599,12 @@ func _create_collection_placeholder() -> Node3D:
 	border.name = "DashedBorder"
 	border.multimesh = _collection_border
 	var ink := StandardMaterial3D.new()
-	ink.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ink.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	ink.albedo_color = Color("796b56")
 	border.material_override = ink
 	slot.add_child(border)
 	var question := Sprite3D.new()
+	question.shaded = true
 	question.name = "Placeholder"
 	question.texture = COLLECTION_PLACEHOLDER
 	question.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
@@ -632,7 +637,7 @@ func _update_collection_hover(delta: float) -> void:
 		card.transform = rest.interpolate_with(Transform3D(facing, at), eased)
 
 
-func _paginate(text: String, columns: int, rows: int) -> Array[String]:
+func _paginate(text: String, columns: int, rows: int, max_height: float = -1.0) -> Array[String]:
 	var lines: Array[String] = []
 	var max_width := minf(_text_width("M".repeat(columns), 46), 2.74)
 	for paragraph in text.split("\n"):
@@ -654,7 +659,8 @@ func _paginate(text: String, columns: int, rows: int) -> Array[String]:
 	var pages: Array[String] = []
 	# Accented fallback glyphs can make a line taller than the pixel font.
 	# Keep the row cap, but also fit the actual space above the page arrows.
-	var max_height := 1.83 if rows <= 12 else 2.85
+	if max_height < 0.0:
+		max_height = 1.83 if rows <= 12 else 2.85
 	var first := 0
 	while first < lines.size():
 		var last := mini(first + maxi(rows, 1), lines.size())
@@ -687,7 +693,7 @@ func _label(text: String, at: Vector3, size: int, align_left: bool = true) -> La
 	label.position = at
 	label.modulate = INK
 	label.outline_size = 0
-	label.shaded = false
+	label.shaded = true
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if align_left else HORIZONTAL_ALIGNMENT_CENTER
 	_paper_contents.add_child(label)
 	return label
@@ -705,7 +711,7 @@ func _box(parent: Node3D, dimensions: Vector3, at: Vector3, color: Color) -> Mes
 	mesh.size = dimensions
 	node.mesh = mesh
 	var material := StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	material.albedo_color = color
 	node.material_override = material
 	node.position = at

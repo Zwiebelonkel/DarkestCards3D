@@ -1,0 +1,28 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS hidden-room Auto Fuse cannot consume cards
+PASS enter the real forge room
+PASS physical fuse button is visible and individually reachable
+PASS physical auto_fuse button is visible and individually reachable
+PASS physical clear button is visible and individually reachable
+PASS manual selection can coexist before starting Auto Fuse
+PASS Auto Fuse remains available for eligible cards outside the visible rarity filter
+PASS actual button click starts the automatic forge animation and locks travel
+PASS one click recursively performs all four upgraded fusions across hidden rarity groups
+PASS actual Auto Fuse preserves the exact deck copy and Secret
+PASS double clicks and direct retriggers cannot duplicate a committed batch
+PASS pause freezes only presentation after the complete batch is saved
+PASS Auto Fuse finishes without dismissing each individual reward
+PASS finished batch restores the refreshed full inventory and clears consumed selections
+PASS no remaining group disables Auto Fuse and the title reports completed fusions
+PASS finished batch restores ordinary room controls
+PASS batch summary follows a language switch
+PASS force a UI batch save failure
+PASS failed batch consumes nothing and reports failure without locking the UI
+PASS restore batch saving
+PASS retry saves the next batch before its animation
+PASS closing the scene mid-animation preserves the entire committed result once
+AUTO_FUSION_WORKBENCH_TESTS: PASS (22 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

@@ -1,6 +1,9 @@
 extends RefCounted
 class_name CombatResolver
 
+const RANDOM_DAMAGE_LOW := 0.75
+const RANDOM_DAMAGE_HIGH := 2.0
+
 static func get_active_effects(card: Card3D) -> Array[Dictionary]:
 	return CardData.get_active_effects(card.card_data)
 
@@ -13,13 +16,19 @@ static func get_hit_count(attacker: Card3D) -> int:
 		return clampi(int(double.get("hits", 2)), 1, 8)
 	return 1
 
-static func get_attack_damage(attacker: Card3D, identical_on_board: int = 1) -> int:
+static func roll_attack_multiplier(attacker: Card3D) -> float:
+	if not CardData.has_effect(attacker.card_data, "random_damage"):
+		return 1.0
+	return RANDOM_DAMAGE_LOW if randi() % 2 == 0 else RANDOM_DAMAGE_HIGH
+
+
+static func get_attack_damage(attacker: Card3D, identical_on_board: int = 1, rolled_multiplier: float = -1.0) -> int:
 	var damage := attacker.attack_value
 	if CardData.has_effect(attacker.card_data, "swarm_power"):
 		damage *= max(identical_on_board, 1)
-	var random_damage := CardData.get_effect(attacker.card_data, "random_damage")
-	if not random_damage.is_empty():
-		damage = int(round(float(damage) * randf_range(float(random_damage.get("min", 0.75)), float(random_damage.get("max", 1.25)))))
+	if CardData.has_effect(attacker.card_data, "random_damage"):
+		var multiplier := roll_attack_multiplier(attacker) if rolled_multiplier < 0.0 else rolled_multiplier
+		damage = roundi(float(damage) * multiplier)
 	return max(damage, 0)
 
 ## Pure mitigation: callers such as Bodyguard can divide this result without

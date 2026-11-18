@@ -1,0 +1,123 @@
+{
+	"captured_at_utc": "2026-11-15T17:37:04",
+	"captures": [
+		{
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.999568, -0.029399), Z: (0.0, 0.029399, 0.999568), O: (0.0, 0.2, 6.8)]",
+			"label": "00-before-front",
+			"mean_luminance": 0.194815993002529,
+			"resolution": "(1500, 900)",
+			"timestamp_utc": "2026-11-15T17:37:04"
+		},
+		{
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.999568, -0.029399), Z: (0.0, 0.029399, 0.999568), O: (0.0, 0.2, 6.8)]",
+			"label": "01-after-front",
+			"mean_luminance": 0.255573194167614,
+			"resolution": "(1500, 900)",
+			"timestamp_utc": "2026-11-15T17:37:05"
+		},
+		{
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.999568, -0.029399), Z: (0.0, 0.029399, 0.999568), O: (0.0, 0.2, 6.8)]",
+			"label": "02-after-back",
+			"mean_luminance": 0.24875900490284,
+			"resolution": "(1500, 900)",
+			"timestamp_utc": "2026-11-15T17:37:06"
+		},
+		{
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.999568, -0.029399), Z: (0.0, 0.029399, 0.999568), O: (0.0, 0.2, 6.8)]",
+			"label": "03-after-grazing",
+			"mean_luminance": 0.207861686527729,
+			"resolution": "(1500, 900)",
+			"timestamp_utc": "2026-11-15T17:37:07"
+		},
+		{
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.999568, -0.029399), Z: (0.0, 0.029399, 0.999568), O: (0.0, 0.2, 6.8)]",
+			"label": "04-after-partial-peel",
+			"mean_luminance": 0.205033602896531,
+			"resolution": "(1500, 900)",
+			"timestamp_utc": "2026-11-15T17:37:07"
+		}
+	],
+	"checks": 54,
+	"failures": 0,
+	"framing": "1500x900, 34 degree camera, equal pack scales and fixed lighting before/after",
+	"materials": [
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/basic_height.res",
+			"mesh": "base",
+			"pack": "basic",
+			"roughness": 0.33,
+			"surface": 0
+		},
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/basic_height.res",
+			"mesh": "base",
+			"pack": "basic",
+			"roughness": 0.33,
+			"surface": 1
+		},
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/basic_height.res",
+			"mesh": "top",
+			"pack": "basic",
+			"roughness": 0.33,
+			"surface": 0
+		},
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/ultra_height.res",
+			"mesh": "base",
+			"pack": "ultra",
+			"roughness": 0.32,
+			"surface": 0
+		},
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/ultra_height.res",
+			"mesh": "base",
+			"pack": "ultra",
+			"roughness": 0.32,
+			"surface": 1
+		},
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/ultra_height.res",
+			"mesh": "top",
+			"pack": "ultra",
+			"roughness": 0.32,
+			"surface": 0
+		},
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/god_height.res",
+			"mesh": "base",
+			"pack": "god",
+			"roughness": 0.31,
+			"surface": 0
+		},
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/god_height.res",
+			"mesh": "base",
+			"pack": "god",
+			"roughness": 0.31,
+			"surface": 1
+		},
+		{
+			"heightmap": "res://assets/cards/pack/surfaces/god_height.res",
+			"mesh": "top",
+			"pack": "god",
+			"roughness": 0.31,
+			"surface": 0
+		}
+	],
+	"performance": {
+		"after": {
+			"average_frame_ms": 15.9928125,
+			"draw_calls": 9.0,
+			"p95_frame_ms": 17.03,
+			"rendered_primitives": 4002.0
+		},
+		"before": {
+			"average_frame_ms": 15.9859791666667,
+			"draw_calls": 9.0,
+			"p95_frame_ms": 16.998,
+			"rendered_primitives": 4002.0
+		}
+	},
+	"shader_modified": 1794764158
+}

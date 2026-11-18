@@ -1,0 +1,21 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS full 100-card deck has one visible layer per remaining card
+PASS opponent stack also extends past the former 20-card cap
+PASS full stack height represents all 100 cards
+PASS draw origin is the actual top card
+PASS stack decoration has no processing or card input
+PASS unchanged snapshot reuses stack cards
+PASS depletion preserves the existing bottom card
+PASS every draw lowers the stack one layer through 20, one, and zero cards
+PASS drawn stack cards disappear immediately before deferred cleanup
+PASS empty deck leaves no phantom cards
+PASS empty stack origin remains at the deck marker
+PASS drawing the player deck leaves the opponent stack unchanged
+PASS joined fighter receives mirrored remaining-card stack heights
+PASS spectator preserves host-side stack heights
+PASS online snapshots show zero and one remaining card exactly
+DECK_STACK_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

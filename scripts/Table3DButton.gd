@@ -48,7 +48,7 @@ func _ready() -> void:
 		glow_root = $model
 
 	if button_mesh == null:
-		button_mesh = $model/ButtonMesh # ggf. Pfad anpassen
+		button_mesh = $model/button # ggf. Pfad anpassen
 
 	if button_mesh:
 		_button_start_pos = button_mesh.position

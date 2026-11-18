@@ -1,0 +1,68 @@
+{
+  "status": "pass",
+  "engine": "Godot 4.4.1, Forward+, AMD Radeon RX 7600",
+  "source_script_modified_utc": "2026-11-17T23:30:17.8635113Z",
+  "views": [
+    {
+      "view": "before",
+      "file": "piss-event-before.png",
+      "captured_utc": "2026-11-17T23:30:26.9488636Z",
+      "width": 1280,
+      "height": 720,
+      "average_luminance_0_to_255": 22.42,
+      "inspected_at_native_resolution": true
+    },
+    {
+      "view": "legendary-card",
+      "file": "piss-event-legendary-card.png",
+      "captured_utc": "2026-11-17T23:30:24.9850255Z",
+      "width": 1280,
+      "height": 720,
+      "average_luminance_0_to_255": 73.12,
+      "inspected_at_native_resolution": true
+    },
+    {
+      "view": "stream-hidden",
+      "file": "piss-event-stream-hidden.png",
+      "captured_utc": "2026-11-17T23:30:28.5319502Z",
+      "width": 1280,
+      "height": 720,
+      "average_luminance_0_to_255": 49.72,
+      "inspected_at_native_resolution": true
+    },
+    {
+      "view": "restored",
+      "file": "piss-event-restored.png",
+      "captured_utc": "2026-11-17T23:30:29.1869190Z",
+      "width": 1280,
+      "height": 720,
+      "average_luminance_0_to_255": 51.08,
+      "inspected_at_native_resolution": true
+    }
+  ],
+  "findings": [
+    "Legendary gold Piss reveal is readable and uses the existing event style.",
+    "Yellow ribbons visibly land on the tabletop. Both rows show question marks and no effect icons in the affected view.",
+    "Restored view displays current values and effects after two affected-player turns.",
+    "A separate event instance preserves the hub emitter pose. Both caster origins and tabletop bounds were checked at runtime."
+  ],
+  "structure": {
+    "new_lights": 0,
+    "gpu_emitters": 1,
+    "nodes": 3,
+    "new_collision_shapes": 0,
+    "loaded_scene_round_trip": "pass",
+    "maximum_particles": 420
+  },
+  "performance_note": "Thirty-frame smoke samples of the full Main scene before and during the stream. Ambient effects and hidden card overlays differ; these are diagnostic samples, not an isolated VFX benchmark.",
+  "safety": {
+    "dummy_audio": true,
+    "user_editor_reused_or_stopped": false,
+    "off_desktop": true,
+    "owned_bounded_child": true
+  },
+  "limitations": [
+    "Steam and exported builds were not tested.",
+    "Some existing integration harnesses report ObjectDB timer warnings during shutdown; final accepted runs had no engine errors."
+  ]
+}

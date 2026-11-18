@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://dcp3rwdcgfp5j"]
+[gd_scene load_steps=44 format=3 uid="uid://dcp3rwdcgfp5j"]
 
 [ext_resource type="Script" uid="uid://b1qevsssthfu" path="res://scenes/table/GameTable.gd" id="1_onr2p"]
 [ext_resource type="PackedScene" uid="uid://dney7f8j2glf2" path="res://scenes/Stun.tscn" id="1_stun"]
@@ -13,20 +13,21 @@
 [ext_resource type="AudioStream" uid="uid://dijntmyht7rcb" path="res://assets/sounds/SFX/cardDamage.mp3" id="7_ye1gf"]
 [ext_resource type="AudioStream" uid="uid://cf8ufynfrf6qq" path="res://assets/sounds/SFX/cardKill.mp3" id="8_g603g"]
 [ext_resource type="Script" uid="uid://4pb8b05gokbq" path="res://scripts/Wobble.gd" id="8_vtfa6"]
-[ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan.png" id="9_c6mk0"]
 [ext_resource type="PackedScene" uid="uid://b73xv648efpap" path="res://scenes/BloodBurst3D.tscn" id="9_ye1gf"]
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="10_6cwm4"]
 [ext_resource type="PackedScene" uid="uid://bxjurjrv4wl4b" path="res://scenes/CardEffectOverview.tscn" id="15_overview"]
 [ext_resource type="PackedScene" uid="uid://dsh13ldburst" path="res://scenes/ShieldBurst3D.tscn" id="16_shield"]
 [ext_resource type="PackedScene" uid="uid://cursevfxscene" path="res://scenes/Curse.tscn" id="17_curse"]
 [ext_resource type="PackedScene" uid="uid://itk4c3ec5hk5" path="res://scenes/Thorns.tscn" id="18_thorns"]
-[ext_resource type="Texture2D" uid="uid://dyabult4prx1r" path="res://assets/characters/flash.png" id="19_1as0s"]
+[ext_resource type="Texture2D" uid="uid://dyabult4prx1r" path="res://assets/characters/gun/flash.png" id="19_1as0s"]
 [ext_resource type="PackedScene" uid="uid://duwx2op48vlcw" path="res://scenes/LastStand.tscn" id="19_laststand"]
-[ext_resource type="Texture2D" uid="uid://xqj4ix8dr8n7" path="res://assets/characters/gun.png" id="19_p1hll"]
+[ext_resource type="Texture2D" uid="uid://xqj4ix8dr8n7" path="res://assets/characters/gun/gun.png" id="19_p1hll"]
 [ext_resource type="AudioStream" uid="uid://65rdgeqebsfy" path="res://assets/sounds/SFX/shot.mp3" id="22_06uou"]
+[ext_resource type="Texture2D" uid="uid://bg8hbg2sn784t" path="res://assets/characters/blood.png" id="23_3leqy"]
 [ext_resource type="PackedScene" uid="uid://dwihrexic354d" path="res://scenes/multiplayer/MatchmakingScreen.tscn" id="23_online"]
 [ext_resource type="PackedScene" uid="uid://cd72kehtehl53" path="res://scenes/ui/MatchHUD.tscn" id="24_match_hud"]
-[ext_resource type="Texture2D" uid="uid://4j87w5jxsox" path="res://assets/characters/gun_back.png" id="25_gun_back"]
+[ext_resource type="Texture2D" uid="uid://4j87w5jxsox" path="res://assets/characters/gun/gun_back.png" id="25_gun_back"]
+[ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan/satan.png" id="25_ubs1g"]
 [ext_resource type="PackedScene" uid="uid://ct7nuivac4a8a" path="res://assets/environments/props/usb/scene.gltf" id="28_uw2q8"]
 [ext_resource type="PackedScene" uid="uid://bqetkqf5b5kk4" path="res://assets/environments/props/beer/energy.glb" id="29_m2vb4"]
 [ext_resource type="PackedScene" uid="uid://coc6b78e8hjdw" path="res://assets/environments/props/knife/knife.glb" id="30_e8wtk"]
@@ -34,7 +35,16 @@
 [ext_resource type="PackedScene" uid="uid://bhu00bhghrr13" path="res://assets/environments/props/cigarettes/cigs.glb" id="32_e8wtk"]
 [ext_resource type="Script" uid="uid://c6frbnygdjhlj" path="res://scripts/ui/DifficultyRewardLabels.gd" id="33_reward_labels"]
 [ext_resource type="AudioStream" uid="uid://bu4v4qlnmw3y6" path="res://assets/sounds/SFX/canKick.mp3" id="34_can_kick"]
+[ext_resource type="PackedScene" uid="uid://f4ca6qdq3n6h" path="res://scenes/effects/Piss.tscn" id="34_piss"]
 [ext_resource type="AudioStream" uid="uid://djtgqglxv7gu0" path="res://assets/sounds/SFX/crateThrow.mp3" id="35_crate_throw"]
+[ext_resource type="Material" uid="uid://d1s5kutkt6lxc" path="res://assets/characters/satan/eye_glow.tres" id="36_eye_glow"]
+[ext_resource type="Shader" uid="uid://dmtulyjj51rs2" path="res://assets/shader/muzzle_flash.gdshader" id="37_muzzle_flash"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_muzzle_flash"]
+shader = ExtResource("37_muzzle_flash")
+shader_parameter/brightness = 3.0
+shader_parameter/glow_strength = 0.45
+shader_parameter/glow_color = Color(1, 0.55, 0.15, 1)
 
 [sub_resource type="StandardMaterial3D" id="TableMaterial"]
 albedo_color = Color(0.12, 0.08, 0.05, 1)
@@ -57,7 +67,6 @@ blood_decal_scene = ExtResource("4_g603g")
 heal_burst_scene = ExtResource("6_6s2yc")
 poison_burst_scene = ExtResource("5_wg4o8")
 blood_spawn_offset = Vector3(0, 0.065, 0)
-blood_decal_offset = Vector3(0, -0.095, 0)
 poison_vfx_scene = ExtResource("5_wg4o8")
 shield_vfx_scene = ExtResource("16_shield")
 overview_scene = ExtResource("15_overview")
@@ -75,13 +84,18 @@ inspect_camera_offset = Vector3(0, 1, 0.01)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
 
 [node name="ModeButtons" type="Node3D" parent="MenuRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.125209, 0)
 
 [node name="KIButton" parent="MenuRoot/ModeButtons" instance=ExtResource("3_efmqq")]
-transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, -0.535432, -0.275349, 1.64473)
-label_text = "KI"
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, -1.06, -0.275349, 1.64473)
+label_text = "Story"
+
+[node name="TrainingButton" parent="MenuRoot/ModeButtons" instance=ExtResource("3_efmqq")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 0, -0.275349, 1.64473)
+label_text = "Training"
 
 [node name="MultiplayerButton" parent="MenuRoot/ModeButtons" instance=ExtResource("3_efmqq")]
-transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 0.530309, -0.275349, 1.64473)
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 1.06, -0.275349, 1.64473)
 label_text = "Multiplayer"
 
 [node name="DifficultyButtons" type="Node3D" parent="MenuRoot"]
@@ -139,13 +153,15 @@ grow_vertical = 0
 mouse_filter = 2
 
 [node name="MuzzleFlash" type="TextureRect" parent="WinCinematicCanvas/PlayerGunMount"]
+visible = false
 texture_filter = 1
+material = SubResource("ShaderMaterial_muzzle_flash")
 layout_mode = 0
-offset_left = -253.0
-offset_top = -460.0
-offset_right = 272.0
-offset_bottom = 24.0
-pivot_offset = Vector2(48, 48)
+offset_left = -260.5
+offset_top = -511.0
+offset_right = 264.5
+offset_bottom = -27.0
+pivot_offset = Vector2(262.5, 242)
 mouse_filter = 2
 texture = ExtResource("19_1as0s")
 expand_mode = 1
@@ -228,6 +244,18 @@ transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, -0.0445504, -0.09297
 transform = Transform3D(0.99996, 0, 0, 0, 0.99996, 0, 0, 0, 0.99996, 0.0264247, -0.4646, -0.00323573)
 size = Vector3(5.87708, 1.0708, 3.67908)
 
+[node name="blood" type="Sprite3D" parent="."]
+transform = Transform3D(2.39, 0, 0, 0, 2.34364, 0.468475, 0, -0.468475, 2.34364, -0.0137849, 1.24565, -5.41997)
+visible = false
+material_override = ExtResource("36_eye_glow")
+pixel_size = 0.024
+billboard = 1
+texture_filter = 0
+texture = ExtResource("23_3leqy")
+script = ExtResource("10_6cwm4")
+fps = 15.0
+TOTAL_FRAMES = 1
+
 [node name="dealer" parent="." instance=ExtResource("5_l1fpw")]
 transform = Transform3D(2.39, 0, 0, 0, 2.34364, 0.468475, 0, -0.468475, 2.34364, -0.0137849, -2.67248, -3.12406)
 script = ExtResource("8_vtfa6")
@@ -240,13 +268,17 @@ visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, 0, 1.57048, 0.313926)
 
 [node name="satan" type="Sprite3D" parent="dealer/SatanMotionRoot"]
+material_override = ExtResource("36_eye_glow")
 pixel_size = 0.0195
 billboard = 1
 texture_filter = 0
-texture = ExtResource("9_c6mk0")
+texture = ExtResource("25_ubs1g")
 hframes = 25
 script = ExtResource("10_6cwm4")
 fps = 15.0
+
+[node name="Piss" parent="dealer/SatanMotionRoot/satan" instance=ExtResource("34_piss")]
+transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, 0, -0.55367, 0.0112922)
 
 [node name="SatanHoverArea" type="Area3D" parent="dealer/SatanMotionRoot"]
 collision_layer = 512
@@ -279,6 +311,10 @@ texture = ExtResource("19_p1hll")
 
 [node name="Audio" type="Node" parent="."]
 
+[node name="WinTinnitusSFX" type="AudioStreamPlayer" parent="Audio"]
+volume_db = -18.0
+bus = &"SFX"
+
 [node name="SelectSFX" type="AudioStreamPlayer" parent="Audio"]
 stream = ExtResource("6_ch7uw")
 bus = &"SFX"
@@ -294,6 +330,14 @@ bus = &"SFX"
 [node name="KillSFX" type="AudioStreamPlayer" parent="Audio"]
 stream = ExtResource("8_g603g")
 bus = &"SFX"
+
+[node name="WinShotLight" type="OmniLight3D" parent="."]
+visible = false
+light_color = Color(1, 0.65, 0.25, 1)
+light_energy = 0.0
+light_indirect_energy = 0.0
+light_volumetric_fog_energy = 0.0
+omni_range = 8.0
 
 [node name="decortaions" type="Node3D" parent="."]
 transform = Transform3D(1.405, 0, 0, 0, 1.405, 0, 0, 0, 1.405, -0.177762, -0.530809, 4.38792)

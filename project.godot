@@ -20,6 +20,7 @@ config/icon="uid://b3jlktytgdrf2"
 [autoload]
 
 SessionDiagnostics="*res://scripts/autoload/SessionDiagnostics.gd"
+PlaytimeManager="*res://scripts/autoload/PlaytimeManager.gd"
 Localization="*res://scripts/autoload/Localization.gd"
 CardDatabase="*res://scripts/autoload/CardDatabase.gd"
 SaveSlots="*res://scripts/autoload/SaveManager.gd"
@@ -31,6 +32,7 @@ CardUpgradeManager="*res://scripts/CardUpgradeManager.gd"
 EffectDatabase="*res://scripts/autoload/EffectDatabase.gd"
 SettingsManager="*res://scripts/autoload/SettingsManager.gd"
 NetworkManager="*res://scripts/autoload/NetworkManager.gd"
+AchievementManager="*res://scripts/autoload/AchievementManager.gd"
 
 [debug]
 
@@ -69,5 +71,5 @@ textures/canvas_textures/default_texture_filter=0
 
 [steam]
 
-initialization/app_data/app_id=480
+initialization/app_data/app_id=5412220
 initialization/processes/initialize_on_startup=true

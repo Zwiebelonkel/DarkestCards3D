@@ -32,8 +32,8 @@ const COVERED_TYPES := [
 	"armor", "regeneration", "poison", "lifesteal", "thorns", "cleave",
 	"lava", "double_strike", "stun", "chain_attack", "triple_strike",
 	"last_stand", "execute", "shield_first_hit", "swarm_power",
-	"grave_return", "draw_on_kill", "curse", "swap_stats", "random_damage",
-	"bodyguard", "neighbor_heal",
+	"grave_return", "draw_on_death", "curse", "swap_stats", "random_damage",
+	"bodyguard", "neighbor_heal", "eternal_suffering",
 ]
 var checks := 0
 var failures := 0
@@ -73,6 +73,7 @@ func _run() -> void:
 		await _check_strikes(side)
 		await _check_attack_modifiers(side)
 		await _check_on_hit_status(side)
+		await _check_effects_after_attacker_death(side)
 		await _check_poison_and_regeneration(side)
 		await _check_survival(side)
 		await _check_revival_damage_records(side)
@@ -260,10 +261,10 @@ func _check_strikes(side: String) -> void:
 
 func _check_attack_modifiers(side: String) -> void:
 	_reset()
-	var attacker := _spawn(side, 2, 4, 30, [{"type":"random_damage", "min":1.5, "max":1.5}])
+	var attacker := _spawn(side, 2, 4, 30, [{"type":"random_damage"}])
 	var defender := _spawn(_opponent(side), 2, 0, 30)
 	await table._resolve_duel(attacker, defender, side)
-	check(defender.current_hp == 24, side + " deterministic random-damage interval modifies the actual hit")
+	check(defender.current_hp in [27, 22], side + " random-damage coin applies exactly 0.75x or 2x to the actual hit")
 	_reset()
 	attacker = _spawn(side, 2, 2, 30, [{"type":"swarm_power"}], "ant")
 	_spawn(side, 0, 0, 30, [], "ant")
@@ -305,6 +306,55 @@ func _check_on_hit_status(side: String) -> void:
 	check(attacker.current_hp == before and not defender.get_network_state().skip_next_attack, side + " stun prevents and consumes exactly the next requested attack")
 	await table._resolve_duel(defender, attacker, _opponent(side))
 	check(attacker.current_hp == before - 4, side + " card can attack normally after its stun was consumed")
+
+
+func _check_effects_after_attacker_death(side: String) -> void:
+	for cause: String in ["counter", "thorns"]:
+		_reset()
+		_keep_match_alive(side)
+		var attacker := _spawn(side, 2, 2, 1, [{"type":"stun", "chance":1.0}, {"type":"curse", "value":3}])
+		var defender := _spawn(_opponent(side), 2, 7, 30, [{"type":"thorns", "percent":1.0}] if cause == "thorns" else [])
+		await table._resolve_duel(attacker, defender, side)
+		check(table._get_card_from_slot(side, 2) == null and defender.current_hp == 28, side + " " + cause + " kills the attacker after its connected hit")
+		check(bool(defender.get_network_state().skip_next_attack) and defender.attack_value == 4, side + " lethal " + cause + " still transfers stun and curse")
+		var badges := defender.get_node("CombatIndicators")
+		var stun_badge := badges.get_node_or_null("Stun") as Node3D
+		var curse_badge := badges.get_node_or_null("Curse") as Node3D
+		check(is_instance_valid(stun_badge) and stun_badge.visible and is_instance_valid(curse_badge) and curse_badge.visible, side + " statuses from a dead attacker retain their visible indicators")
+		_check_online_mirror(side + " statuses after lethal " + cause)
+		await table._resolve_duel(defender, table._get_card_from_slot(side, 4), _opponent(side))
+		check(not bool(defender.get_network_state().skip_next_attack) and table._get_card_from_slot(side, 4).current_hp == 100, side + " stun from a dead attacker actually skips the target's next attack")
+	_reset()
+	_keep_match_alive(side)
+	var poisonous := _spawn(side, 2, 2, 1, [{"type":"poison", "damage":3, "turns":3}])
+	var poisoned := _spawn(_opponent(side), 2, 7, 30)
+	await table._resolve_duel(poisonous, poisoned, side)
+	check(table._get_card_from_slot(side, 2) == null and int(poisoned.get_meta("poison_turns", 0)) == 3, side + " poison survives the source's lethal counterattack")
+	await table._apply_start_turn_effects(_opponent(side))
+	check(poisoned.current_hp == 25 and int(poisoned.get_meta("poison_turns", 0)) == 2, side + " poison from a dead source still deals its next scheduled tick")
+	_check_online_mirror(side + " poison after source death")
+	_reset()
+	_keep_match_alive(side)
+	var blocked := _spawn(side, 2, 2, 1, [{"type":"stun", "chance":1.0}, {"type":"curse", "value":3}])
+	var shielded := _spawn(_opponent(side), 2, 7, 30, [{"type":"shield_first_hit"}])
+	await table._resolve_duel(blocked, shielded, side)
+	check(table._get_card_from_slot(side, 2) == null and shielded.current_hp == 30 and shielded.attack_value == 7 and not bool(shielded.get_network_state().skip_next_attack), side + " a dead attacker still cannot transfer statuses through a completely blocked hit")
+	_reset()
+	_keep_match_alive(side)
+	var multi := _spawn(side, 2, 2, 1, [{"type":"triple_strike"}, {"type":"curse", "value":3}])
+	var target := _spawn(_opponent(side), 2, 7, 30)
+	await table._resolve_duel(multi, target, side)
+	check(table._get_card_from_slot(side, 2) == null and target.current_hp == 28 and target.attack_value == 4, side + " interrupted multi-strike transfers its effect exactly once for the completed hit")
+	_reset()
+	_keep_match_alive(side)
+	var cleaver := _spawn(side, 2, 8, 1, [{"type":"cleave", "side_damage":0.5}, {"type":"draw_on_death"}])
+	var center := _spawn(_opponent(side), 2, 7, 30)
+	_spawn(_opponent(side), 1, 0, 1)
+	var right := _spawn(_opponent(side), 3, 0, 30)
+	await table._resolve_duel(cleaver, center, side)
+	check(table._get_card_from_slot(side, 2) == null and center.current_hp == 22 and right.current_hp == 26 and table._get_card_from_slot(_opponent(side), 1) == null, side + " the dying attacker's completed attack still applies cleave to both adjacent slots")
+	check(table._event_hand(side).size() == 1, side + " the dying attacker triggers its draw-on-death effect once despite a simultaneous cleave kill")
+	_check_online_mirror(side + " cleave after source death")
 
 
 func _check_poison_and_regeneration(side: String) -> void:
@@ -465,16 +515,16 @@ func _check_cleave_and_chain(side: String) -> void:
 
 func _check_lava_and_draw(side: String) -> void:
 	_reset()
-	var attacker := _spawn(side, 2, 4, 40, [{"type":"lava"}, {"type":"draw_on_kill"}], "piss")
+	var attacker := _spawn(side, 2, 4, 40, [{"type":"lava"}, {"type":"draw_on_death"}], "piss")
 	var targets: Array[Card3D] = []
 	for slot in range(GameTable.HAND_SIZE):
 		targets.append(_spawn(_opponent(side), slot, 2, 1 if slot < 2 else 20))
 	await table._resolve_duel(attacker, targets[2], side)
 	check(targets[2].current_hp == 16 and targets[3].current_hp == 16 and targets[4].current_hp == 16 and attacker.current_hp == 38, side + " Lava hits all initial targets and takes only the selected counter")
-	check(table._event_hand(side).size() == 2 and table._event_hand(_opponent(side)).is_empty() and table._event_deck.size() == 22, side + " Draw On Kill awards exactly one shared event per actual Lava kill")
-	_check_online_mirror(side + " lava/draw_on_kill")
+	check(table._event_hand(side).is_empty() and table._event_hand(_opponent(side)).is_empty() and table._event_deck.size() == EventDeck.DECK_SIZE, side + " Draw On Death grants no event while its Lava attacker survives")
+	_check_online_mirror(side + " lava/draw_on_death")
 	_reset()
-	attacker = _spawn(side, 2, 8, 40, [{"type":"draw_on_kill"}])
+	attacker = _spawn(side, 2, 8, 40, [{"type":"draw_on_death"}])
 	var defender := _spawn(_opponent(side), 2, 0, 4, [{"type":"last_stand"}])
 	await table._resolve_duel(attacker, defender, side)
 	check(table._event_hand(side).is_empty(), side + " surviving a lethal hit never awards a kill event")

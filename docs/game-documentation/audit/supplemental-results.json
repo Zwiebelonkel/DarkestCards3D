@@ -1,0 +1,15 @@
+{
+  "dialog_close": {
+    "success": true,
+    "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 118 Karten\r\nDOCUMENTATION_DIALOG_CLOSE_TESTS: PASS (4 checks)\r\n",
+    "errors": [],
+    "root": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-documentation-documentation_dialog_close_test-47e57ecef6c7464692ebe09e5c3ccf2f"
+  },
+  "rolling_audio": {
+    "success": true,
+    "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\nVulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600\r\n\r\nCardDatabase geladen: 118 Karten\r\nROLLING_SFX_LEVELS: peak -17.0 dB, RMS -31.6 dB at 4.0 metres\r\nPASS the actual rolling recording reaches SFX at an audible level at normal distance\r\nPASS the audible loop still slows down and fades toward the final symbol\r\nPASS stopping the spin leaves no rolling sound on SFX\r\nROLLING_AUDIO_AUDIBILITY_TESTS: PASS\r\n",
+    "errors": [],
+    "exit_code": 0,
+    "elapsed_ms": 3729
+  }
+}

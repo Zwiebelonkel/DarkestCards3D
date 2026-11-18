@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/props/WeedPickup.asset.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -0.254566103219986,
+        0.0000205338001251221,
+        -0.3416787981987
+      ],
+      "size": [
+        0.505839943885803,
+        0.11035893112421,
+        0.695991396903992
+      ]
+    },
+    "collision_shapes": 1,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 1,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 9,
+    "nonuniform_scales": 1,
+    "particles": 0,
+    "surfaces": 1,
+    "triangles": 2144,
+    "unique_materials": 1
+  },
+  "passed": true,
+  "target": "res://scenes/props/WeedPickup.tscn"
+}

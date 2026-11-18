@@ -1,0 +1,727 @@
+=== spread_headless ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS Credit Card has exactly its new innate suffering effect
+PASS no other authored card carries Eternal Suffering
+PASS suffering is documented but excluded from the random effect pool
+PASS instance rewards cannot grant the innate-only effect
+PASS upgrades cannot purchase Eternal Suffering
+PASS legacy draw effect migrates without its obsolete rules: deck_burn
+PASS legacy draw effect migrates without its obsolete rules: draw_on_kill
+PASS old and new death-draw aliases cannot double the effect
+PASS presentation uses the supplied suffering icon
+PASS online Credit Card keeps only canonical innate parameters
+PASS remote cards cannot forge the Credit Card's innate effect
+PASS player sacrifice bypasses own shield_first_hit and transfers through the target shield
+PASS player suffering is already transferred in the attack contact frame
+PASS player target immediately displays its red suffering status
+PASS player suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS player suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS player sacrifice bypasses own last_stand and transfers through the target shield
+PASS player suffering is already transferred in the attack contact frame
+PASS player target immediately displays its red suffering status
+PASS player suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS player suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS player sacrifice bypasses own grave_return and transfers through the target shield
+PASS player suffering is already transferred in the attack contact frame
+PASS player target immediately displays its red suffering status
+PASS player suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS player suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS player afflicted targets attack normally without sacrificing or spreading the curse
+PASS player opponent turn never advances suffering
+PASS player suffering deals unmitigated 1 then increases by two
+PASS player opponent turn never advances suffering
+PASS player suffering deals unmitigated 3 then increases by two
+PASS player opponent turn never advances suffering
+PASS player suffering deals unmitigated 5 then increases by two
+PASS player opponent turn never advances suffering
+PASS player suffering deals unmitigated 7 then increases by two
+PASS player ordinary healing and reapplication cannot remove or restart suffering
+PASS player escalating suffering fighter snapshot preserves actual HP, effects and one-use state
+PASS player escalating suffering spectator snapshot preserves actual HP, effects and one-use state
+PASS player stolen-card redraw preserves the accumulated suffering
+PASS player last_stand delays death without cleansing suffering or awarding a death draw
+PASS player grave_return delays death without cleansing suffering or awarding a death draw
+PASS player neighbor in slot 1 cures before a lethal suffering tick
+PASS player neighbor cure removes the status indicator
+PASS player neighbor in slot 3 cures before a lethal suffering tick
+PASS player neighbor cure removes the status indicator
+PASS player regeneration and a nonadjacent healer cannot cleanse suffering
+PASS player a zero-strength healing effect cannot cleanse suffering
+PASS player hit death grants exactly one event to the deceased card's owner
+PASS player repeated death cleanup cannot duplicate the draw
+PASS player poison death grants exactly one event to the deceased card's owner
+PASS player repeated death cleanup cannot duplicate the draw
+PASS player suffering death grants exactly one event to the deceased card's owner
+PASS player repeated death cleanup cannot duplicate the draw
+PASS player sacrifice death grants exactly one event to the deceased card's owner
+PASS player repeated death cleanup cannot duplicate the draw
+PASS player killing another card no longer triggers the old draw-on-kill rule
+PASS player hit death spreads the current suffering value to both neighbors
+PASS player fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS player death spread gives ordinary poison only to adjacent allies
+PASS player death poison hit fighter snapshot preserves actual HP, effects and one-use state
+PASS player death poison hit spectator snapshot preserves actual HP, effects and one-use state
+PASS player death poison ticks normally through shields on the next own turn
+PASS player duplicate death resolution never refreshes the spread
+PASS player a neighbor dying from the spread cannot propagate poison again
+PASS player suffering death spreads the current suffering value to both neighbors
+PASS player fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS player death spread gives ordinary poison only to adjacent allies
+PASS player death poison suffering fighter snapshot preserves actual HP, effects and one-use state
+PASS player death poison suffering spectator snapshot preserves actual HP, effects and one-use state
+PASS player death poison ticks normally through shields on the next own turn
+PASS player duplicate death resolution never refreshes the spread
+PASS player a neighbor dying from the spread cannot propagate poison again
+PASS player poison death spreads the current suffering value to both neighbors
+PASS player fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS player death spread gives ordinary poison only to adjacent allies
+PASS player death poison poison fighter snapshot preserves actual HP, effects and one-use state
+PASS player death poison poison spectator snapshot preserves actual HP, effects and one-use state
+PASS player death poison ticks normally through shields on the next own turn
+PASS player duplicate death resolution never refreshes the spread
+PASS player a neighbor dying from the spread cannot propagate poison again
+PASS player thorns death spreads the current suffering value to both neighbors
+PASS player fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS player death spread gives ordinary poison only to adjacent allies
+PASS player death poison thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS player death poison thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS player death poison ticks normally through shields on the next own turn
+PASS player duplicate death resolution never refreshes the spread
+PASS player a neighbor dying from the spread cannot propagate poison again
+PASS player surviving a lethal suffering tick does not trigger the death spread
+PASS player a cured card dying later has no poison death spread
+PASS player board edge 0 spreads only to its single direct neighbor
+PASS player board edge 4 spreads only to its single direct neighbor
+PASS enemy sacrifice bypasses own shield_first_hit and transfers through the target shield
+PASS enemy suffering is already transferred in the attack contact frame
+PASS enemy target immediately displays its red suffering status
+PASS enemy suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy sacrifice bypasses own last_stand and transfers through the target shield
+PASS enemy suffering is already transferred in the attack contact frame
+PASS enemy target immediately displays its red suffering status
+PASS enemy suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy sacrifice bypasses own grave_return and transfers through the target shield
+PASS enemy suffering is already transferred in the attack contact frame
+PASS enemy target immediately displays its red suffering status
+PASS enemy suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy afflicted targets attack normally without sacrificing or spreading the curse
+PASS enemy opponent turn never advances suffering
+PASS enemy suffering deals unmitigated 1 then increases by two
+PASS enemy opponent turn never advances suffering
+PASS enemy suffering deals unmitigated 3 then increases by two
+PASS enemy opponent turn never advances suffering
+PASS enemy suffering deals unmitigated 5 then increases by two
+PASS enemy opponent turn never advances suffering
+PASS enemy suffering deals unmitigated 7 then increases by two
+PASS enemy ordinary healing and reapplication cannot remove or restart suffering
+PASS enemy escalating suffering fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy escalating suffering spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stolen-card redraw preserves the accumulated suffering
+PASS enemy last_stand delays death without cleansing suffering or awarding a death draw
+PASS enemy grave_return delays death without cleansing suffering or awarding a death draw
+PASS enemy neighbor in slot 1 cures before a lethal suffering tick
+PASS enemy neighbor cure removes the status indicator
+PASS enemy neighbor in slot 3 cures before a lethal suffering tick
+PASS enemy neighbor cure removes the status indicator
+PASS enemy regeneration and a nonadjacent healer cannot cleanse suffering
+PASS enemy a zero-strength healing effect cannot cleanse suffering
+PASS enemy hit death grants exactly one event to the deceased card's owner
+PASS enemy repeated death cleanup cannot duplicate the draw
+PASS enemy poison death grants exactly one event to the deceased card's owner
+PASS enemy repeated death cleanup cannot duplicate the draw
+PASS enemy suffering death grants exactly one event to the deceased card's owner
+PASS enemy repeated death cleanup cannot duplicate the draw
+PASS enemy sacrifice death grants exactly one event to the deceased card's owner
+PASS enemy repeated death cleanup cannot duplicate the draw
+PASS enemy killing another card no longer triggers the old draw-on-kill rule
+PASS enemy hit death spreads the current suffering value to both neighbors
+PASS enemy fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS enemy death spread gives ordinary poison only to adjacent allies
+PASS enemy death poison hit fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison hit spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison ticks normally through shields on the next own turn
+PASS enemy duplicate death resolution never refreshes the spread
+PASS enemy a neighbor dying from the spread cannot propagate poison again
+PASS enemy suffering death spreads the current suffering value to both neighbors
+PASS enemy fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS enemy death spread gives ordinary poison only to adjacent allies
+PASS enemy death poison suffering fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison suffering spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison ticks normally through shields on the next own turn
+PASS enemy duplicate death resolution never refreshes the spread
+PASS enemy a neighbor dying from the spread cannot propagate poison again
+PASS enemy poison death spreads the current suffering value to both neighbors
+PASS enemy fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS enemy death spread gives ordinary poison only to adjacent allies
+PASS enemy death poison poison fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison poison spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison ticks normally through shields on the next own turn
+PASS enemy duplicate death resolution never refreshes the spread
+PASS enemy a neighbor dying from the spread cannot propagate poison again
+PASS enemy thorns death spreads the current suffering value to both neighbors
+PASS enemy fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS enemy death spread gives ordinary poison only to adjacent allies
+PASS enemy death poison thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison ticks normally through shields on the next own turn
+PASS enemy duplicate death resolution never refreshes the spread
+PASS enemy a neighbor dying from the spread cannot propagate poison again
+PASS enemy surviving a lethal suffering tick does not trigger the death spread
+PASS enemy a cured card dying later has no poison death spread
+PASS enemy board edge 0 spreads only to its single direct neighbor
+PASS enemy board edge 4 spreads only to its single direct neighbor
+ETERNAL_SUFFERING_TESTS: PASS (173 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== spread_render ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 122 Karten
+PASS Credit Card has exactly its new innate suffering effect
+PASS no other authored card carries Eternal Suffering
+PASS suffering is documented but excluded from the random effect pool
+PASS instance rewards cannot grant the innate-only effect
+PASS upgrades cannot purchase Eternal Suffering
+PASS legacy draw effect migrates without its obsolete rules: deck_burn
+PASS legacy draw effect migrates without its obsolete rules: draw_on_kill
+PASS old and new death-draw aliases cannot double the effect
+PASS presentation uses the supplied suffering icon
+PASS online Credit Card keeps only canonical innate parameters
+PASS remote cards cannot forge the Credit Card's innate effect
+PASS player sacrifice bypasses own shield_first_hit and transfers through the target shield
+PASS player suffering is already transferred in the attack contact frame
+PASS player target immediately displays its red suffering status
+PASS player suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS player suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS player sacrifice bypasses own last_stand and transfers through the target shield
+PASS player suffering is already transferred in the attack contact frame
+PASS player target immediately displays its red suffering status
+PASS player suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS player suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS player sacrifice bypasses own grave_return and transfers through the target shield
+PASS player suffering is already transferred in the attack contact frame
+PASS player target immediately displays its red suffering status
+PASS player suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS player suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS player afflicted targets attack normally without sacrificing or spreading the curse
+PASS player opponent turn never advances suffering
+PASS player suffering deals unmitigated 1 then increases by two
+PASS player opponent turn never advances suffering
+PASS player suffering deals unmitigated 3 then increases by two
+PASS player opponent turn never advances suffering
+PASS player suffering deals unmitigated 5 then increases by two
+PASS player opponent turn never advances suffering
+PASS player suffering deals unmitigated 7 then increases by two
+PASS player ordinary healing and reapplication cannot remove or restart suffering
+PASS player escalating suffering fighter snapshot preserves actual HP, effects and one-use state
+PASS player escalating suffering spectator snapshot preserves actual HP, effects and one-use state
+PASS player stolen-card redraw preserves the accumulated suffering
+PASS player last_stand delays death without cleansing suffering or awarding a death draw
+PASS player grave_return delays death without cleansing suffering or awarding a death draw
+PASS player neighbor in slot 1 cures before a lethal suffering tick
+PASS player neighbor cure removes the status indicator
+PASS player neighbor in slot 3 cures before a lethal suffering tick
+PASS player neighbor cure removes the status indicator
+PASS player regeneration and a nonadjacent healer cannot cleanse suffering
+PASS player a zero-strength healing effect cannot cleanse suffering
+PASS player hit death grants exactly one event to the deceased card's owner
+PASS player repeated death cleanup cannot duplicate the draw
+PASS player poison death grants exactly one event to the deceased card's owner
+PASS player repeated death cleanup cannot duplicate the draw
+PASS player suffering death grants exactly one event to the deceased card's owner
+PASS player repeated death cleanup cannot duplicate the draw
+PASS player sacrifice death grants exactly one event to the deceased card's owner
+PASS player repeated death cleanup cannot duplicate the draw
+PASS player killing another card no longer triggers the old draw-on-kill rule
+PASS player hit death spreads the current suffering value to both neighbors
+PASS player fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS player death spread gives ordinary poison only to adjacent allies
+PASS player death poison hit fighter snapshot preserves actual HP, effects and one-use state
+PASS player death poison hit spectator snapshot preserves actual HP, effects and one-use state
+PASS player death poison ticks normally through shields on the next own turn
+PASS player duplicate death resolution never refreshes the spread
+PASS player a neighbor dying from the spread cannot propagate poison again
+PASS player suffering death spreads the current suffering value to both neighbors
+PASS player fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS player death spread gives ordinary poison only to adjacent allies
+PASS player death poison suffering fighter snapshot preserves actual HP, effects and one-use state
+PASS player death poison suffering spectator snapshot preserves actual HP, effects and one-use state
+PASS player death poison ticks normally through shields on the next own turn
+PASS player duplicate death resolution never refreshes the spread
+PASS player a neighbor dying from the spread cannot propagate poison again
+PASS player poison death spreads the current suffering value to both neighbors
+PASS player fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS player death spread gives ordinary poison only to adjacent allies
+PASS player death poison poison fighter snapshot preserves actual HP, effects and one-use state
+PASS player death poison poison spectator snapshot preserves actual HP, effects and one-use state
+PASS player death poison ticks normally through shields on the next own turn
+PASS player duplicate death resolution never refreshes the spread
+PASS player a neighbor dying from the spread cannot propagate poison again
+PASS player thorns death spreads the current suffering value to both neighbors
+PASS player fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS player death spread gives ordinary poison only to adjacent allies
+PASS player death poison thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS player death poison thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS player death poison ticks normally through shields on the next own turn
+PASS player duplicate death resolution never refreshes the spread
+PASS player a neighbor dying from the spread cannot propagate poison again
+PASS player surviving a lethal suffering tick does not trigger the death spread
+PASS player a cured card dying later has no poison death spread
+PASS player board edge 0 spreads only to its single direct neighbor
+PASS player board edge 4 spreads only to its single direct neighbor
+PASS enemy sacrifice bypasses own shield_first_hit and transfers through the target shield
+PASS enemy suffering is already transferred in the attack contact frame
+PASS enemy target immediately displays its red suffering status
+PASS enemy suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy sacrifice bypasses own last_stand and transfers through the target shield
+PASS enemy suffering is already transferred in the attack contact frame
+PASS enemy target immediately displays its red suffering status
+PASS enemy suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy sacrifice bypasses own grave_return and transfers through the target shield
+PASS enemy suffering is already transferred in the attack contact frame
+PASS enemy target immediately displays its red suffering status
+PASS enemy suffering contact fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy suffering contact spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy afflicted targets attack normally without sacrificing or spreading the curse
+PASS enemy opponent turn never advances suffering
+PASS enemy suffering deals unmitigated 1 then increases by two
+PASS enemy opponent turn never advances suffering
+PASS enemy suffering deals unmitigated 3 then increases by two
+PASS enemy opponent turn never advances suffering
+PASS enemy suffering deals unmitigated 5 then increases by two
+PASS enemy opponent turn never advances suffering
+PASS enemy suffering deals unmitigated 7 then increases by two
+PASS enemy ordinary healing and reapplication cannot remove or restart suffering
+PASS enemy escalating suffering fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy escalating suffering spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stolen-card redraw preserves the accumulated suffering
+PASS enemy last_stand delays death without cleansing suffering or awarding a death draw
+PASS enemy grave_return delays death without cleansing suffering or awarding a death draw
+PASS enemy neighbor in slot 1 cures before a lethal suffering tick
+PASS enemy neighbor cure removes the status indicator
+PASS enemy neighbor in slot 3 cures before a lethal suffering tick
+PASS enemy neighbor cure removes the status indicator
+PASS enemy regeneration and a nonadjacent healer cannot cleanse suffering
+PASS enemy a zero-strength healing effect cannot cleanse suffering
+PASS enemy hit death grants exactly one event to the deceased card's owner
+PASS enemy repeated death cleanup cannot duplicate the draw
+PASS enemy poison death grants exactly one event to the deceased card's owner
+PASS enemy repeated death cleanup cannot duplicate the draw
+PASS enemy suffering death grants exactly one event to the deceased card's owner
+PASS enemy repeated death cleanup cannot duplicate the draw
+PASS enemy sacrifice death grants exactly one event to the deceased card's owner
+PASS enemy repeated death cleanup cannot duplicate the draw
+PASS enemy killing another card no longer triggers the old draw-on-kill rule
+PASS enemy hit death spreads the current suffering value to both neighbors
+PASS enemy fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS enemy death spread gives ordinary poison only to adjacent allies
+PASS enemy death poison hit fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison hit spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison ticks normally through shields on the next own turn
+PASS enemy duplicate death resolution never refreshes the spread
+PASS enemy a neighbor dying from the spread cannot propagate poison again
+PASS enemy suffering death spreads the current suffering value to both neighbors
+PASS enemy fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS enemy death spread gives ordinary poison only to adjacent allies
+PASS enemy death poison suffering fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison suffering spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison ticks normally through shields on the next own turn
+PASS enemy duplicate death resolution never refreshes the spread
+PASS enemy a neighbor dying from the spread cannot propagate poison again
+PASS enemy poison death spreads the current suffering value to both neighbors
+PASS enemy fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS enemy death spread gives ordinary poison only to adjacent allies
+PASS enemy death poison poison fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison poison spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison ticks normally through shields on the next own turn
+PASS enemy duplicate death resolution never refreshes the spread
+PASS enemy a neighbor dying from the spread cannot propagate poison again
+PASS enemy thorns death spreads the current suffering value to both neighbors
+PASS enemy fresh death poison lasts three turns without an immediate or slot-dependent tick
+PASS enemy death spread gives ordinary poison only to adjacent allies
+PASS enemy death poison thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy death poison ticks normally through shields on the next own turn
+PASS enemy duplicate death resolution never refreshes the spread
+PASS enemy a neighbor dying from the spread cannot propagate poison again
+PASS enemy surviving a lethal suffering tick does not trigger the death spread
+PASS enemy a cured card dying later has no poison death spread
+PASS enemy board edge 0 spreads only to its single direct neighbor
+PASS enemy board edge 4 spreads only to its single direct neighbor
+PASS rendered the supplied seal and escalating red status
+PASS rendered poison remains visibly above raised opaque card artwork
+PASS rendered stun remains visibly above raised opaque card artwork
+PASS rendered status badges above occluding artwork
+PASS rendered the cleansed card without the status
+ETERNAL_SUFFERING_TESTS: PASS (178 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== spread_eternal_suffering_network_test ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS event test starts a loopback ENet authority
+PASS event test starts a separate guest transport
+PASS host and guest event peers connect
+PASS ENet carries suffering and the red status to the affected fighter
+PASS ENet removes the damage state and the red status after a neighbor cure
+PASS ENet gives the deceased card owner's private hand exactly one event
+PASS ENet replicates the one-time neighbor poison with the deceased card's suffering damage
+PASS player Piss duration and public reveal arrive over real ENet
+PASS both host-side rows are concealed only when the guest casts Piss
+PASS both mirrored guest rows are concealed only when the host casts Piss
+PASS concealment leaves synchronized combat values intact
+PASS each peer plays the public stream locally
+PASS duplicate snapshots cannot restart the Piss stream
+PASS ending the caster turn preserves two complete blinded turns
+PASS the first affected turn ticks once and mirrors over ENet
+PASS a spectator sees normal values during a fighter's Piss status
+PASS returning to the affected fighter view restores concealment
+PASS the second affected turn restores values on both peers
+PASS stale Piss requests cannot blind either player or consume the card
+PASS enemy Piss duration and public reveal arrive over real ENet
+PASS both host-side rows are concealed only when the guest casts Piss
+PASS both mirrored guest rows are concealed only when the host casts Piss
+PASS concealment leaves synchronized combat values intact
+PASS each peer plays the public stream locally
+PASS duplicate snapshots cannot restart the Piss stream
+PASS ending the caster turn preserves two complete blinded turns
+PASS the first affected turn ticks once and mirrors over ENet
+PASS the second affected turn restores values on both peers
+PASS player Heal fixture synchronizes the wounded card
+PASS player Heal fully heals the correct mirrored card over ENet
+PASS Online Heal consumes one event and preserves the attack turn
+PASS Heal finishes the authoritative synchronization barrier
+PASS enemy Heal fixture synchronizes the wounded card
+PASS A stale Heal cannot change health
+PASS enemy Heal fully heals the correct mirrored card over ENet
+PASS Online Heal consumes one event and preserves the attack turn
+PASS Heal finishes the authoritative synchronization barrier
+PASS player Rearrange swaps the same card instances on both peers
+PASS Rearrange preserves health and finishes at the mirrored slot
+PASS Online Rearrange consumes one event and leaves the attack available
+PASS Duplicate snapshots preserve the moved nodes
+PASS Stale and identical-slot Rearrange requests are rejected
+PASS enemy Rearrange swaps the same card instances on both peers
+PASS Rearrange preserves health and finishes at the mirrored slot
+PASS Online Rearrange consumes one event and leaves the attack available
+PASS Duplicate snapshots preserve the moved nodes
+EVENT_CARDS_NETWORK_TESTS: PASS
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== spread_combat_effect_audit_test ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS Deck Burn is absent from both effect and innate-card catalogs
+PASS Runtime audit covers declared catalog/card effect armor
+PASS Runtime audit covers declared catalog/card effect regeneration
+PASS Runtime audit covers declared catalog/card effect poison
+PASS Runtime audit covers declared catalog/card effect lifesteal
+PASS Runtime audit covers declared catalog/card effect thorns
+PASS Runtime audit covers declared catalog/card effect cleave
+PASS Runtime audit covers declared catalog/card effect lava
+PASS Runtime audit covers declared catalog/card effect double_strike
+PASS Runtime audit covers declared catalog/card effect stun
+PASS Runtime audit covers declared catalog/card effect chain_attack
+PASS Runtime audit covers declared catalog/card effect triple_strike
+PASS Runtime audit covers declared catalog/card effect last_stand
+PASS Runtime audit covers declared catalog/card effect execute
+PASS Runtime audit covers declared catalog/card effect shield_first_hit
+PASS Runtime audit covers declared catalog/card effect swarm_power
+PASS Runtime audit covers declared catalog/card effect grave_return
+PASS Runtime audit covers declared catalog/card effect draw_on_death
+PASS Runtime audit covers declared catalog/card effect curse
+PASS Runtime audit covers declared catalog/card effect swap_stats
+PASS Runtime audit covers declared catalog/card effect random_damage
+PASS Runtime audit covers declared catalog/card effect bodyguard
+PASS Runtime audit covers declared catalog/card effect neighbor_heal
+PASS Runtime audit covers declared catalog/card effect eternal_suffering
+PASS Audit type still has an actual catalog/card declaration: armor
+PASS Audit type still has an actual catalog/card declaration: regeneration
+PASS Audit type still has an actual catalog/card declaration: poison
+PASS Audit type still has an actual catalog/card declaration: lifesteal
+PASS Audit type still has an actual catalog/card declaration: thorns
+PASS Audit type still has an actual catalog/card declaration: cleave
+PASS Audit type still has an actual catalog/card declaration: lava
+PASS Audit type still has an actual catalog/card declaration: double_strike
+PASS Audit type still has an actual catalog/card declaration: stun
+PASS Audit type still has an actual catalog/card declaration: chain_attack
+PASS Audit type still has an actual catalog/card declaration: triple_strike
+PASS Audit type still has an actual catalog/card declaration: last_stand
+PASS Audit type still has an actual catalog/card declaration: execute
+PASS Audit type still has an actual catalog/card declaration: shield_first_hit
+PASS Audit type still has an actual catalog/card declaration: swarm_power
+PASS Audit type still has an actual catalog/card declaration: grave_return
+PASS Audit type still has an actual catalog/card declaration: draw_on_death
+PASS Audit type still has an actual catalog/card declaration: curse
+PASS Audit type still has an actual catalog/card declaration: swap_stats
+PASS Audit type still has an actual catalog/card declaration: random_damage
+PASS Audit type still has an actual catalog/card declaration: bodyguard
+PASS Audit type still has an actual catalog/card declaration: neighbor_heal
+PASS Audit type still has an actual catalog/card declaration: eternal_suffering
+PASS player armor 0.1 reduces a real hit, preserving one counter
+PASS player armor 0.25 reduces a real hit, preserving one counter
+PASS player armor 0.35 reduces a real hit, preserving one counter
+PASS player armor 0.5 reduces a real hit, preserving one counter
+PASS player armor 0.75 reduces a real hit, preserving one counter
+PASS player shield blocks and consumes the first hit
+PASS player shield does not block the second hit
+PASS player armor/shield fighter snapshot preserves actual HP, effects and one-use state
+PASS player armor/shield spectator snapshot preserves actual HP, effects and one-use state
+PASS player zero attack does not spend an unused first-hit shield
+PASS player double_strike executes every hit
+PASS player thorns reacts to each strike, normal counter only once
+PASS player triple_strike executes every hit
+PASS player thorns reacts to each strike, normal counter only once
+PASS player multi-hit/thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS player multi-hit/thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS player explicit hits overrides the strike default and still counters only once
+PASS player random-damage coin applies exactly 0.75x or 2x to the actual hit
+PASS player swarm counts the three identical cards across the battlefield
+PASS player swapped stats determine real damage and health
+PASS player swap_stats fighter snapshot preserves actual HP, effects and one-use state
+PASS player swap_stats spectator snapshot preserves actual HP, effects and one-use state
+PASS player lifesteal uses actual three HP lost, not twelve overkill damage
+PASS player lifesteal/overkill fighter snapshot preserves actual HP, effects and one-use state
+PASS player lifesteal/overkill spectator snapshot preserves actual HP, effects and one-use state
+PASS player stun honors exact chance 0.0
+PASS player curse permanently subtracts its value without negative attack
+PASS player curse/stun 0.0 fighter snapshot preserves actual HP, effects and one-use state
+PASS player curse/stun 0.0 spectator snapshot preserves actual HP, effects and one-use state
+PASS player stun honors exact chance 1.0
+PASS player curse permanently subtracts its value without negative attack
+PASS player curse/stun 1.0 fighter snapshot preserves actual HP, effects and one-use state
+PASS player curse/stun 1.0 spectator snapshot preserves actual HP, effects and one-use state
+PASS player stun prevents and consumes exactly the next requested attack
+PASS player card can attack normally after its stun was consumed
+PASS player counter kills the attacker after its connected hit
+PASS player lethal counter still transfers stun and curse
+PASS player statuses from a dead attacker retain their visible indicators
+PASS player statuses after lethal counter fighter snapshot preserves actual HP, effects and one-use state
+PASS player statuses after lethal counter spectator snapshot preserves actual HP, effects and one-use state
+PASS player stun from a dead attacker actually skips the target's next attack
+PASS player thorns kills the attacker after its connected hit
+PASS player lethal thorns still transfers stun and curse
+PASS player statuses from a dead attacker retain their visible indicators
+PASS player statuses after lethal thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS player statuses after lethal thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS player stun from a dead attacker actually skips the target's next attack
+PASS player poison survives the source's lethal counterattack
+PASS player poison from a dead source still deals its next scheduled tick
+PASS player poison after source death fighter snapshot preserves actual HP, effects and one-use state
+PASS player poison after source death spectator snapshot preserves actual HP, effects and one-use state
+PASS player a dead attacker still cannot transfer statuses through a completely blocked hit
+PASS player interrupted multi-strike transfers its effect exactly once for the completed hit
+PASS player the dying attacker's completed attack still applies cleave to both adjacent slots
+PASS player the dying attacker triggers its draw-on-death effect once despite a simultaneous cleave kill
+PASS player cleave after source death fighter snapshot preserves actual HP, effects and one-use state
+PASS player cleave after source death spectator snapshot preserves actual HP, effects and one-use state
+PASS player attack applies configured poison without an extra immediate tick
+PASS player poison deals configured damage on owner turn 1
+PASS player poison deals configured damage on owner turn 2
+PASS player poison deals configured damage on owner turn 3
+PASS player poison expires after its configured three ticks
+PASS player fully blocked hits cannot apply poison
+PASS player regeneration executes on owner turn start
+PASS player regeneration respects maximum HP
+PASS player poison/regeneration fighter snapshot preserves actual HP, effects and one-use state
+PASS player poison/regeneration spectator snapshot preserves actual HP, effects and one-use state
+PASS player last_stand survives a lethal ordinary hit
+PASS player consumed last_stand fighter snapshot preserves actual HP, effects and one-use state
+PASS player consumed last_stand spectator snapshot preserves actual HP, effects and one-use state
+PASS player last_stand cannot survive twice
+PASS player last_stand also survives lethal poison
+PASS player last_stand survives the execute portion of a hit
+PASS player execute cannot kill again after the same hit consumed last_stand
+PASS player grave_return survives a lethal ordinary hit
+PASS player consumed grave_return fighter snapshot preserves actual HP, effects and one-use state
+PASS player consumed grave_return spectator snapshot preserves actual HP, effects and one-use state
+PASS player grave_return cannot survive twice
+PASS player grave_return also survives lethal poison
+PASS player grave_return survives the execute portion of a hit
+PASS player execute cannot kill again after the same hit consumed grave_return
+PASS player execute leaves a target above its threshold alive
+PASS player execute destroys a target reaching its threshold
+PASS player two-HP Grave Return preserves the actual hit, poison application and two reflected HP despite gaining health
+PASS player Execute records two normal plus five execution HP before Grave Return, yielding four actual Lifesteal HP
+PASS player lethal Thorns preserves its two-HP damage record separately from the attacker's ten-HP revival
+PASS player Cleave includes a reviving bodyguard's two redirected HP in its real damage total and eight-HP Lifesteal
+PASS player cleave uses side_damage and reaches only adjacent targets
+PASS player cleave fighter snapshot preserves actual HP, effects and one-use state
+PASS player cleave spectator snapshot preserves actual HP, effects and one-use state
+PASS player chain attack performs a second real duel after a kill then ends once
+PASS player a cleave-only kill also earns the chain attack
+PASS player lifesteal includes actual primary and both cleave damage totals
+PASS player Lava hits all initial targets and takes only the selected counter
+PASS player Draw On Death grants no event while its Lava attacker survives
+PASS player lava/draw_on_death fighter snapshot preserves actual HP, effects and one-use state
+PASS player lava/draw_on_death spectator snapshot preserves actual HP, effects and one-use state
+PASS player surviving a lethal hit never awards a kill event
+PASS player triple Lava kills and replaces the original neighbor, but the newly drawn guard cannot intercept later hits of that same attack
+PASS player adjacent bodyguard takes half a real hit, distant bodyguard takes none
+PASS player bodyguard fighter snapshot preserves actual HP, effects and one-use state
+PASS player bodyguard spectator snapshot preserves actual HP, effects and one-use state
+PASS player bodyguard's own armor mitigates its redirected share
+PASS player protected target's first-hit shield blocks the entire hit before redirection
+PASS player two bodyguards select only the living left neighbor without recursive sharing
+PASS player bodyguard also redirects the selected target's counterattack
+PASS player counterattack/bodyguard fighter snapshot preserves actual HP, effects and one-use state
+PASS player counterattack/bodyguard spectator snapshot preserves actual HP, effects and one-use state
+PASS player bodyguard honors a custom redirected percentage
+PASS player redirected lethal damage respects bodyguard's Last Stand
+PASS player neighbor-heal does not trigger early from received damage
+PASS player catalog neighbor-heal heals only adjacent allies on owner turn start
+PASS player turn-start neighbor_heal fighter snapshot preserves actual HP, effects and one-use state
+PASS player turn-start neighbor_heal spectator snapshot preserves actual HP, effects and one-use state
+PASS player authored paramedic heals one adjacent HP at turn start
+PASS player authored paramedic does not gain an extra damage trigger
+PASS player authored repair_bot heals one adjacent HP at turn start
+PASS player authored repair_bot does not gain an extra damage trigger
+PASS enemy armor 0.1 reduces a real hit, preserving one counter
+PASS enemy armor 0.25 reduces a real hit, preserving one counter
+PASS enemy armor 0.35 reduces a real hit, preserving one counter
+PASS enemy armor 0.5 reduces a real hit, preserving one counter
+PASS enemy armor 0.75 reduces a real hit, preserving one counter
+PASS enemy shield blocks and consumes the first hit
+PASS enemy shield does not block the second hit
+PASS enemy armor/shield fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy armor/shield spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy zero attack does not spend an unused first-hit shield
+PASS enemy double_strike executes every hit
+PASS enemy thorns reacts to each strike, normal counter only once
+PASS enemy triple_strike executes every hit
+PASS enemy thorns reacts to each strike, normal counter only once
+PASS enemy multi-hit/thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy multi-hit/thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy explicit hits overrides the strike default and still counters only once
+PASS enemy random-damage coin applies exactly 0.75x or 2x to the actual hit
+PASS enemy swarm counts the three identical cards across the battlefield
+PASS enemy swapped stats determine real damage and health
+PASS enemy swap_stats fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy swap_stats spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy lifesteal uses actual three HP lost, not twelve overkill damage
+PASS enemy lifesteal/overkill fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy lifesteal/overkill spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stun honors exact chance 0.0
+PASS enemy curse permanently subtracts its value without negative attack
+PASS enemy curse/stun 0.0 fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy curse/stun 0.0 spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stun honors exact chance 1.0
+PASS enemy curse permanently subtracts its value without negative attack
+PASS enemy curse/stun 1.0 fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy curse/stun 1.0 spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stun prevents and consumes exactly the next requested attack
+PASS enemy card can attack normally after its stun was consumed
+PASS enemy counter kills the attacker after its connected hit
+PASS enemy lethal counter still transfers stun and curse
+PASS enemy statuses from a dead attacker retain their visible indicators
+PASS enemy statuses after lethal counter fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy statuses after lethal counter spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stun from a dead attacker actually skips the target's next attack
+PASS enemy thorns kills the attacker after its connected hit
+PASS enemy lethal thorns still transfers stun and curse
+PASS enemy statuses from a dead attacker retain their visible indicators
+PASS enemy statuses after lethal thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy statuses after lethal thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stun from a dead attacker actually skips the target's next attack
+PASS enemy poison survives the source's lethal counterattack
+PASS enemy poison from a dead source still deals its next scheduled tick
+PASS enemy poison after source death fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy poison after source death spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy a dead attacker still cannot transfer statuses through a completely blocked hit
+PASS enemy interrupted multi-strike transfers its effect exactly once for the completed hit
+PASS enemy the dying attacker's completed attack still applies cleave to both adjacent slots
+PASS enemy the dying attacker triggers its draw-on-death effect once despite a simultaneous cleave kill
+PASS enemy cleave after source death fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy cleave after source death spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy attack applies configured poison without an extra immediate tick
+PASS enemy poison deals configured damage on owner turn 1
+PASS enemy poison deals configured damage on owner turn 2
+PASS enemy poison deals configured damage on owner turn 3
+PASS enemy poison expires after its configured three ticks
+PASS enemy fully blocked hits cannot apply poison
+PASS enemy regeneration executes on owner turn start
+PASS enemy regeneration respects maximum HP
+PASS enemy poison/regeneration fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy poison/regeneration spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy last_stand survives a lethal ordinary hit
+PASS enemy consumed last_stand fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy consumed last_stand spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy last_stand cannot survive twice
+PASS enemy last_stand also survives lethal poison
+PASS enemy last_stand survives the execute portion of a hit
+PASS enemy execute cannot kill again after the same hit consumed last_stand
+PASS enemy grave_return survives a lethal ordinary hit
+PASS enemy consumed grave_return fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy consumed grave_return spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy grave_return cannot survive twice
+PASS enemy grave_return also survives lethal poison
+PASS enemy grave_return survives the execute portion of a hit
+PASS enemy execute cannot kill again after the same hit consumed grave_return
+PASS enemy execute leaves a target above its threshold alive
+PASS enemy execute destroys a target reaching its threshold
+PASS enemy two-HP Grave Return preserves the actual hit, poison application and two reflected HP despite gaining health
+PASS enemy Execute records two normal plus five execution HP before Grave Return, yielding four actual Lifesteal HP
+PASS enemy lethal Thorns preserves its two-HP damage record separately from the attacker's ten-HP revival
+PASS enemy Cleave includes a reviving bodyguard's two redirected HP in its real damage total and eight-HP Lifesteal
+PASS enemy cleave uses side_damage and reaches only adjacent targets
+PASS enemy cleave fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy cleave spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy chain attack performs a second real duel after a kill then ends once
+PASS enemy a cleave-only kill also earns the chain attack
+PASS enemy lifesteal includes actual primary and both cleave damage totals
+PASS enemy Lava hits all initial targets and takes only the selected counter
+PASS enemy Draw On Death grants no event while its Lava attacker survives
+PASS enemy lava/draw_on_death fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy lava/draw_on_death spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy surviving a lethal hit never awards a kill event
+PASS enemy triple Lava kills and replaces the original neighbor, but the newly drawn guard cannot intercept later hits of that same attack
+PASS enemy adjacent bodyguard takes half a real hit, distant bodyguard takes none
+PASS enemy bodyguard fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy bodyguard spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy bodyguard's own armor mitigates its redirected share
+PASS enemy protected target's first-hit shield blocks the entire hit before redirection
+PASS enemy two bodyguards select only the living left neighbor without recursive sharing
+PASS enemy bodyguard also redirects the selected target's counterattack
+PASS enemy counterattack/bodyguard fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy counterattack/bodyguard spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy bodyguard honors a custom redirected percentage
+PASS enemy redirected lethal damage respects bodyguard's Last Stand
+PASS enemy neighbor-heal does not trigger early from received damage
+PASS enemy catalog neighbor-heal heals only adjacent allies on owner turn start
+PASS enemy turn-start neighbor_heal fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy turn-start neighbor_heal spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy authored paramedic heals one adjacent HP at turn start
+PASS enemy authored paramedic does not gain an extra damage trigger
+PASS enemy authored repair_bot heals one adjacent HP at turn start
+PASS enemy authored repair_bot does not gain an extra damage trigger
+COMBAT_EFFECT_AUDIT_TESTS: PASS (283 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== spread_journal_localization_test ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+JOURNAL_LOCALIZATION_LAYOUT: 1000 localized entries and 1104 body pages measured
+JOURNAL_LOCALIZATION_TESTS: PASS (9095 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+

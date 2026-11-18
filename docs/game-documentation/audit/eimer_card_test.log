@@ -1,0 +1,33 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS Pisse-Eimer is registered under a unique card ID
+PASS Card database contains exactly one Eimer definition
+PASS Pisse-Eimer has 1 attack and 5 health
+PASS Eimer uses epic rarity for its low base values and area attack
+PASS Pisse-Eimer is available to combat decks and the AI card pool
+PASS Pisse-Eimer is in the epic pack pool
+PASS Eimer carries Lava as its single innate effect
+PASS Lava is registered in the shared effect catalog
+PASS Type-only Lava resolves to a readable title and all-enemies badge
+PASS Lava tooltip describes its simultaneous attack
+PASS Lava loads its dedicated SVG icon instead of the placeholder
+PASS Pack reward selection can award Eimer
+PASS Eimer can be collected more than once as a normal combat card
+PASS Eimer ownership and instances survive save and reload
+PASS Owned Eimer copies can both enter the battle deck
+PASS Deck persistence preserves Eimer copies
+PASS Random instance effects preserve innate Lava and instance identity
+PASS Eimer retains one extra purchasable effect slot
+PASS Saved stat and effect upgrades preserve Lava
+PASS Prepared battle card data retains Lava alongside its upgrade
+PASS Remote deck validation accepts the new registered card and Lava
+PASS Real Card3D initializes the requested combat values
+PASS Real card displays both attack and health
+PASS Real card displays its assigned rarity
+PASS Generated bucket artwork loads into the actual card material
+PASS Real card effect slot displays the Lava icon
+PASS Lava icon has a transparent background and an opaque flame for the alpha-only card hologram
+PASS Actual effect overview presents Lava and its target badge
+PASS Overview loads the dedicated icon and shows exactly one effect
+EIMER_CARD_TESTS: PASS (29 checks)

@@ -1,0 +1,46 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS level 1 hides both quantity buttons and starts with one pack
+PASS actual level-up immediately reveals quantity controls
+PASS one pack is the minimum and a second is affordable
+PASS disabled minus cannot reduce the minimum below one pack
+PASS quantity column matches purchase button height and vertical alignment
+PASS plus sits above minus immediately left of purchase
+PASS quantity buttons remain small
+PASS quantity buttons are red with a darker disabled background
+PASS both active and disabled symbols use white text
+PASS seven physical screen clicks select eight packs for 40 coins
+PASS 41 coins can buy eight packs but cannot enable a ninth
+PASS disabled plus ignores real clicks without spending coins
+PASS minus lowers the total and enables adding a pack again
+PASS balance reaching the next total enables plus immediately
+PASS balance dropping below the next total disables plus again
+PASS switching pack type resets quantity and uses its own price
+PASS two Ultra packs also use their correct combined cost
+PASS multi-buy cannot bypass God Pack's level requirement
+PASS two Basic packs display the requested quantity and total
+PASS one purchase click charges both packs once and locks the shop
+PASS quantity stays fixed during the prepaid opening
+PASS clicks during opening cannot start or charge another purchase
+PASS first purchased foil becomes ready
+PASS pack 1 opens through its real foil drag and spawns five cards
+PASS pack 1 reveals all five rewards before collection
+PASS pack 1 is awarded only on collection
+PASS pack 1 double collect click awards each card once
+PASS second paid pack appears automatically after first collection
+PASS between packs the shop and screen focus remain locked without a new purchase
+PASS second pack has fresh sealed foil and working input
+PASS automatic next pack never deducts more coins
+PASS pack 2 opens through its real foil drag and spawns five cards
+PASS pack 2 reveals all five rewards before collection
+PASS pack 2 is awarded only on collection
+PASS pack 2 double collect click awards each card once
+PASS second collection finishes the batch
+PASS only the completed batch unlocks the shop exactly once
+PASS two Basic packs award exactly ten cards for ten coins
+PASS low fractional balance clamps quantity and blocks unaffordable purchase
+PASS progress reset hides quantity controls again
+PACK_QUANTITY_TESTS: PASS (40 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

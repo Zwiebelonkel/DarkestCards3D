@@ -1,0 +1,71 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS Pisse-Eimer is available from the real card catalog
+PASS Pisse-Eimer has one attack and five health
+PASS Pisse-Eimer is an epic battle card
+PASS Pisse-Eimer's active effect is lava
+PASS player lava uses one attack contact for the whole board
+PASS player lava damages all five opponents in the same impact frame
+PASS player lava receives only the selected defender's counterattack
+PASS player lava never damages an allied card
+PASS player lava reaches both distant slots
+PASS player all damaged enemy cards receive the hit surface effect
+PASS enemy lava uses one attack contact for the whole board
+PASS enemy lava damages all five opponents in the same impact frame
+PASS enemy lava receives only the selected defender's counterattack
+PASS enemy lava never damages an allied card
+PASS enemy lava reaches both distant slots
+PASS enemy all damaged enemy cards receive the hit surface effect
+PASS lava respects each target's shield, armor, and last stand at the same contact
+PASS lava consumes only the shield that blocked its target's hit
+PASS blocked lava stays clean while reduced armor damage stains the target
+PASS last stand keeps its target in the slot and is consumed once
+PASS a secondary target's thorns and the primary counter each resolve once
+PASS all lethal lava targets reach zero in one impact
+PASS a lethal selected defender still retaliates once
+PASS five simultaneous deaths draw exactly the three available replacements
+PASS replacement cards enter alive and receive no damage from the completed lava hit
+PASS lava awaits all replacement draws before finishing the duel
+PASS double strike repeats lava against surviving original targets
+PASS double lava receives one primary counter for the entire duel
+PASS a second lava strike excludes replacements drawn after its first impact
+PASS a second lava strike reaches surviving original cards after the main defender dies
+PASS retargeting a later lava animation never adds a second counterattack
+PASS retargeted lava still excludes the dead main defender's replacement
+PASS a lethal counter cannot cancel simultaneous lava damage on the other opponents
+PASS a counter-killed lava attacker leaves its slot without removing an ally
+PASS lava plus cleave does not damage adjacent cards twice
+PASS an ordinary attack still hits only its selected defender
+PASS an ordinary duel preserves its normal counterattack
+PASS lava handles a single remaining opponent and empty neighboring slots
+PASS mirrored guest applies every authoritative lava hit in one contact frame
+PASS mirrored guest applies the main counter and leaves allies unchanged
+PASS mirrored guest renders hit feedback on all five targets
+PASS mirrored guest ignores duplicate lava packets without replaying damage or blood
+PASS mirrored guest real attack animation captures the original opposing slot identities
+PASS mirrored guest queued lava packet resolves all targets at the real animation contact
+PASS mirrored guest real attack completes and releases its context and presentation barrier
+PASS spectator applies every authoritative lava hit in one contact frame
+PASS spectator applies the main counter and leaves allies unchanged
+PASS spectator renders hit feedback on all five targets
+PASS spectator ignores duplicate lava packets without replaying damage or blood
+PASS spectator real attack animation captures the original opposing slot identities
+PASS spectator queued lava packet resolves all targets at the real animation contact
+PASS spectator real attack completes and releases its context and presentation barrier
+PASS invalid lava instance rejects the whole packet before any card changes
+PASS invalid lava side rejects the whole packet before any card changes
+PASS invalid lava duplicate rejects the whole packet before any card changes
+PASS invalid lava replacement rejects the whole packet before any card changes
+PASS a lethal online lava packet frees all five opposing slots together
+PASS guest lava deaths leave replacement draws to the authoritative host
+PASS late lava packets cannot access retired cards or start death jobs during exit
+PASS late lava presentation cannot rebuild either board after cinematic cleanup
+PASS retiring online presentation clears queued lava contexts and packets
+[OnlineSession 11655] leave requested: Lobby verlassen.
+[OnlineSession 11689] peer teardown completed
+LAVA_EFFECT_TESTS: PASS (61 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 6 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

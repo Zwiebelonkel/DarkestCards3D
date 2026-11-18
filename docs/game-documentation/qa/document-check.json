@@ -1,0 +1,250 @@
+{
+  "pages": [
+    {
+      "page": 1,
+      "words": 102,
+      "text_characters": 811,
+      "overflow_words": []
+    },
+    {
+      "page": 2,
+      "words": 1595,
+      "text_characters": 3920,
+      "overflow_words": []
+    },
+    {
+      "page": 3,
+      "words": 328,
+      "text_characters": 2515,
+      "overflow_words": []
+    },
+    {
+      "page": 4,
+      "words": 345,
+      "text_characters": 2742,
+      "overflow_words": []
+    },
+    {
+      "page": 5,
+      "words": 323,
+      "text_characters": 2578,
+      "overflow_words": []
+    },
+    {
+      "page": 6,
+      "words": 429,
+      "text_characters": 3245,
+      "overflow_words": []
+    },
+    {
+      "page": 7,
+      "words": 394,
+      "text_characters": 2943,
+      "overflow_words": []
+    },
+    {
+      "page": 8,
+      "words": 404,
+      "text_characters": 3170,
+      "overflow_words": []
+    },
+    {
+      "page": 9,
+      "words": 430,
+      "text_characters": 3371,
+      "overflow_words": []
+    },
+    {
+      "page": 10,
+      "words": 475,
+      "text_characters": 3469,
+      "overflow_words": []
+    },
+    {
+      "page": 11,
+      "words": 315,
+      "text_characters": 2233,
+      "overflow_words": []
+    },
+    {
+      "page": 12,
+      "words": 444,
+      "text_characters": 2673,
+      "overflow_words": []
+    },
+    {
+      "page": 13,
+      "words": 388,
+      "text_characters": 2644,
+      "overflow_words": []
+    },
+    {
+      "page": 14,
+      "words": 381,
+      "text_characters": 2738,
+      "overflow_words": []
+    },
+    {
+      "page": 15,
+      "words": 314,
+      "text_characters": 2340,
+      "overflow_words": []
+    },
+    {
+      "page": 16,
+      "words": 417,
+      "text_characters": 3051,
+      "overflow_words": []
+    },
+    {
+      "page": 17,
+      "words": 286,
+      "text_characters": 2131,
+      "overflow_words": []
+    },
+    {
+      "page": 18,
+      "words": 337,
+      "text_characters": 2368,
+      "overflow_words": []
+    },
+    {
+      "page": 19,
+      "words": 363,
+      "text_characters": 2738,
+      "overflow_words": []
+    },
+    {
+      "page": 20,
+      "words": 447,
+      "text_characters": 3175,
+      "overflow_words": []
+    },
+    {
+      "page": 21,
+      "words": 425,
+      "text_characters": 3118,
+      "overflow_words": []
+    },
+    {
+      "page": 22,
+      "words": 430,
+      "text_characters": 3447,
+      "overflow_words": []
+    },
+    {
+      "page": 23,
+      "words": 407,
+      "text_characters": 3440,
+      "overflow_words": []
+    },
+    {
+      "page": 24,
+      "words": 380,
+      "text_characters": 3168,
+      "overflow_words": []
+    },
+    {
+      "page": 25,
+      "words": 314,
+      "text_characters": 2815,
+      "overflow_words": []
+    },
+    {
+      "page": 26,
+      "words": 91,
+      "text_characters": 767,
+      "overflow_words": []
+    },
+    {
+      "page": 27,
+      "words": 244,
+      "text_characters": 1648,
+      "overflow_words": []
+    },
+    {
+      "page": 28,
+      "words": 202,
+      "text_characters": 1231,
+      "overflow_words": []
+    },
+    {
+      "page": 29,
+      "words": 207,
+      "text_characters": 1229,
+      "overflow_words": []
+    },
+    {
+      "page": 30,
+      "words": 197,
+      "text_characters": 1182,
+      "overflow_words": []
+    },
+    {
+      "page": 31,
+      "words": 129,
+      "text_characters": 823,
+      "overflow_words": []
+    },
+    {
+      "page": 32,
+      "words": 269,
+      "text_characters": 2320,
+      "overflow_words": []
+    },
+    {
+      "page": 33,
+      "words": 164,
+      "text_characters": 1435,
+      "overflow_words": []
+    },
+    {
+      "page": 34,
+      "words": 195,
+      "text_characters": 2574,
+      "overflow_words": []
+    },
+    {
+      "page": 35,
+      "words": 149,
+      "text_characters": 2554,
+      "overflow_words": []
+    },
+    {
+      "page": 36,
+      "words": 135,
+      "text_characters": 1412,
+      "overflow_words": []
+    },
+    {
+      "page": 37,
+      "words": 99,
+      "text_characters": 1085,
+      "overflow_words": []
+    },
+    {
+      "page": 38,
+      "words": 105,
+      "text_characters": 1084,
+      "overflow_words": []
+    },
+    {
+      "page": 39,
+      "words": 98,
+      "text_characters": 1057,
+      "overflow_words": []
+    },
+    {
+      "page": 40,
+      "words": 71,
+      "text_characters": 799,
+      "overflow_words": []
+    }
+  ],
+  "outline_entries": 29,
+  "page_count": 40,
+  "margin_check": "passed",
+  "catalog_check": "118 total, 93 combat, 25 special",
+  "test_suite_count": 122,
+  "rendered_page_count": 40
+}

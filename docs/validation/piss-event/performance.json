@@ -1,0 +1,14 @@
+{
+	"before": {
+		"average_draw_calls": 1149.7,
+		"average_process_ms": 55.9986666666666,
+		"p95_process_ms": 78.995,
+		"samples": 30
+	},
+	"stream_hidden": {
+		"average_draw_calls": 1190.4,
+		"average_process_ms": 70.728,
+		"p95_process_ms": 70.728,
+		"samples": 30
+	}
+}

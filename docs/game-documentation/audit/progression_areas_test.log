@@ -1,0 +1,53 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: Main exposes three distinct progression entrances
+PASS: black_market cannot be entered without its card
+PASS: black_market persistence cannot bypass access
+PASS: black_market does not host an independent world or destination screen
+PASS: black_market ownership alone leaves the physical door locked
+PASS: black_market real doorway click cannot use an owned unused key
+PASS: black_market direct area opening cannot bypass explicit key use
+PASS: black_market direct Main travel cannot silently persist or bypass key activation
+PASS: black_market explicit key use commits the access flag
+PASS: black_market explicit activation refreshes the existing world door
+PASS: black_market access neither consumes the key nor adds it to a battle deck
+PASS: graveyard cannot be entered without its card
+PASS: graveyard persistence cannot bypass access
+PASS: graveyard routes to its physical Main room
+PASS: graveyard does not host an independent world or destination screen
+PASS: graveyard ownership alone leaves the physical door locked
+PASS: graveyard real doorway click cannot use an owned unused key
+PASS: graveyard direct area opening cannot bypass explicit key use
+PASS: graveyard direct Main travel cannot silently persist or bypass key activation
+PASS: graveyard explicit key use commits the access flag
+PASS: graveyard explicit activation refreshes the existing world door
+PASS: graveyard access neither consumes the key nor adds it to a battle deck
+PASS: basement cannot be entered without its card
+PASS: basement persistence cannot bypass access
+PASS: basement routes to its physical Main room
+PASS: basement does not host an independent world or destination screen
+PASS: basement ownership alone leaves the physical door locked
+PASS: basement real doorway click cannot use an owned unused key
+PASS: basement direct area opening cannot bypass explicit key use
+PASS: basement direct Main travel cannot silently persist or bypass key activation
+PASS: basement explicit key use commits the access flag
+PASS: basement explicit activation refreshes the existing world door
+PASS: basement access neither consumes the key nor adds it to a battle deck
+PASS: new area cards do not unlock the independent slot-room door
+PASS: Black Market routes to its physical Main room
+PASS: Black Market is a permanent connected Main room
+PASS: physical Black Market contains its daily offer board
+PASS: Black Market supplies daily stock from its independent shop pool
+PASS: Black Market excludes normal-shop Dealer License discount
+PASS: removing Black Market access locks its physical entrance
+PASS: black_market resetting cards and saved access flags locks its entrance
+PASS: graveyard resetting cards and saved access flags locks its entrance
+PASS: basement resetting cards and saved access flags locks its entrance
+PASS: black_market access survives save/load
+PASS: graveyard access survives save/load
+PASS: basement access survives save/load
+PASS: area access management preserves normal hub controls
+PROGRESSION_AREAS_TESTS: PASS (47 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

@@ -1,0 +1,55 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS fixture unlocks the graveyard with its real key
+PASS remote crypt cannot be interacted with from the hub
+PASS all seven bars and both rails move as one grille
+PASS the normal doorway flight enters the graveyard
+PASS real pointer hover gently swings the grille
+PASS hover alone leaves the player at the graveyard viewpoint
+PASS the hover hit box remains fixed while the grille moves
+PASS a stationary pointer keeps a stable hover pose
+PASS leaving the grille gently restores its closed pose
+PASS a real left click starts a walk and blocks competing turns
+PASS the walk completes even after a repeated click
+PASS approaching preserves the room and its shared camera
+PASS the camera stops at the authored position directly in front of the grille
+PASS the player actually travels toward the grille
+PASS moving the pointer away keeps the player in front of the crypt
+PASS right click finishes the return walk
+PASS right click restores the exact original graveyard viewpoint
+PASS Escape finishes the return walk
+PASS Escape returns from the grille without opening the pause menu
+PASS a real A key completes a turn at the crypt
+PASS turning at the crypt keeps the player at the new viewpoint
+PASS a real A key completes a turn at the crypt
+PASS turning at the crypt keeps the player at the new viewpoint
+PASS a real A key completes a turn at the crypt
+PASS turning at the crypt keeps the player at the new viewpoint
+PASS a real A key completes a turn at the crypt
+PASS turning at the crypt keeps the player at the new viewpoint
+PASS a full turn at the crypt restores the exact near view without camera drift
+PASS the player can face the crossing without activating the distant Jester
+PASS the return beacon stays hidden without a crossing hover
+PASS hovering the crossing reveals a small beacon without moving the player
+PASS the beacon remains stable under a stationary pointer
+PASS moving off the crossing hides the beacon while staying at the crypt
+PASS clicking away from the crossing does not walk back
+PASS Pause immediately hides the crossing beacon
+PASS the crossing cannot be clicked through Pause
+PASS the journal also hides the crossing beacon
+PASS the crossing cannot be clicked through the journal
+PASS a real left click on the crossing starts the return walk and hides its beacon
+PASS the complete beacon return walk keeps looking ahead without turning toward the crypt
+PASS the crossing walk finishes
+PASS clicking the crossing restores its original position while preserving the current facing
+PASS opening Pause immediately disables the crypt
+PASS the pause overlay blocks clicks on the grille
+PASS the journal immediately blocks crypt interaction
+PASS a click through the journal cannot approach the crypt
+PASS crypt exploration leaves cards and currency unchanged
+PASS the normal return door remains usable after crypt exploration
+PASS leaving the graveyard clears crypt interaction
+CRYPT_GATE_TESTS: PASS (49 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

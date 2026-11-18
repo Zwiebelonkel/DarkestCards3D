@@ -1,0 +1,207 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/AccessKeyTray.gd" id="1_tray"]
+[ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="2_font"]
+
+[sub_resource type="StandardMaterial3D" id="Material_frame"]
+render_priority = 80
+no_depth_test = true
+shading_mode = 0
+disable_fog = true
+albedo_color = Color(0.11, 0.105, 0.105, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_frame"]
+material = SubResource("Material_frame")
+size = Vector3(7.8, 1.62, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="Material_trim"]
+render_priority = 81
+no_depth_test = true
+shading_mode = 0
+disable_fog = true
+albedo_color = Color(0.37, 0.29, 0.17, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_trim"]
+material = SubResource("Material_trim")
+size = Vector3(7.67, 1.5, 0.027)
+
+[sub_resource type="StandardMaterial3D" id="Material_face"]
+render_priority = 82
+no_depth_test = true
+shading_mode = 0
+disable_fog = true
+albedo_color = Color(0.027, 0.032, 0.038, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_face"]
+material = SubResource("Material_face")
+size = Vector3(7.62, 1.45, 0.022)
+
+[sub_resource type="StandardMaterial3D" id="Material_screw"]
+render_priority = 85
+no_depth_test = true
+shading_mode = 0
+disable_fog = true
+albedo_color = Color(0.46, 0.43, 0.35, 1)
+
+[sub_resource type="CylinderMesh" id="Mesh_screw"]
+material = SubResource("Material_screw")
+top_radius = 0.032
+bottom_radius = 0.032
+height = 0.012
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="Mesh_axle"]
+material = SubResource("Material_trim")
+top_radius = 0.024
+bottom_radius = 0.024
+height = 6.76
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="Mesh_hinge"]
+material = SubResource("Material_frame")
+top_radius = 0.063
+bottom_radius = 0.063
+height = 0.48
+radial_segments = 16
+
+[sub_resource type="CylinderMesh" id="Mesh_hinge_band"]
+material = SubResource("Material_trim")
+top_radius = 0.069
+bottom_radius = 0.069
+height = 0.045
+radial_segments = 16
+
+[sub_resource type="BoxMesh" id="Mesh_arm"]
+material = SubResource("Material_frame")
+size = Vector3(0.13, 0.17, 0.065)
+
+[sub_resource type="BoxMesh" id="Mesh_rail"]
+material = SubResource("Material_trim")
+size = Vector3(0.84, 0.018, 0.028)
+
+[node name="AccessKeyTray" type="Node3D"]
+script = ExtResource("1_tray")
+
+[node name="Hinge" type="Node3D" parent="."]
+rotation_degrees = Vector3(-200, 0, 0)
+
+[node name="Frame" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(0, 0.86, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_frame")
+
+[node name="BrassTrim" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(0, 0.86, 0.057)
+cast_shadow = 0
+mesh = SubResource("Mesh_trim")
+
+[node name="RecessedFace" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(0, 0.86, 0.074)
+cast_shadow = 0
+mesh = SubResource("Mesh_face")
+
+[node name="TitleLabel" type="Label3D" parent="Hinge"]
+position = Vector3(0, 1.48, 0.12)
+pixel_size = 0.0033
+no_depth_test = true
+render_priority = 100
+modulate = Color(0.92, 0.78, 0.5, 1)
+outline_modulate = Color(0.015, 0.02, 0.025, 1)
+text = "SCHLÜSSEL"
+font = ExtResource("2_font")
+font_size = 46
+outline_size = 4
+
+[node name="EmptyLabel" type="Label3D" parent="Hinge"]
+position = Vector3(0, 0.86, 0.12)
+pixel_size = 0.0033
+no_depth_test = true
+render_priority = 100
+modulate = Color(0.69, 0.68, 0.64, 1)
+outline_modulate = Color(0.015, 0.02, 0.025, 1)
+text = "Keine unbenutzten Schlüssel"
+font = ExtResource("2_font")
+font_size = 38
+outline_size = 4
+
+[node name="HintLabel" type="Label3D" parent="Hinge"]
+position = Vector3(0, 0.21, 0.12)
+pixel_size = 0.0033
+no_depth_test = true
+render_priority = 100
+modulate = Color(0.69, 0.68, 0.64, 1)
+outline_modulate = Color(0.015, 0.02, 0.025, 1)
+text = "Schlüssel anklicken, um den Zugang zu öffnen"
+font = ExtResource("2_font")
+font_size = 29
+outline_size = 3
+
+[node name="Keys" type="Node3D" parent="Hinge"]
+
+[node name="LeftArm" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(-2.8, 0.045, -0.01)
+cast_shadow = 0
+mesh = SubResource("Mesh_arm")
+
+[node name="RightArm" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(2.8, 0.045, -0.01)
+cast_shadow = 0
+mesh = SubResource("Mesh_arm")
+
+[node name="TopRail" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(0, 1.63, 0.074)
+cast_shadow = 0
+mesh = SubResource("Mesh_rail")
+
+[node name="TopLeftScrew" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(-3.78, 1.52, 0.078)
+rotation_degrees = Vector3(90, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_screw")
+
+[node name="TopRightScrew" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(3.78, 1.52, 0.078)
+rotation_degrees = Vector3(90, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_screw")
+
+[node name="BottomLeftScrew" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(-3.78, 0.2, 0.078)
+rotation_degrees = Vector3(90, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_screw")
+
+[node name="BottomRightScrew" type="MeshInstance3D" parent="Hinge"]
+position = Vector3(3.78, 0.2, 0.078)
+rotation_degrees = Vector3(90, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_screw")
+
+[node name="Axle" type="MeshInstance3D" parent="."]
+rotation_degrees = Vector3(0, 0, 90)
+cast_shadow = 0
+mesh = SubResource("Mesh_axle")
+
+[node name="LeftHinge" type="MeshInstance3D" parent="."]
+position = Vector3(-2.8, 0, 0)
+rotation_degrees = Vector3(0, 0, 90)
+cast_shadow = 0
+mesh = SubResource("Mesh_hinge")
+
+[node name="RightHinge" type="MeshInstance3D" parent="."]
+position = Vector3(2.8, 0, 0)
+rotation_degrees = Vector3(0, 0, 90)
+cast_shadow = 0
+mesh = SubResource("Mesh_hinge")
+
+[node name="LeftHingeBand" type="MeshInstance3D" parent="."]
+position = Vector3(-2.8, 0, 0)
+rotation_degrees = Vector3(0, 0, 90)
+cast_shadow = 0
+mesh = SubResource("Mesh_hinge_band")
+
+[node name="RightHingeBand" type="MeshInstance3D" parent="."]
+position = Vector3(2.8, 0, 0)
+rotation_degrees = Vector3(0, 0, 90)
+cast_shadow = 0
+mesh = SubResource("Mesh_hinge_band")

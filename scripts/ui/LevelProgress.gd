@@ -1,5 +1,6 @@
 extends Node3D
 class_name LevelProgress
+const UI_AUDIO := preload("res://scripts/ui/InterfaceSounds.gd")
 
 ## A camera-mounted, physical progress visor. Instantiate LevelProgress.tscn
 ## directly beneath a Camera3D; the hinge and lettering are editable 3D nodes.
@@ -89,7 +90,16 @@ func _process(_delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton or not _can_click():
+	if not _can_click():
+		return
+	if event is InputEventKey:
+		if event.keycode != KEY_SPACE and event.physical_keycode != KEY_SPACE:
+			return
+		get_viewport().set_input_as_handled()
+		if event.pressed and not event.echo:
+			_activate_coin_button()
+		return
+	if not event is InputEventMouseButton:
 		return
 	var on_button := _pointer_hits_mesh(event.position, coin_button)
 	if not on_button and not _pointer_hits_mesh(event.position, frame):
@@ -98,14 +108,18 @@ func _input(event: InputEvent) -> void:
 	# including collection background clicks. Modal screens disable the visor.
 	get_viewport().set_input_as_handled()
 	if on_button and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		# Read ownership again at the click, including inventory resets and new
-		# copies acquired since the panel opened. An upgrade alone cannot unlock it.
-		_on_collection_changed([])
-		if coins_per_click <= 0:
-			return
-		GameCurrency.award_manual_click()
-		_set_coin_hover(true)
-		_play_coin_press()
+		_activate_coin_button()
+
+
+func _activate_coin_button() -> void:
+	# Mouse and keyboard share ownership checks, rewards and button feedback.
+	# An upgrade alone cannot unlock the clicker.
+	_on_collection_changed([])
+	if coins_per_click <= 0:
+		return
+	GameCurrency.award_manual_click()
+	_set_coin_hover(true)
+	_play_coin_press()
 
 
 func _play_coin_press() -> void:
@@ -223,6 +237,8 @@ func set_expanded(value: bool) -> void:
 	if not is_node_ready() or (value and not _enabled) or _expanded == value:
 		return
 	_expanded = value
+	if value:
+		UI_AUDIO.play_panel_flip(self)
 	if _hinge_tween != null and _hinge_tween.is_valid():
 		_hinge_tween.kill()
 	_hinge_tween = create_tween()
@@ -237,6 +253,7 @@ func _can_display() -> bool:
 	return (
 		_enabled
 		and _window_focused
+		and is_inside_tree()
 		and not get_tree().paused
 		and is_instance_valid(_camera)
 		and get_viewport().get_camera_3d() == _camera

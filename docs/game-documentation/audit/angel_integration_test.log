@@ -1,0 +1,47 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS the hub's initial table view cannot open the collection angel
+PASS hub turning reaches side 2
+PASS only the active hub collection side enables the angel
+PASS the real hub angel projects inside the collection view
+PASS hovering the angel does not register or trigger station camera focus
+PASS real hub hover preserves camera position, rotation, FOV and angel scale
+PASS an actual hub angel pointer click opens the sentence
+PASS the opening pointer press and release do not also skip the fresh sentence
+PASS the real hub angel dialog has no buttons
+PASS opening the modal preserves the hub camera and angel size
+PASS the angel modal locks hub turning, room travel and journal opening
+PASS the angel modal stows and disables progression and coin input
+PASS journal, debug unlock, keyboard turns and arrow callbacks cannot pass through the sentence
+PASS progression doorway black_market remains blocked during the angel modal
+PASS progression doorway graveyard remains blocked during the angel modal
+PASS progression doorway basement remains blocked during the angel modal
+PASS card detail, row scrolling and deck controls remain blocked while reading
+PASS blocked game and collection inputs cannot mutate any owned card, deck, progression or save file
+PASS the visible hub dialog contains exactly its chosen localized sentence
+FAIL Escape closes the angel without also opening Pause
+FAIL closing restores normal hub navigation and progression input
+FAIL the angel can open again after Escape
+PASS an outside click on the turn-arrow location reveals the sentence without turning
+PASS a second outside click closes without falling through to the underlying turn arrow
+PASS the collection remains available after outside dismissal
+PASS a click over a foreground card reveals the sentence without opening the card
+FAIL dismissing over a card never also opens its detail
+FAIL a new sentence can be read by clicking inside its panel
+PASS the real dialog title reveals the sentence with one click
+FAIL a following text click closes without triggering the collection behind it
+FAIL opening Pause immediately closes the dialog and disables and silences the angel
+PASS unpausing restores the angel context
+FAIL a room-flight context closes and disables the dialog
+FAIL the same facing direction in another room cannot retain the hub angel
+PASS hub turning reaches side 1
+PASS leaving the collection view disables the angel
+PASS hub turning reaches side 2
+PASS returning to the collection restores its original angel interaction
+PASS context changes and all angel presentations preserve inventory and saved profile bytes
+FAIL an open-dialog scene exit can be exercised
+PASS the whole hub frees cleanly while the angel is speaking
+ANGEL_INTEGRATION_TESTS: FAIL (41 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

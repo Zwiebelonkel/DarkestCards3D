@@ -1,9 +1,9 @@
 extends Node
 ## Exercises the encounter through Main's physical doors, D key and UI input.
 
-const LIVING_TEXTURE := "res://assets/characters/cat.png"
-const DEAD_TEXTURE := "res://assets/characters/catDead.png"
-const SPARED_TEXTURE := "res://assets/characters/catSpare.png"
+const LIVING_TEXTURE := "res://assets/characters/cat/cat.png"
+const DEAD_TEXTURE := "res://assets/characters/cat/catDead.png"
+const SPARED_TEXTURE := "res://assets/characters/cat/catSpare.png"
 
 var checks := 0
 var failures := 0
@@ -51,6 +51,7 @@ func _run() -> void:
 	CardUpgradeManager.clear_profile_state()
 	CollectionManager.add_card("basement_key")
 	CollectionManager.add_card("black_market_access")
+	check(CollectionManager.use_access_key("basement_key") and CollectionManager.use_access_key("black_market_access"), "cat fixture explicitly activates both room entrances")
 	SettingsManager.set_fullscreen(false)
 	Localization.set_locale("en")
 	viewport = SubViewport.new()

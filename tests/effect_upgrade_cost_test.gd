@@ -112,6 +112,7 @@ func _run() -> void:
 
 
 func _new_shop() -> void:
+	GameCurrency._rescued_npcs["angel"] = true
 	shop = SHOP_SCENE.instantiate() as UpgradeMachine
 	add_child(shop)
 	shop.set_process(false)

@@ -1,0 +1,48 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS legacy effect becomes only canonical Mailman without mutating its source
+PASS unrelated effect parameters retain independent copies
+PASS alias duplicates collapse before the two-effect limit so poison is retained
+PASS migration preserves existing duplicate semantics for unrelated effects and the two-effect limit
+PASS combat readers expose only the replacement effect for old cards
+PASS new instance boundary migrates effects while preserving level/Holo and filtering non-innate Lava
+PASS innate Mailman and migrated instance effect merge once while retaining the second distinct effect
+PASS merge preserves exact copy metadata without rewriting preview inputs
+PASS innate Lava survives while the instance contributes only the migrated Mailman
+PASS migration cannot turn a special card into a combat-effect carrier
+PASS retired effect is no longer retrievable and canonical Mailman remains catalogued
+PASS complete effect catalog contains no retired entry
+PASS random pool contains neither retired effect nor innate-only Lava
+PASS an old in-memory pool is normalized without double-weighting Mailman
+PASS even the weighted single-entry fallback cannot return the retired effect
+PASS collection reload normalizes both persisted effect fields and keeps Lava excluded
+PASS collection migration preserves ownership count and exact Holo instance identity
+PASS unrelated unlock metadata survives and a stored offering reward mirror is normalized too
+PASS reading and previewing an old collection performs no migration-only disk write
+PASS normal collection save persists the migrated profile
+PASS normal save removes legacy aliases from owned copies and reward metadata
+PASS migrated collection survives another save/load without changing its copy
+PASS direct collection admission also migrates an old reward without modifying its caller
+PASS legacy upgrade fixture saves only in the isolated slot
+PASS upgrade load migrates old effects before capacity checks and excludes bought Lava
+PASS an alias matching innate Mailman cannot displace its distinct purchased effect or consume an extra slot
+PASS migration preserves stat purchases, effect-roll pricing and accumulated bonuses
+PASS apply_upgrades replaces stale preferred active_effects so bought effects remain usable without mutating input
+PASS preferred active_effects cannot resurrect a removed innate Lava after upgrade migration
+PASS an explicitly removed former innate effect remains removed after its authored replacement
+PASS upgrade load and all pure previews avoid extra persistence writes
+PASS normal upgrade save persists only canonical effects
+PASS canonical upgrade lists, removal indices and roll counters survive another reload
+PASS visible upgraded-effect index removes the migrated Mailman rather than its neighbor
+PASS legacy direct add migrates canonically while preserving independent roll progression
+PASS normalizing a legacy type never opens the upgrade Lava boundary
+PASS network hit counts share the executable one-to-eight range
+PASS remote legacy effect migrates before catalog validation and drops obsolete amount fields
+PASS remote card keeps exact identity/Holo and distinct effects while removing alias duplicates and illegal Lava
+PASS payload migration preserves duplicate-instance rejection and remaps chosen starting copies
+PASS all accepted network deck copies carry only canonical effects
+PASS an explicit authoritative active list remains authoritative instead of reviving an inactive legacy effect
+PASS only Pisse-Eimer retains its canonical innate Lava beside migrated Mailman
+PASS network normalization does not restore a deliberately removed innate Lava
+DECK_BURN_MIGRATION_TESTS: PASS (44 checks)

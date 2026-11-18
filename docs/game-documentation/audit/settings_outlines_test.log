@@ -1,0 +1,51 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+FAIL: All seven settings sliders and all four checkboxes are covered
+PASS: Scale3DSlider has one-pixel white track borders and all three outlined knob states
+PASS: Scale3DSlider has at least 120 pixels of usable track at 1280-pixel viewport width
+PASS: MasterSlider has one-pixel white track borders and all three outlined knob states
+PASS: MasterSlider has at least 120 pixels of usable track at 1280-pixel viewport width
+PASS: MusicSlider has one-pixel white track borders and all three outlined knob states
+PASS: MusicSlider has at least 120 pixels of usable track at 1280-pixel viewport width
+PASS: SFXSlider has one-pixel white track borders and all three outlined knob states
+PASS: SFXSlider has at least 120 pixels of usable track at 1280-pixel viewport width
+PASS: SatanVoicePitchSlider has one-pixel white track borders and all three outlined knob states
+PASS: SatanVoicePitchSlider has at least 120 pixels of usable track at 1280-pixel viewport width
+PASS: MicrophoneGainSlider has one-pixel white track borders and all three outlined knob states
+PASS: MicrophoneGainSlider has at least 120 pixels of usable track at 1280-pixel viewport width
+PASS: SatanVoiceVolumeSlider has one-pixel white track borders and all three outlined knob states
+PASS: SatanVoiceVolumeSlider has at least 120 pixels of usable track at 1280-pixel viewport width
+PASS: FullscreenCheckBox retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: FullscreenCheckBox has no added border around its text row
+PASS: DamageNumbersCheckBox retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: DamageNumbersCheckBox has no added border around its text row
+PASS: TurnArrowsCheckBox retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: TurnArrowsCheckBox has no added border around its text row
+PASS: CheatRarity_common retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: CheatRarity_common has no added border around its text row
+PASS: CheatRarity_uncommon retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: CheatRarity_uncommon has no added border around its text row
+PASS: CheatRarity_rare retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: CheatRarity_rare has no added border around its text row
+PASS: CheatRarity_epic retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: CheatRarity_epic has no added border around its text row
+PASS: CheatRarity_legendary retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: CheatRarity_legendary has no added border around its text row
+PASS: CheatRarity_mythic retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: CheatRarity_mythic has no added border around its text row
+PASS: CheatRarity_exotic retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: CheatRarity_exotic has no added border around its text row
+PASS: CheatRarity_secret retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: CheatRarity_secret has no added border around its text row
+PASS: SatanVoiceEnabledCheckBox retains icon dimensions and checkmark/fill pixels in checked, unchecked and disabled states
+PASS: SatanVoiceEnabledCheckBox has no added border around its text row
+PASS: Actual fullscreen checkbox click still enables fullscreen
+PASS: Second actual fullscreen checkbox click still disables fullscreen
+PASS: Dragging the master knob still changes and saves volume
+PASS: Disabled outlined controls ignore mouse input
+PASS: Actual voice checkbox click still updates the setting
+PASS: Pitch layout retains the original range and loaded setting
+PASS: Dragging the visible pitch track updates both the setting and percentage
+PASS: Nested voice volume slider remains draggable after scrolling
+SETTINGS_OUTLINES_TESTS: FAIL (47 checks)

@@ -1,0 +1,147 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: select fixture slot 1 through the real API
+PASS: reset isolated profile fixture 1
+PASS: reset isolated profile fixture 2
+PASS: fresh empty profile: repeated reads preserve shared RNG
+PASS: fresh empty profile: reads preserve all profile/catalog state and all save/settings bytes
+PASS: fresh empty profile: stable snapshot contains the complete public schema
+PASS: fresh empty profile: callers own the returned snapshot
+PASS: empty deck reports zero for deck_count
+PASS: empty deck reports zero for total_attack
+PASS: empty deck reports zero for total_health
+PASS: empty deck reports zero for deck_strength
+PASS: empty deck reports zero for average_strength
+PASS: empty deck reports zero for unique_deck_cards
+PASS: empty deck reports zero for effect_count
+PASS: empty deck reports zero for unique_effects
+PASS: empty deck reports zero for holo_deck_count
+PASS: empty deck reports zero for strongest_strength
+PASS: empty deck has no strongest card and retains its capacity
+PASS: fresh profile has no inherited progress
+PASS: own the exact fixture instance profile-corpse-normal
+PASS: own the exact fixture instance profile-corpse-holo
+PASS: own the exact fixture instance profile-corpse-holo-reserve
+PASS: own the exact fixture instance profile-joe
+PASS: own the exact fixture instance profile-piss
+PASS: own the exact fixture instance profile-mailman-reserve
+PASS: own the exact fixture instance profile-clicker
+PASS: own the exact fixture instance profile-key
+PASS: save duplicate combat cards bound to exact owned copies
+PASS: special cards cannot enter the real combat deck
+PASS: both corpse copies share one purchased armor effect
+PASS: replace Joe's innate thorns with a purchased effect
+PASS: save a non-default player level, XP and cent balance
+PASS: populated exact-copy deck: repeated reads preserve shared RNG
+PASS: populated exact-copy deck: reads preserve all profile/catalog state and all save/settings bytes
+PASS: populated exact-copy deck: stable snapshot contains the complete public schema
+PASS: populated exact-copy deck: callers own the returned snapshot
+PASS: overview reads the selected slot's exact player progression
+PASS: deck counts copies separately from unique combat types
+PASS: deck strength sums each copy's upgraded attack and maximum health exactly once
+PASS: average strength divides by actual deck copies
+PASS: strongest card is evaluated using its upgraded maximum stats
+PASS: effects include both armor copies, regeneration and innate Lava while removed thorns stay absent
+PASS: a reserved collection Holo does not replace the normal copy pinned in the deck
+PASS: collection distinguishes combat copies, combat types and permanent special types
+PASS: stat purchases count each type transaction once, including reserves but excluding effect rolls
+PASS: catalog completion denominators include every relevant card type
+PASS: legacy deck without bindings or a corpse upgrade record: repeated reads preserve shared RNG
+PASS: legacy deck without bindings or a corpse upgrade record: reads preserve all profile/catalog state and all save/settings bytes
+PASS: legacy deck without bindings or a corpse upgrade record: stable snapshot contains the complete public schema
+PASS: legacy deck without bindings or a corpse upgrade record: callers own the returned snapshot
+PASS: read-only profile ignores a stray special without filling legacy Holo bindings or missing upgrade records
+PASS: legacy stat counter: repeated reads preserve shared RNG
+PASS: legacy stat counter: reads preserve all profile/catalog state and all save/settings bytes
+PASS: legacy stat counter: stable snapshot contains the complete public schema
+PASS: legacy stat counter: callers own the returned snapshot
+PASS: legacy purchase fallback reads stat bonuses without writing a derived counter
+PASS: owned collection with an empty deck: repeated reads preserve shared RNG
+PASS: owned collection with an empty deck: reads preserve all profile/catalog state and all save/settings bytes
+PASS: owned collection with an empty deck: stable snapshot contains the complete public schema
+PASS: owned collection with an empty deck: callers own the returned snapshot
+PASS: empty deck reports zero for deck_count
+PASS: empty deck reports zero for total_attack
+PASS: empty deck reports zero for total_health
+PASS: empty deck reports zero for deck_strength
+PASS: empty deck reports zero for average_strength
+PASS: empty deck reports zero for unique_deck_cards
+PASS: empty deck reports zero for effect_count
+PASS: empty deck reports zero for unique_effects
+PASS: empty deck reports zero for holo_deck_count
+PASS: empty deck reports zero for strongest_strength
+PASS: empty deck has no strongest card and retains its capacity
+PASS: select fixture slot 2 through the real API
+PASS: second save slot: repeated reads preserve shared RNG
+PASS: second save slot: reads preserve all profile/catalog state and all save/settings bytes
+PASS: second save slot: stable snapshot contains the complete public schema
+PASS: second save slot: callers own the returned snapshot
+PASS: empty deck reports zero for deck_count
+PASS: empty deck reports zero for total_attack
+PASS: empty deck reports zero for total_health
+PASS: empty deck reports zero for deck_strength
+PASS: empty deck reports zero for average_strength
+PASS: empty deck reports zero for unique_deck_cards
+PASS: empty deck reports zero for effect_count
+PASS: empty deck reports zero for unique_effects
+PASS: empty deck reports zero for holo_deck_count
+PASS: empty deck reports zero for strongest_strength
+PASS: empty deck has no strongest card and retains its capacity
+PASS: another save slot has independent collection and purchase counts
+PASS: own the exact fixture instance profile-slot2-joe
+PASS: second slot owns and selects its own combat card
+PASS: persist the second profile's distinct wallet
+PASS: populated second save slot: repeated reads preserve shared RNG
+PASS: populated second save slot: reads preserve all profile/catalog state and all save/settings bytes
+PASS: populated second save slot: stable snapshot contains the complete public schema
+PASS: populated second save slot: callers own the returned snapshot
+PASS: second slot's Joe retains innate thorns instead of the first slot's purchased regeneration
+PASS: select fixture slot 1 through the real API
+PASS: restored first save slot: repeated reads preserve shared RNG
+PASS: restored first save slot: reads preserve all profile/catalog state and all save/settings bytes
+PASS: restored first save slot: stable snapshot contains the complete public schema
+PASS: restored first save slot: callers own the returned snapshot
+PASS: switching back restores the exact first profile statistics
+PASS: standalone journal opens with a real reading camera
+PASS: physical profile control exists: chapter:5
+PASS: profile control is visible and pointer-reachable: chapter:5
+PASS: physical click completes: chapter:5
+PASS: journal preserves its selected subject and shows a fresh snapshot: profile:overview
+PASS: updated profile text is printed on the visible page: profile:overview
+PASS: open profile updates both upgraded deck copies without switching tabs or reopening
+PASS: journal preserves its selected subject and shows a fresh snapshot: profile:overview
+PASS: updated profile text is printed on the visible page: profile:overview
+PASS: physical profile control exists: entry:1
+PASS: profile control is visible and pointer-reachable: entry:1
+PASS: physical click completes: entry:1
+PASS: journal preserves its selected subject and shows a fresh snapshot: profile:deck
+PASS: updated profile text is printed on the visible page: profile:deck
+PASS: profile has no Close or X control
+PASS: Escape closes the profile journal
+PASS: journal reopens after progression changes while closed
+PASS: journal preserves its selected subject and shows a fresh snapshot: profile:deck
+PASS: updated profile text is printed on the visible page: profile:deck
+PASS: physical profile control exists: chapter:3
+PASS: profile control is visible and pointer-reachable: chapter:3
+PASS: physical click completes: chapter:3
+PASS: refreshing profile data preserves another tab's subject and existing printed nodes
+PASS: physical profile control exists: chapter:5
+PASS: profile control is visible and pointer-reachable: chapter:5
+PASS: physical click completes: chapter:5
+PASS: journal preserves its selected subject and shows a fresh snapshot: profile:overview
+PASS: updated profile text is printed on the visible page: profile:overview
+PASS: physical profile control exists: entry:2
+PASS: profile control is visible and pointer-reachable: entry:2
+PASS: physical click completes: entry:2
+PASS: journal preserves its selected subject and shows a fresh snapshot: profile:collection
+PASS: updated profile text is printed on the visible page: profile:collection
+PASS: own the exact fixture instance profile-new-collection-copy
+PASS: the visible collection page updates after acquisition
+PASS: journal preserves its selected subject and shows a fresh snapshot: profile:collection
+PASS: updated profile text is printed on the visible page: profile:collection
+PASS: profile has no Close or X control
+PASS: Escape closes the profile journal
+JOURNAL_PROFILE_TESTS: PASS (141 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

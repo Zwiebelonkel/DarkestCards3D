@@ -1,0 +1,26 @@
+{
+  "checked_at_utc": "2026-11-14T18:32:08.3796759Z",
+  "prisoner_dialogue": "PASS: 70 checks, Forward+ render, fixed authored sprite and viewport mouse events",
+  "crypt_and_beacon": "PASS: 49 checks headless, plus 53 checks in the rendered run",
+  "voice": "Same satanVoice.mp3 sample and variation as Jester; offset +3 semitones versus Jester +6; no sentence-end player",
+  "order": [
+    "*Lacht*",
+    "*Scheisst sich ein*"
+  ],
+  "translations": "All five production language resources verified",
+  "return_heading": "Horizontal camera heading remains within dot product 0.999 of its starting direction for every sampled return frame; side 2 retained on arrival",
+  "profile_integrity": "Cards, currency and profile file bytes unchanged",
+  "visual_review": "Authored sprite placement preserved; hover and both text windows inspected at 1280x720",
+  "engine_errors": [],
+  "exit_warning": "Existing ObjectDB instances leaked at exit warning",
+  "source_matches_tested_copy": {
+    "scripts/rooms/PrisonerDialogue.gd": true,
+    "scenes/rooms/Graveyard.tscn": true,
+    "tests/crypt_gate_test.gd": true,
+    "tests/prisoner_dialogue_test.gd": true,
+    "localization/game.csv": true,
+    "scripts/main/Main.gd": true
+  },
+  "fart_effect": "fart.mp3 plays once on entering the second window, uses SFX, does not restart when revealing the line, stops on close and Pause",
+  "billboard": "Disabled on both Sprite3D and eye-glow material; click area follows the fixed actor transform"
+}

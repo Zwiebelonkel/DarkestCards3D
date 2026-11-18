@@ -36,6 +36,9 @@ const SHAKE_MAX_ROTATION_RADIANS := SatanVoicePortrait.SHAKE_MAX_ROTATION_RADIAN
 var _voice_activity := VoiceActivity.SILENT
 var _chat_enabled := false
 var _remote_voice_level := 0.0
+var _second_fighter_panel: PanelContainer
+var _second_fighter_portrait: TextureRect
+var _second_fighter_name: Label
 
 
 func _ready() -> void:
@@ -58,6 +61,43 @@ func show_for_match(should_show: bool) -> void:
 	if not should_show:
 		set_remote_voice_activity(VoiceActivity.SILENT)
 		_reset_portrait_shake()
+
+
+func set_character_players(opponent: Dictionary = {}, second_fighter: Dictionary = {}, spectator: bool = false) -> void:
+	satan_portrait.set_character_appearance(opponent.get("appearance", {}) if not opponent.is_empty() else null)
+	var title := get_node("OpponentVoiceIndicator/MarginContainer/VBoxContainer/Header/Title") as Label
+	title.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	title.text = str(opponent.get("name", Localization.text("GEGENSPIELER"))).substr(0, 48)
+	if spectator and not second_fighter.is_empty():
+		if _second_fighter_panel == null:
+			_second_fighter_panel = PanelContainer.new()
+			_second_fighter_panel.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+			_second_fighter_panel.offset_left = -200
+			_second_fighter_panel.offset_right = -20
+			_second_fighter_panel.offset_top = 20
+			_second_fighter_panel.add_theme_stylebox_override("panel", idle_panel_style)
+			add_child(_second_fighter_panel)
+			var column := VBoxContainer.new()
+			_second_fighter_panel.add_child(column)
+			_second_fighter_name = Label.new()
+			_second_fighter_name.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+			_second_fighter_name.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			_second_fighter_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			column.add_child(_second_fighter_name)
+			_second_fighter_portrait = TextureRect.new()
+			_second_fighter_portrait.custom_minimum_size = Vector2(160, 140)
+			_second_fighter_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			_second_fighter_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			_second_fighter_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			column.add_child(_second_fighter_portrait)
+			_set_mouse_filter_ignore(_second_fighter_panel)
+		_second_fighter_panel.show()
+		_second_fighter_name.text = str(second_fighter.get("name", "")).substr(0, 48)
+		_second_fighter_portrait.texture = CharacterAppearance.resources(second_fighter.get("appearance", {}))["texture"]
+	elif _second_fighter_panel != null:
+		_second_fighter_panel.hide()
+	_apply_voice_visuals()
 
 
 func set_voice_chat_enabled(enabled: bool) -> void:
@@ -123,7 +163,7 @@ func _apply_voice_visuals() -> void:
 		voice_state_label.text = "VOICE AUS"
 		voice_state_label.add_theme_color_override("font_color", Color(0.46, 0.43, 0.45, 1.0))
 		voice_panel.add_theme_stylebox_override("panel", idle_panel_style)
-		satan_portrait.modulate = Color(0.48, 0.45, 0.47, 1.0)
+		satan_portrait.modulate = Color.WHITE if satan_portrait.has_character_appearance() else Color(0.48, 0.45, 0.47, 1.0)
 		return
 
 	satan_portrait.modulate = Color.WHITE

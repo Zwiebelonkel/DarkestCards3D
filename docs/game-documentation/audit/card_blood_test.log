@@ -1,0 +1,33 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS freshly spawned cards start clean
+PASS a hit stains only its own card
+PASS both card body and artwork receive bloodMix overlays
+PASS cards do not share mutable blood shader materials
+PASS blood fades on static card artwork
+PASS same-card snapshot preserves the current stain
+PASS snapshot does not restart the blood fade deadline
+PASS fully faded artwork removes its overlay
+PASS a subsequent hit refreshes the visible blood
+PASS refreshed blood remains after the original hit would expire
+PASS refreshed blood eventually disappears completely
+PASS another owned copy of the same card starts clean when a node is reused
+PASS deck stack decorations cannot be stained
+PASS zero-strength effect does not create a stain
+PASS real attack and counter stain both cards even without particle scenes
+PASS surviving a real attack and counter keeps both original card materials without starting a death dissolve
+PASS shield-blocked hits leave both cards clean
+FAIL last-stand counter hit stains the attacker despite unchanged final HP
+PASS last stand prevents a lethal-looking counter from dissolving the surviving card
+FAIL last-stand thorns hit stains the attacker before HP restoration
+PASS poison stains only the damaged card
+PASS authoritative impact presentation stains only the remotely damaged card
+PASS duplicate impact cannot refresh a fading stain
+PASS spectator receives generic poison and cleave surface blood
+PASS duplicate generic blood packet cannot refresh a fading stain
+PASS real process frames progressively fade the rendered stain
+PASS rendered stain expires while the unhit neighbor stays clean
+CARD_BLOOD_TESTS: FAIL
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

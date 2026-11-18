@@ -1,0 +1,29 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "Legendary Piss event stream",
+  "scene": "res://scenes/effects/Piss.tscn",
+  "units": "meters",
+  "origin": "caster's table side, 0.85 m above the slot root and 1.25 m behind it",
+  "forward": "ballistic world-space aim onto the tabletop",
+  "interaction_sides": ["near fighter", "far fighter", "spectator"],
+  "style_references": [
+    {"path": "res://scenes/effects/Piss.tscn", "reason": "Existing yellow ribbon, particle trail and sound"},
+    {"path": "res://scenes/table/GameTable.tscn", "reason": "Real tabletop bounds and both fighter rows"},
+    {"path": "res://scripts/ui/EventHandUI.gd", "reason": "Existing gold legendary event frame and drawn symbol style"}
+  ],
+  "collision": {"required": false, "strategy": "Reuse the authored GPU table collision; no gameplay physics added"},
+  "budgets": {"nodes": 3, "particles": 1, "particle_capacity": 420, "lights": 0, "collision_shapes": 0},
+  "review": {"required_views": ["match camera before", "legendary public reveal", "stream and all hidden rows", "restored rows"]},
+  "evidence": {
+    "structural": ["res://tests/piss_event_test.tscn"],
+    "runtime": ["res://tests/piss_event_test.tscn", "res://tests/event_cards_network_test.tscn", "res://tests/satan_stream_test.tscn"],
+    "performance": ["docs/validation/piss-event/performance.json"],
+    "visual": ["docs/validation/piss-event/review.json"]
+  },
+  "notes": [
+    "Dynamic presentation reuses the existing packed scene without new meshes, textures, lights or rigid bodies. Static junction, route and navigation gates do not apply.",
+    "A separate event emitter preserves the authored Satan hub stream and its editable pose. The table-event target circles horizontally at radius 0.45 m on the actual mesh's top surface; flight time is 0.65 seconds.",
+    "Duration is gameplay state owned by the host. Visuals play locally once per event sequence and stop on match cleanup."
+  ]
+}

@@ -1,0 +1,97 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS boiler fixture explicitly activates basement access
+PASS the isolated boiler fixture saves successfully
+PASS all four authored boilers have their own interactive controller
+PASS the hub cannot hover or operate remote basement boilers
+PASS a real basement door click starts travel with boiler input disabled
+PASS the physical doorway flight arrives in the basement
+PASS MainBoiler exposes a visible body hover target
+PASS MainBoiler enables its own wheel in the visible basement view
+PASS MainBoiler real body hover selects this boiler's camera focus
+PASS MainBoiler focus stays stable with a stationary pointer
+PASS MainBoiler focused camera keeps the valve visible and reachable
+PASS MainBoiler real left press on the wheel begins circular dragging
+PASS an active valve drag owns navigation until released
+PASS MainBoiler circular dragging leaves the shared battle and reward RNG untouched
+PASS MainBoiler changes its pressure within the decorative gauge range
+PASS MainBoiler turns the complete valve wheel and both spokes together
+PASS MainBoiler moves its needle and updates the displayed pressure together
+PASS MainBoiler leaves every other boiler's pressure unchanged
+PASS MainBoiler reversing the mouse circle reverses the pressure change
+PASS MainBoiler retains camera framing while dragging outside the boiler
+PASS MainBoiler releasing outside ends dragging and returns the camera
+PASS MainBoiler pointer movement after release cannot keep turning the wheel
+PASS MainBoiler2 exposes a visible body hover target
+PASS MainBoiler2 enables its own wheel in the visible basement view
+PASS MainBoiler2 real body hover selects this boiler's camera focus
+PASS MainBoiler2 focus stays stable with a stationary pointer
+PASS MainBoiler2 focused camera keeps the valve visible and reachable
+PASS MainBoiler2 real left press on the wheel begins circular dragging
+PASS an active valve drag owns navigation until released
+PASS MainBoiler2 circular dragging leaves the shared battle and reward RNG untouched
+PASS MainBoiler2 changes its pressure within the decorative gauge range
+PASS MainBoiler2 turns the complete valve wheel and both spokes together
+PASS MainBoiler2 moves its needle and updates the displayed pressure together
+PASS MainBoiler2 leaves every other boiler's pressure unchanged
+PASS MainBoiler2 reversing the mouse circle reverses the pressure change
+PASS MainBoiler2 retains camera framing while dragging outside the boiler
+PASS MainBoiler2 releasing outside ends dragging and returns the camera
+PASS MainBoiler2 pointer movement after release cannot keep turning the wheel
+PASS MainBoiler3 exposes a visible body hover target
+PASS MainBoiler3 enables its own wheel in the visible basement view
+PASS MainBoiler3 real body hover selects this boiler's camera focus
+PASS MainBoiler3 focus stays stable with a stationary pointer
+PASS MainBoiler3 focused camera keeps the valve visible and reachable
+PASS MainBoiler3 real left press on the wheel begins circular dragging
+PASS an active valve drag owns navigation until released
+PASS MainBoiler3 circular dragging leaves the shared battle and reward RNG untouched
+PASS MainBoiler3 changes its pressure within the decorative gauge range
+PASS MainBoiler3 turns the complete valve wheel and both spokes together
+PASS MainBoiler3 moves its needle and updates the displayed pressure together
+PASS MainBoiler3 leaves every other boiler's pressure unchanged
+PASS MainBoiler3 reversing the mouse circle reverses the pressure change
+PASS MainBoiler3 retains camera framing while dragging outside the boiler
+PASS MainBoiler3 releasing outside ends dragging and returns the camera
+PASS MainBoiler3 pointer movement after release cannot keep turning the wheel
+PASS MainBoiler4 exposes a visible body hover target
+PASS MainBoiler4 enables its own wheel in the visible basement view
+PASS MainBoiler4 real body hover selects this boiler's camera focus
+PASS MainBoiler4 focus stays stable with a stationary pointer
+PASS MainBoiler4 focused camera keeps the valve visible and reachable
+PASS MainBoiler4 real left press on the wheel begins circular dragging
+PASS an active valve drag owns navigation until released
+PASS MainBoiler4 circular dragging leaves the shared battle and reward RNG untouched
+PASS MainBoiler4 changes its pressure within the decorative gauge range
+PASS MainBoiler4 turns the complete valve wheel and both spokes together
+PASS MainBoiler4 moves its needle and updates the displayed pressure together
+PASS MainBoiler4 leaves every other boiler's pressure unchanged
+PASS MainBoiler4 reversing the mouse circle reverses the pressure change
+PASS MainBoiler4 retains camera framing while dragging outside the boiler
+PASS MainBoiler4 releasing outside ends dragging and returns the camera
+PASS MainBoiler4 pointer movement after release cannot keep turning the wheel
+PASS MainBoiler2 exposes a visible body hover target
+PASS the adjacent boiler remains reachable from a focused boiler
+PASS real hover directly into another boiler on the same side replaces the focus target
+PASS direct boiler-to-boiler focus also updates the camera pose
+PASS MainBoiler exposes a visible body hover target
+PASS opening the real journal disables boiler input and releases focus
+PASS a journal-covered valve cannot be dragged
+PASS MainBoiler exposes a visible body hover target
+PASS MainBoiler focused camera keeps the valve visible and reachable
+PASS the wheel can be dragged again after the journal closes
+PASS Pause cancels an in-progress wheel drag and disables all boiler picking
+PASS Pause immediately returns the camera before the tree stops
+PASS MainBoiler exposes a visible body hover target
+PASS MainBoiler focused camera keeps the valve visible and reachable
+PASS the online pause overlay also cancels dragging while networking stays active
+PASS starting a normal cardinal turn disables boiler picking immediately
+PASS settling back at the boiler wall restores interaction
+PASS turning the valves changes neither cards nor currency
+PASS cosmetic boiler interaction leaves the catalog and all profile save bytes unchanged
+PASS the real return door remains usable after boiler interaction
+PASS leaving the basement releases boiler input and camera focus
+BASEMENT_BOILER_TESTS: PASS (91 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

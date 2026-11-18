@@ -1,0 +1,20 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS the real main menu opens
+PASS Play enters the standalone loading scene even after a double click
+PASS the selected save slot is committed before background loading
+PASS Main is not requested before the loading screen can draw
+PASS the standalone scene covers the viewport in black
+PASS the screen contains only Satan and an empty minimalist bar
+PASS the bar reaches 100 percent only after Main is fully loaded
+PASS Satan's existing laugh sheet continues animating while loading
+PASS the completed bar is displayed before the scene switch
+PASS the deferred handoff enters the real Main scene
+PASS entering Main preserves the selected profile and resumes normal processing
+PASS returning from Main restores the menu
+PASS the menu's direct/online entry path also uses the loader
+PASS a repeated load reaches Main without getting stuck or duplicating the transition
+LOADING_SCREEN_TESTS: PASS (14 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

@@ -1,0 +1,21 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS Every current special card and upgrade belongs to the separate wall collection
+PASS No access key or other special type remains in the normal collection
+PASS All combat cards keep their normal collection category
+PASS The actual normal collection creates only the owned combat cards
+PASS The separate physical wall includes all four access keys alongside owned upgrades
+PASS Owned visible cards suppress the empty-collection message
+PASS Separating displays leaves every owned copy and instance identity intact
+PASS The hidden upgrade cards still unlock all five starting slots
+PASS A combat card can still use the fifth unlocked starting slot
+PASS Existing sparse starting-slot assignments remain available
+PASS The real clicker still applies its unlock and both upgrade copies
+PASS Save and reload preserve special-card ownership and the display partition
+PASS An upgrade-only inventory shows the actual empty state without hidden card rows
+PASS Empty normal collection does not reset slot unlocks or clicker earnings
+PASS Acquiring another special card updates only the separate wall
+COLLECTION_FILTER_TESTS: PASS (15 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

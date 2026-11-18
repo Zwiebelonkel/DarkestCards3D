@@ -34,6 +34,7 @@ var _portrait_atlas := AtlasTexture.new()
 var _voice_level := 0.0
 var _smoothed_shake_level := 0.0
 var _shake_phase := 0.0
+var _character_texture: Texture2D
 
 
 func _ready() -> void:
@@ -70,6 +71,17 @@ func configure_textures(
 	_current_texture = null
 	_current_frame = -1
 	_refresh_portrait_frame()
+
+
+func set_character_appearance(appearance: Variant = null) -> void:
+	_character_texture = CharacterAppearance.resources(appearance)["texture"] if appearance != null else null
+	_current_texture = null
+	_current_frame = -1
+	_refresh_portrait_frame()
+
+
+func has_character_appearance() -> bool:
+	return _character_texture != null
 
 
 func set_activity(activity: int) -> void:
@@ -184,6 +196,9 @@ func _apply_shake_transform(offset: Vector2, angle: float) -> void:
 
 func _refresh_portrait_frame() -> void:
 	if portrait == null:
+		return
+	if _character_texture != null:
+		portrait.texture = _character_texture
 		return
 	var target_texture := satan_idle_texture
 	var target_frame := floori(_base_animation_seconds * BASE_FPS) % BASE_FRAME_COUNT

@@ -1,0 +1,84 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS mirrored fighter accepts original bodyguards on both canonical sides and repeated hits
+PASS mirrored fighter consumes one validated authoritative contact
+PASS mirrored fighter applies final primary, Lava and both-side guard states to correct local cards
+PASS mirrored fighter repeated guard records retain distinct damage numbers plus their own Lava hit
+PASS mirrored fighter all contact damage uses real popup nodes in the same frame
+PASS mirrored fighter guard damage presentation always sees its final HP rather than intermediate snapshots
+PASS mirrored fighter replayed packet neither reapplies guard hits nor starts death
+PASS mirrored fighter validator rejects array
+PASS mirrored fighter invalid array rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects entry
+PASS mirrored fighter invalid entry rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects overflow
+PASS mirrored fighter invalid overflow rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects side
+PASS mirrored fighter invalid side rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects negative_slot
+PASS mirrored fighter invalid negative_slot rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects large_slot
+PASS mirrored fighter invalid large_slot rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects state_type
+PASS mirrored fighter invalid state_type rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects empty_state
+PASS mirrored fighter invalid empty_state rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects wrong_identity
+PASS mirrored fighter invalid wrong_identity rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects nonguard
+PASS mirrored fighter invalid nonguard rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects replacement
+PASS mirrored fighter invalid replacement rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects missing_board
+PASS mirrored fighter invalid missing_board rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter accepts exactly the documented ten-record bound
+PASS mirrored fighter legacy packet without guard hits needs no original-board map
+PASS mirrored fighter blocked guard share preserves HP, consumes shield and presents one zero
+PASS mirrored fighter guard survival state is consumed without a death animation
+PASS mirrored fighter guard also killed as a Lava target leaves its slot and flies away exactly once
+PASS mirrored fighter lethal combined contact preserves each guard/Lava damage number
+PASS mirrored fighter replay of a lethal guard/Lava packet cannot kill or display twice
+PASS mirrored fighter remote guard death never consumes a replacement reserved for the authority
+PASS spectator accepts original bodyguards on both canonical sides and repeated hits
+PASS spectator consumes one validated authoritative contact
+PASS spectator applies final primary, Lava and both-side guard states to correct local cards
+PASS spectator repeated guard records retain distinct damage numbers plus their own Lava hit
+PASS spectator all contact damage uses real popup nodes in the same frame
+PASS spectator guard damage presentation always sees its final HP rather than intermediate snapshots
+PASS spectator replayed packet neither reapplies guard hits nor starts death
+PASS spectator validator rejects array
+PASS spectator invalid array rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects entry
+PASS spectator invalid entry rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects overflow
+PASS spectator invalid overflow rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects side
+PASS spectator invalid side rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects negative_slot
+PASS spectator invalid negative_slot rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects large_slot
+PASS spectator invalid large_slot rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects state_type
+PASS spectator invalid state_type rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects empty_state
+PASS spectator invalid empty_state rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects wrong_identity
+PASS spectator invalid wrong_identity rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects nonguard
+PASS spectator invalid nonguard rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects replacement
+PASS spectator invalid replacement rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects missing_board
+PASS spectator invalid missing_board rejects the whole contact before HP, popups or deaths
+PASS spectator accepts exactly the documented ten-record bound
+PASS spectator legacy packet without guard hits needs no original-board map
+PASS spectator blocked guard share preserves HP, consumes shield and presents one zero
+PASS spectator guard survival state is consumed without a death animation
+PASS spectator guard also killed as a Lava target leaves its slot and flies away exactly once
+PASS spectator lethal combined contact preserves each guard/Lava damage number
+PASS spectator replay of a lethal guard/Lava packet cannot kill or display twice
+PASS spectator remote guard death never consumes a replacement reserved for the authority
+BODYGUARD_ONLINE_IMPACT_TESTS: PASS (78 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

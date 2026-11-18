@@ -5,13 +5,22 @@ Keller und Friedhof stehen direkt in `scenes/main/Main.tscn` als
 verwenden dieselbe Main-Kamera wie Hub und Slotraum. Die Kamera fliegt beim
 Türklick sichtbar durch die geöffneten `HospitalDoor`-Türrahmen und den
 Verbindungsgang zum festen Mittelpunkt des Zielraums. Der Rückweg führt durch
-dieselben Türen zurück zur vorherigen Hub-Position und Blickrichtung.
+dieselben Türen zurück zur vorherigen Hub-Position. Der Blick zeigt dann von
+der Eingangstür weg ins Rauminnere: aus dem Keller zum Packshop und vom
+Friedhof zum Spieltisch. Diese Richtung bleibt auch nach Item-Dialogen erhalten.
 
 Am festen Standpunkt dreht A/D den Blick wie im Slotraum um 90°. Die sichtbare
 Rückkehrtür lässt sich nach dem Drehen anklicken. Escape öffnet das reguläre
 Pausemenü. Die Räume haben keine eigene Kamera, kein eigenes HUD und keinen
 separaten Viewport. Es gibt keine Wegpunkt- oder W/S-Steuerung und keine
 eigenständige F6-Besichtigung.
+
+Alle Laufwege einschließlich der Gruft-Annäherung und ihrer Rückwege erhalten
+ein dezentes vertikales Kamera-Bobbing (2,5 cm) und eine leichte Auf-/Abneigung
+(0,6°). Der Rhythmus läuft über Türschwellen und Treppen hinweg durch und wird
+am Anfang und Ende sanft ausgeblendet. Die Kamera erreicht weiterhin exakt den
+vorgegebenen Standpunkt. Höhe, Neigung, Schrittabstand und Ein-/Ausblendzeit
+sind an Main unter `Walking Camera` einstellbar.
 
 ## Raumbausteine und Gestaltung
 
@@ -69,9 +78,10 @@ neu erzeugt und in Godot importiert werden.
 
 ## Zugang und Rückkehr
 
-`basement_key` und `graveyard_key` schalten weiterhin ihre jeweiligen Zugänge
-frei. Die Karten werden beim Besuch nicht verbraucht; der besuchte Zugang wird
-über die bestehende Sammlung gespeichert. Die Rückkehrtür bleibt bedienbar,
+`basement_key` und `graveyard_key` müssen zuerst im Hauptraum über die
+Schlüsselablage benutzt werden. Besitz oder ein Türklick allein schalten keinen
+Zugang frei. Die Benutzung wird gespeichert und die Karten bleiben erhalten.
+Die Rückkehrtür bleibt bedienbar,
 auch wenn die zugehörige Karte während des Aufenthalts verloren geht oder die
 Sammlung neu geladen wird. Eine erneute Einreise prüft wieder den gültigen Zugang.
 
@@ -99,6 +109,24 @@ gezeigt. Ein zusätzlicher Sammelklick ist nicht erforderlich. Der Schlüssel
 ist über `random_reward: false` von Packs und Zufallsbelohnungen ausgeschlossen.
 Bereits vorhandene Schlüssel und gespeicherte Friedhofszugänge bleiben gültig;
 erneutes Betreten oder Laden erzeugt keine zweite Karte.
+
+## Pumpensteuerung im Keller
+
+Die Box unter `PumpStation` verwendet `BasementPumpControl.gd`. Beim Hover über
+das Gehäuse fährt die gemeinsame Main-Kamera in eine frontale Nahansicht. Beim
+Verlassen der Box, Drehen, Öffnen des Journals oder Pausieren wird der Fokus
+wieder freigegeben. Alle drei Hebel lassen sich einzeln mit der linken Maustaste
+umlegen: oben leuchtet die zugehörige LED gelb, unten grün. Anfangs stehen die
+ersten beiden Hebel unten und der dritte oben. Die Hebel bewegen sich animiert;
+ihre Zustände bleiben beim Raumwechsel innerhalb derselben Main-Szene erhalten.
+Nach der ersten Aktivierung des Weed-Effekts löst **oben, unten, unten** das
+Pumpenrätsel und vergibt einmal pro Spielstand die Schlüsselkarte **Klopapier**.
+Vor der ersten Weed-Nutzung bleibt dieselbe Kombination ohne Belohnung. Die
+Karte wird gespeichert und kann vor dem Gefangenen gegen **Weihwasser** aus der
+Gruppe **Story-Karten** eingetauscht werden; sie öffnet keine Tür. Die leuchtenden
+Pfeile von `Hint1` verraten die Pumpenlösung während des Effekts.
+Während Menüs, Raumflügen und anderer gesperrter Interaktionen sind die Hebel
+nicht bedienbar. Details: [weed-reward.md](weed-reward.md).
 
 ## Feuerstelle im Friedhof
 

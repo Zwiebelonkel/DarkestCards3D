@@ -1,0 +1,35 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS collection entrance animation enables its area input
+PASS collection count sits at the top right of the card
+PASS multi-digit amounts grow left from their right edge
+PASS collection card lifts on its first hover
+PASS click opens the hovered card in detail
+PASS leaving the area during detail does not retain collection hover
+PASS the same card lifts again after closing its detail
+PASS duplicate enter events do not require extra exits to lower a card
+PASS hover remains reusable after duplicate signals
+PASS original card lifts after navigating to another detail and back to collection
+PASS another collection card also remains hoverable after detail navigation
+PASS collection hover recovers after opening and closing the deck fan
+PASS upgrade cards are absent from the normal collection
+PASS stale special-card callbacks cannot add an upgrade to the deck
+PASS combat card restores the Add to Deck action
+PASS top-right count updates after a combat card enters the deck
+PASS right-click fixture has every owned copy in the deck
+PASS overlapping card picking resolves the visible front card
+PASS right-click removes one copy even when all copies were in the deck
+PASS the same right-click leaves the overlapping rear card in the deck
+PASS removing from the deck preserves owned collection copies
+PASS right button release does not remove another copy
+PASS repeated right-click removal persists and updates the available count
+PASS right-clicking a card absent from the deck does not remove the card behind it
+PASS inactive collection areas cannot remove deck cards
+PASS right-click is ignored while a card is in detail view
+PASS deck fan exposes its front card for right-click
+PASS right-click also removes exactly one copy from the open deck fan
+PASS random deck fills with combat cards while skipping special copies
+COLLECTION_INTERACTION_TESTS: PASS (29 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

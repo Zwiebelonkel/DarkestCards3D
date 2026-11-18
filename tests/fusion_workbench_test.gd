@@ -95,7 +95,7 @@ func _run() -> void:
 	var corpse_base := CardDatabase.get_card("corpse")
 	check(int(upgraded_card.card_data.get("attack")) == int(corpse_base["attack"]) + 3 and int(upgraded_card.card_data.get("defense")) == int(corpse_base["defense"]) + 2, "inventory cards include the same purchased stat upgrades as battle cards")
 	check(int(upgraded_card.card_data.get("level")) == 3 and CardData.is_holo(upgraded_card.card_data) and str(upgraded_card.card_data.get("instance_id")) == upgraded_copy_id, "inventory preserves the exact owned level and Holo copy")
-	for action in ["fuse", "clear", "page_prev", "page_next", "rarity_prev", "rarity_next"]:
+	for action in ["fuse", "auto_fuse", "clear", "page_prev", "page_next", "rarity_prev", "rarity_next"]:
 		var node := forge._buttons[action]["node"] as Node3D
 		var half_size: Vector2 = forge._buttons[action]["size"] * 0.5
 		var all_corners_visible := true

@@ -1,4 +1,23 @@
 "keys","en","de","es","fr","pl"
+"No Hat","No hat","Kein Hut","Sin sombrero","Sans chapeau","Bez kapelusza"
+"Create Character","Create Character","Charakter erstellen","Crear personaje","Créer un personnage","Stwórz postać"
+"Eye Color","Eye Color","Augenfarbe","Color de ojos","Couleur des yeux","Kolor oczu"
+"Eye and Mouth Color","Eye and Mouth Color","Augen- und Mundfarbe","Color de ojos y boca","Couleur des yeux et de la bouche","Kolor oczu i ust"
+"No Mouth","No mouth","Kein Mund","Sin boca","Sans bouche","Bez ust"
+"Character Mouth %d / %d","Mouth %d / %d","Mund %d / %d","Boca %d / %d","Bouche %d / %d","Usta %d / %d"
+"Previous Mouth","Previous mouth","Vorheriger Mund","Boca anterior","Bouche précédente","Poprzednie usta"
+"Next Mouth","Next mouth","Nächster Mund","Siguiente boca","Bouche suivante","Następne usta"
+"Start the microphone test to see your character react to your voice.","Start the microphone test to see your character react to your voice.","Starte den Mikrofontest, damit dein Charakter auf deine Stimme reagiert.","Inicia la prueba del micrófono para ver cómo reacciona tu personaje a tu voz.","Lance le test du microphone pour voir ton personnage réagir à ta voix.","Uruchom test mikrofonu, aby zobaczyć, jak twoja postać reaguje na twój głos."
+"Louder input makes your character shake more.","Louder input makes your character shake more.","Je lauter du sprichst, desto stärker zittert dein Charakter.","Cuanto más fuerte hables, más temblará tu personaje.","Plus tu parles fort, plus ton personnage tremble.","Im głośniej mówisz, tym mocniej drży twoja postać."
+"Apply Character","Apply Character","Übernehmen","Aplicar","Appliquer","Zastosuj"
+"Back","Back","Zurück","Volver","Retour","Wstecz"
+"Character Hat %d / %d","Hat %d / %d","Hut %d / %d","Sombrero %d / %d","Chapeau %d / %d","Kapelusz %d / %d"
+"Character Face %d / %d","Face %d / %d","Gesicht %d / %d","Cara %d / %d","Visage %d / %d","Twarz %d / %d"
+"Previous Hat","Previous hat","Vorheriger Hut","Sombrero anterior","Chapeau précédent","Poprzedni kapelusz"
+"Next Hat","Next hat","Nächster Hut","Siguiente sombrero","Chapeau suivant","Następny kapelusz"
+"Previous Face","Previous face","Vorheriges Gesicht","Cara anterior","Visage précédent","Poprzednia twarz"
+"Next Face","Next face","Nächstes Gesicht","Siguiente cara","Visage suivant","Następna twarz"
+"Your character is visible to other players in multiplayer.","Your character is visible to other players in multiplayer.","Dein Charakter wird anderen Spielern im Multiplayer angezeigt.","Los demás jugadores verán tu personaje en multijugador.","Les autres joueurs verront ton personnage en multijoueur.","Inni gracze zobaczą twoją postać w trybie wieloosobowym."
 "Language","Language","Sprache","Idioma","Langue","Język"
 "Settings","Settings","Einstellungen","Ajustes","Paramètres","Ustawienia"
 "Frame Limit","Frame Limit","Bildratenlimit","Límite de FPS","Limite d’images par seconde","Limit klatek"
@@ -45,9 +64,9 @@
 "+50 Soul Coins","+50 Soul Coins","+50 Seelenmünzen","+50 monedas de alma","+50 pièces d’âme","+50 monet dusz"
 "Startdeck-Karten freischalten","Unlock starting-hand cards","Startdeck-Karten freischalten","Desbloquear cartas de mano inicial","Débloquer les cartes de main initiale","Odblokuj karty ręki początkowej"
 "Erhält Starthand I–V und schaltet alle fünf Startplätze frei.","Receive Starting Hand I–V and unlock all five starting slots.","Erhält Starthand I–V und schaltet alle fünf Startplätze frei.","Obtén Mano inicial I–V y desbloquea los cinco espacios iniciales.","Reçois Main initiale I–V et débloque les cinq emplacements de départ.","Otrzymaj Rękę początkową I–V i odblokuj wszystkie pięć pól początkowych."
-"Level %d erreicht · +%d Soul Coins Levelbonus","Reached level %d · +%d Soul Coins level reward","Stufe %d erreicht · +%d Seelenmünzen Stufenbonus","Nivel %d alcanzado · +%d monedas de alma de recompensa","Niveau %d atteint · récompense de +%d pièces d’âme","Osiągnięto poziom %d · premia: +%d monet dusz"
-"+50 Soul Coins · Kontostand: %s","+50 Soul Coins · Balance: %s","+50 Seelenmünzen · Kontostand: %s","+50 monedas de alma · Saldo: %s","+50 pièces d’âme · Solde : %s","+50 monet dusz · Stan konta: %s"
-"Alle 5 Startplätze freigeschaltet · Starthand I–V erhalten","All 5 starting slots unlocked · Starting Hand I–V received","Alle 5 Startplätze freigeschaltet · Starthand I–V erhalten","Los 5 espacios iniciales desbloqueados · Mano inicial I–V obtenida","Les 5 emplacements de départ sont débloqués · Main initiale I–V reçue","Odblokowano wszystkie 5 pól początkowych · Otrzymano Rękę początkową I–V"
+"Level %d erreicht - +%d Soul Coins Levelbonus","Reached level %d - +%d Soul Coins level reward","Stufe %d erreicht - +%d Seelenmünzen Stufenbonus","Nivel %d alcanzado - +%d monedas de alma de recompensa","Niveau %d atteint - récompense de +%d pièces d’âme","Osiągnięto poziom %d - premia: +%d monet dusz"
+"+50 Soul Coins - Kontostand: %s","+50 Soul Coins - Balance: %s","+50 Seelenmünzen - Kontostand: %s","+50 monedas de alma - Saldo: %s","+50 pièces d’âme - Solde : %s","+50 monet dusz - Stan konta: %s"
+"Alle 5 Startplätze freigeschaltet - Starthand I–V erhalten","All 5 starting slots unlocked - Starting Hand I–V received","Alle 5 Startplätze freigeschaltet - Starthand I–V erhalten","Los 5 espacios iniciales desbloqueados - Mano inicial I–V obtenida","Les 5 emplacements de départ sont débloqués - Main initiale I–V reçue","Odblokowano wszystkie 5 pól początkowych - Otrzymano Rękę początkową I–V"
 "Steam microphone is still stopping. Please wait a moment.","Steam microphone is still stopping. Please wait a moment.","Das Steam-Mikrofon wird noch gestoppt. Bitte warte kurz.","El micrófono de Steam aún se está deteniendo. Espera un momento.","Le microphone Steam est en cours d’arrêt. Patiente un instant.","Mikrofon Steam jest jeszcze wyłączany. Poczekaj chwilę."
 "Steam is not ready. Start Steam and try the microphone test again.","Steam is not ready. Start Steam and try the microphone test again.","Steam ist nicht bereit. Starte Steam und versuche den Mikrofontest erneut.","Steam no está listo. Inicia Steam y vuelve a probar el micrófono.","Steam n’est pas prêt. Lance Steam et réessaie le test du microphone.","Steam nie jest gotowy. Uruchom Steam i ponów test mikrofonu."
 "Preparing the Steam microphone...","Preparing the Steam microphone...","Steam-Mikrofon wird vorbereitet …","Preparando el micrófono de Steam…","Préparation du microphone Steam…","Przygotowywanie mikrofonu Steam…"
@@ -83,14 +102,14 @@
 "Continue","Continue","Fortsetzen","Continuar","Continuer","Kontynuuj"
 "Zum Hauptmenü zurückgekehrt.","Returned to the main menu.","Zum Hauptmenü zurückgekehrt.","Se ha vuelto al menú principal.","Retour au menu principal.","Powrót do menu głównego."
 "STEAM-ONLINE","STEAM ONLINE","STEAM-ONLINE","STEAM EN LÍNEA","STEAM EN LIGNE","STEAM ONLINE"
-"STEAM: WIRD GEPRÜFT  ·  APP 480","STEAM: CHECKING  ·  APP 480","STEAM: WIRD GEPRÜFT  ·  APP 480","STEAM: COMPROBANDO  ·  APP 480","STEAM : VÉRIFICATION  ·  APP 480","STEAM: SPRAWDZANIE  ·  APP 480"
-"STEAM: BEREIT  ·  APP 480","STEAM: READY  ·  APP 480","STEAM: BEREIT  ·  APP 480","STEAM: LISTO  ·  APP 480","STEAM : PRÊT  ·  APP 480","STEAM: GOTOWY  ·  APP 480"
-"STEAM: OFFLINE  ·  APP 480","STEAM: OFFLINE  ·  APP 480","STEAM: OFFLINE  ·  APP 480","STEAM: DESCONECTADO  ·  APP 480","STEAM : HORS LIGNE  ·  APP 480","STEAM: OFFLINE  ·  APP 480"
+"STEAM: WIRD GEPRÜFT  -  APP 480","STEAM: CHECKING  -  APP 480","STEAM: WIRD GEPRÜFT  -  APP 480","STEAM: COMPROBANDO  -  APP 480","STEAM : VÉRIFICATION  -  APP 480","STEAM: SPRAWDZANIE  -  APP 480"
+"STEAM: BEREIT  -  APP 480","STEAM: READY  -  APP 480","STEAM: BEREIT  -  APP 480","STEAM: LISTO  -  APP 480","STEAM : PRÊT  -  APP 480","STEAM: GOTOWY  -  APP 480"
+"STEAM: OFFLINE  -  APP 480","STEAM: OFFLINE  -  APP 480","STEAM: OFFLINE  -  APP 480","STEAM: DESCONECTADO  -  APP 480","STEAM : HORS LIGNE  -  APP 480","STEAM: OFFLINE  -  APP 480"
 "Steam-Verbindung wird geprüft …","Checking Steam connection…","Steam-Verbindung wird geprüft …","Comprobando la conexión con Steam…","Vérification de la connexion Steam…","Sprawdzanie połączenia ze Steam…"
 "OFFENE LOBBYS","OPEN LOBBIES","OFFENE LOBBYS","SALAS ABIERTAS","SALONS OUVERTS","OTWARTE POKOJE"
 "0 GEFUNDEN","0 FOUND","0 GEFUNDEN","0 ENCONTRADAS","0 TROUVÉ","ZNALEZIONO: 0"
 "%d GEFUNDEN","%d FOUND","%d GEFUNDEN","%d ENCONTRADAS","TROUVÉS : %d","ZNALEZIONO: %d"
-"2 Spieler + 2 Zuschauer · Zuschauer brauchen kein Deck.","2 players + 2 spectators · Spectators do not need a deck.","2 Spieler + 2 Zuschauer · Zuschauer brauchen kein Deck.","2 jugadores + 2 espectadores · Los espectadores no necesitan mazo.","2 joueurs + 2 spectateurs · Les spectateurs n’ont pas besoin de deck.","2 graczy + 2 widzów · Widzowie nie potrzebują talii."
+"2 Spieler + 2 Zuschauer - Zuschauer brauchen kein Deck.","2 players + 2 spectators - Spectators do not need a deck.","2 Spieler + 2 Zuschauer - Zuschauer brauchen kein Deck.","2 jugadores + 2 espectadores - Los espectadores no necesitan mazo.","2 joueurs + 2 spectateurs - Les spectateurs n’ont pas besoin de deck.","2 graczy + 2 widzów - Widzowie nie potrzebują talii."
 "BEITRETEN ALS","JOIN AS","BEITRETEN ALS","UNIRSE COMO","REJOINDRE EN TANT QUE","DOŁĄCZ JAKO"
 "Spieler kämpfen mit ihrem Deck. Zuschauer verfolgen den Tisch von oben. Ein Beitritt ist nur vor Matchstart möglich.","Players fight with their decks. Spectators watch the table from above. You can only join before the match starts.","Spieler kämpfen mit ihrem Deck. Zuschauer verfolgen den Tisch von oben. Ein Beitritt ist nur vor Matchstart möglich.","Los jugadores luchan con sus mazos. Los espectadores ven la mesa desde arriba. Solo se puede entrar antes de que empiece la partida.","Les joueurs combattent avec leur deck. Les spectateurs regardent la table d’en haut. On ne peut rejoindre qu’avant le début du match.","Gracze walczą swoimi taliami. Widzowie obserwują stół z góry. Dołączenie jest możliwe tylko przed rozpoczęciem meczu."
 "SPIELER","PLAYER","SPIELER","JUGADOR","JOUEUR","GRACZ"
@@ -105,14 +124,14 @@
 "KEINE LOBBY AKTIV","NO ACTIVE LOBBY","KEINE LOBBY AKTIV","NINGUNA SALA ACTIVA","AUCUN SALON ACTIF","BRAK AKTYWNEGO POKOJU"
 "LOBBY-ID: —","LOBBY ID: —","LOBBY-ID: —","ID DE SALA: —","ID DU SALON : —","ID POKOJU: —"
 "LOBBY-ID: %d","LOBBY ID: %d","LOBBY-ID: %d","ID DE SALA: %d","ID DU SALON : %d","ID POKOJU: %d"
-"DEINE LOBBY · %s","YOUR LOBBY · %s","DEINE LOBBY · %s","TU SALA · %s","TON SALON · %s","TWÓJ POKÓJ · %s"
+"DEINE LOBBY - %s","YOUR LOBBY - %s","DEINE LOBBY - %s","TU SALA - %s","TON SALON - %s","TWÓJ POKÓJ - %s"
 "2 SPIELER + 2 ZUSCHAUER","2 PLAYERS + 2 SPECTATORS","2 SPIELER + 2 ZUSCHAUER","2 JUGADORES + 2 ESPECTADORES","2 JOUEURS + 2 SPECTATEURS","2 GRACZY + 2 WIDZÓW"
 "Noch nicht in einer Lobby.","Not in a lobby yet.","Noch nicht in einer Lobby.","Aún no estás en una sala.","Pas encore dans un salon.","Jeszcze nie dołączono do pokoju."
 "NICHT VERBUNDEN","NOT CONNECTED","NICHT VERBUNDEN","SIN CONEXIÓN","NON CONNECTÉ","BRAK POŁĄCZENIA"
 "FREUNDE EINLADEN","INVITE FRIENDS","FREUNDE EINLADEN","INVITAR AMIGOS","INVITER DES AMIS","ZAPROŚ ZNAJOMYCH"
 "MATCH STARTEN","START MATCH","MATCH STARTEN","INICIAR PARTIDA","LANCER LE MATCH","ROZPOCZNIJ MECZ"
 "ZURÜCK","BACK","ZURÜCK","VOLVER","RETOUR","WRÓĆ"
-"ESC: ZURÜCK  ·  ZUSCHAUER TRETEN VOR MATCHSTART BEI  ·  HOST STARTET DEN KAMPF","ESC: BACK  ·  SPECTATORS JOIN BEFORE THE MATCH  ·  HOST STARTS THE FIGHT","ESC: ZURÜCK  ·  ZUSCHAUER TRETEN VOR MATCHSTART BEI  ·  HOST STARTET DEN KAMPF","ESC: VOLVER  ·  LOS ESPECTADORES ENTRAN ANTES DE LA PARTIDA  ·  EL ANFITRIÓN INICIA EL COMBATE","ÉCHAP : RETOUR  ·  LES SPECTATEURS REJOIGNENT AVANT LE MATCH  ·  L’HÔTE LANCE LE COMBAT","ESC: WRÓĆ  ·  WIDZOWIE DOŁĄCZAJĄ PRZED MECZEM  ·  GOSPODARZ ROZPOCZYNA WALKĘ"
+"ESC: ZURÜCK  -  ZUSCHAUER TRETEN VOR MATCHSTART BEI  -  HOST STARTET DEN KAMPF","ESC: BACK  -  SPECTATORS JOIN BEFORE THE MATCH  -  HOST STARTS THE FIGHT","ESC: ZURÜCK  -  ZUSCHAUER TRETEN VOR MATCHSTART BEI  -  HOST STARTET DEN KAMPF","ESC: VOLVER  -  LOS ESPECTADORES ENTRAN ANTES DE LA PARTIDA  -  EL ANFITRIÓN INICIA EL COMBATE","ÉCHAP : RETOUR  -  LES SPECTATEURS REJOIGNENT AVANT LE MATCH  -  L’HÔTE LANCE LE COMBAT","ESC: WRÓĆ  -  WIDZOWIE DOŁĄCZAJĄ PRZED MECZEM  -  GOSPODARZ ROZPOCZYNA WALKĘ"
 "Netzwerkdienst fehlt","Network service missing","Netzwerkdienst fehlt","Falta el servicio de red","Service réseau manquant","Brak usługi sieciowej"
 "Der NetworkManager ist nicht verfügbar.","NetworkManager is unavailable.","Der NetworkManager ist nicht verfügbar.","NetworkManager no está disponible.","NetworkManager est indisponible.","NetworkManager jest niedostępny."
 "Online-Modus nicht verfügbar: NetworkManager fehlt.","Online mode unavailable: NetworkManager is missing.","Online-Modus nicht verfügbar: NetworkManager fehlt.","Modo en línea no disponible: falta NetworkManager.","Mode en ligne indisponible : NetworkManager est absent.","Tryb online niedostępny: brak NetworkManager."
@@ -146,30 +165,30 @@
 "Bereit","Ready","Bereit","Listo","Prêt","Gotowe"
 "Nicht verfügbar","Unavailable","Nicht verfügbar","No disponible","Indisponible","Niedostępne"
 "Spielerliste wird geladen …","Loading player list…","Spielerliste wird geladen …","Cargando lista de jugadores…","Chargement de la liste des joueurs…","Wczytywanie listy graczy…"
-"ZUSCHAUER · KAMERA VON OBEN","SPECTATOR · TOP-DOWN CAMERA","ZUSCHAUER · KAMERA VON OBEN","ESPECTADOR · CÁMARA SUPERIOR","SPECTATEUR · VUE DU DESSUS","WIDZ · KAMERA Z GÓRY"
+"ZUSCHAUER - KAMERA VON OBEN","SPECTATOR - TOP-DOWN CAMERA","ZUSCHAUER - KAMERA VON OBEN","ESPECTADOR - CÁMARA SUPERIOR","SPECTATEUR - VUE DU DESSUS","WIDZ - KAMERA Z GÓRY"
 "GEGENSPIELER VERBUNDEN","OPPONENT CONNECTED","GEGENSPIELER VERBUNDEN","RIVAL CONECTADO","ADVERSAIRE CONNECTÉ","PRZECIWNIK POŁĄCZONY"
 "WARTE AUF GEGENSPIELER","WAITING FOR OPPONENT","WARTE AUF GEGENSPIELER","ESPERANDO RIVAL","EN ATTENTE D’UN ADVERSAIRE","OCZEKIWANIE NA PRZECIWNIKA"
 "WARTE AUF DEN HOST","WAITING FOR HOST","WARTE AUF DEN HOST","ESPERANDO AL ANFITRIÓN","EN ATTENTE DE L’HÔTE","OCZEKIWANIE NA GOSPODARZA"
 "Unbekannt","Unknown","Unbekannt","Desconocido","Inconnu","Nieznany"
 "Lobby von %s","%s's lobby","Lobby von %s","Sala de %s","Salon de %s","Pokój gracza %s"
-"%s  [S %d/2 · Z %d/2]","%s  [P %d/2 · S %d/2]","%s  [S %d/2 · Z %d/2]","%s  [J %d/2 · E %d/2]","%s  [J %d/2 · S %d/2]","%s  [G %d/2 · W %d/2]"
+"%s  [S %d/2 - Z %d/2]","%s  [P %d/2 - S %d/2]","%s  [S %d/2 - Z %d/2]","%s  [J %d/2 - E %d/2]","%s  [J %d/2 - S %d/2]","%s  [G %d/2 - W %d/2]"
 "Host: %s
-Spieler: %d/2 · Zuschauer: %d/2
+Spieler: %d/2 - Zuschauer: %d/2
 Lobby-ID: %d
 Zuschauer benötigen kein Deck. Beitritt vor Matchstart.","Host: %s
-Players: %d/2 · Spectators: %d/2
+Players: %d/2 - Spectators: %d/2
 Lobby ID: %d
 Spectators do not need a deck. Join before the match starts.","Host: %s
-Spieler: %d/2 · Zuschauer: %d/2
+Spieler: %d/2 - Zuschauer: %d/2
 Lobby-ID: %d
 Zuschauer benötigen kein Deck. Beitritt vor Matchstart.","Anfitrión: %s
-Jugadores: %d/2 · Espectadores: %d/2
+Jugadores: %d/2 - Espectadores: %d/2
 ID de sala: %d
 Los espectadores no necesitan mazo. Entra antes de que comience la partida.","Hôte : %s
-Joueurs : %d/2 · Spectateurs : %d/2
+Joueurs : %d/2 - Spectateurs : %d/2
 ID du salon : %d
 Les spectateurs n’ont pas besoin de deck. Rejoins avant le début du match.","Gospodarz: %s
-Gracze: %d/2 · Widzowie: %d/2
+Gracze: %d/2 - Widzowie: %d/2
 ID pokoju: %d
 Widzowie nie potrzebują talii. Dołącz przed rozpoczęciem meczu."
 "Match starten","Start match","Match starten","Iniciar partida","Lancer le match","Rozpocznij mecz"
@@ -223,12 +242,12 @@ Widzowie nie potrzebują talii. Dołącz przed rozpoczęciem meczu."
 "save_slot_title","SAVE %d","SPIELSTAND %d","PARTIDA %d","SAUVEGARDE %d","ZAPIS %d"
 "save_slot_selected","SELECTED","AUSGEWÄHLT","ELEGIDA","SÉLECTIONNÉE","WYBRANY"
 "save_slot_new","New game","Neuer Spielstand","Nueva partida","Nouvelle partie","Nowa gra"
-"save_slot_stats","LEVEL %d  ·  %d XP
-%s SC  ·  %d CARDS","LEVEL %d  ·  %d XP
-%s SC  ·  %d KARTEN","NIVEL %d  ·  %d EXP
-%s SC  ·  %d CARTAS","NIVEAU %d  ·  %d EXP
-%s SC  ·  %d CARTES","POZIOM %d  ·  %d PD
-%s SC  ·  %d KART"
+"save_slot_stats","LEVEL %d  -  %d XP
+%s SC  -  %d CARDS","LEVEL %d  -  %d XP
+%s SC  -  %d KARTEN","NIVEL %d  -  %d EXP
+%s SC  -  %d CARTAS","NIVEAU %d  -  %d EXP
+%s SC  -  %d CARTES","POZIOM %d  -  %d PD
+%s SC  -  %d KART"
 "Spielstand zurücksetzen","Reset saved game","Spielstand zurücksetzen","Restablecer partida","Réinitialiser la sauvegarde","Zresetuj zapis gry"
 "save_slot_reset_confirm","Reset saved game %d?
 All progress in this slot will be deleted.","Spielstand %d zurücksetzen?
@@ -239,3 +258,13 @@ Cały postęp w tym zapisie zostanie usunięty."
 "save_slot_load_error","Could not load saved game %d. Error: %d","Spielstand %d konnte nicht geladen werden. Fehler: %d","No se pudo cargar la partida %d. Error: %d","Impossible de charger la sauvegarde %d. Erreur : %d","Nie udało się wczytać zapisu %d. Błąd: %d"
 "save_slot_reset_error","Could not reset saved game %d. Error: %d","Spielstand %d konnte nicht zurückgesetzt werden. Fehler: %d","No se pudo restablecer la partida %d. Error: %d","Impossible de réinitialiser la sauvegarde %d. Erreur : %d","Nie udało się zresetować zapisu %d. Błąd: %d"
 "save_slot_reset_done","Saved game %d was reset.","Spielstand %d wurde zurückgesetzt.","Se ha restablecido la partida %d.","La sauvegarde %d a été réinitialisée.","Zapis gry %d został zresetowany."
+"Dieser Schlüssel wird vorerst nur gesammelt.","Keep this key for later.","Dieser Schlüssel wird vorerst nur gesammelt.","Guarda esta llave para más adelante.","Garde cette clé pour plus tard.","Zachowaj ten klucz na później."
+"Klopapier beim Gefangenen verwenden.","Use Toilet Paper at the prisoner.","Klopapier beim Gefangenen verwenden.","Usa el papel higiénico junto al prisionero.","Utilise le papier toilette auprès du prisonnier.","Użyj papieru toaletowego przy więźniu."
+"Weed-Paket fallen lassen","Drop weed package","Weed-Paket fallen lassen","Dejar caer el paquete de hierba","Faire tomber le sachet d'herbe","Upuść paczkę zioła"
+"Brain Timer zurücksetzen","Reset Brain Timer","Brain Timer zurücksetzen","Reiniciar Brain Timer","Réinitialiser Brain Timer","Zresetuj Brain Timer"
+"Setzt Spielzeit und Satan-Szene zurück, damit sie erneut ausgelöst werden kann.","Resets playtime and Satan's scene so it can trigger again.","Setzt Spielzeit und Satan-Szene zurück, damit sie erneut ausgelöst werden kann.","Reinicia el tiempo de juego y la escena de Satán para que pueda activarse de nuevo.","Réinitialise le temps de jeu et la scène de Satan pour pouvoir la déclencher à nouveau.","Resetuje czas gry i scenę Szatana, aby można było uruchomić ją ponownie."
+"Brain Timer und Satan-Szene zurückgesetzt.","Brain Timer and Satan's scene reset.","Brain Timer und Satan-Szene zurückgesetzt.","Brain Timer y escena de Satán reiniciados.","Brain Timer et scène de Satan réinitialisés.","Brain Timer i scena Szatana zostały zresetowane."
+"Brain Timer zurückgesetzt, konnte aber nicht gespeichert werden.","Brain Timer reset, but could not be saved.","Brain Timer zurückgesetzt, konnte aber nicht gespeichert werden.","Brain Timer reiniciado, pero no se pudo guardar.","Brain Timer réinitialisé, mais l'enregistrement a échoué.","Brain Timer został zresetowany, ale nie udało się go zapisać."
+"Kokain-Paket fallen lassen","Drop cocaine package","Kokain-Paket fallen lassen","Dejar caer el paquete de cocaína","Faire tomber le sachet de cocaïne","Upuść paczkę kokainy"
+"Das Paket fällt, sobald du zum freien Spieltisch zurückkehrst.","The package will drop when you return to the idle game table.","Das Paket fällt, sobald du zum freien Spieltisch zurückkehrst.","El paquete caerá cuando vuelvas a la mesa libre.","Le sachet tombera à ton retour à la table libre.","Paczka spadnie po powrocie do wolnego stołu."
+"Das Weed-Paket fällt, sobald du zum freien Spieltisch zurückkehrst.","The weed package will drop when you return to the idle game table.","Das Weed-Paket fällt, sobald du zum freien Spieltisch zurückkehrst.","El paquete caerá cuando vuelvas a la mesa libre.","Le sachet tombera à ton retour à la table libre.","Paczka spadnie po powrocie do wolnego stołu."

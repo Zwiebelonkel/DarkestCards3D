@@ -1,0 +1,65 @@
+{
+	"after.png": {
+		"captured_at_utc": "2026-11-14T18:29:36",
+		"fixture": "isolated character row",
+		"mean_sampled_luminance": 0.0337974668392143,
+		"resolution": "(1280, 400)",
+		"satan_material_modified": 1794680971.0
+	},
+	"before.png": {
+		"captured_at_utc": "2026-11-14T18:29:36",
+		"fixture": "isolated character row",
+		"mean_sampled_luminance": 0.0265171406548593,
+		"resolution": "(1280, 400)",
+		"satan_material_modified": 1794680971.0
+	},
+	"context-angel.png": {
+		"captured_at_utc": "2026-11-14T18:29:39",
+		"fixture": "authored scene geometry and lighting; gameplay scripts disabled",
+		"mean_sampled_luminance": 0.244050598411646,
+		"resolution": "(1280, 720)",
+		"satan_material_modified": 1794680971.0
+	},
+	"context-blackmarketDealer.png": {
+		"captured_at_utc": "2026-11-14T18:29:39",
+		"fixture": "authored scene geometry and lighting; gameplay scripts disabled",
+		"mean_sampled_luminance": 0.0430430830018359,
+		"resolution": "(1280, 720)",
+		"satan_material_modified": 1794680971.0
+	},
+	"context-jester.png": {
+		"captured_at_utc": "2026-11-14T18:29:39",
+		"fixture": "authored scene geometry and lighting; gameplay scripts disabled",
+		"mean_sampled_luminance": 0.0906141177551362,
+		"resolution": "(1280, 720)",
+		"satan_material_modified": 1794680971.0
+	},
+	"context-prisoner.png": {
+		"captured_at_utc": "2026-11-14T18:29:39",
+		"fixture": "authored scene geometry and lighting; gameplay scripts disabled",
+		"mean_sampled_luminance": 0.0223704608805972,
+		"resolution": "(1280, 720)",
+		"satan_material_modified": 1794680971
+	},
+	"context-satan.png": {
+		"captured_at_utc": "2026-11-14T18:29:39",
+		"fixture": "authored scene geometry and lighting; gameplay scripts disabled",
+		"mean_sampled_luminance": 0.153361263900167,
+		"resolution": "(1280, 720)",
+		"satan_material_modified": 1794680971.0
+	},
+	"dark.png": {
+		"captured_at_utc": "2026-11-14T18:29:36",
+		"fixture": "isolated character row",
+		"mean_sampled_luminance": 0.0334956960541923,
+		"resolution": "(1280, 400)",
+		"satan_material_modified": 1794680971.0
+	},
+	"table-context.png": {
+		"captured_at_utc": "2026-11-14T18:29:39",
+		"fixture": "authored scene geometry and lighting; gameplay scripts disabled",
+		"mean_sampled_luminance": 0.145445069912847,
+		"resolution": "(1280, 720)",
+		"satan_material_modified": 1794680971.0
+	}
+}

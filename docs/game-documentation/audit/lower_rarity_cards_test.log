@@ -1,0 +1,520 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+ERROR: rat reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot reuses the common placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot does not introduce animated
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot does not introduce frame_count
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot does not introduce frame_columns
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot does not introduce frame_rows
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot does not introduce frame_fps
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot survives remote card sanitization with canonical artwork
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair locally describes its actual armor percentage
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair reconstructs accurate armor text after network metadata sanitization
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker locally describes its actual armor percentage
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker reconstructs accurate armor text after network metadata sanitization
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer locally describes its actual armor percentage
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer reconstructs accurate armor text after network metadata sanitization
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: street_dog uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: brick uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: plastic_chair uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_pigeon uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: moldy_bread uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bottle uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: shopping_cart uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sock uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_rat uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: crab uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: security_guard uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: drunk_guy uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: broken_robot uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cactus_dealer uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: sewer_worker uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: angry_goose uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: trash_monster uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rat_king uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: butcher uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: paramedic uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: bouncer uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: rabid_dog uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: cultist uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot uses the existing static image path
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot displays the shared placeholder texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: repair_bot uses the entire static texture
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: Reusing an animated card node resets to a complete static placeholder
+   at: push_error (core/variant/variant_utility.cpp:1098)
+LOWER_RARITY_CARDS_TESTS: FAIL (1250 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

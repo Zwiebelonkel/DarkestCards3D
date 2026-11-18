@@ -104,8 +104,9 @@ SoulCoins korrekt angezeigt und ausgezahlt werden.
 
 Alle Freischaltungen liegen weiterhin mit ihren Exemplaren und Mengen in
 `user://collection.json`. Diese Sonderkarten werden nicht verbraucht; auch Keys
-bleiben erhalten. Besuchte neue Bereiche werden zusätzlich unter
-`metadata.area_access` atomar gespeichert. Die vorhandene Slotraum-Freischaltung
+bleiben erhalten. Erst die Benutzung eines Schlüssels über die Ablage im Hauptraum
+schaltet seinen Zugang frei und wird unter `metadata.area_access` atomar
+gespeichert; der bloße Besitz reicht nicht. Die vorhandene Slotraum-Freischaltung
 und ihre Schlüssel-Interaktion bleiben kompatibel. Ein Collection-Reload meldet
 die geänderten IDs, damit aktive Anzeigen und Auto-Clicker-Cache aktualisiert werden.
 
@@ -136,7 +137,7 @@ Raum-, Fundort- oder Navigationstipps und zeigt Schlüssel nur als normale Karte
 Die drei Zugänge stehen im Hub und verwenden `HospitalDoor` mit `area_id`.
 Black Market liegt neben dem Pack-Shop, Graveyard neben der Sammlung und
 Basement neben dem Upgrade-Shop.
-Ohne passende Karte bleibt die Tür gesperrt. Friedhof und Keller sind als
+Bis zur Benutzung des passenden Schlüssels bleibt die Tür gesperrt. Friedhof und Keller sind als
 `GraveyardRoom` und `BasementRoom` direkt in Main instanziert und teilen dessen
 3D-Welt und Kamera. Nach Freischaltung fliegt die Main-Kamera beim Türklick
 sichtbar durch die geöffneten Hospitaltüren und den Verbindungsgang zum festen

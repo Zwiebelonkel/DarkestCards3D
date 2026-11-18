@@ -1,0 +1,60 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: New manager defaults both presentation options to enabled
+PASS: A missing config restores both enabled defaults even after a prior disabled state
+PASS: Legacy settings fixture is saved inside the isolated project
+PASS: Older configs without either option keep both presentations visible
+PASS: Loading old configs preserves unrelated saved options
+PASS: A saved false damage option survives while a missing arrow option defaults to true
+PASS: A saved false arrow option survives while a missing damage option defaults to true
+PASS: Disabling damage numbers preserves enabled arrows
+PASS: Damage setter emits one zero-argument notification after persisting both options
+PASS: No-op presentation setters do not emit redundant notifications
+PASS: Both presentations can be disabled independently
+PASS: Arrow setter saves before its single notification
+PASS: A newly created manager restores both saved false values
+PASS: Presentation setters preserve voice opt-in and volume
+PASS: Applying unchanged settings still publishes one presentation refresh
+PASS: Reset without saving restores both defaults and publishes a presentation refresh
+PASS: Reset without saving leaves the persisted disabled choices intact
+PASS: Normal reset persists both enabled defaults and publishes once
+PASS: Opening settings displays both loaded enabled defaults
+PASS: DamageNumbersCheckBox uses the existing white checkbox outlines in every state
+PASS: TurnArrowsCheckBox uses the existing white checkbox outlines in every state
+PASS: Actual damage checkbox click disables only damage numbers
+PASS: Damage checkbox click persists once without a refresh feedback loop
+PASS: Actual arrow checkbox click independently disables arrows
+PASS: Arrow checkbox click persists once without a refresh feedback loop
+PASS: An external setter updates the open menu without redundant notifications
+PASS: Applying settings synchronizes checkbox presentation without changing either option
+PASS: Reopening settings displays choices updated while the menu was closed
+PASS: en translates DamageNumbersCheckBox using the current native UI locale
+PASS: en checkbox label fits the available menu width
+PASS: en translates TurnArrowsCheckBox using the current native UI locale
+PASS: en checkbox label fits the available menu width
+PASS: en language switch preserves presentation choices and emits no presentation changes
+PASS: de translates DamageNumbersCheckBox using the current native UI locale
+PASS: de checkbox label fits the available menu width
+PASS: de translates TurnArrowsCheckBox using the current native UI locale
+PASS: de checkbox label fits the available menu width
+PASS: de language switch preserves presentation choices and emits no presentation changes
+PASS: es translates DamageNumbersCheckBox using the current native UI locale
+PASS: es checkbox label fits the available menu width
+PASS: es translates TurnArrowsCheckBox using the current native UI locale
+PASS: es checkbox label fits the available menu width
+PASS: es language switch preserves presentation choices and emits no presentation changes
+PASS: fr translates DamageNumbersCheckBox using the current native UI locale
+PASS: fr checkbox label fits the available menu width
+PASS: fr translates TurnArrowsCheckBox using the current native UI locale
+PASS: fr checkbox label fits the available menu width
+PASS: fr language switch preserves presentation choices and emits no presentation changes
+PASS: pl translates DamageNumbersCheckBox using the current native UI locale
+PASS: pl checkbox label fits the available menu width
+PASS: pl translates TurnArrowsCheckBox using the current native UI locale
+PASS: pl checkbox label fits the available menu width
+PASS: pl language switch preserves presentation choices and emits no presentation changes
+PASS: Reset immediately updates both checkboxes in an already open menu
+PASS: Presentation options remain usable after the menu is freed
+PASS: Presentation options, resetting settings, and locale changes preserve currency, progression, collection and deck
+PRESENTATION_SETTINGS_TESTS: PASS (56 checks)

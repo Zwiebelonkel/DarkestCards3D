@@ -61,13 +61,13 @@ func show_for_card(card: Card3D) -> void:
 		hide_overview()
 		return
 
-	var effects := CardData.get_active_effects(card.card_data)
+	var effects := card.get_available_effects()
 	if effects.is_empty():
 		hide_overview()
 		return
 
 	_request_serial += 1
-	_active_card = card
+	_set_active_card(card)
 	_populate(card, effects)
 	_play_show_animation()
 
@@ -112,7 +112,25 @@ func _on_locale_changed() -> void:
 		return
 	# Refresh the existing panel; do not restart fades or invalidate a pending
 	# hover-out delay by changing the active card or request serial.
-	_populate(_active_card, CardData.get_active_effects(_active_card.card_data))
+	_populate(_active_card, _active_card.get_available_effects())
+
+
+func _set_active_card(card: Card3D) -> void:
+	if is_instance_valid(_active_card) and _active_card.combat_effects_changed.is_connected(_on_combat_effects_changed):
+		_active_card.combat_effects_changed.disconnect(_on_combat_effects_changed)
+	_active_card = card
+	if is_instance_valid(card):
+		card.combat_effects_changed.connect(_on_combat_effects_changed)
+
+
+func _on_combat_effects_changed(card: Card3D) -> void:
+	if card != _active_card or not visible:
+		return
+	var effects := card.get_available_effects()
+	if effects.is_empty():
+		hide_overview(card)
+	else:
+		_populate(card, effects)
 
 
 func _fit_height_to_content() -> void:
@@ -151,7 +169,7 @@ func _play_show_animation() -> void:
 
 func _hide_after_delay(request_id: int) -> void:
 	if not visible:
-		_active_card = null
+		_set_active_card(null)
 		return
 
 	await get_tree().create_timer(HIDE_DELAY, true, false, true).timeout
@@ -178,7 +196,7 @@ func _finish_hide(request_id: int, hide_tween: Tween) -> void:
 		return
 	_animation = null
 	hide()
-	_active_card = null
+	_set_active_card(null)
 	offset_left = _rest_offset_left
 	offset_right = _rest_offset_right
 

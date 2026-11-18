@@ -1,0 +1,14 @@
+{
+  "hidden": {
+    "average_draw_calls": 2228.0,
+    "average_frame_ms": 16.8662666666667,
+    "frames": 30,
+    "p95_frame_ms": 18.26
+  },
+  "visible": {
+    "average_draw_calls": 2232.13333333333,
+    "average_frame_ms": 16.9393333333333,
+    "frames": 30,
+    "p95_frame_ms": 18.896
+  }
+}

@@ -28,7 +28,7 @@ func _ready() -> void:
 			real_secrets.append(str(card.id))
 			_expect(not eligible.has(card), "World Secret stays outside random acquisitions: " + str(card.id))
 	real_secrets.sort()
-	_expect(real_secrets == ["cigarettes", "moewenmilch", "usb_stick"], "Exactly the three prop cards use Secret rarity")
+	_expect(real_secrets == ["cigarettes", "dman", "moewenmilch", "usb_stick"], "The three prop cards and wall-code DMAN use Secret rarity")
 	for pack_id: String in PackDefinition.PACK_TYPES:
 		var actual := CardDatabase.get_reward_rarity_weights(eligible, PackDefinition.PACK_TYPES[pack_id].rarity_weights, 0.0)
 		_expect(not actual.has("secret") and _close(_sum(actual), 100.0), "%s redistributes absent Secret mass among ordinary rarities" % pack_id)

@@ -4,6 +4,7 @@ signal satan_voice_settings_changed
 signal microphone_test_state_changed(is_active: bool)
 signal presentation_settings_changed
 signal cheat_rarities_changed
+signal character_appearance_changed
 
 const CONFIG_PATH := "user://settings.cfg"
 const SECTION := "settings"
@@ -20,9 +21,10 @@ const DEFAULT_SFX_VOLUME := 0.3
 const DEFAULT_SATAN_VOICE_ENABLED := false
 const DEFAULT_SATAN_VOICE_PITCH := 0.62
 const DEFAULT_SATAN_VOICE_VOLUME := 0.3
+const MAX_SATAN_VOICE_VOLUME := 20.0
 const DEFAULT_MICROPHONE_GAIN := 1.0
 const MIN_MICROPHONE_GAIN := 0.0
-const MAX_MICROPHONE_GAIN := 5.0
+const MAX_MICROPHONE_GAIN := 20.0
 const SATAN_VOICE_CHAT_ENABLED_KEY := "satan_voice_chat_enabled"
 
 var frame_limit := DEFAULT_FRAME_LIMIT
@@ -39,12 +41,31 @@ var satan_voice_pitch := DEFAULT_SATAN_VOICE_PITCH
 var satan_voice_volume := DEFAULT_SATAN_VOICE_VOLUME
 var microphone_gain := DEFAULT_MICROPHONE_GAIN
 var microphone_test_active := false
+var _character_appearance: Dictionary = CharacterAppearance.DEFAULT.duplicate()
+var character_creation_completed := false
 var _cheat_enabled_rarities: Array[String] = CardDatabase.REWARD_RARITIES.duplicate()
 
 
 func _ready() -> void:
 	load_settings()
 	apply_settings()
+
+
+func get_character_appearance() -> Dictionary:
+	return _character_appearance.duplicate()
+
+
+func set_character_appearance(value: Variant, confirm_creation: bool = false) -> void:
+	var appearance := CharacterAppearance.sanitize(value)
+	var changed := appearance != _character_appearance
+	if not changed and (not confirm_creation or character_creation_completed):
+		return
+	_character_appearance = appearance
+	if confirm_creation:
+		character_creation_completed = true
+	save_settings()
+	if changed:
+		character_appearance_changed.emit()
 
 
 func set_frame_limit(value: int) -> void:
@@ -163,8 +184,8 @@ func set_satan_voice_pitch(value: float) -> void:
 
 
 func set_satan_voice_volume(value: float) -> void:
-	satan_voice_volume = clampf(value, 0.0, 1.0)
-	_set_bus_volume("SatanVoice", satan_voice_volume)
+	satan_voice_volume = clampf(value, 0.0, MAX_SATAN_VOICE_VOLUME)
+	_set_bus_volume("SatanVoice", satan_voice_volume, MAX_SATAN_VOICE_VOLUME)
 	save_settings()
 	satan_voice_settings_changed.emit()
 
@@ -191,12 +212,14 @@ func apply_settings() -> void:
 	_set_bus_volume("Master", master_volume)
 	_set_bus_volume("Music", music_volume)
 	_set_bus_volume("SFX", sfx_volume)
-	_set_bus_volume("SatanVoice", satan_voice_volume)
+	_set_bus_volume("SatanVoice", satan_voice_volume, MAX_SATAN_VOICE_VOLUME)
 	satan_voice_settings_changed.emit()
 	presentation_settings_changed.emit()
 
 
 func load_settings() -> void:
+	_character_appearance = CharacterAppearance.DEFAULT.duplicate()
+	character_creation_completed = false
 	# These options did not exist in older profiles. Missing keys (or a new
 	# profile) always restore the original visible presentation.
 	damage_numbers_enabled = DEFAULT_DAMAGE_NUMBERS_ENABLED
@@ -206,6 +229,9 @@ func load_settings() -> void:
 		_load_cheat_rarities(CardDatabase.REWARD_RARITIES)
 		return
 	_load_cheat_rarities(config.get_value(SECTION, "cheat_enabled_rarities", CardDatabase.REWARD_RARITIES))
+	_character_appearance = CharacterAppearance.sanitize(config.get_value(SECTION, "character_appearance", {}))
+	var confirmed: Variant = config.get_value(SECTION, "character_creation_completed", false)
+	character_creation_completed = confirmed is bool and confirmed
 	frame_limit = int(config.get_value(SECTION, "frame_limit", frame_limit))
 	language = _supported_language(str(config.get_value(SECTION, "language", DEFAULT_LANGUAGE)))
 	fullscreen = bool(config.get_value(SECTION, "fullscreen", fullscreen))
@@ -225,7 +251,7 @@ func load_settings() -> void:
 	)), 0.35, 0.9)
 	satan_voice_volume = clampf(float(config.get_value(
 		SECTION, "satan_voice_volume", satan_voice_volume
-	)), 0.0, 1.0)
+	)), 0.0, MAX_SATAN_VOICE_VOLUME)
 	microphone_gain = clampf(float(config.get_value(
 		SECTION, "microphone_gain", microphone_gain
 	)), MIN_MICROPHONE_GAIN, MAX_MICROPHONE_GAIN)
@@ -247,6 +273,8 @@ func save_settings() -> void:
 	config.set_value(SECTION, "satan_voice_pitch", satan_voice_pitch)
 	config.set_value(SECTION, "satan_voice_volume", satan_voice_volume)
 	config.set_value(SECTION, "microphone_gain", microphone_gain)
+	config.set_value(SECTION, "character_appearance", _character_appearance)
+	config.set_value(SECTION, "character_creation_completed", character_creation_completed)
 	config.save(CONFIG_PATH)
 
 
@@ -270,9 +298,9 @@ func reset_to_defaults(save_after_reset := true) -> void:
 		save_settings()
 
 
-func _set_bus_volume(bus_name: StringName, value: float) -> void:
+func _set_bus_volume(bus_name: StringName, value: float, max_volume := 1.0) -> void:
 	var index := AudioServer.get_bus_index(bus_name)
 	if index == -1:
 		return
-	AudioServer.set_bus_volume_db(index, linear_to_db(clampf(value, 0.0001, 1.0)))
+	AudioServer.set_bus_volume_db(index, linear_to_db(clampf(value, 0.0001, max_volume)))
 	AudioServer.set_bus_mute(index, value <= 0.0)

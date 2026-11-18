@@ -35,7 +35,7 @@ func _run() -> void:
 		return
 	var initialized: Dictionary = Steam.get_steam_init_result()
 	if initialized.is_empty():
-		initialized = Steam.steamInitEx(480, false)
+		initialized = Steam.steamInitEx(5412220, false)
 	if int(initialized.get("status", -1)) != Steam.STEAM_API_INIT_RESULT_OK:
 		print("NATIVE_PEER_PROBE: SKIP Steam initialization unavailable (status %d)" % int(initialized.get("status", -1)))
 		get_tree().quit(0)

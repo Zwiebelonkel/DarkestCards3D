@@ -1,0 +1,53 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: Actual Main camera opens the collection deck
+PASS: New collection shows five locked starting slots
+PASS: Upper card fan remains reachable by the actual pointer
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Dropping on a locked slot cannot assign or remove the deck card
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Real mouse drag assigns the first unlocked slot
+PASS: Chosen physical card snaps into its starting slot
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Higher tiers stay locked after acquiring only Startkarten I
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Dragging an assigned card to slot 3 leaves slots 1 and 2 empty
+PASS: The chosen card lands in the actual third slot
+PASS: Empty slots retain their drop labels beside a filled later slot
+PASS: Drag highlight follows the targeted fifth slot instead of the first empty slot
+PASS: Pointer picks exactly the intended visible card copy
+PASS: A second card can go directly into slot 5 without filling earlier gaps
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Dropping onto an occupied slot returns its previous card to the fan
+PASS: Replacing a start card preserves its deck copy and moves it back into the fan
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Dragging between occupied starting slots swaps the exact two copies
+PASS: The displaced card moves into the dragged card's previous slot
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Pointer picks exactly the intended visible card copy
+PASS: All five slots retain their explicit targets regardless of drag order
+PASS: Starting cards remain in the same twenty-card deck
+PASS: Starting card 1 occupies its matching table order
+PASS: Starting card 2 occupies its matching table order
+PASS: Starting card 3 occupies its matching table order
+PASS: Starting card 4 occupies its matching table order
+PASS: Starting card 5 occupies its matching table order
+PASS: Fan and all five starting cards remain inside a resized 4:3 viewport
+PASS: A/D cannot move the shared camera away while editing starting cards
+PASS: Opening Pause cancels the drag without changing starting cards
+PASS: Losing application focus cancels drag without removing a card
+PASS: GUI-consumed mouse release cannot leave a stuck drag or edit the deck
+PASS: Right-click returns a start card to the fan without shifting other slots
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Dragging a starting card back to the fan leaves its specific slot empty
+PASS: Closing and reopening preserves the saved starting positions and empty slots
+PASS: Clearing the deck empties all assignments and keeps the unlocked row visible
+PASS: Random deck rebuild keeps all copies draggable without stale selections
+PASS: Pointer picks exactly the intended visible card copy
+PASS: Rebuilt fan cards retain their actual deck-copy indices
+PASS: Clicking beside the deck removes slot visuals and restores collection cards
+STARTING_HAND_UI_TESTS: PASS (47 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

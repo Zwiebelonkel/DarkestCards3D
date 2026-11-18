@@ -1,4 +1,4 @@
-[gd_scene load_steps=90 format=3 uid="uid://q2tlqdpkrsrl"]
+[gd_scene load_steps=89 format=3 uid="uid://q2tlqdpkrsrl"]
 
 [ext_resource type="PackedScene" uid="uid://cc38yiwfpqqq0" path="res://scenes/rooms/HospitalRoomShell.tscn" id="1_shell"]
 [ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="2_door"]
@@ -7,6 +7,9 @@
 [ext_resource type="Script" uid="uid://c5dpe7oohd6mi" path="res://scripts/rooms/BasementDiscovery.gd" id="5_discovery"]
 [ext_resource type="PackedScene" path="res://scenes/rooms/BasementCatEncounter.tscn" id="6_cat"]
 [ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_3sn4p"]
+[ext_resource type="Script" uid="uid://btt024lsjxv6y" path="res://scripts/rooms/BasementBoiler.gd" id="8_boiler"]
+[ext_resource type="Script" uid="uid://d1v1ethq3uun2" path="res://scripts/rooms/BasementPumpControl.gd" id="9_pump"]
+[ext_resource type="PackedScene" path="res://scenes/props/BoilerGauge.tscn" id="10_gauge"]
 
 [sub_resource type="StandardMaterial3D" id="DarkIron"]
 albedo_color = Color(0.075, 0.085, 0.083, 1)
@@ -67,40 +70,6 @@ ring_segments = 8
 material = SubResource("DarkIron")
 size = Vector3(1.9, 0.3, 0.16)
 
-[sub_resource type="StandardMaterial3D" id="TarnishedBrass"]
-albedo_color = Color(0.44, 0.285, 0.1, 1)
-metallic = 0.65
-roughness = 0.45
-
-[sub_resource type="CylinderMesh" id="Mesh_26"]
-material = SubResource("TarnishedBrass")
-top_radius = 0.19
-bottom_radius = 0.19
-height = 0.085
-radial_segments = 20
-rings = 1
-
-[sub_resource type="StandardMaterial3D" id="GaugeFace"]
-albedo_color = Color(0.69, 0.66, 0.51, 1)
-roughness = 0.78
-
-[sub_resource type="CylinderMesh" id="Mesh_27"]
-material = SubResource("GaugeFace")
-top_radius = 0.162
-bottom_radius = 0.162
-height = 0.009
-radial_segments = 20
-rings = 1
-
-[sub_resource type="StandardMaterial3D" id="ValveRed"]
-albedo_color = Color(0.37, 0.075, 0.045, 1)
-metallic = 0.4
-roughness = 0.65
-
-[sub_resource type="BoxMesh" id="Mesh_28"]
-material = SubResource("ValveRed")
-size = Vector3(0.011, 0.11, 0.017)
-
 [sub_resource type="BoxMesh" id="Mesh_29"]
 material = SubResource("DarkIron")
 size = Vector3(0.12, 0.52, 0.7)
@@ -128,6 +97,11 @@ bottom_radius = 0.045
 height = 0.4
 radial_segments = 20
 rings = 1
+
+[sub_resource type="StandardMaterial3D" id="ValveRed"]
+albedo_color = Color(0.37, 0.075, 0.045, 1)
+metallic = 0.4
+roughness = 0.65
 
 [sub_resource type="TorusMesh" id="Mesh_32"]
 material = SubResource("ValveRed")
@@ -269,6 +243,11 @@ bottom_radius = 0.068
 height = 0.04
 radial_segments = 20
 rings = 1
+
+[sub_resource type="StandardMaterial3D" id="TarnishedBrass"]
+albedo_color = Color(0.44, 0.285, 0.1, 1)
+metallic = 0.65
+roughness = 0.45
 
 [sub_resource type="BoxMesh" id="Mesh_57"]
 material = SubResource("TarnishedBrass")
@@ -474,387 +453,320 @@ omni_attenuation = 1.3
 [node name="BoilerEquipment" type="Node3D" parent="."]
 transform = Transform3D(-4.52499e-06, 0, -1.25, 0, 1.25, 0, 1.25, 0, -4.52499e-06, -4.5625, -2.22292, -1)
 
-[node name="MainBoiler" type="Node3D" parent="BoilerEquipment"]
+[node name="MainBoiler_2" type="Node3D" parent="BoilerEquipment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 0, -3.65)
+script = ExtResource("8_boiler")
+view_side = 0
 
-[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
 mesh = SubResource("Mesh_21")
 
-[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, 0)
 mesh = SubResource("Mesh_22")
 
-[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 0.28, 0, 0, 0, 1, 0, 2.17, 0)
 mesh = SubResource("Mesh_23")
 
-[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("Mesh_24")
 
-[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0)
 mesh = SubResource("Mesh_24")
 
-[node name="SupportFoot-0.57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="SupportFoot-0.57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, -0.57)
 mesh = SubResource("Mesh_25")
 
-[node name="SupportFoot0.57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="SupportFoot0.57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0.57)
 mesh = SubResource("Mesh_25")
 
-[node name="GaugeRim" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
-transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.895, 1.75, 0.12)
-mesh = SubResource("Mesh_26")
+[node name="PressureGauge" parent="BoilerEquipment/MainBoiler_2" instance=ExtResource("10_gauge")]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 0.895, 1.75, 0.12)
 
-[node name="GaugeDial" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
-transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.944, 1.75, 0.12)
-mesh = SubResource("Mesh_27")
-
-[node name="GaugeNeedle" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
-transform = Transform3D(1, 0, 0, 0, 0.852525, -0.522687, 0, 0.522687, 0.852525, 0.952, 1.77, 0.12)
-mesh = SubResource("Mesh_28")
-
-[node name="PressureDigits" type="Label3D" parent="BoilerEquipment/MainBoiler"]
-transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 0.962, 1.68, 0.12)
-pixel_size = 0.003
-modulate = Color(0.06, 0.055, 0.04, 1)
-text = "2.8"
-font = ExtResource("3_font")
-font_size = 20
-outline_size = 0
-
-[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 0.79, 0)
 mesh = SubResource("Mesh_29")
 
-[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.64, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.7, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.76, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.82, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.88, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.94, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1, 1.26, -0.45)
 mesh = SubResource("Mesh_31")
 
-[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_32")
 
-[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_33")
 
-[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler"]
+[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_34")
 
-[node name="MainBoiler2" type="Node3D" parent="BoilerEquipment"]
+[node name="MainBoiler_1" type="Node3D" parent="BoilerEquipment"]
 transform = Transform3D(-1.455, 0, -2.19699e-07, 0, 1.455, 0, 2.19699e-07, 0, -1.455, 7.51106, 0, -3.65005)
+script = ExtResource("8_boiler")
 
-[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
 mesh = SubResource("Mesh_21")
 
-[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, 0)
 mesh = SubResource("Mesh_22")
 
-[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 0.28, 0, 0, 0, 1, 0, 2.17, 0)
 mesh = SubResource("Mesh_23")
 
-[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("Mesh_24")
 
-[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0)
 mesh = SubResource("Mesh_24")
 
-[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, -0.57)
 mesh = SubResource("Mesh_25")
 
-[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0.57)
 mesh = SubResource("Mesh_25")
 
-[node name="GaugeRim" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
-transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.895, 1.75, 0.12)
-mesh = SubResource("Mesh_26")
+[node name="PressureGauge" parent="BoilerEquipment/MainBoiler_1" instance=ExtResource("10_gauge")]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 0.895, 1.75, 0.12)
 
-[node name="GaugeDial" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
-transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.944, 1.75, 0.12)
-mesh = SubResource("Mesh_27")
-
-[node name="GaugeNeedle" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
-transform = Transform3D(1, 0, 0, 0, 0.852525, -0.522687, 0, 0.522687, 0.852525, 0.952, 1.77, 0.12)
-mesh = SubResource("Mesh_28")
-
-[node name="PressureDigits" type="Label3D" parent="BoilerEquipment/MainBoiler2"]
-transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 0.962, 1.68, 0.12)
-pixel_size = 0.003
-modulate = Color(0.06, 0.055, 0.04, 1)
-text = "2.8"
-font = ExtResource("3_font")
-font_size = 20
-outline_size = 0
-
-[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 0.79, 0)
 mesh = SubResource("Mesh_29")
 
-[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.64, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.7, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.76, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.82, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.88, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.94, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1, 1.26, -0.45)
 mesh = SubResource("Mesh_31")
 
-[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_32")
 
-[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_33")
 
-[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler2"]
+[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_34")
 
-[node name="MainBoiler3" type="Node3D" parent="BoilerEquipment"]
+[node name="MainBoiler_4" type="Node3D" parent="BoilerEquipment"]
 transform = Transform3D(-1.455, 0, -2.19699e-07, 0, 1.455, 0, 2.19699e-07, 0, -1.455, 7.51108, 0, -0.315108)
+script = ExtResource("8_boiler")
 
-[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
 mesh = SubResource("Mesh_21")
 
-[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, 0)
 mesh = SubResource("Mesh_22")
 
-[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 0.28, 0, 0, 0, 1, 0, 2.17, 0)
 mesh = SubResource("Mesh_23")
 
-[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("Mesh_24")
 
-[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0)
 mesh = SubResource("Mesh_24")
 
-[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, -0.57)
 mesh = SubResource("Mesh_25")
 
-[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0.57)
 mesh = SubResource("Mesh_25")
 
-[node name="GaugeRim" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
-transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.895, 1.75, 0.12)
-mesh = SubResource("Mesh_26")
+[node name="PressureGauge" parent="BoilerEquipment/MainBoiler_4" instance=ExtResource("10_gauge")]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 0.895, 1.75, 0.12)
 
-[node name="GaugeDial" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
-transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.944, 1.75, 0.12)
-mesh = SubResource("Mesh_27")
-
-[node name="GaugeNeedle" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
-transform = Transform3D(1, 0, 0, 0, 0.852525, -0.522687, 0, 0.522687, 0.852525, 0.952, 1.77, 0.12)
-mesh = SubResource("Mesh_28")
-
-[node name="PressureDigits" type="Label3D" parent="BoilerEquipment/MainBoiler3"]
-transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 0.962, 1.68, 0.12)
-pixel_size = 0.003
-modulate = Color(0.06, 0.055, 0.04, 1)
-text = "2.8"
-font = ExtResource("3_font")
-font_size = 20
-outline_size = 0
-
-[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 0.79, 0)
 mesh = SubResource("Mesh_29")
 
-[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.64, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.7, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.76, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.82, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.88, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.94, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1, 1.26, -0.45)
 mesh = SubResource("Mesh_31")
 
-[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_32")
 
-[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_33")
 
-[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler3"]
+[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_34")
 
-[node name="MainBoiler4" type="Node3D" parent="BoilerEquipment"]
+[node name="MainBoiler_3" type="Node3D" parent="BoilerEquipment"]
 transform = Transform3D(-1.455, 0, -2.19699e-07, 0, 1.455, 0, 2.19699e-07, 0, -1.455, 7.51105, 0, -7.22156)
+script = ExtResource("8_boiler")
 
-[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="Plinth" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
 mesh = SubResource("Mesh_21")
 
-[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="PressureVessel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24, 0)
 mesh = SubResource("Mesh_22")
 
-[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="DomedCrown" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 0.28, 0, 0, 0, 1, 0, 2.17, 0)
 mesh = SubResource("Mesh_23")
 
-[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="VesselRim0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("Mesh_24")
 
-[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="VesselRim1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0)
 mesh = SubResource("Mesh_24")
 
-[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="SupportFoot-0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, -0.57)
 mesh = SubResource("Mesh_25")
 
-[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="SupportFoot0_57" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0.57)
 mesh = SubResource("Mesh_25")
 
-[node name="GaugeRim" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
-transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.895, 1.75, 0.12)
-mesh = SubResource("Mesh_26")
+[node name="PressureGauge" parent="BoilerEquipment/MainBoiler_3" instance=ExtResource("10_gauge")]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, 0.895, 1.75, 0.12)
 
-[node name="GaugeDial" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
-transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 0.944, 1.75, 0.12)
-mesh = SubResource("Mesh_27")
-
-[node name="GaugeNeedle" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
-transform = Transform3D(1, 0, 0, 0, 0.852525, -0.522687, 0, 0.522687, 0.852525, 0.952, 1.77, 0.12)
-mesh = SubResource("Mesh_28")
-
-[node name="PressureDigits" type="Label3D" parent="BoilerEquipment/MainBoiler4"]
-transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 0.962, 1.68, 0.12)
-pixel_size = 0.003
-modulate = Color(0.06, 0.055, 0.04, 1)
-text = "2.8"
-font = ExtResource("3_font")
-font_size = 20
-outline_size = 0
-
-[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="FurnacePlate" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 0.79, 0)
 mesh = SubResource("Mesh_29")
 
-[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="FurnaceGlow0" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.64, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="FurnaceGlow1" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.7, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="FurnaceGlow2" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.76, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="FurnaceGlow3" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.82, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="FurnaceGlow4" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.88, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="FurnaceGlow5" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.908, 0.94, 0)
 mesh = SubResource("Mesh_30")
 
-[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="ValveShaft" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1, 1.26, -0.45)
 mesh = SubResource("Mesh_31")
 
-[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="RedValveWheel" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(-3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_32")
 
-[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="WheelSpokeA" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_33")
 
-[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler4"]
+[node name="WheelSpokeB" type="MeshInstance3D" parent="BoilerEquipment/MainBoiler_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.21, 1.26, -0.45)
 mesh = SubResource("Mesh_34")
 
@@ -1677,6 +1589,7 @@ mesh = SubResource("Mesh_53")
 
 [node name="PumpStation" type="Node3D" parent="."]
 transform = Transform3D(-4.52499e-06, 0, 1.25, 0, 1.25, 0, -1.25, 0, -4.52499e-06, 4.1, -2.22292, 3.2)
+script = ExtResource("9_pump")
 
 [node name="ControlCabinet" type="MeshInstance3D" parent="PumpStation"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -9.62)
@@ -1691,45 +1604,69 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.43, -9.31)
 visible = false
 pixel_size = 0.0045
 modulate = Color(0.83, 0.78, 0.62, 1)
-text = "PUMP CONTROL / 03"
+text = "PUMP CONTROL / 05"
 font = ExtResource("3_font")
 font_size = 40
 outline_size = 0
 
 [node name="StatusLamp0" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -0.7, 1.73, -9.265)
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -0.9, 1.73, -9.265)
 mesh = SubResource("Mesh_56")
 
 [node name="ToggleBase0" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 1.2, -9.25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 1.2, -9.25)
 mesh = SubResource("Mesh_57")
 
 [node name="ToggleLever0" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, -0.7, 1.2, -9.19)
+transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, -0.9, 1.2, -9.19)
 mesh = SubResource("Mesh_58")
 
 [node name="StatusLamp1" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 1.73, -9.265)
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, -0.45, 1.73, -9.265)
 mesh = SubResource("Mesh_56")
 
 [node name="ToggleBase1" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -9.25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 1.2, -9.25)
 mesh = SubResource("Mesh_57")
 
 [node name="ToggleLever1" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, 0, 1.2, -9.19)
+transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, -0.45, 1.2, -9.19)
 mesh = SubResource("Mesh_58")
 
 [node name="StatusLamp2" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 0.7, 1.73, -9.265)
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 0, 1.73, -9.265)
 mesh = SubResource("Mesh_59")
 
 [node name="ToggleBase2" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 1.2, -9.25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -9.25)
 mesh = SubResource("Mesh_57")
 
 [node name="ToggleLever2" type="MeshInstance3D" parent="PumpStation"]
-transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, 0.7, 1.2, -9.19)
+transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, 0, 1.2, -9.19)
+mesh = SubResource("Mesh_58")
+
+[node name="StatusLamp3" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 0.45, 1.73, -9.265)
+mesh = SubResource("Mesh_56")
+
+[node name="ToggleBase3" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 1.2, -9.25)
+mesh = SubResource("Mesh_57")
+
+[node name="ToggleLever3" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, 0.45, 1.2, -9.19)
+mesh = SubResource("Mesh_58")
+
+[node name="StatusLamp4" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, -3.61999e-06, -1, 0, 1, -3.61999e-06, 0.9, 1.73, -9.265)
+mesh = SubResource("Mesh_56")
+
+[node name="ToggleBase4" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 1.2, -9.25)
+mesh = SubResource("Mesh_57")
+
+[node name="ToggleLever4" type="MeshInstance3D" parent="PumpStation"]
+transform = Transform3D(1, 0, 0, 0, 0.955337, -0.29552, 0, 0.29552, 0.955337, 0.9, 1.2, -9.19)
 mesh = SubResource("Mesh_58")
 
 [node name="CabinetVent0" type="MeshInstance3D" parent="PumpStation"]
@@ -1893,6 +1830,7 @@ mesh = SubResource("Mesh_65")
 
 [node name="DampPatch2" type="MeshInstance3D" parent="FloorDetails"]
 transform = Transform3D(-0.0224837, 0, 0.359847, 0, 1, 0, -0.769672, 0, -0.0105118, -5, 0.007, -1)
+visible = false
 mesh = SubResource("Mesh_65")
 
 [node name="DampPatch3" type="MeshInstance3D" parent="FloorDetails"]
@@ -2553,7 +2491,7 @@ omni_range = 11.0
 omni_attenuation = 1.25
 
 [node name="PumpLight" type="OmniLight3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9, 2.3, 3.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.55522, -0.0380132, 3.2)
 light_color = Color(0.47, 0.61, 0.63, 1)
 light_energy = 1.4
 light_indirect_energy = 0.7
@@ -2563,11 +2501,11 @@ omni_range = 9.0
 omni_attenuation = 1.25
 
 [node name="StairLightMount0" type="MeshInstance3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9005, 10.9101, -4.06162)
+transform = Transform3D(0.633475, 0.773763, 0, -0.773763, 0.633475, 0, 0, 0, 1, -17.8657, 10.8936, -4.06162)
 mesh = SubResource("Mesh_97")
 
 [node name="StairLightGlass0" type="MeshInstance3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9005, 10.8201, -4.06162)
+transform = Transform3D(0.633475, 0.773763, 0, -0.773763, 0.633475, 0, 0, 0, 1, -17.9353, 10.8366, -4.06162)
 mesh = SubResource("Mesh_98")
 
 [node name="StairLamp0" type="OmniLight3D" parent="Lighting"]
@@ -2581,11 +2519,11 @@ omni_range = 7.0
 omni_attenuation = 1.25
 
 [node name="StairLightMount1" type="MeshInstance3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4685, 7.94008, -4.06162)
+transform = Transform3D(0.680529, 0.732721, 0, -0.732721, 0.680529, 0, 0, 0, 1, -14.4355, 7.9257, -4.06162)
 mesh = SubResource("Mesh_97")
 
 [node name="StairLightGlass1" type="MeshInstance3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4685, 7.85008, -4.06162)
+transform = Transform3D(0.680529, 0.732721, 0, -0.732721, 0.680529, 0, 0, 0, 1, -14.5015, 7.86446, -4.06162)
 mesh = SubResource("Mesh_98")
 
 [node name="StairLamp1" type="OmniLight3D" parent="Lighting"]
@@ -2599,11 +2537,11 @@ omni_range = 7.0
 omni_attenuation = 1.25
 
 [node name="StairLightMount2" type="MeshInstance3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.0365, 4.97008, -4.06162)
+transform = Transform3D(0.584448, 0.811431, 0, -0.811431, 0.584448, 0, 0, 0, 1, -11, 4.95138, -4.06162)
 mesh = SubResource("Mesh_97")
 
 [node name="StairLightGlass2" type="MeshInstance3D" parent="Lighting"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.0365, 4.88008, -4.06162)
+transform = Transform3D(0.584448, 0.811431, 0, -0.811431, 0.584448, 0, 0, 0, 1, -11.073, 4.89878, -4.06162)
 mesh = SubResource("Mesh_98")
 
 [node name="StairLamp2" type="OmniLight3D" parent="Lighting"]

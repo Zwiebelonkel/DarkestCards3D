@@ -1,8 +1,13 @@
-[gd_scene load_steps=9 format=3 uid="uid://40ujoatdq5fj"]
+[gd_scene load_steps=14 format=3 uid="uid://40ujoatdq5fj"]
 
 [ext_resource type="PackedScene" uid="uid://cc38yiwfpqqq0" path="res://scenes/rooms/HospitalRoomShell.tscn" id="1_shell"]
 [ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="2_door"]
 [ext_resource type="PackedScene" uid="uid://bu2rbglf7l317" path="res://scenes/props/SlotMachine.tscn" id="3_slots"]
+[ext_resource type="PackedScene" path="res://scenes/props/SecretWallInput.tscn" id="4_secret_input"]
+[ext_resource type="PackedScene" uid="uid://dfkeo80pdvipp" path="res://assets/environments/props/Bed/bed.glb" id="5_2iy70"]
+[ext_resource type="Texture2D" uid="uid://x3lmx44aslge" path="res://assets/hints/hint2.png" id="6_jtqij"]
+[ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="7_uvb0p"]
+[ext_resource type="Material" path="res://assets/hints/hint2_emission.tres" id="8_hint_emission"]
 
 [sub_resource type="StandardMaterial3D" id="Material_floor"]
 albedo_color = Color(0.13, 0.15, 0.12, 1)
@@ -44,6 +49,9 @@ transform = Transform3D(1.37784e-07, 0, -1.825, 0, 1.825, 0, 1.825, 0, 1.37784e-
 hover_open_degrees = 25.0
 travel_open_degrees = 100.0
 
+[node name="SecretWallInput" parent="." instance=ExtResource("4_secret_input")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -8.3, 2.51694, 0.674603)
+
 [node name="RoomLight" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.68198, 4.39407, 0)
 light_color = Color(0.890196, 0.25098, 0.180392, 1)
@@ -72,3 +80,20 @@ mesh = SubResource("Mesh_side")
 [node name="SideFar" type="MeshInstance3D" parent="Connector"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8815, 1.573)
 mesh = SubResource("Mesh_side")
+
+[node name="bed" parent="." instance=ExtResource("5_2iy70")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -6.33099, -1.19173, 7.56841)
+
+[node name="bed2" parent="." instance=ExtResource("5_2iy70")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 6.20643, -1.19173, 7.56841)
+
+[node name="hint2" type="Sprite3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, -0.0888074, 0.996049, -3.88189e-09, -0.996049, -0.0888074, -4.35387e-08, -8.06966, -0.101763, -0.71024)
+visible = false
+material_override = ExtResource("8_hint_emission")
+pixel_size = 0.027
+texture_filter = 0
+texture = ExtResource("6_jtqij")
+hframes = 4
+script = ExtResource("7_uvb0p")
+TOTAL_FRAMES = 4

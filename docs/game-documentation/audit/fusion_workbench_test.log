@@ -1,0 +1,63 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS slot room owns the physical fusion workbench
+PASS forge stands opposite the upgrade board on the left side
+PASS forge starts inactive while player is in hub
+PASS hidden-room inventory rejects card selection
+PASS room flight keeps forge interaction disabled
+PASS normal door travel enters the slot room
+PASS turning toward forge does not enable input before camera settles
+PASS left turn enables the forge without an additional room hint
+PASS forge rack is reachable from the room camera before focus
+PASS hover approaches and centers the wide forge
+PASS forge uses its own full-station focus distance
+PASS every displayed inventory card is visible and individually reachable through its real camera ray
+PASS inventory cards include the same purchased stat upgrades as battle cards
+PASS inventory preserves the exact owned level and Holo copy
+PASS entire physical fuse control is inside the focused camera view
+PASS entire physical auto_fuse control is inside the focused camera view
+PASS entire physical clear control is inside the focused camera view
+PASS entire physical page_prev control is inside the focused camera view
+PASS entire physical page_next control is inside the focused camera view
+PASS entire physical rarity_prev control is inside the focused camera view
+PASS entire physical rarity_next control is inside the focused camera view
+PASS forge has no explanatory subtitle or bottom instruction and consumption texts
+PASS physical next-page control reaches the remaining owned cards
+PASS physical previous-page control returns to first cards
+PASS physical rarity control filters ordinary cards
+PASS every displayed inventory card is visible and individually reachable through its real camera ray
+PASS available copy can be selected before changing its deck reservation
+PASS returning to the forge prunes a selected copy that entered the battle deck while away
+PASS new deck reservation rejects reselection of that same exact copy
+PASS right-click creates no card preview and leaves the selection unchanged
+PASS right-click leaves normal room controls available
+PASS A/D can turn away immediately after right-clicking a forge card
+PASS five separate copies are available on the ordinary-card rack
+PASS five actual inventory clicks fill the five fusion sockets
+PASS visible five-card selection satisfies the real backend rules
+PASS forge click starts work and blocks premature room travel
+PASS fusion animation blocks A/D rotation
+PASS pause freezes the in-progress physical fusion without losing its committed reward
+PASS forging presents a physical reward card
+PASS actual forge action consumes exactly five chosen copies and grants one card
+PASS five common cards produce an uncommon card
+PASS forging preserves special upgrades, room key and highest-rarity copy
+PASS clicking the reward preserves its physical presentation without opening a preview
+PASS physical WEITER control leaves reward presentation and releases the room controls
+PASS pause disables forge interaction before freezing
+PASS pause immediately releases the forge camera
+PASS resuming restores forge interaction
+PASS turning away disables forge picking and restores normal room framing
+PASS return door remains usable after fusion
+PASS return to hub leaves hidden forge inactive
+PASS returning hub collection immediately reflects consumed copies and the actual reward without reloading Main
+PASS forge remains usable on another room visit
+PASS empty inventory replaces the rack with its physical collection hint
+PASS second fusion commits the five-copy exchange before its animation completes
+PASS closing Main during forging reloads the saved reward without duplicating or restoring consumed inputs
+FUSION_WORKBENCH_TESTS: PASS (55 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

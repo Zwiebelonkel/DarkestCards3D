@@ -1,0 +1,95 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 122 Karten
+PASS knowing the solution cannot bypass first cocaine use
+PASS boiler 1 off by -0.1 cannot solve the puzzle
+PASS boiler 1 off by 0.1 cannot solve the puzzle
+PASS boiler 2 off by -0.1 cannot solve the puzzle
+PASS boiler 2 off by 0.1 cannot solve the puzzle
+PASS boiler 3 off by -0.1 cannot solve the puzzle
+PASS boiler 3 off by 0.1 cannot solve the puzzle
+PASS boiler 4 off by -0.1 cannot solve the puzzle
+PASS boiler 4 off by 0.1 cannot solve the puzzle
+PASS scene child order cannot replace actual boiler numbers
+PASS incomplete and nonfinite pressure inputs are rejected
+PASS incomplete and nonfinite pressure inputs are rejected
+PASS incomplete and nonfinite pressure inputs are rejected
+PASS training cannot award the eye
+PASS a failed reward save preserves collection and completion history
+PASS the displayed tenths count and a failed save can retry
+PASS the boiler reward is one-time
+PASS an unrescued Jester cannot trade
+PASS training cannot exchange the eye
+PASS a failed trade save retains the exact eye and grants no Crucifix
+PASS retry atomically commits both sides of the Jester trade
+PASS consumption preserves both discovery histories
+PASS a consumed eye cannot be farmed again
+PASS historical Crucifix ownership prevents another exchange after losing it
+PASS the eye behaves as a unique special tray item excluded from packs and combat
+PASS the Crucifix is a Story Card excluded from keys, packs and combat
+PASS both rewards have localized names in de
+PASS both rewards have localized names in en
+PASS both rewards have localized names in es
+PASS both rewards have localized names in fr
+PASS both rewards have localized names in pl
+PASS the German card names match the requested items
+PASS both new cards have immediately loadable native icons
+PASS puzzle pressure 1 uses the numbered boiler
+PASS puzzle pressure 2 uses the numbered boiler
+PASS puzzle pressure 3 uses the numbered boiler
+PASS puzzle pressure 4 uses the numbered boiler
+PASS real doorway reaches room 3
+PASS correct real boilers alone do not bypass cocaine consumption
+PASS the package's real consumption API records first use
+PASS MainBoiler_1 exposes a visible body hover target
+PASS MainBoiler_1 focused camera keeps the valve visible and reachable
+PASS real input sets boiler 1 and keeps the reward pending during dragging
+PASS boiler 1 settles on exactly its displayed tenth after release
+PASS MainBoiler_2 exposes a visible body hover target
+PASS MainBoiler_2 focused camera keeps the valve visible and reachable
+PASS real input sets boiler 2 and keeps the reward pending during dragging
+PASS boiler 2 settles on exactly its displayed tenth after release
+PASS MainBoiler_3 exposes a visible body hover target
+PASS MainBoiler_3 focused camera keeps the valve visible and reachable
+PASS real input sets boiler 3 and keeps the reward pending during dragging
+PASS boiler 3 settles on exactly its displayed tenth after release
+PASS MainBoiler_4 exposes a visible body hover target
+PASS MainBoiler_4 focused camera keeps the valve visible and reachable
+PASS real input sets boiler 4 and keeps the reward pending during dragging
+PASS the settled-state check grants the eye even if the final release callback is missed
+PASS boiler 4 settles on exactly its displayed tenth after release
+PASS releasing the solved valve grants and reveals exactly one Jester Eye
+PASS the eye is awarded with the graveyard still locked and the Jester still imprisoned
+PASS the imprisoned Jester blocks only the later exchange and leaves the owned eye intact
+PASS solving the boiler puzzle ends ordinary cocaine drops
+PASS later victories cannot queue cocaine after puzzle completion
+PASS rendered evidence: puzzle-jester-eye
+PASS rechecking the solved room cannot duplicate the eye
+PASS real doorway reaches room 0
+PASS returning with only the eye does not start or consume the cross sequence
+PASS the hub cannot remotely exchange the eye
+PASS real doorway reaches room 2
+PASS the rescued Jester accepts the owned eye in his station view
+PASS Pause blocks the Jester exchange
+PASS the Jester's existing conversation still opens
+PASS an active Jester conversation blocks the exchange
+PASS turning away from the Jester disables his item
+PASS the prisoner viewpoint cannot use the Jester's item
+PASS bottom-edge input opens the tray with the Jester Eye
+PASS the tray explains the Jester action even alongside Toilet Paper
+PASS rendered evidence: jester-trade-tray
+PASS a real tray click consumes the eye and grants exactly one Crucifix
+PASS the Crucifix is revealed at the Jester
+PASS the Crucifix stays visible while tray closing refocuses the Jester camera
+PASS the consumed eye leaves the tray without changing money
+PASS rendered evidence: jester-crucifix
+PASS repeated item callbacks cannot duplicate the Crucifix
+PASS the exchange and first cocaine use survive profile reload
+PASS consuming the eye never reopens the boiler reward
+PASS the Crucifix appears in Story Cards beside Holy Water
+PASS returning after the Jester trade starts the Crucifix Satan sequence
+PASS real doorway reaches room 0
+PASS the real Jester trade triggers the cross conversation on returning home and preserves the Crucifix
+BOILER_PUZZLE_TESTS: PASS (89 checks)
+

@@ -1,0 +1,23 @@
+{
+  "schema_version": 2, "profile": "prop", "asset_name": "Local Cleave brick",
+  "scene": "res://scenes/effects/CleaveBrick.tscn", "units": "meters", "forward": "-Z",
+  "origin": "body_center", "footprint_m": [0.5002, 0.2401], "height_m": 0.1202,
+  "interaction_sides": ["all_visible_sides"],
+  "style_references": [
+    "assets/effects/brick/scene.gltf: original supplied brick silhouette and terracotta color",
+    "scenes/table/Card3D.tscn: brick fits within a single target card",
+    "scenes/BloodBurst3D.tscn: short fall overlaps the existing impact particles",
+    "scenes/effects/RandomDamageCoin.tscn: private materials using the existing dissolve shader"
+  ],
+  "collision": {"required": true, "strategy": "one centered BoxShape3D; private table layer 12, brick layer 13; pick layer 11"},
+  "routes": [],
+  "budgets": {"nodes": 10, "mesh_instances": 1, "surfaces": 1, "triangles": 1000, "unique_materials": 1, "collision_shapes": 1, "lights": 0, "particles": 0},
+  "review": {"required_views": ["front", "back", "left", "right", "context_drop", "context_landed", "context_dissolve", "context_kick"]},
+  "evidence": {
+    "structural": ["docs/validation/cleave-brick/asset_audit.json", "docs/validation/cleave-brick/scene-inspection.json"],
+    "runtime": ["tests/cleave_brick_test.tscn", "docs/validation/cleave-brick/focused-run.json", "docs/validation/cleave-brick/combat-run.json"],
+    "performance": ["docs/validation/cleave-brick/review_report.json"],
+    "visual": ["docs/validation/cleave-brick/context-landed.png", "docs/validation/cleave-brick/context-dissolve.png", "docs/validation/cleave-brick/detail-front.png"]
+  },
+  "notes": ["Original model is 50 x 12 x 24 units; instance scale 0.01, imported source untouched.", "No navigation or construction junctions; centered primitive collision and tabletop contact require runtime review.", "Off-happy-path checks: edge/empty slots, blocked hits, lethal target, duplicate remote effects, click through GUI, match cleanup."]
+}

@@ -28,6 +28,7 @@ func _run() -> void:
 	CollectionManager.add_card("jd")
 	CollectionManager.add_card("clicker")
 	GameCurrency.coins = 100
+	GameCurrency._rescued_npcs["angel"] = true
 	var shop := SHOP_SCENE.instantiate() as UpgradeMachine
 	add_child(shop)
 	shop.set_process(false)

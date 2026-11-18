@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://hsfn8ypja21m"]
+[gd_scene load_steps=55 format=3 uid="uid://hsfn8ypja21m"]
 
 [ext_resource type="Script" uid="uid://bn3rv4pewgvkj" path="res://scripts/main/Main.gd" id="1_main"]
 [ext_resource type="Shader" uid="uid://blvhqjy1g4613" path="res://assets/shader/buckshot.gdshader" id="2_dc040"]
@@ -11,16 +11,29 @@
 [ext_resource type="PackedScene" uid="uid://6sqfhud6j5e6" path="res://scenes/UpgradeShop.tscn" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://blwfoh8dya7ba" path="res://scripts/flicker.gd" id="7_ostsq"]
 [ext_resource type="PackedScene" uid="uid://cbj0qaueir1wc" path="res://scenes/ui/PauseMenu.tscn" id="10_pause"]
+[ext_resource type="Material" uid="uid://bxek7xpbdgrjq" path="res://assets/characters/jester/eye_glow.tres" id="11_n7vst"]
+[ext_resource type="Texture2D" uid="uid://dk2lqf5tvggyn" path="res://assets/characters/jester/jester.png" id="12_8gxhd"]
 [ext_resource type="AudioStream" uid="uid://d20rs8dtp7wb0" path="res://assets/sounds/atmo.mp3" id="12_p5fgu"]
-[ext_resource type="AudioStream" uid="uid://dpq5xmex4n558" path="res://assets/sounds/End of Line (From TRON LegacyScore).mp3" id="13_u8lgh"]
+[ext_resource type="Texture2D" uid="uid://lufwi21gl84" path="res://assets/characters/jester/jesterHover.png" id="14_o1ohc"]
+[ext_resource type="Material" uid="uid://c81ppigygggjs" path="res://assets/characters/baclmarketDealer/eye_glow.tres" id="15_botte"]
 [ext_resource type="PackedScene" uid="uid://g6mmig2vuj1q" path="res://scenes/Neon.tscn" id="15_tck0d"]
+[ext_resource type="Texture2D" uid="uid://qlmpdb8geucv" path="res://assets/characters/baclmarketDealer/blackmarketDealer.png" id="16_2cgg3"]
 [ext_resource type="PackedScene" uid="uid://ojun7qpo6psw" path="res://assets/environments/props/Neon/2/collection.glb" id="16_u8lgh"]
 [ext_resource type="PackedScene" uid="uid://cy3btw2xuam5t" path="res://assets/environments/props/Neon/4/shop.glb" id="17_rikml"]
+[ext_resource type="Texture2D" uid="uid://bjdj85emmgjc1" path="res://assets/characters/baclmarketDealer/dealerHover.png" id="17_wke70"]
+[ext_resource type="Material" uid="uid://c7mq4t46wq4wj" path="res://assets/characters/angel/eye_glow.tres" id="18_ctbwf"]
 [ext_resource type="PackedScene" uid="uid://b1y3kkh4xehbe" path="res://assets/environments/props/Neon/3/upgrade.glb" id="18_vc03v"]
 [ext_resource type="Script" uid="uid://buipggjtnvpx7" path="res://scripts/ui/ScreenCameraFocus.gd" id="19_focus"]
+[ext_resource type="Texture2D" uid="uid://ddgq6dfuyq1ow" path="res://assets/characters/angel/angel.png" id="19_o80qj"]
 [ext_resource type="PackedScene" uid="uid://ct7nuivac4a8a" path="res://assets/environments/props/usb/scene.gltf" id="19_vc03v"]
+[ext_resource type="Texture2D" uid="uid://bp2nfqse45kr5" path="res://assets/characters/angel/angelHover.png" id="20_0sk6p"]
 [ext_resource type="PackedScene" uid="uid://bqetkqf5b5kk4" path="res://assets/environments/props/beer/energy.glb" id="20_grv7h"]
+[ext_resource type="Material" uid="uid://vptoi2ysaulb" path="res://assets/characters/prisoner/eye_glow.tres" id="21_e8pg6"]
+[ext_resource type="AudioStream" uid="uid://bgf3uifb20lkq" path="res://assets/sounds/theme4.mp3" id="21_ew7m7"]
+[ext_resource type="Script" uid="uid://q3el046eyy7u" path="res://scripts/main/ThemeMusic.gd" id="21_theme_music"]
 [ext_resource type="PackedScene" uid="uid://coc6b78e8hjdw" path="res://assets/environments/props/knife/knife.glb" id="22_d8523"]
+[ext_resource type="Texture2D" uid="uid://cs6a232v4f24t" path="res://assets/characters/prisoner/prisoner.png" id="22_h05k6"]
+[ext_resource type="Texture2D" uid="uid://c106ugrl6gowv" path="res://assets/characters/prisoner/prisonerHover.png" id="23_ex0yv"]
 [ext_resource type="Script" uid="uid://buklinv6mfo0y" path="res://scripts/table/LocalTableProp.gd" id="23_local_prop"]
 [ext_resource type="PackedScene" uid="uid://byptauqy0lmst" path="res://scenes/ui/LevelProgress.tscn" id="24_level_progress"]
 [ext_resource type="PackedScene" uid="uid://b5it3dha7wsec" path="res://scenes/props/HospitalDoor.tscn" id="25_door"]
@@ -31,6 +44,13 @@
 [ext_resource type="PackedScene" uid="uid://bf245el40ckwm" path="res://scenes/rooms/BlackMarket.tscn" id="30_black_market"]
 [ext_resource type="AudioStream" uid="uid://bu4v4qlnmw3y6" path="res://assets/sounds/SFX/canKick.mp3" id="31_can_kick"]
 [ext_resource type="AudioStream" uid="uid://djtgqglxv7gu0" path="res://assets/sounds/SFX/crateThrow.mp3" id="32_crate_throw"]
+[ext_resource type="PackedScene" path="res://scenes/ui/AccessKeyTray.tscn" id="33_access_keys"]
+[ext_resource type="PackedScene" uid="uid://bwdtbe7k6r5lq" path="res://assets/environments/props/cables/cables.glb" id="33_ew7m7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/BloodOverlay.tscn" id="34_blood"]
+[ext_resource type="Texture2D" uid="uid://bmitvblro0jet" path="res://assets/hints/hint1.png" id="35_m1khv"]
+[ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="36_vs4dm"]
+[ext_resource type="PackedScene" path="res://scenes/props/WeedPickup.tscn" id="37_weed"]
+[ext_resource type="Material" uid="uid://6dt01yfv33t1" path="res://assets/hints/hint1_emission.tres" id="38_hint_emission"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u8lgh"]
 shader = ExtResource("3_jsdfw")
@@ -86,7 +106,7 @@ sway_angle_degrees = 7.015
 room_travel_duration = 2.4
 slot_room_music_attenuation_db = -7.0
 slot_room_music_cutoff_hz = 950.0
-wakeup_blur_duration = 3.4
+wakeup_blur_duration = 3.1
 debug_interaction_clicks = false
 
 [node name="CameraPivot" type="Node3D" parent="."]
@@ -100,7 +120,14 @@ fov = 58.0
 
 [node name="LevelProgress" parent="CameraPivot/CameraTilt/Camera3D" instance=ExtResource("24_level_progress")]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D"]
+[node name="AccessKeyTray" parent="CameraPivot/CameraTilt/Camera3D" instance=ExtResource("33_access_keys")]
+
+[node name="BloodOverlay" parent="CameraPivot/CameraTilt/Camera3D" instance=ExtResource("34_blood")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D" groups=["screen_overlay_effects"]]
+
+[node name="BloodScreenCopy" type="BackBufferCopy" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer"]
+copy_mode = 2
 
 [node name="DirtyLensRect" type="ColorRect" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer"]
 material = SubResource("ShaderMaterial_u8lgh")
@@ -112,8 +139,11 @@ grow_vertical = 2
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="CanvasLayer2" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D"]
+[node name="CanvasLayer2" type="CanvasLayer" parent="CameraPivot/CameraTilt/Camera3D" groups=["screen_overlay_effects"]]
 layer = 128
+
+[node name="LensScreenCopy" type="BackBufferCopy" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer2"]
+copy_mode = 2
 
 [node name="ColorRect" type="ColorRect" parent="CameraPivot/CameraTilt/Camera3D/CanvasLayer2"]
 material = SubResource("ShaderMaterial_1rhdn")
@@ -133,8 +163,65 @@ camera = NodePath("../CameraPivot/CameraTilt/Camera3D")
 [node name="GameTable" parent="ScenePivot" node_paths=PackedStringArray("table_camera") instance=ExtResource("2_table")]
 transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0, 0.392041, -3.15325)
 blood_spawn_offset = Vector3(0, 0.16, 0)
-blood_decal_offset = Vector3(0, 0.012, 0)
 table_camera = NodePath("../../CameraPivot/CameraTilt/Camera3D")
+
+[node name="WeedPickup" parent="ScenePivot/GameTable" instance=ExtResource("37_weed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.021, 0.5)
+
+[node name="angelImprisoned" type="Sprite3D" parent="ScenePivot/GameTable"]
+transform = Transform3D(0.241882, -0.0953579, -8.2524e-09, 0.0953579, 0.241882, 2.09328e-08, 0, -2.25008e-08, 0.26, -2.03384, 0.953089, -2.98447)
+visible = false
+material_override = ExtResource("18_ctbwf")
+pixel_size = 0.1355
+texture_filter = 0
+texture = ExtResource("19_o80qj")
+hframes = 18
+script = ExtResource("36_vs4dm")
+fps = 10.0
+TOTAL_FRAMES = 18
+hover_texture = ExtResource("20_0sk6p")
+
+[node name="DealerImprisoned" type="Sprite3D" parent="ScenePivot/GameTable"]
+transform = Transform3D(0.3627, 0, 0, 0, 0.3627, 2.59839e-08, 0, -2.59839e-08, 0.3627, 0.959158, 0.863921, -3.5637)
+visible = false
+material_override = ExtResource("15_botte")
+pixel_size = 0.1155
+billboard = 1
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("16_2cgg3")
+hframes = 19
+script = ExtResource("36_vs4dm")
+fps = 10.0
+TOTAL_FRAMES = 19
+hover_texture = ExtResource("17_wke70")
+
+[node name="PrisonerImprisoned" type="Sprite3D" parent="ScenePivot/GameTable"]
+transform = Transform3D(0.229505, 0.122179, 8.75292e-09, -0.122179, 0.229505, 1.64418e-08, -1.23358e-15, -1.86264e-08, 0.26, 2.04527, 0.704526, -2.91814)
+visible = false
+material_override = ExtResource("21_e8pg6")
+pixel_size = 0.153
+texture_filter = 0
+texture = ExtResource("22_h05k6")
+hframes = 12
+script = ExtResource("36_vs4dm")
+fps = 10.0
+TOTAL_FRAMES = 12
+hover_texture = ExtResource("23_ex0yv")
+
+[node name="jesterImprisoned" type="Sprite3D" parent="ScenePivot/GameTable"]
+transform = Transform3D(0.26, 0, 0, 0, 0.26, 1.86265e-08, 0, -1.86265e-08, 0.26, -1.37052, 0.681609, -4.33492)
+visible = false
+material_override = ExtResource("11_n7vst")
+pixel_size = 0.1675
+billboard = 1
+texture_filter = 0
+texture = ExtResource("12_8gxhd")
+hframes = 19
+script = ExtResource("36_vs4dm")
+fps = 10.0
+TOTAL_FRAMES = 19
+hover_texture = ExtResource("14_o1ohc")
 
 [node name="PackShopMachine" parent="ScenePivot" instance=ExtResource("4_qkm1d")]
 transform = Transform3D(-1.18895e-07, 0, -2.72, 0, 2.72, 0, 2.72, 0, -1.18895e-07, -6.07893, -1.83417, 0.391837)
@@ -236,6 +323,27 @@ light_energy = 11.087
 spot_range = 8.479
 script = ExtResource("7_ostsq")
 
+[node name="SpotLight3D2" type="SpotLight3D" parent="HubDoor"]
+transform = Transform3D(0.547945, 2.36242e-08, 2.78975e-08, -2.36241e-08, -0.0902767, 0.540457, 2.78976e-08, -0.540457, -0.0902767, 4.31528, 3.95159, -0.804162)
+light_color = Color(0.996814, 0.00130689, 0.000717341, 1)
+light_energy = 11.087
+spot_range = 8.479
+script = ExtResource("7_ostsq")
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="HubDoor"]
+transform = Transform3D(0.547945, 2.22808e-08, 1.51627e-08, -2.22807e-08, 0.201063, 0.509723, 1.51628e-08, -0.509723, 0.201063, 4.31528, 3.95159, -7.47583)
+light_color = Color(0.996814, 0.00130689, 0.000717341, 1)
+light_energy = 11.087
+spot_range = 8.479
+script = ExtResource("7_ostsq")
+
+[node name="SpotLight3D4" type="SpotLight3D" parent="HubDoor"]
+transform = Transform3D(0.457119, 0.00518338, 0.302092, -0.302136, 0.0078422, 0.457052, 1.94189e-08, -0.547865, 0.0094004, -3.02667, 3.58182, -7.23718)
+light_color = Color(0.392523, 0.562263, 0.633308, 1)
+light_energy = 0.774
+spot_range = 8.479
+script = ExtResource("7_ostsq")
+
 [node name="EmptyRoom" parent="." instance=ExtResource("26_empty_room")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.1164, 0, 8.56162)
 
@@ -282,10 +390,10 @@ shadow_enabled = true
 omni_range = 1826.41
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("13_u8lgh")
-pitch_scale = 0.72
-autoplay = true
+stream = ExtResource("21_ew7m7")
+pitch_scale = 0.8
 bus = &"Music"
+script = ExtResource("21_theme_music")
 
 [node name="Atmo" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_p5fgu")
@@ -295,9 +403,10 @@ bus = &"SFX"
 
 [node name="Neon" parent="." instance=ExtResource("15_tck0d")]
 transform = Transform3D(1.19, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.7732, -6.89788)
+visible = false
 
 [node name="collection" parent="." instance=ExtResource("16_u8lgh")]
-transform = Transform3D(-2.325, -2.63488e-07, 2.42467e-14, 3.63857e-08, -0.180858, -1.7356, 3.49175e-07, -1.7356, 0.180858, 0, 4.35192, 11.7201)
+transform = Transform3D(-2.325, -2.63488e-07, 2.42467e-14, 3.63857e-08, -0.180858, -1.7356, 3.49175e-07, -1.7356, 0.180858, 0, 4.35192, 11.5158)
 
 [node name="shop" parent="." instance=ExtResource("17_rikml")]
 transform = Transform3D(-2.18557e-08, 0.5, -2.18557e-08, 0, -2.18557e-08, -0.5, -0.5, -2.18557e-08, 9.55343e-16, -5.06037, 2.97948, 0.0526822)
@@ -336,6 +445,20 @@ throw_sound = ExtResource("31_can_kick")
 [node name="knife" parent="decortaions" instance=ExtResource("22_d8523")]
 transform = Transform3D(-0.12282, -0.174671, -0.025104, -0.0513653, 0.00612494, 0.208684, -0.168825, 0.125209, -0.0452293, 2.71879, 0.721674, -3.65632)
 script = ExtResource("23_local_prop")
+
+[node name="cables" parent="." instance=ExtResource("33_ew7m7")]
+
+[node name="Hint1" type="Sprite3D" parent="."]
+transform = Transform3D(0.987389, -0.158313, 0, 0.158313, 0.987389, 0, 0, 0, 1, -4.2, 2.20268, -10.8147)
+visible = false
+material_override = ExtResource("38_hint_emission")
+pixel_size = 0.0595
+shaded = true
+texture_filter = 0
+texture = ExtResource("35_m1khv")
+hframes = 5
+script = ExtResource("36_vs4dm")
+TOTAL_FRAMES = 5
 
 [editable path="ScenePivot/PackShopMachine"]
 [editable path="ScenePivot/UpgradeMachine"]

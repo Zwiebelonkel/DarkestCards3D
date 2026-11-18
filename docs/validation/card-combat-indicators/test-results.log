@@ -1,0 +1,673 @@
+=== unit_result ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS: direct damage updates current HP and its printed number
+PASS: nonpositive damage never heals or emits a death
+PASS: ordinary healing restores missing HP without increasing maximum HP
+PASS: ordinary healing caps at maximum HP
+PASS: explicit overheal preserves the separate maximum
+PASS: capped, negative and zero heals cannot remove preexisting overheal
+PASS: Curse reduces the current attack and its label
+PASS: nonpositive Curse never becomes a stat increase
+PASS: Curse cannot make attack negative
+PASS: a lethal hit clamps HP and emits one death notification
+PASS: further hits on a dead card never emit duplicate death notifications
+PASS: ordinary healing cannot resurrect a card without an available death save
+PASS: damage, healing and curses remain transient combat state
+PASS: catalog default armor is 25 percent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.1
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.25
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.35
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.5
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.75
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 1.0
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: -0.2
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: a type-only armor effect uses the actual 25-percent catalog default
+PASS: type-only armor uses the matching default 25-percent icon
+PASS: pure armor never turns negative damage into healing
+PASS: nonpositive incoming damage leaves both one-use defenses available
+PASS: nonpositive incoming damage leaves both one-use defenses available
+PASS: the next actual hit still consumes only the intact shield
+PASS: raw-damage helper bypasses armor and preserves the first-hit shield
+PASS: overkill reports only the three HP actually removed
+PASS: checking a living card does not consume either survival charge
+PASS: Last Stand has priority, prevents the final HP of damage and creates no healing
+PASS: the resolver consumes only the used charge and clears its presentation marker
+PASS: saving a Holo card never starts dissolve or replaces its live material
+PASS: a zero-damage continuation cannot consume the second survival effect
+PASS: Grave Return reports the actual lethal hit separately from its restored half-health
+PASS: a third lethal hit kills after both independent survival charges are consumed
+PASS: already dead cards cannot consume or recreate survival state
+PASS: odd maximum HP uses rounded half-health revival without hiding damage already taken
+PASS: a two-HP grave return still reports its real hit and separate ten-HP revival
+PASS: one-HP Grave Return never rounds down to a dead card
+PASS: dissolving the confirmed dead card leaves another Holo card and its survival untouched
+PASS: ordinary cards get one hit and no implicit identical-card bonus
+PASS: multi-strike uses its configured bounded hit count: { "type": "double_strike" }
+PASS: multi-strike uses its configured bounded hit count: { "type": "double_strike", "hits": 4 }
+PASS: multi-strike uses its configured bounded hit count: { "type": "triple_strike" }
+PASS: multi-strike uses its configured bounded hit count: { "type": "triple_strike", "hits": 6 }
+PASS: multi-strike uses its configured bounded hit count: { "type": "double_strike", "hits": 0 }
+PASS: multi-strike uses its configured bounded hit count: { "type": "triple_strike", "hits": 500 }
+PASS: Triple Strike retains precedence when both effects are present
+PASS: type-only strike defaults match both catalog entries
+PASS: Swarm Power multiplies by identical living copies with a minimum factor of one
+PASS: Swarm Power uses cursed current attack rather than immutable catalog attack
+PASS: attacks without Random Damage do not consume RNG
+PASS: custom random-damage bounds produce a reproducible variable damage sequence
+PASS: Random Damage multiplies the swarm total using its explicit custom parameters
+PASS: type-only random-damage bounds match the catalog
+PASS: Lifesteal and Thorns catalog percentages match combat defaults
+PASS: type-only Lifesteal heals 20 percent of real damage
+PASS: Lifesteal returns only the health actually restored at its cap
+PASS: full-health Lifesteal produces zero effective healing
+PASS: capped Lifesteal preserves existing overheal and reports no gain
+PASS: a custom 10-percent Lifesteal uses whole-HP rounding
+PASS: small and nonpositive lifesteal amounts do not invent a heal
+PASS: Lifesteal never revives a dead attacker
+PASS: Thorns rounds its percentage and bypasses armor and the first-hit shield: { "type": "thorns" }
+PASS: Thorns rounds its percentage and bypasses armor and the first-hit shield: { "type": "thorns", "percent": 0.15 }
+PASS: Thorns rounds its percentage and bypasses armor and the first-hit shield: { "type": "thorns", "percent": 0.2 }
+PASS: Thorns rounds its percentage and bypasses armor and the first-hit shield: { "type": "thorns", "percent": 0.25 }
+PASS: zero damage received never reflects phantom thorns
+PASS: the real heal method applies the catalog's three-HP regeneration value
+PASS: a mixed live state retains damage saves, overheal, Curse and refreshed block duration
+PASS: network round-trip preserves exact HP, attack, effects, Holo, poison, stun and consumed survival flags
+PASS: restored state immediately prints its actual combat values and block badge
+PASS: restored one-use states cannot be replayed
+PASS: stolen-card redraw restores transient state once without leaking the embedded match snapshot into card data
+PASS: network dictionaries are detached from both original and replica card effects
+PASS: Swap Stats exchanges the supplied upgraded attack and maximum HP exactly once
+PASS: Strength scales current swapped and cursed values while preserving proportional damage with rounding
+PASS: network update and stolen redraw never apply Swap Stats a second time
+PASS: changing language does not heal, re-swap or restore consumed combat state
+PASS: fresh setup resets mutable values and one-use charges for a new match
+PASS: fresh setup clears poison and stale survival presentation metadata
+PASS: every authored combat card initializes its exact stats, including active Swap Stats
+PASS: reusing one node across the complete catalog neither leaks survival charges nor activates them on special/event cards
+PASS: combat methods and card setup never mutate either shared catalog
+PASS: unit combat leaves file bytes unchanged: collection.json
+PASS: unit combat leaves file bytes unchanged: card_upgrades.cfg
+PASS: unit combat leaves file bytes unchanged: battle_deck.cfg
+PASS: unit combat leaves file bytes unchanged: currency.cfg
+PASS: unit combat leaves file bytes unchanged: settings.cfg
+PASS: unit combat leaves file bytes unchanged: cards.json
+PASS: unit combat leaves file bytes unchanged: effects.json
+CARD_EFFECT_UNIT_TESTS: PASS (106 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== combat_audit ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS Deck Burn is absent from both effect and innate-card catalogs
+PASS Runtime audit covers declared catalog/card effect armor
+PASS Runtime audit covers declared catalog/card effect regeneration
+PASS Runtime audit covers declared catalog/card effect poison
+PASS Runtime audit covers declared catalog/card effect lifesteal
+PASS Runtime audit covers declared catalog/card effect thorns
+PASS Runtime audit covers declared catalog/card effect cleave
+PASS Runtime audit covers declared catalog/card effect lava
+PASS Runtime audit covers declared catalog/card effect double_strike
+PASS Runtime audit covers declared catalog/card effect stun
+PASS Runtime audit covers declared catalog/card effect chain_attack
+PASS Runtime audit covers declared catalog/card effect triple_strike
+PASS Runtime audit covers declared catalog/card effect last_stand
+PASS Runtime audit covers declared catalog/card effect execute
+PASS Runtime audit covers declared catalog/card effect shield_first_hit
+PASS Runtime audit covers declared catalog/card effect swarm_power
+PASS Runtime audit covers declared catalog/card effect grave_return
+PASS Runtime audit covers declared catalog/card effect draw_on_kill
+PASS Runtime audit covers declared catalog/card effect curse
+PASS Runtime audit covers declared catalog/card effect swap_stats
+PASS Runtime audit covers declared catalog/card effect random_damage
+PASS Runtime audit covers declared catalog/card effect bodyguard
+PASS Runtime audit covers declared catalog/card effect neighbor_heal
+PASS Audit type still has an actual catalog/card declaration: armor
+PASS Audit type still has an actual catalog/card declaration: regeneration
+PASS Audit type still has an actual catalog/card declaration: poison
+PASS Audit type still has an actual catalog/card declaration: lifesteal
+PASS Audit type still has an actual catalog/card declaration: thorns
+PASS Audit type still has an actual catalog/card declaration: cleave
+PASS Audit type still has an actual catalog/card declaration: lava
+PASS Audit type still has an actual catalog/card declaration: double_strike
+PASS Audit type still has an actual catalog/card declaration: stun
+PASS Audit type still has an actual catalog/card declaration: chain_attack
+PASS Audit type still has an actual catalog/card declaration: triple_strike
+PASS Audit type still has an actual catalog/card declaration: last_stand
+PASS Audit type still has an actual catalog/card declaration: execute
+PASS Audit type still has an actual catalog/card declaration: shield_first_hit
+PASS Audit type still has an actual catalog/card declaration: swarm_power
+PASS Audit type still has an actual catalog/card declaration: grave_return
+PASS Audit type still has an actual catalog/card declaration: draw_on_kill
+PASS Audit type still has an actual catalog/card declaration: curse
+PASS Audit type still has an actual catalog/card declaration: swap_stats
+PASS Audit type still has an actual catalog/card declaration: random_damage
+PASS Audit type still has an actual catalog/card declaration: bodyguard
+PASS Audit type still has an actual catalog/card declaration: neighbor_heal
+PASS player armor 0.1 reduces a real hit, preserving one counter
+PASS player armor 0.25 reduces a real hit, preserving one counter
+PASS player armor 0.35 reduces a real hit, preserving one counter
+PASS player armor 0.5 reduces a real hit, preserving one counter
+PASS player armor 0.75 reduces a real hit, preserving one counter
+PASS player shield blocks and consumes the first hit
+PASS player shield does not block the second hit
+PASS player armor/shield fighter snapshot preserves actual HP, effects and one-use state
+PASS player armor/shield spectator snapshot preserves actual HP, effects and one-use state
+PASS player zero attack does not spend an unused first-hit shield
+PASS player double_strike executes every hit
+PASS player thorns reacts to each strike, normal counter only once
+PASS player triple_strike executes every hit
+PASS player thorns reacts to each strike, normal counter only once
+PASS player multi-hit/thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS player multi-hit/thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS player explicit hits overrides the strike default and still counters only once
+PASS player deterministic random-damage interval modifies the actual hit
+PASS player swarm counts the three identical cards across the battlefield
+PASS player swapped stats determine real damage and health
+PASS player swap_stats fighter snapshot preserves actual HP, effects and one-use state
+PASS player swap_stats spectator snapshot preserves actual HP, effects and one-use state
+PASS player lifesteal uses actual three HP lost, not twelve overkill damage
+PASS player lifesteal/overkill fighter snapshot preserves actual HP, effects and one-use state
+PASS player lifesteal/overkill spectator snapshot preserves actual HP, effects and one-use state
+PASS player stun honors exact chance 0.0
+PASS player curse permanently subtracts its value without negative attack
+PASS player curse/stun 0.0 fighter snapshot preserves actual HP, effects and one-use state
+PASS player curse/stun 0.0 spectator snapshot preserves actual HP, effects and one-use state
+PASS player stun honors exact chance 1.0
+PASS player curse permanently subtracts its value without negative attack
+PASS player curse/stun 1.0 fighter snapshot preserves actual HP, effects and one-use state
+PASS player curse/stun 1.0 spectator snapshot preserves actual HP, effects and one-use state
+PASS player stun prevents and consumes exactly the next requested attack
+PASS player card can attack normally after its stun was consumed
+PASS player attack applies configured poison without an extra immediate tick
+PASS player poison deals configured damage on owner turn 1
+PASS player poison deals configured damage on owner turn 2
+PASS player poison deals configured damage on owner turn 3
+PASS player poison expires after its configured three ticks
+PASS player fully blocked hits cannot apply poison
+PASS player regeneration executes on owner turn start
+PASS player regeneration respects maximum HP
+PASS player poison/regeneration fighter snapshot preserves actual HP, effects and one-use state
+PASS player poison/regeneration spectator snapshot preserves actual HP, effects and one-use state
+PASS player last_stand survives a lethal ordinary hit
+PASS player consumed last_stand fighter snapshot preserves actual HP, effects and one-use state
+PASS player consumed last_stand spectator snapshot preserves actual HP, effects and one-use state
+PASS player last_stand cannot survive twice
+PASS player last_stand also survives lethal poison
+PASS player last_stand survives the execute portion of a hit
+PASS player execute cannot kill again after the same hit consumed last_stand
+PASS player grave_return survives a lethal ordinary hit
+PASS player consumed grave_return fighter snapshot preserves actual HP, effects and one-use state
+PASS player consumed grave_return spectator snapshot preserves actual HP, effects and one-use state
+PASS player grave_return cannot survive twice
+PASS player grave_return also survives lethal poison
+PASS player grave_return survives the execute portion of a hit
+PASS player execute cannot kill again after the same hit consumed grave_return
+PASS player execute leaves a target above its threshold alive
+PASS player execute destroys a target reaching its threshold
+PASS player two-HP Grave Return preserves the actual hit, poison application and two reflected HP despite gaining health
+PASS player Execute records two normal plus five execution HP before Grave Return, yielding four actual Lifesteal HP
+PASS player lethal Thorns preserves its two-HP damage record separately from the attacker's ten-HP revival
+PASS player Cleave includes a reviving bodyguard's two redirected HP in its real damage total and eight-HP Lifesteal
+PASS player cleave uses side_damage and reaches only adjacent targets
+PASS player cleave fighter snapshot preserves actual HP, effects and one-use state
+PASS player cleave spectator snapshot preserves actual HP, effects and one-use state
+PASS player chain attack performs a second real duel after a kill then ends once
+PASS player a cleave-only kill also earns the chain attack
+PASS player lifesteal includes actual primary and both cleave damage totals
+PASS player Lava hits all initial targets and takes only the selected counter
+PASS player Draw On Kill awards exactly one shared event per actual Lava kill
+PASS player lava/draw_on_kill fighter snapshot preserves actual HP, effects and one-use state
+PASS player lava/draw_on_kill spectator snapshot preserves actual HP, effects and one-use state
+PASS player surviving a lethal hit never awards a kill event
+PASS player triple Lava kills and replaces the original neighbor, but the newly drawn guard cannot intercept later hits of that same attack
+PASS player adjacent bodyguard takes half a real hit, distant bodyguard takes none
+PASS player bodyguard fighter snapshot preserves actual HP, effects and one-use state
+PASS player bodyguard spectator snapshot preserves actual HP, effects and one-use state
+PASS player bodyguard's own armor mitigates its redirected share
+PASS player protected target's first-hit shield blocks the entire hit before redirection
+PASS player two bodyguards select only the living left neighbor without recursive sharing
+PASS player bodyguard also redirects the selected target's counterattack
+PASS player counterattack/bodyguard fighter snapshot preserves actual HP, effects and one-use state
+PASS player counterattack/bodyguard spectator snapshot preserves actual HP, effects and one-use state
+PASS player bodyguard honors a custom redirected percentage
+PASS player redirected lethal damage respects bodyguard's Last Stand
+PASS player neighbor-heal does not trigger early from received damage
+PASS player catalog neighbor-heal heals only adjacent allies on owner turn start
+PASS player turn-start neighbor_heal fighter snapshot preserves actual HP, effects and one-use state
+PASS player turn-start neighbor_heal spectator snapshot preserves actual HP, effects and one-use state
+PASS player authored paramedic heals one adjacent HP at turn start
+PASS player authored paramedic does not gain an extra damage trigger
+PASS player authored repair_bot heals one adjacent HP at turn start
+PASS player authored repair_bot does not gain an extra damage trigger
+PASS enemy armor 0.1 reduces a real hit, preserving one counter
+PASS enemy armor 0.25 reduces a real hit, preserving one counter
+PASS enemy armor 0.35 reduces a real hit, preserving one counter
+PASS enemy armor 0.5 reduces a real hit, preserving one counter
+PASS enemy armor 0.75 reduces a real hit, preserving one counter
+PASS enemy shield blocks and consumes the first hit
+PASS enemy shield does not block the second hit
+PASS enemy armor/shield fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy armor/shield spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy zero attack does not spend an unused first-hit shield
+PASS enemy double_strike executes every hit
+PASS enemy thorns reacts to each strike, normal counter only once
+PASS enemy triple_strike executes every hit
+PASS enemy thorns reacts to each strike, normal counter only once
+PASS enemy multi-hit/thorns fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy multi-hit/thorns spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy explicit hits overrides the strike default and still counters only once
+PASS enemy deterministic random-damage interval modifies the actual hit
+PASS enemy swarm counts the three identical cards across the battlefield
+PASS enemy swapped stats determine real damage and health
+PASS enemy swap_stats fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy swap_stats spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy lifesteal uses actual three HP lost, not twelve overkill damage
+PASS enemy lifesteal/overkill fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy lifesteal/overkill spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stun honors exact chance 0.0
+PASS enemy curse permanently subtracts its value without negative attack
+PASS enemy curse/stun 0.0 fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy curse/stun 0.0 spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stun honors exact chance 1.0
+PASS enemy curse permanently subtracts its value without negative attack
+PASS enemy curse/stun 1.0 fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy curse/stun 1.0 spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy stun prevents and consumes exactly the next requested attack
+PASS enemy card can attack normally after its stun was consumed
+PASS enemy attack applies configured poison without an extra immediate tick
+PASS enemy poison deals configured damage on owner turn 1
+PASS enemy poison deals configured damage on owner turn 2
+PASS enemy poison deals configured damage on owner turn 3
+PASS enemy poison expires after its configured three ticks
+PASS enemy fully blocked hits cannot apply poison
+PASS enemy regeneration executes on owner turn start
+PASS enemy regeneration respects maximum HP
+PASS enemy poison/regeneration fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy poison/regeneration spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy last_stand survives a lethal ordinary hit
+PASS enemy consumed last_stand fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy consumed last_stand spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy last_stand cannot survive twice
+PASS enemy last_stand also survives lethal poison
+PASS enemy last_stand survives the execute portion of a hit
+PASS enemy execute cannot kill again after the same hit consumed last_stand
+PASS enemy grave_return survives a lethal ordinary hit
+PASS enemy consumed grave_return fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy consumed grave_return spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy grave_return cannot survive twice
+PASS enemy grave_return also survives lethal poison
+PASS enemy grave_return survives the execute portion of a hit
+PASS enemy execute cannot kill again after the same hit consumed grave_return
+PASS enemy execute leaves a target above its threshold alive
+PASS enemy execute destroys a target reaching its threshold
+PASS enemy two-HP Grave Return preserves the actual hit, poison application and two reflected HP despite gaining health
+PASS enemy Execute records two normal plus five execution HP before Grave Return, yielding four actual Lifesteal HP
+PASS enemy lethal Thorns preserves its two-HP damage record separately from the attacker's ten-HP revival
+PASS enemy Cleave includes a reviving bodyguard's two redirected HP in its real damage total and eight-HP Lifesteal
+PASS enemy cleave uses side_damage and reaches only adjacent targets
+PASS enemy cleave fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy cleave spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy chain attack performs a second real duel after a kill then ends once
+PASS enemy a cleave-only kill also earns the chain attack
+PASS enemy lifesteal includes actual primary and both cleave damage totals
+PASS enemy Lava hits all initial targets and takes only the selected counter
+PASS enemy Draw On Kill awards exactly one shared event per actual Lava kill
+PASS enemy lava/draw_on_kill fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy lava/draw_on_kill spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy surviving a lethal hit never awards a kill event
+PASS enemy triple Lava kills and replaces the original neighbor, but the newly drawn guard cannot intercept later hits of that same attack
+PASS enemy adjacent bodyguard takes half a real hit, distant bodyguard takes none
+PASS enemy bodyguard fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy bodyguard spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy bodyguard's own armor mitigates its redirected share
+PASS enemy protected target's first-hit shield blocks the entire hit before redirection
+PASS enemy two bodyguards select only the living left neighbor without recursive sharing
+PASS enemy bodyguard also redirects the selected target's counterattack
+PASS enemy counterattack/bodyguard fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy counterattack/bodyguard spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy bodyguard honors a custom redirected percentage
+PASS enemy redirected lethal damage respects bodyguard's Last Stand
+PASS enemy neighbor-heal does not trigger early from received damage
+PASS enemy catalog neighbor-heal heals only adjacent allies on owner turn start
+PASS enemy turn-start neighbor_heal fighter snapshot preserves actual HP, effects and one-use state
+PASS enemy turn-start neighbor_heal spectator snapshot preserves actual HP, effects and one-use state
+PASS enemy authored paramedic heals one adjacent HP at turn start
+PASS enemy authored paramedic does not gain an extra damage trigger
+PASS enemy authored repair_bot heals one adjacent HP at turn start
+PASS enemy authored repair_bot does not gain an extra damage trigger
+COMBAT_EFFECT_AUDIT_TESTS: PASS (237 checks)
+
+WARNING: 'res://assets/environments/props/dealer/scene.gltf': In external resource #1, invalid UID: 'uid://28klbqm2yqjs' - using text path instead: 'res://assets/environments/props/dealer/textures/Scene_-_Root_emissive.png'.
+   at: open (core/io/resource_format_binary.cpp:1094)
+WARNING: 'res://assets/environments/props/dealer/scene.gltf': In external resource #1, invalid UID: 'uid://28klbqm2yqjs' - using text path instead: 'res://assets/environments/props/dealer/textures/Scene_-_Root_emissive.png'.
+   at: open (core/io/resource_format_binary.cpp:1094)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== bodyguard_online_impact_test ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS mirrored fighter accepts original bodyguards on both canonical sides and repeated hits
+PASS mirrored fighter consumes one validated authoritative contact
+PASS mirrored fighter applies final primary, Lava and both-side guard states to correct local cards
+PASS mirrored fighter repeated guard records retain distinct damage numbers plus their own Lava hit
+PASS mirrored fighter all contact damage uses real popup nodes in the same frame
+PASS mirrored fighter guard damage presentation always sees its final HP rather than intermediate snapshots
+PASS mirrored fighter replayed packet neither reapplies guard hits nor starts death
+PASS mirrored fighter validator rejects array
+PASS mirrored fighter invalid array rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects entry
+PASS mirrored fighter invalid entry rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects overflow
+PASS mirrored fighter invalid overflow rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects side
+PASS mirrored fighter invalid side rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects negative_slot
+PASS mirrored fighter invalid negative_slot rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects large_slot
+PASS mirrored fighter invalid large_slot rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects state_type
+PASS mirrored fighter invalid state_type rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects empty_state
+PASS mirrored fighter invalid empty_state rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects wrong_identity
+PASS mirrored fighter invalid wrong_identity rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects nonguard
+PASS mirrored fighter invalid nonguard rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects replacement
+PASS mirrored fighter invalid replacement rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter validator rejects missing_board
+PASS mirrored fighter invalid missing_board rejects the whole contact before HP, popups or deaths
+PASS mirrored fighter accepts exactly the documented ten-record bound
+PASS mirrored fighter legacy packet without guard hits needs no original-board map
+PASS mirrored fighter blocked guard share preserves HP, consumes shield and presents one zero
+PASS mirrored fighter guard survival state is consumed without a death animation
+PASS mirrored fighter guard also killed as a Lava target leaves its slot and flies away exactly once
+PASS mirrored fighter lethal combined contact preserves each guard/Lava damage number
+PASS mirrored fighter replay of a lethal guard/Lava packet cannot kill or display twice
+PASS mirrored fighter remote guard death never consumes a replacement reserved for the authority
+PASS spectator accepts original bodyguards on both canonical sides and repeated hits
+PASS spectator consumes one validated authoritative contact
+PASS spectator applies final primary, Lava and both-side guard states to correct local cards
+PASS spectator repeated guard records retain distinct damage numbers plus their own Lava hit
+PASS spectator all contact damage uses real popup nodes in the same frame
+PASS spectator guard damage presentation always sees its final HP rather than intermediate snapshots
+PASS spectator replayed packet neither reapplies guard hits nor starts death
+PASS spectator validator rejects array
+PASS spectator invalid array rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects entry
+PASS spectator invalid entry rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects overflow
+PASS spectator invalid overflow rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects side
+PASS spectator invalid side rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects negative_slot
+PASS spectator invalid negative_slot rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects large_slot
+PASS spectator invalid large_slot rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects state_type
+PASS spectator invalid state_type rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects empty_state
+PASS spectator invalid empty_state rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects wrong_identity
+PASS spectator invalid wrong_identity rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects nonguard
+PASS spectator invalid nonguard rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects replacement
+PASS spectator invalid replacement rejects the whole contact before HP, popups or deaths
+PASS spectator validator rejects missing_board
+PASS spectator invalid missing_board rejects the whole contact before HP, popups or deaths
+PASS spectator accepts exactly the documented ten-record bound
+PASS spectator legacy packet without guard hits needs no original-board map
+PASS spectator blocked guard share preserves HP, consumes shield and presents one zero
+PASS spectator guard survival state is consumed without a death animation
+PASS spectator guard also killed as a Lava target leaves its slot and flies away exactly once
+PASS spectator lethal combined contact preserves each guard/Lava damage number
+PASS spectator replay of a lethal guard/Lava packet cannot kill or display twice
+PASS spectator remote guard death never consumes a replacement reserved for the authority
+BODYGUARD_ONLINE_IMPACT_TESTS: PASS (78 checks)
+
+WARNING: 'res://assets/environments/props/dealer/scene.gltf': In external resource #1, invalid UID: 'uid://28klbqm2yqjs' - using text path instead: 'res://assets/environments/props/dealer/textures/Scene_-_Root_emissive.png'.
+   at: open (core/io/resource_format_binary.cpp:1094)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== event_cards_test ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS The third shared pile contains 24 shuffled events
+PASS Building the shared pile alone does not deal the separate opening hands
+PASS Ordinary combat-card draws never grant event cards
+PASS Both players draw into separate hands from the same pile
+PASS An event draw never fills a combat slot
+PASS The shared pile cannot award one physical event to both players
+PASS Switch rejects attempts to supply a combat-card target
+PASS Switch can be played without a table target
+PASS Switch preserves both draw-pile sizes
+PASS Switch exchanges exactly one complete card instance in each direction
+PASS Playing an event discards it and leaves the attack available
+PASS Switch rejects an empty opponent draw pile
+PASS An impossible event stays in hand and does not spend the turn's event
+PASS One click on the actual Switch hand card immediately exchanges the draw cards
+PASS A successful Switch never waits for a table target and leaves the hand immediately
+PASS After the Switch animation, the same player can still attack
+PASS An impossible Switch click never enters table-target selection
+PASS An impossible Switch click preserves its card and the turn's event allowance
+PASS An impossible Switch explains the problem while leaving normal attacks available
+PASS Clicking targeted Block still waits for the chosen enemy card
+PASS Strength rejects an empty table slot
+PASS Unknown event identities cannot be played
+PASS strength_120 strengthens a selected allied card
+PASS Strength scales current attack, max HP and damaged current HP, rounding up
+PASS Strength leaves the opposing card unchanged
+PASS Only one event can be played before a turn's attack
+PASS A rejected second event remains in hand
+PASS Strength survives card state serialization
+PASS Strength rejects an empty table slot
+PASS Unknown event identities cannot be played
+PASS strength_150 strengthens a selected allied card
+PASS Strength scales current attack, max HP and damaged current HP, rounding up
+PASS Strength leaves the opposing card unchanged
+PASS Only one event can be played before a turn's attack
+PASS A rejected second event remains in hand
+PASS Strength survives card state serialization
+PASS Strength rejects an empty table slot
+PASS Unknown event identities cannot be played
+PASS strength_200 strengthens a selected allied card
+PASS Strength scales current attack, max HP and damaged current HP, rounding up
+PASS Strength leaves the opposing card unchanged
+PASS Only one event can be played before a turn's attack
+PASS A rejected second event remains in hand
+PASS Strength survives card state serialization
+PASS Block requires an explicit enemy target
+PASS Block marks the selected enemy card
+PASS Block starts at two turns on its target only
+PASS A blocked attacker cannot resolve a duel
+PASS A blocked defender takes damage without counterattacking
+PASS The attack ends the player's turn without consuming an opposing blocked turn
+PASS The first completed enemy turn leaves one blocked turn
+PASS The other player's turns do not age the block
+PASS Remaining block duration survives card state serialization
+PASS The second completed enemy turn releases the blocked card
+PASS Steel accepts the chosen opponent card even while it is blocked
+PASS Steel moves one card to the player's draw pile and consumes one enemy replacement
+PASS The opponent's empty slot receives the replacement card
+PASS The stolen physical card returns through the new owner's combat draw pile
+PASS Stealing preserves modified attack and existing damage
+PASS Stealing preserves consumed one-shot effects and poison
+PASS Stealing preserves remaining block duration
+PASS Steel still works when the opponent cannot draw a replacement
+PASS An exhausted enemy draw pile leaves the stolen slot empty
+PASS Only a real kill with Draw On Kill grants an event
+PASS Draw On Kill never grants an extra combat card
+PASS The attack immediately ends its turn
+PASS Only a real kill with Draw On Kill grants an event
+PASS Draw On Kill never grants an extra combat card
+PASS The attack immediately ends its turn
+PASS The event earned during an attack waits for the next own turn
+PASS An opposing fighter earns its own event hand through the same kill effect
+PASS Mutual lethal attacks grant each eligible fighter its own kill event
+PASS A mutual kill removes exactly two cards from the shared pile
+PASS A simultaneous Lava multi-kill grants exactly one event per defeated card
+PASS Multi-kill rewards are distinct events in the attacking fighter's hand
+PASS The AI plays a useful event from its own hand
+PASS The AI strengthens its fighter before using the stronger attack
+PASS The AI attack hands over the turn and renews the event allowance
+PASS A fighter with an available attacker cannot skip its attack
+PASS A fully blocked player can pass and consume its first blocked turn
+PASS A fully blocked AI also passes instead of deadlocking the match
+PASS Passing two blocked turns restores both fighters' attack choices
+PASS Passing blocked turns causes no attacks or damage
+PASS An online client cannot mutate authoritative event state directly
+PASS A spectator cannot play an event
+PASS Rejected network actions leave the hand and target untouched
+PASS Leaving a match clears both shared event piles
+PASS Leaving a match clears both event hands
+EVENT_CARD_TESTS: PASS (88 checks)
+
+WARNING: 'res://assets/environments/props/dealer/scene.gltf': In external resource #1, invalid UID: 'uid://28klbqm2yqjs' - using text path instead: 'res://assets/environments/props/dealer/textures/Scene_-_Root_emissive.png'.
+   at: open (core/io/resource_format_binary.cpp:1094)
+WARNING: 'res://assets/environments/props/cables/cables.glb': In external resource #0, invalid UID: 'uid://bkr7dxytexprg' - using text path instead: 'res://assets/environments/props/cables/cables_Material_albedo002.png'.
+   at: open (core/io/resource_format_binary.cpp:1094)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== card_combat_indicators_test ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS: zero damage keeps the shield seal available
+PASS: real shield absorption immediately consumes only its own effect
+PASS: an already-open hover overview immediately removes the spent shield
+PASS: the two lethal hits trigger the actual one-use survival paths
+PASS: consumed seal visibly shrinks before removal: SHIELD
+PASS: consumed seal fades during its shrink: SHIELD
+PASS: consumed seal visibly shrinks before removal: REBIRTH
+PASS: consumed seal fades during its shrink: REBIRTH
+PASS: consumed seal visibly shrinks before removal: LAST STAND
+PASS: consumed seal fades during its shrink: LAST STAND
+PASS: duplicate online snapshots preserve the ongoing consumption animation
+PASS: network refresh leaves the unused passive seal untouched
+PASS: using a one-shot effect does not remove it from the owned card data
+PASS: active status sits in the card's upper-right row: poison
+PASS: status uses its distinct color: poison
+PASS: active status sits in the card's upper-right row: stun
+PASS: status uses its distinct color: stun
+PASS: active status sits in the card's upper-right row: curse
+PASS: status uses its distinct color: curse
+PASS: poison badge displays its remaining three turns
+PASS: curse badge displays the actual attack reduction
+PASS: spent seal and its area disappear while the passive remains: SHIELD
+PASS: spent seal and its area disappear while the passive remains: REBIRTH
+PASS: spent seal and its area disappear while the passive remains: LAST STAND
+PASS: new online replicas immediately hide already-consumed seals without replay
+PASS: joining with a consumed seal starts no consumption animation
+PASS: new online replica restores active status without an entrance replay: poison
+PASS: new online replica restores active status without an entrance replay: stun
+PASS: new online replica restores active status without an entrance replay: curse
+PASS: stealing and redrawing preserves consumed seals and all status values
+PASS: stolen cards retain all three status indicators
+PASS: stun is consumed by exactly one selected attack
+PASS: the next poison tick updates the remaining-turn number
+PASS: the last poison tick clears both transient fields
+PASS: reapplied poison and stun survive the previous exit animation
+PASS: expired poison and consumed stun disappear while permanent curse remains
+PASS: online updates remove ended statuses without losing permanent debuffs
+PASS: a fresh battle clears the curse indicator and its transient penalty
+PASS: the real shielded hit applies no poison and creates no poison badge
+PASS: a real damaging poison hit immediately marks the target
+PASS: the production turn-start tick deals damage and removes a one-turn poison badge
+PASS: a fresh battle restores the intact seal at full size
+PASS: death during seal consumption cancels indicators without resurrecting the seal
+CARD_COMBAT_INDICATORS_TESTS: PASS (43 checks)
+
+WARNING: 'res://assets/environments/props/dealer/scene.gltf': In external resource #1, invalid UID: 'uid://28klbqm2yqjs' - using text path instead: 'res://assets/environments/props/dealer/textures/Scene_-_Root_emissive.png'.
+   at: open (core/io/resource_format_binary.cpp:1094)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+
+=== indicators_visual_final ===
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 122 Karten
+PASS: zero damage keeps the shield seal available
+PASS: rendered battle-indicators-before
+PASS: real shield absorption immediately consumes only its own effect
+PASS: an already-open hover overview immediately removes the spent shield
+PASS: the two lethal hits trigger the actual one-use survival paths
+PASS: consumed seal visibly shrinks before removal: SHIELD
+PASS: consumed seal fades during its shrink: SHIELD
+PASS: consumed seal visibly shrinks before removal: REBIRTH
+PASS: consumed seal fades during its shrink: REBIRTH
+PASS: consumed seal visibly shrinks before removal: LAST STAND
+PASS: consumed seal fades during its shrink: LAST STAND
+PASS: duplicate online snapshots preserve the ongoing consumption animation
+PASS: network refresh leaves the unused passive seal untouched
+PASS: using a one-shot effect does not remove it from the owned card data
+PASS: active status sits in the card's upper-right row: poison
+PASS: status uses its distinct color: poison
+PASS: active status sits in the card's upper-right row: stun
+PASS: status uses its distinct color: stun
+PASS: active status sits in the card's upper-right row: curse
+PASS: status uses its distinct color: curse
+PASS: poison badge displays its remaining three turns
+PASS: curse badge displays the actual attack reduction
+PASS: rendered battle-indicators-consuming
+PASS: spent seal and its area disappear while the passive remains: SHIELD
+PASS: spent seal and its area disappear while the passive remains: REBIRTH
+PASS: spent seal and its area disappear while the passive remains: LAST STAND
+PASS: rendered battle-indicators-after
+PASS: new online replicas immediately hide already-consumed seals without replay
+PASS: joining with a consumed seal starts no consumption animation
+PASS: new online replica restores active status without an entrance replay: poison
+PASS: new online replica restores active status without an entrance replay: stun
+PASS: new online replica restores active status without an entrance replay: curse
+PASS: a live online transition from intact to spent starts its own seal exit
+PASS: repeated remote impact state never restarts the seal exit
+PASS: the remotely consumed seal finishes disappearing
+PASS: stealing and redrawing preserves consumed seals and all status values
+PASS: stolen cards retain all three status indicators
+PASS: stun is consumed by exactly one selected attack
+PASS: the next poison tick updates the remaining-turn number
+PASS: the last poison tick clears both transient fields
+PASS: reapplied poison and stun survive the previous exit animation
+PASS: expired poison and consumed stun disappear while permanent curse remains
+PASS: online updates remove ended statuses without losing permanent debuffs
+PASS: a fresh battle clears the curse indicator and its transient penalty
+PASS: using the first of two one-shot saves preserves the second seal
+PASS: the next lethal hit independently consumes the second survival seal
+PASS: both spent seals and their open hover overview disappear completely
+PASS: the real shielded hit applies no poison and creates no poison badge
+PASS: a real damaging poison hit immediately marks the target
+PASS: the production turn-start tick deals damage and removes a one-turn poison badge
+PASS: a fresh battle restores the intact seal at full size
+PASS: death during seal consumption cancels indicators without resurrecting the seal
+CARD_COMBAT_INDICATORS_TESTS: PASS (52 checks)
+
+WARNING: 'res://assets/environments/props/dealer/scene.gltf': In external resource #1, invalid UID: 'uid://28klbqm2yqjs' - using text path instead: 'res://assets/environments/props/dealer/textures/Scene_-_Root_emissive.png'.
+   at: open (core/io/resource_format_binary.cpp:1094)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+

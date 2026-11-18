@@ -10,6 +10,13 @@ const SLOT_ROOM_KEY_ID := "slot_room_key"
 const USB_SECRET_CARD_ID := "usb_stick"
 const CIGARETTES_SECRET_CARD_ID := "cigarettes"
 const MOEWENMILCH_SECRET_CARD_ID := "moewenmilch"
+const DMAN_SECRET_CARD_ID := "dman"
+const PUMP_REWARD_CARD_ID := "toilet_paper"
+const PRISONER_REWARD_CARD_ID := "holy_water"
+const BOILER_REWARD_CARD_ID := "jester_eye"
+const JESTER_STORY_REWARD_CARD_ID := "crucifix"
+const BOILER_SOLUTION: Array[float] = [3.4, 5.1, 5.8, 1.8]
+const PUMP_SOLUTION: Array[bool] = [true, false, false, true, false]
 const PROP_SECRET_CARD_IDS: Array[String] = [USB_SECRET_CARD_ID, CIGARETTES_SECRET_CARD_ID, MOEWENMILCH_SECRET_CARD_ID]
 const PROP_SECRET_THROW_REQUIREMENTS := {"usb_stick": 50, "cigarettes": 80, "moewenmilch": 150}
 const JESTER_OFFERING_CARD_IDS: Array[String] = ["chick", "harald"]
@@ -111,17 +118,126 @@ func save_collection() -> bool:
 
 
 func add_card(card_id: String) -> Dictionary:
-	var instance := create_card_instance(card_id)
-	if instance.is_empty():
+	return add_card_instance(roll_card_instance(card_id))
+
+
+func claim_pump_puzzle_reward(switches: Array[bool]) -> Dictionary:
+	# Consumption is permanent evidence of an activated trip, including older
+	# profiles. The effect need not still be active to solve the puzzle.
+	if not GameCurrency.weed_consumed or switches != PUMP_SOLUTION or GameCurrency.is_training_session():
 		return {}
-	save_collection()
-	var changed_card_ids: Array[String] = [card_id]
-	collection_changed.emit(changed_card_ids)
-	return instance
+	if has_discovered_card(PUMP_REWARD_CARD_ID) or not can_obtain_card(PUMP_REWARD_CARD_ID):
+		return {}
+	# Atomic acquisition publishes only after saving. Discovery history also
+	# prevents repeated rewards after losing the owned copy.
+	return add_card_instance(CardData.create_instance(PUMP_REWARD_CARD_ID))
 
 
 func discover_usb_secret(random: RandomNumberGenerator) -> Dictionary:
 	return discover_prop_secret(USB_SECRET_CARD_ID, random)
+
+
+func claim_boiler_puzzle_reward(pressures: Array[float]) -> Dictionary:
+	# The eye is a basement reward, independent of graveyard access or NPC
+	# rescue. Only exchanging it for the Crucifix requires the freed Jester.
+	if not GameCurrency.cocaine_consumed or GameCurrency.is_training_session() or pressures.size() != BOILER_SOLUTION.size():
+		return {}
+	for index in range(BOILER_SOLUTION.size()):
+		# Match the visible gauge, rather than requiring an exact mouse angle.
+		var pressure := pressures[index]
+		if not is_finite(pressure) or pressure < 0.0 or pressure > 6.0 or "%.1f" % pressure != "%.1f" % BOILER_SOLUTION[index]:
+			return {}
+	if has_discovered_card(BOILER_REWARD_CARD_ID) or not can_obtain_card(BOILER_REWARD_CARD_ID):
+		return {}
+	return add_card_instance(CardData.create_instance(BOILER_REWARD_CARD_ID))
+
+
+func exchange_prisoner_toilet_paper() -> Dictionary:
+	return _exchange_story_item("prisoner", PUMP_REWARD_CARD_ID, PRISONER_REWARD_CARD_ID)
+
+
+func exchange_jester_eye() -> Dictionary:
+	return _exchange_story_item("jester", BOILER_REWARD_CARD_ID, JESTER_STORY_REWARD_CARD_ID)
+
+
+func _exchange_story_item(npc_id: String, offered_id: String, reward_id: String) -> Dictionary:
+	# Main validates the local NPC context before requesting this exchange.
+	# Consume one exact copy and grant the reward in a single durable snapshot.
+	if not GameCurrency.is_npc_rescued(npc_id) or GameCurrency.is_training_session() or get_amount(offered_id) <= 0 or has_discovered_card(reward_id):
+		return {}
+	if not can_obtain_card(reward_id):
+		return {}
+	_migrate_legacy_collection()
+	var snapshot := collection.duplicate(true)
+	_seed_card_discoveries(snapshot)
+	var consumed := false
+	for index in range(snapshot["instances"].size()):
+		if str(snapshot["instances"][index].get("card_id", "")) == offered_id:
+			snapshot["instances"].remove_at(index)
+			consumed = true
+			break
+	if not consumed:
+		return {}
+	var remaining := int(snapshot["cards"].get(offered_id, 0)) - 1
+	if remaining <= 0:
+		snapshot["cards"].erase(offered_id)
+	else:
+		snapshot["cards"][offered_id] = remaining
+	var reward := CardData.create_instance(reward_id)
+	snapshot["instances"].append(reward.duplicate(true))
+	snapshot["cards"][reward_id] = 1
+	_record_card_discovery(snapshot, reward_id)
+	if not _save_collection_snapshot(snapshot, "." + npc_id + "-trade.tmp"):
+		return {}
+	collection = snapshot
+	var changed: Array[String] = [offered_id, reward_id]
+	collection_changed.emit(changed)
+	return reward.duplicate(true)
+
+
+func claim_holy_water_return_dialogue() -> bool:
+	return _claim_story_item_return_dialogue(PRISONER_REWARD_CARD_ID, "holy_water_return_dialogue_seen")
+
+
+func claim_crucifix_return_dialogue() -> bool:
+	return _claim_story_item_return_dialogue(JESTER_STORY_REWARD_CARD_ID, "crucifix_return_dialogue_seen")
+
+
+func _claim_story_item_return_dialogue(card_id: String, seen_flag: String) -> bool:
+	if GameCurrency.is_training_session() or not has_discovered_card(card_id):
+		return false
+	if bool(collection.get("metadata", {}).get(seen_flag, false)):
+		return false
+	var snapshot := collection.duplicate(true)
+	if not snapshot.get("metadata") is Dictionary:
+		snapshot["metadata"] = {}
+	snapshot["metadata"][seen_flag] = true
+	if not _save_collection_snapshot(snapshot):
+		return false
+	collection = snapshot
+	return true
+
+
+func redeem_wall_secret(text: String) -> Dictionary:
+	var card_id := DMAN_SECRET_CARD_ID
+	if text.strip_edges().to_lower() != "dman" or has_discovered_card(card_id) or not can_obtain_card(card_id):
+		return {}
+	if not collection.get("cards") is Dictionary or not collection.get("instances") is Array:
+		return {}
+	var next_collection := collection.duplicate(true)
+	_seed_card_discoveries(next_collection)
+	# No rolled combat effects: this discovery grants the authored 20/20 card.
+	var instance := CardData.create_instance(card_id)
+	next_collection["instances"].append(instance.duplicate(true))
+	next_collection["cards"][card_id] = int(next_collection["cards"].get(card_id, 0)) + 1
+	_record_card_discovery(next_collection, card_id)
+	# Commit ownership and permanent discovery before any reveal or listener.
+	if not _save_collection_snapshot(next_collection, ".wall-secret.tmp"):
+		return {}
+	collection = next_collection
+	var changed: Array[String] = [card_id]
+	collection_changed.emit(changed)
+	return instance.duplicate(true)
 
 
 func get_prop_secret_throw_count(card_id: String) -> int:
@@ -187,13 +303,44 @@ func discover_prop_secret(card_id: String, random: RandomNumberGenerator) -> Dic
 func add_card_instance(instance: Dictionary) -> Dictionary:
 	# Pack reveals already own their roll. Store that exact copy, never roll
 	# again when the player finally collects it or a callback is repeated.
-	var stored := _store_card_instance(instance)
-	if stored.is_empty():
-		return {}
-	save_collection()
-	var changed_card_ids: Array[String] = [str(stored["card_id"])]
-	collection_changed.emit(changed_card_ids)
-	return stored
+	var result := add_card_instances([instance])
+	var added: Array = result["instances"]
+	return {} if added.is_empty() else added[0]
+
+
+func add_card_instances(instances: Array) -> Dictionary:
+	# Commit an entire pack once. No listener sees provisional ownership, and a
+	# failed write leaves every rolled copy available for the player's retry.
+	var added: Array[Dictionary] = []
+	var result := {"success": true, "instances": added}
+	if instances.is_empty():
+		return result
+	_migrate_legacy_collection()
+	var previous_collection := collection
+	collection = collection.duplicate(true)
+	var identities := {}
+	for owned: Dictionary in collection["instances"]:
+		identities[str(owned.get("instance_id", ""))] = true
+	var changed: Array[String] = []
+	for raw: Variant in instances:
+		if not raw is Dictionary:
+			continue
+		var stored := _store_card_instance(raw, identities)
+		if stored.is_empty():
+			continue
+		added.append(stored)
+		var card_id := str(stored["card_id"])
+		if not changed.has(card_id):
+			changed.append(card_id)
+	if added.is_empty():
+		collection = previous_collection
+		return result
+	_seed_card_discoveries(collection)
+	if not _save_collection_snapshot(collection):
+		collection = previous_collection
+		return {"success": false, "instances": []}
+	collection_changed.emit(changed)
+	return result
 
 
 func create_card_instance(card_id: String, level: int = 1, effects: Array = []) -> Dictionary:
@@ -214,15 +361,18 @@ func roll_card_instance(card_id: String, level: int = 1, effects: Array = []) ->
 	return CardData.create_instance(card_id, level, rolled_effects, CardData.roll_holo())
 
 
-func _store_card_instance(instance: Dictionary) -> Dictionary:
+func _store_card_instance(instance: Dictionary, identities: Dictionary = {}) -> Dictionary:
 	var card_id := str(instance.get("card_id", ""))
 	var instance_id := str(instance.get("instance_id", ""))
 	if instance_id.is_empty() or not CardDatabase.has_card(card_id) or not can_obtain_card(card_id):
 		return {}
 	_migrate_legacy_collection()
-	for owned: Dictionary in collection["instances"]:
-		if str(owned.get("instance_id", "")) == instance_id:
-			return {}
+	if identities.is_empty():
+		for owned: Dictionary in collection["instances"]:
+			if str(owned.get("instance_id", "")) == instance_id:
+				return {}
+	elif identities.has(instance_id):
+		return {}
 	var stored := instance.duplicate(true)
 	_sanitize_instance_effects(stored)
 	stored["is_holo"] = CardData.is_holo(instance)
@@ -230,6 +380,7 @@ func _store_card_instance(instance: Dictionary) -> Dictionary:
 	var cards: Dictionary = collection["cards"]
 	cards[card_id] = int(cards.get(card_id, 0)) + 1
 	_record_card_discovery(collection, card_id)
+	identities[instance_id] = true
 	return stored.duplicate(true)
 
 
@@ -349,24 +500,59 @@ func get_area_unlock_card_id(area_id: String) -> String:
 	return ""
 
 
+func get_access_key_area_id(card_id: String) -> String:
+	var card := CardDatabase.get_card(card_id)
+	if not CardData.is_access_key(card):
+		return ""
+	return "slot_room" if card_id == SLOT_ROOM_KEY_ID else str(card.get("area_unlock", ""))
+
+
+func is_access_key_used(card_id: String) -> bool:
+	var area_id := get_access_key_area_id(card_id)
+	if area_id.is_empty():
+		return false
+	if area_id == "slot_room":
+		return is_slot_room_unlocked()
+	# Only a saved activation grants access; owning the key is not enough.
+	var metadata: Variant = collection.get("metadata", {})
+	if not metadata is Dictionary:
+		return false
+	var areas: Variant = metadata.get("area_access", {})
+	return areas is Dictionary and areas.get(area_id, false) == true
+
+
+func get_unused_access_key_ids() -> Array[String]:
+	var result: Array[String] = []
+	for card: Dictionary in CardDatabase.get_all_cards():
+		var card_id := str(card.get("id", ""))
+		if CardData.is_access_key(card) and get_amount(card_id) > 0 and not is_access_key_used(card_id):
+			result.append(card_id)
+	return result
+
+
+func use_access_key(card_id: String) -> bool:
+	var area_id := get_access_key_area_id(card_id)
+	if area_id.is_empty() or get_amount(card_id) <= 0 or is_access_key_used(card_id):
+		return false
+	# The saved unlock consumes only the tray action, preserving the owned
+	# instance, discovery history and permanent special-card display.
+	return unlock_area(area_id)
+
+
 func has_area_access(area_id: String) -> bool:
 	var card_id := get_area_unlock_card_id(area_id)
-	if card_id.is_empty():
-		return false
-	if area_id == "slot_room" and is_slot_room_unlocked():
-		return true
-	var metadata: Variant = collection.get("metadata", {})
-	if metadata is Dictionary:
-		var areas: Variant = metadata.get("area_access", {})
-		if areas is Dictionary and areas.get(area_id, false) == true:
-			return true
-	return has_unlock(card_id)
+	return not card_id.is_empty() and is_access_key_used(card_id)
 
 
 func unlock_area(area_id: String) -> bool:
 	if area_id == "slot_room":
 		return unlock_slot_room()
-	if not has_area_access(area_id):
+	var card_id := get_area_unlock_card_id(area_id)
+	if card_id.is_empty():
+		return false
+	if has_area_access(area_id):
+		return true
+	if not has_unlock(card_id):
 		return false
 	var next_collection := collection.duplicate(true)
 	if not next_collection.get("metadata") is Dictionary:
@@ -380,7 +566,7 @@ func unlock_area(area_id: String) -> bool:
 	if not _save_collection_snapshot(next_collection):
 		return false
 	collection = next_collection
-	var changed: Array[String] = [get_area_unlock_card_id(area_id)]
+	var changed: Array[String] = [card_id]
 	collection_changed.emit(changed)
 	return true
 
@@ -453,7 +639,7 @@ func has_black_market_receipt(transaction_id: String) -> bool:
 func purchase_black_market_offer(day: String, offer_id: String) -> Dictionary:
 	if _black_market_purchase_in_progress or _fusion_in_progress or _jester_offering_in_progress:
 		return _black_market_failure("busy")
-	if not has_area_access("black_market"):
+	if not has_area_access("black_market") or not GameCurrency.is_npc_rescued("dealer"):
 		return _black_market_failure("locked")
 	var board := get_black_market_offers()
 	if day != str(board["day"]):
@@ -534,15 +720,21 @@ func is_slot_room_unlocked() -> bool:
 
 
 func unlock_slot_room() -> bool:
-	# Keeping the key in the collection lets the player revisit its door.
+	# The owned key remains in the special collection after activation.
 	if get_amount(SLOT_ROOM_KEY_ID) <= 0:
 		return false
 	if is_slot_room_unlocked():
 		return true
-	if not collection.has("metadata") or not collection["metadata"] is Dictionary:
-		collection["metadata"] = {}
-	collection["metadata"]["slot_room_unlocked"] = true
-	save_collection()
+	var next_collection := collection.duplicate(true)
+	if not next_collection.get("metadata") is Dictionary:
+		next_collection["metadata"] = {}
+	next_collection["metadata"]["slot_room_unlocked"] = true
+	_seed_card_discoveries(next_collection)
+	if not _save_collection_snapshot(next_collection):
+		return false
+	collection = next_collection
+	var changed: Array[String] = [SLOT_ROOM_KEY_ID]
+	collection_changed.emit(changed)
 	return true
 
 
@@ -592,9 +784,9 @@ func mark_card_seen(card_id: String) -> bool:
 		return false
 	if not is_card_new(card_id):
 		return true
-	# A hover acknowledges a card type permanently, independently of the
+	# Hovering or inspecting acknowledges a card type permanently, independently of the
 	# number of copies. Publish only after the save succeeds so failed writes
-	# leave its badge visible and allow a later hover to retry.
+	# leave its badge visible and allow a later interaction to retry.
 	var next_collection := collection.duplicate(true)
 	_seed_card_discoveries(next_collection)
 	var metadata: Dictionary = next_collection["metadata"]
@@ -744,6 +936,8 @@ func get_jester_offering_candidate(card_id: String) -> Dictionary:
 
 
 func _jester_offering_unavailable_reason(card_id: String) -> String:
+	if not GameCurrency.is_npc_rescued("jester"):
+		return "Befreie zuerst den Jester."
 	if _jester_offering_in_progress or _fusion_in_progress:
 		return "Ein Opfer wird bereits verarbeitet."
 	if card_id not in JESTER_OFFERING_CARD_IDS or not CardDatabase.has_card(card_id):
@@ -1003,6 +1197,108 @@ func fuse_card_instances(instance_ids: Array) -> Dictionary:
 	return result
 
 
+func auto_fuse_card_instances() -> Dictionary:
+	if _fusion_in_progress or _jester_offering_in_progress or _black_market_purchase_in_progress:
+		return _fusion_failure("Die Schmiede arbeitet bereits.")
+	_fusion_in_progress = true
+	# Build the entire cascade on a private snapshot. A failed save keeps every
+	# original card; observers see only the final, durable collection once.
+	var result := _prepare_auto_fusion()
+	if bool(result["ok"]) and int(result["fusion_count"]) > 0:
+		if _save_fusion_collection(result["snapshot"]):
+			collection = result["snapshot"]
+			var changed: Array[String] = result["changed_card_ids"]
+			result.erase("snapshot")
+			result.erase("changed_card_ids")
+			collection_changed.emit(changed)
+		else:
+			result = _fusion_failure("Speichern fehlgeschlagen. Deine Karten wurden behalten.")
+	_fusion_in_progress = false
+	return result
+
+
+func _prepare_auto_fusion() -> Dictionary:
+	var candidates := get_fusion_candidates()
+	var required := get_fusion_requirement()
+	var queues := {}
+	var pools := {}
+	var identities := {}
+	for rarity: String in FUSION_RARITIES:
+		queues[rarity] = []
+		pools[rarity] = get_fusion_pool(rarity)
+	for entry: Dictionary in candidates:
+		var identity := str(entry["instance_id"])
+		if identity.is_empty() or identities.has(identity):
+			return _fusion_failure("Die Kartensammlung hat sich geändert. Wähle die Karten erneut.")
+		identities[identity] = true
+		if bool(entry["eligible"]):
+			queues[str(entry["rarity"])].append(entry["instance"])
+
+	var next_collection := collection.duplicate(true)
+	_seed_card_discoveries(next_collection)
+	var consumed := {}
+	var created: Array[Dictionary] = []
+	var changed: Array[String] = []
+	var fusion_count := 0
+	var reserved := _get_fusion_reserved_instances()
+	# Ascending tiers consume every complete group, including rewards from the
+	# preceding tier. The fixed rarity ceiling makes recursion finite.
+	for rarity: String in FUSION_RARITIES:
+		var queue: Array = queues[rarity]
+		var pool: Array = pools[rarity]
+		var cursor := 0
+		while queue.size() - cursor >= required and not pool.is_empty():
+			var reward_card: Dictionary = pool.pick_random()
+			var reward := roll_card_instance(str(reward_card["id"]))
+			if reward.is_empty():
+				return _fusion_failure("Die neue Karte konnte nicht erstellt werden.")
+			var reward_identity := str(reward["instance_id"])
+			if reward_identity.is_empty() or identities.has(reward_identity):
+				return _fusion_failure("Bitte versuche die Fusion erneut.")
+			identities[reward_identity] = true
+			for index in range(cursor, cursor + required):
+				var input: Dictionary = queue[index]
+				var card_id := str(input["card_id"])
+				var identity := str(input["instance_id"])
+				var amount := int(next_collection["cards"].get(card_id, 0))
+				if amount <= 0 or consumed.has(identity):
+					return _fusion_failure("Die Kartensammlung hat sich geändert. Wähle die Karten erneut.")
+				consumed[identity] = true
+				if amount == 1:
+					next_collection["cards"].erase(card_id)
+				else:
+					next_collection["cards"][card_id] = amount - 1
+				if not changed.has(card_id):
+					changed.append(card_id)
+			cursor += required
+			fusion_count += 1
+			created.append(reward)
+			var reward_id := str(reward["card_id"])
+			next_collection["cards"][reward_id] = int(next_collection["cards"].get(reward_id, 0)) + 1
+			_record_card_discovery(next_collection, reward_id)
+			if not changed.has(reward_id):
+				changed.append(reward_id)
+			var next_rarity := get_next_fusion_rarity(rarity)
+			if _fusion_disabled_reason(reward, reward_card, reserved, not pools[next_rarity].is_empty()).is_empty():
+				queues[next_rarity].append(reward)
+
+	var result := {"ok": true, "reason": "", "fusion_count": fusion_count, "instances": []}
+	if fusion_count == 0:
+		return result
+	var surviving: Array = []
+	for instance: Dictionary in next_collection["instances"]:
+		if not consumed.has(str(instance["instance_id"])):
+			surviving.append(instance)
+	for instance: Dictionary in created:
+		if not consumed.has(str(instance["instance_id"])):
+			surviving.append(instance)
+			result["instances"].append(instance.duplicate(true))
+	next_collection["instances"] = surviving
+	result["snapshot"] = next_collection
+	result["changed_card_ids"] = changed
+	return result
+
+
 func _fusion_failure(reason: String) -> Dictionary:
 	return {"ok": false, "reason": reason, "rarity": "", "next_rarity": ""}
 
@@ -1046,7 +1342,7 @@ func _save_collection_snapshot(next_collection: Dictionary, suffix: String = ".t
 	var file := FileAccess.open(temporary_path, FileAccess.WRITE)
 	if file == null:
 		return false
-	file.store_string(JSON.stringify(next_collection, "\t"))
+	file.store_string(JSON.stringify(next_collection))
 	file.flush()
 	var write_error := file.get_error()
 	file.close()
@@ -1063,26 +1359,66 @@ func get_display_card(card_id: String, occurrence: int = 0) -> Dictionary:
 	var base_card := CardDatabase.get_card(card_id)
 	if base_card.is_empty():
 		return {}
-	var instances := get_instances_for_card(card_id)
 	# Collection/deck slots are grouped by card type. Prefer an owned Holo,
 	# then consume distinct copies in their stable acquisition order.
-	var ordered: Array[Dictionary] = []
+	_migrate_legacy_collection()
+	var remaining := occurrence
 	for holo in [true, false]:
-		for instance: Dictionary in instances:
-			if CardData.is_holo(instance) == holo:
-				ordered.append(instance)
-	if occurrence >= 0 and occurrence < ordered.size():
-		return CardData.with_instance_metadata(base_card, ordered[occurrence])
+		for instance: Dictionary in collection["instances"]:
+			if str(instance.get("card_id", "")) == card_id and CardData.is_holo(instance) == holo:
+				if remaining == 0:
+					return CardData.with_instance_metadata(base_card, instance)
+				remaining -= 1
 	return CardData.with_instance_metadata(base_card)
 
 
+func get_display_cards(card_ids: Array) -> Dictionary:
+	# A refresh needs one representative per type, not a copied/sorted list of
+	# every owned copy for every type. Keep this local so slot loads, fusion and
+	# legacy callers changing the collection cannot leave a persistent cache stale.
+	_migrate_legacy_collection()
+	var selected := {}
+	for value: Variant in card_ids:
+		var card_id := str(value)
+		if CardDatabase.is_collectible_card(card_id):
+			selected[card_id] = {}
+	if selected.is_empty():
+		return {}
+	for instance: Dictionary in collection["instances"]:
+		var card_id := str(instance.get("card_id", ""))
+		if not selected.has(card_id):
+			continue
+		var current: Dictionary = selected[card_id]
+		if current.is_empty() or (not CardData.is_holo(current) and CardData.is_holo(instance)):
+			selected[card_id] = instance
+	var result := {}
+	for card_id: String in selected:
+		result[card_id] = CardData.with_instance_metadata(CardDatabase.get_card(card_id), selected[card_id])
+	return result
+
+
 func get_deck_card_data(card_ids: Array) -> Array[Dictionary]:
+	if card_ids.is_empty():
+		return []
+	_migrate_legacy_collection()
 	var result: Array[Dictionary] = []
 	var occurrences: Dictionary = {}
+	var grouped := {}
+	for value: Variant in card_ids:
+		grouped[str(value)] = []
+	for holo in [true, false]:
+		for instance: Dictionary in collection["instances"]:
+			var card_id := str(instance.get("card_id", ""))
+			if grouped.has(card_id) and CardData.is_holo(instance) == holo:
+				grouped[card_id].append(instance)
 	for value: Variant in card_ids:
 		var card_id := str(value)
 		var occurrence := int(occurrences.get(card_id, 0))
-		var data := get_display_card(card_id, occurrence)
+		if not CardDatabase.is_collectible_card(card_id):
+			continue
+		var copies: Array = grouped[card_id]
+		var instance: Dictionary = copies[occurrence] if occurrence < copies.size() else {}
+		var data := CardData.with_instance_metadata(CardDatabase.get_card(card_id), instance)
 		occurrences[card_id] = occurrence + 1
 		if not data.is_empty():
 			result.append(data)

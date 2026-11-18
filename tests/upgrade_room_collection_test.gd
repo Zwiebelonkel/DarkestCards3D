@@ -70,8 +70,9 @@ func _run() -> void:
 	await settle(0.5)
 	var normal := main.scene_pivot.get_node("Collection") as CollectionScreen
 	check(is_instance_valid(wall) and wall.get_parent() == main.empty_room, "second room owns its independent wall collection")
-	check(_normal_ids(normal) == ["corpse", "slot_room_key"], "hub collection shows combat cards and the key without upgrade cards")
-	check(wall._cards.size() == 7 and not wall._cards.has("slot_room_key") and not wall._cards.has("corpse"), "wall groups the seven owned upgrade types and excludes key and combat cards")
+	check(_normal_ids(normal) == ["corpse"], "hub collection shows combat cards without access keys or upgrade cards")
+	check(wall._cards.size() == 8 and wall._cards.has("slot_room_key") and not wall._cards.has("corpse"), "wall retains the used access key alongside seven owned upgrade types")
+	check(CollectionManager.is_access_key_used("slot_room_key") and wall._rows[int(wall._card_rows["slot_room_key"])]["group"] == "upgrade_group_access", "using the slot-room key preserves its special-card display in the access group")
 	check(wall._amount_labels["clicker_upgrade"].text.contains("2"), "duplicate upgrades display their owned quantity")
 	check(not wall._interaction_enabled, "wall ignores input while player is in the hub")
 	wall.open_detail("clicker")
@@ -133,13 +134,13 @@ func _run() -> void:
 	check(not wall._interaction_enabled, "turning away disables wall hover and card clicks")
 	main._on_room_door_activated(main.return_door)
 	check(await _wait_until(func(): return main._active_room == 0 and not main._room_transition_active), "return door still brings player back to hub")
-	check(not wall._interaction_enabled and _normal_ids(normal) == ["corpse", "slot_room_key"], "returning keeps both collections correctly separated")
+	check(not wall._interaction_enabled and _normal_ids(normal) == ["corpse"], "returning keeps combat cards and special access keys in their separate collections")
 	# A reset/refreshed profile can remove every wall card while Main persists.
-	CollectionManager.collection = {"cards": {"corpse": 1, "slot_room_key": 1}, "instances": []}
-	var changed: Array[String] = ["clicker", "clicker_upgrade", "starting_hand_1", "starting_hand_2", "starting_hand_3", "starting_hand_4", "starting_hand_5"]
+	CollectionManager.collection = {"cards": {"corpse": 1}, "instances": []}
+	var changed: Array[String] = ["slot_room_key", "clicker", "clicker_upgrade", "starting_hand_1", "starting_hand_2", "starting_hand_3", "starting_hand_4", "starting_hand_5"]
 	CollectionManager.collection_changed.emit(changed)
 	await settle()
-	check(wall._cards.is_empty() and wall._empty_label.visible, "removing all upgrades refreshes the wall to its empty state")
+	check(wall._cards.is_empty() and wall._empty_label.visible, "removing all upgrades and access keys refreshes the wall to its empty state")
 	CollectionManager.add_card("clicker")
 	await settle()
 	check(wall._cards.size() == 1 and wall._cards.has("clicker") and not wall._empty_label.visible, "a new upgrade appears on the separate wall without rebuilding Main")

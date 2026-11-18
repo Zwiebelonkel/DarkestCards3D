@@ -2,6 +2,7 @@ extends Node3D
 class_name MainMenu
 
 const MAIN_SCENE := "res://scenes/main/Main.tscn"
+const LOADING_SCENE := "res://scenes/main/LoadingScreen.tscn"
 const PACK_OPENING_SCENE := MAIN_SCENE
 const COLLECTION_SCENE := MAIN_SCENE
 const GAME_TABLE_SCENE := MAIN_SCENE
@@ -16,7 +17,6 @@ const PISKEL_TOOL_SCENE := "res://scenes/ui/PiskelTool.tscn"
 @onready var quit_button: Button = %QuitButton
 @onready var settings_menu: SettingsMenu = %SettingsMenu
 @onready var reset_confirmation: ConfirmationDialog = %ResetConfirmation
-@onready var level_progress: Node3D = $Camera3D/LevelProgress
 @onready var slot_picker: GridContainer = %SaveSlotPicker
 @onready var slot_heading: Label = %SaveSlotHeading
 @onready var slot_status: Label = %SaveSlotStatus
@@ -29,9 +29,22 @@ var _launching := false
 var _status_key := ""
 var _status_values: Array = []
 var _status_is_error := false
+var character_customizer: CharacterCustomizer
+var character_button: Button
 
 
 func _ready() -> void:
+	character_customizer = CharacterCustomizer.new()
+	character_customizer.name = "CharacterCustomizer"
+	add_child(character_customizer)
+	character_button = Button.new()
+	character_button.name = "CharacterButton"
+	character_button.text = "Create Character"
+	character_button.custom_minimum_size.y = 44
+	settings_button.get_parent().add_child(character_button)
+	settings_button.get_parent().move_child(character_button, settings_button.get_index())
+	character_button.pressed.connect(character_customizer.open)
+	character_customizer.closed.connect(character_button.grab_focus)
 	selected_slot = SaveSlots.active_slot
 	slot_picker.slot_selected.connect(_on_slot_selected)
 	SaveSlots.slots_changed.connect(_refresh_slots)
@@ -55,12 +68,20 @@ func _ready() -> void:
 		call_deferred("_change_scene", MAIN_SCENE)
 
 
-func _process(_delta: float) -> void:
-	level_progress.set_enabled(not settings_menu.visible and not reset_confirmation.visible)
-
-
 func _change_scene(scene_path: String) -> void:
-	get_tree().change_scene_to_file(scene_path)
+	if _launching:
+		return
+	_launching = true
+	var error := _switch_scene(scene_path)
+	if error != OK:
+		_launching = false
+		_set_status("save_slot_load_error", [selected_slot, error], true)
+
+
+func _switch_scene(scene_path: String) -> Error:
+	# Keep Main as a path: preloading its PackedScene would block the menu
+	# before the standalone loading screen has had a chance to draw.
+	return get_tree().change_scene_to_file(LOADING_SCENE if scene_path == MAIN_SCENE else scene_path)
 
 
 func _play_selected(scene_path: String = MAIN_SCENE) -> void:
@@ -72,7 +93,7 @@ func _play_selected(scene_path: String = MAIN_SCENE) -> void:
 		_launching = false
 		_set_status("save_slot_load_error", [selected_slot, error], true)
 		return
-	error = get_tree().change_scene_to_file(scene_path)
+	error = _switch_scene(scene_path)
 	if error != OK:
 		_launching = false
 		_set_status("save_slot_load_error", [selected_slot, error], true)

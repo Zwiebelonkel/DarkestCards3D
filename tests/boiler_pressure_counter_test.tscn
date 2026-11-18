@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://tests/boiler_pressure_counter_test.gd" id="1"]
+[node name="BoilerPressureCounterTest" type="Node3D"]
+process_mode = 3
+script = ExtResource("1")

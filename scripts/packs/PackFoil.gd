@@ -4,6 +4,7 @@ class_name PackFoil
 ## Flexible, length-preserving peel of the imported top. Progress belongs to
 ## the interaction controller; this helper only adds spring response to lift.
 const FOIL_SHADER := preload("res://assets/shader/pack_foil.gdshader")
+const SURFACE_SCRIPT := preload("res://scripts/packs/PackSurface.gd")
 const WIDTH_SEGMENTS := 96
 const EPSILON := 0.000001
 
@@ -22,10 +23,12 @@ var _lift := 0.0
 var _lift_velocity := 0.0
 var _ripple := 0.0
 var _phase := 0.0
+var _pack_id := "basic"
 
 
-func configure(top: MeshInstance3D) -> bool:
+func configure(top: MeshInstance3D, pack_id: String = "basic") -> bool:
 	_restore_source()
+	_pack_id = pack_id
 	if top == null or top.mesh == null:
 		return false
 	_top = top
@@ -177,13 +180,8 @@ func _make_material(original: Material) -> ShaderMaterial:
 	material.set_shader_parameter("source_width", _bounds.size.x)
 	material.set_shader_parameter("cross_center", _center)
 	material.set_shader_parameter("band_height", _bounds.size.y * _metric_scale.y)
-	if original is BaseMaterial3D:
-		var source := original as BaseMaterial3D
-		material.set_shader_parameter("albedo_texture", source.albedo_texture)
-		material.set_shader_parameter("has_albedo_texture", source.albedo_texture != null)
-		material.set_shader_parameter("albedo_tint", source.albedo_color)
-		material.set_shader_parameter("metallic_value", source.metallic)
-		material.set_shader_parameter("roughness_value", source.roughness)
+	material.set_shader_parameter("surface_origin", _top.position)
+	SURFACE_SCRIPT.configure_material(material, original, _pack_id)
 	return material
 
 

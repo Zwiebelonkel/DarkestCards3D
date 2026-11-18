@@ -34,6 +34,7 @@ func _reset() -> void:
 	CollectionManager.collection["metadata"]["area_access"] = {"black_market": true}
 	CollectionManager.save_collection()
 	GameCurrency.clear_profile_state()
+	GameCurrency._rescued_npcs["dealer"] = true
 	GameCurrency.coins = 2000.0
 	GameCurrency.save()
 	GameCurrency.set("save_calls", 0)

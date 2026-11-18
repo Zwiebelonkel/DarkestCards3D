@@ -1,0 +1,100 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 122 Karten
+PASS fixture unlocks the basement through its access key
+PASS fixture saves to its isolated profile
+PASS the pump cabinet cannot receive input from the hub
+PASS initial positions match four green lamps and one yellow lamp
+PASS actual doorway travel keeps cabinet input disabled
+PASS actual door flight enters the basement
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS the focused view keeps lever 3 visible and reachable
+PASS the focused view keeps lever 4 visible and reachable
+PASS hover physically moves the shared camera toward the box
+PASS stationary hover keeps the camera stable
+PASS rendered evidence: mixed
+PASS left click flips lever 0 exactly once
+PASS lever 0 and its LED agree: up yellow, down green
+PASS lever 0 leaves all other levers and lamps unchanged
+PASS a second click reverses lever 0
+PASS left click flips lever 1 exactly once
+PASS lever 1 and its LED agree: up yellow, down green
+PASS lever 1 leaves all other levers and lamps unchanged
+PASS a second click reverses lever 1
+PASS left click flips lever 2 exactly once
+PASS lever 2 and its LED agree: up yellow, down green
+PASS lever 2 leaves all other levers and lamps unchanged
+PASS a second click reverses lever 2
+PASS left click flips lever 3 exactly once
+PASS lever 3 and its LED agree: up yellow, down green
+PASS lever 3 leaves all other levers and lamps unchanged
+PASS a second click reverses lever 3
+PASS left click flips lever 4 exactly once
+PASS lever 4 and its LED agree: up yellow, down green
+PASS lever 4 leaves all other levers and lamps unchanged
+PASS a second click reverses lever 4
+PASS all five levers can be up together
+PASS rendered evidence: all-up-yellow
+PASS all five levers can be down together
+PASS rendered evidence: all-down-green
+PASS rapid repeated clicks settle at the latest requested position
+PASS right click does not operate a lever
+PASS journal releases camera focus and blocks all levers
+PASS clicks through the journal do not operate the box
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS the focused view keeps lever 3 visible and reachable
+PASS the focused view keeps lever 4 visible and reachable
+PASS pause blocks the box and releases camera ownership
+PASS pause restores the camera before the tree stops
+PASS paused clicks cannot flip a switch
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS the focused view keeps lever 3 visible and reachable
+PASS the focused view keeps lever 4 visible and reachable
+PASS online pause also blocks input while the tree keeps running
+PASS online pause clicks cannot flip a switch
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS the focused view keeps lever 3 visible and reachable
+PASS the focused view keeps lever 4 visible and reachable
+PASS moving away returns the camera to its ordinary view
+PASS starting a turn immediately blocks the switches
+PASS the cabinet remains disabled on another wall
+PASS the actual return door is usable after operating the box
+PASS leaving the basement releases cabinet input and focus
+PASS the real door permits another basement visit
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS the focused view keeps lever 3 visible and reachable
+PASS the focused view keeps lever 4 visible and reachable
+PASS room travel preserves the positions during the current game session
+PASS operating the box does not change cards or currency
+PASS operating the box leaves the catalog and profile save bytes unchanged
+PASS the exact up-down-down-up-down solution cannot grant a key before the first weed effect
+PASS save evidence of a previously activated weed effect
+PASS a wrong first lever cannot solve the puzzle
+PASS a real lever click on the unlocked solution grants and reveals Klopapier
+PASS rendered evidence: solved-key-reveal
+PASS Klopapier is a puzzle-only special key card
+PASS the new key is collected without opening any door
+PASS repeated solutions cannot farm another key
+PASS the first-trip gate and one-time reward survive loading the profile
+BASEMENT_PUMP_CONTROL_TESTS: PASS (95 checks)

@@ -50,7 +50,6 @@ shader_parameter/seed = 0.0
 [sub_resource type="QuadMesh" id="QuadMesh_blood_decal"]
 
 [node name="BloodDecal3D" type="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0115053, 0)
 script = ExtResource("1_blood_decal_script")
 normal_scale = Vector3(2, 2, 2)
 kill_scale = Vector3(3, 3, 3)
@@ -58,6 +57,6 @@ fade_delay = 2.0
 start_alpha = 0.925
 
 [node name="DecalMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.0234272, 0)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 material_override = SubResource("ShaderMaterial_blood_decal")
 mesh = SubResource("QuadMesh_blood_decal")

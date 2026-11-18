@@ -58,7 +58,8 @@ func _run() -> void:
 		var preview := _find(collection_entries, "collection:" + str(source["id"]))
 		check(not preview.is_empty() and preview.get("card_data", {}) == source["card_data"], "collection includes authored card data for " + str(source["id"]))
 	check(card_entries.size() + special_entries.size() == cards_before.size() and event_entries.size() == EventDeck.definitions().size(), "collectibles and every event definition appear in their separate chapters without ownership filtering")
-	check(special_entries.size() == 25, "all 25 current special cards appear in the separate special chapter")
+	check(special_entries.size() == 29, "all 29 current special cards appear in the separate special chapter")
+	check(not _find(event_entries, "event:piss_event").is_empty() and not _find(card_entries, "card:piss").is_empty(), "legendary Piss and the collectible Piss Bucket have separate journal pages")
 	for card: Dictionary in cards_before:
 		var is_special := str(card.get("category", "combat")).to_lower() == "special"
 		var entry_id := "card:" + str(card["id"])
@@ -121,7 +122,7 @@ func _run() -> void:
 	var guard_description := CONTENT.effect_description({"type": "bodyguard", "percent": 0.4})
 	check(guard_description.contains("40%") and guard_description.contains("linke Vorrang") and guard_description.contains("vor der Aufteilung") and guard_description.contains("nicht erneut geteilt"), "Bodyguard explains actual raw-damage sharing, left priority, shield gate and nonrecursive routing")
 	var legacy_effect := {"type": "deck_burn", "name": "Deck Burn", "amount": 8}
-	var mailman_effect := {"type": "draw_on_kill"}
+	var mailman_effect := {"type": "draw_on_death"}
 	check(CONTENT.effect_description(legacy_effect) == CONTENT.effect_description(mailman_effect) and EffectPresentation.get_title(legacy_effect) == EffectPresentation.get_title(mailman_effect) and EffectPresentation.get_icon_path(legacy_effect) == EffectPresentation.get_icon_path(mailman_effect), "legacy presentation uses the canonical Mailman title, icon and executable rules")
 	check(CONTENT.effect_description({"type": "neighbor_heal", "value": 7}) == Localization.format_text("Heilt zu Beginn des eigenen Zuges die direkt links und rechts benachbarten eigenen Karten um %d HP, höchstens bis zu deren maximalen HP.", [7]), "neighbor heal uses real turn-start timing and the supplied value")
 	check(CONTENT.effect_description({"type": "swarm_power"}).contains("beiden Tischseiten"), "swarm rule includes identical opposing copies")
@@ -140,7 +141,7 @@ func _run() -> void:
 		check(not _find(mechanics, id).is_empty(), "requested gameplay topic is covered: " + id)
 	var god_pack: Dictionary = PackDefinition.PACK_TYPES["god"]
 	check(str(_find(mechanics, "pack:god")["subtitle"]) == Localization.format_text("%d Soul Coins · %d Karten · ab Level %d", [int(god_pack["cost"]), int(god_pack["card_count"]), int(god_pack["minimum_level"])]), "GOD pack page carries its localized current price and unlock level")
-	check(str(_find(mechanics, "slot_bets")["body"]).contains("1, 2, 5, 10, 20, 50") and str(_find(mechanics, "slot_payouts")["body"]).contains("×50"), "slot pages derive actual stakes and highest payout")
+	check(str(_find(mechanics, "slot_bets")["body"]).contains("1, 2, 5, 10, 20, 50") and str(_find(mechanics, "slot_payouts")["body"]).contains("×55"), "slot pages derive actual stakes and highest payout")
 	check(str(_find(mechanics, "effect_upgrades")["body"]).contains("ohne Effekt enden") and str(_find(mechanics, "forge_protection")["body"]).contains("Kampfdeck"), "journal explains paid failed rolls and protected fusion inputs")
 	for id: String in ["permanent_upgrades", "lucky_rewards", "income_boosts"]:
 		check(not _find(mechanics, id).is_empty(), "new permanent progression topic is documented: " + id)

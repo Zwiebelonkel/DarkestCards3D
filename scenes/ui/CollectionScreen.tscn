@@ -1,15 +1,17 @@
-[gd_scene load_steps=12 format=3 uid="uid://cvxblkstddw2n"]
+[gd_scene load_steps=14 format=3 uid="uid://cvxblkstddw2n"]
 
 [ext_resource type="Script" uid="uid://bb62mpjyv4ak2" path="res://scripts/ui/CollectionScreen.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://bpcv0s5e6orfb" path="res://scenes/Table3DButton.tscn" id="2_eujja"]
 [ext_resource type="PackedScene" uid="uid://48l5iy1dnyb" path="res://assets/environments/props/table/table.glb" id="4_1pna7"]
 [ext_resource type="AudioStream" uid="uid://dd2vad4psje60" path="res://assets/sounds/SFX/cardHover.mp3" id="5_ke5g5"]
 [ext_resource type="AudioStream" uid="uid://bb6frcxr0ib18" path="res://assets/sounds/SFX/cardFly.mp3" id="6_wu3m3"]
-[ext_resource type="Texture2D" uid="uid://ddgq6dfuyq1ow" path="res://assets/characters/angel.png" id="7_efdwr"]
+[ext_resource type="Texture2D" uid="uid://ddgq6dfuyq1ow" path="res://assets/characters/angel/angel.png" id="7_efdwr"]
 [ext_resource type="Script" uid="uid://b51dcfenfx2hb" path="res://scripts/SpriteAnim.gd" id="8_kelpw"]
 [ext_resource type="PackedScene" uid="uid://bqetkqf5b5kk4" path="res://assets/environments/props/beer/energy.glb" id="9_bghdq"]
 [ext_resource type="Script" uid="uid://buklinv6mfo0y" path="res://scripts/table/LocalTableProp.gd" id="10_mh264"]
 [ext_resource type="AudioStream" uid="uid://bu4v4qlnmw3y6" path="res://assets/sounds/SFX/canKick.mp3" id="11_can_kick"]
+[ext_resource type="Texture2D" uid="uid://bp2nfqse45kr5" path="res://assets/characters/angel/angelHover.png" id="12_angel_hover"]
+[ext_resource type="Material" uid="uid://c7mq4t46wq4wj" path="res://assets/characters/angel/eye_glow.tres" id="13_eye_glow"]
 [ext_resource type="Script" uid="uid://oyqpnugunh4o" path="res://scripts/ui/MenuNavigation.gd" id="99_menu_nav"]
 
 [node name="CollectionScreen" type="Node3D"]
@@ -103,6 +105,7 @@ bus = &"SFX"
 
 [node name="angel" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, 0, 2.43191, -10.2784)
+material_override = ExtResource("13_eye_glow")
 pixel_size = 0.092
 billboard = 1
 texture_filter = 0
@@ -111,6 +114,7 @@ hframes = 18
 script = ExtResource("8_kelpw")
 fps = 10.0
 TOTAL_FRAMES = 18
+hover_texture = ExtResource("12_angel_hover")
 
 [node name="decorations" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.65438)

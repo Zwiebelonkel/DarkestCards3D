@@ -1,0 +1,11 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+SLOT_TRIPLE_SEEDS: { 3: 0, 1: 52, 4: 54, 2: 58, 0: 90 }
+SLOT_CLICK_CADENCE: first clicks 0.019 s apart, last clicks 0.267 s apart
+SLOT_LOSING_SEED: 1
+SLOT_MACHINE_TESTS: PASS (130 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:614)

@@ -7,6 +7,193 @@ signal basement_cat_choice_changed(choice: String)
 signal cat_clicker_changed(active: bool)
 signal cat_clicker_frame_changed(frame: int)
 signal cat_clicker_clicked
+signal story_progress_changed(completed: int)
+signal npc_rescue_changed
+
+const STORY_RULES := preload("res://scripts/match/OfflineMatchRules.gd")
+var story_completed_level := 0
+const RESCUE_NPC_IDS: Array[String] = ["angel", "dealer", "jester", "prisoner"]
+var _rescued_npcs: Dictionary = {}
+var _npc_rescue_intros_pending: Dictionary = {}
+# Keep the previous Angel save/API compatible with the per-NPC introductions.
+var angel_rescue_intro_pending: bool:
+	get:
+		return is_npc_rescue_intro_pending("angel")
+	set(value):
+		if value:
+			_npc_rescue_intros_pending["angel"] = true
+		else:
+			_npc_rescue_intros_pending.erase("angel")
+
+
+func is_npc_rescued(npc_id: String) -> bool:
+	return _rescued_npcs.get(npc_id, false) == true
+
+
+func cheat_unlock_all_characters() -> bool:
+	# New rescues retain their introductions; existing dialogue progress stays intact.
+	if is_training_session() or _story_transaction_active:
+		return false
+	for area_id in ["black_market", "graveyard"]:
+		if CollectionManager.has_area_access(area_id):
+			continue
+		var key_id := CollectionManager.get_area_unlock_card_id(area_id)
+		if CollectionManager.get_amount(key_id) == 0:
+			CollectionManager.add_card(key_id)
+		if not CollectionManager.unlock_area(area_id):
+			return false
+	var previous_rescued := _rescued_npcs.duplicate()
+	var previous_intros := _npc_rescue_intros_pending.duplicate()
+	for npc_id in RESCUE_NPC_IDS:
+		if not is_npc_rescued(npc_id):
+			_rescued_npcs[npc_id] = true
+			_npc_rescue_intros_pending[npc_id] = true
+	if not save():
+		_rescued_npcs = previous_rescued
+		_npc_rescue_intros_pending = previous_intros
+		return false
+	npc_rescue_changed.emit()
+	return true
+
+
+func get_imprisoned_npc_ids() -> Array[String]:
+	var result: Array[String] = []
+	if not is_npc_rescued("angel"):
+		result.append("angel")
+	if CollectionManager.has_area_access("black_market") and not is_npc_rescued("dealer"):
+		result.append("dealer")
+	if CollectionManager.has_area_access("graveyard"):
+		if not is_npc_rescued("jester"):
+			result.append("jester")
+		elif not is_npc_rescued("prisoner"):
+			result.append("prisoner")
+	return result
+
+
+func complete_angel_rescue_intro() -> bool:
+	return complete_npc_rescue_intro("angel")
+
+
+func is_npc_rescue_intro_pending(npc_id: String) -> bool:
+	return is_npc_rescued(npc_id) and _npc_rescue_intros_pending.get(npc_id, false) == true
+
+
+func complete_npc_rescue_intro(npc_id: String) -> bool:
+	if not is_npc_rescue_intro_pending(npc_id):
+		return true
+	_npc_rescue_intros_pending.erase(npc_id)
+	if save():
+		return true
+	_npc_rescue_intros_pending[npc_id] = true
+	return false
+var greeting_completed := false
+var weed_consumed := false
+signal story_package_queued
+var weed_package_pending := false
+var cocaine_package_pending := false
+var weed_reward_unlocked := false
+const WEED_STORY_LEVEL := 7
+const COCAINE_STORY_LEVEL := 20
+var cocaine_consumed := false
+var cocaine_reward_unlocked := false
+var admin_weed_drop_pending := false
+var _story_transaction_active := false
+var _training_owner: WeakRef
+
+
+func set_training_session(owner: Node, active: bool) -> void:
+	if active:
+		_training_owner = weakref(owner)
+	elif _training_owner != null and _training_owner.get_ref() == owner:
+		_training_owner = null
+
+
+func is_training_session() -> bool:
+	return _training_owner != null and is_instance_valid(_training_owner.get_ref())
+
+
+func complete_greeting() -> bool:
+	if greeting_completed:
+		return true
+	greeting_completed = true
+	if save():
+		return true
+	greeting_completed = false
+	return false
+
+
+func consume_weed_reward(admin_package: bool = false) -> bool:
+	return consume_story_package("weed", admin_package)
+
+
+func get_story_package_kind() -> String:
+	return "cocaine" if story_completed_level >= COCAINE_STORY_LEVEL else "weed"
+
+
+func is_story_package_available(kind: String) -> bool:
+	if kind != get_story_package_kind():
+		return false
+	if kind == "weed":
+		return weed_reward_unlocked and weed_package_pending and not CollectionManager.has_discovered_card(CollectionManager.PUMP_REWARD_CARD_ID)
+	return cocaine_reward_unlocked and cocaine_package_pending and not CollectionManager.has_discovered_card(CollectionManager.BOILER_REWARD_CARD_ID)
+
+
+func consume_story_package(kind: String, admin_package: bool = false) -> bool:
+	if kind not in ["weed", "cocaine"] or is_training_session() or (not admin_package and not is_story_package_available(kind)):
+		return false
+	var previous := [weed_consumed, cocaine_consumed]
+	var previous_pending := [weed_package_pending, cocaine_package_pending]
+	if kind == "cocaine":
+		cocaine_consumed = true
+		cocaine_package_pending = false
+	else:
+		weed_consumed = true
+		weed_package_pending = false
+	if save():
+		return true
+	weed_consumed = previous[0]
+	cocaine_consumed = previous[1]
+	weed_package_pending = previous_pending[0]
+	cocaine_package_pending = previous_pending[1]
+	return false
+
+
+func request_admin_weed_drop() -> void:
+	# A debug request waits for the idle hub, including when made in the main
+	# menu. It never completes story levels or resets the permanent trip history.
+	admin_weed_drop_pending = true
+
+
+func is_story_level_unlocked(story_level: int) -> bool:
+	return story_level >= 1 and story_level <= STORY_RULES.LEVEL_COUNT and story_level <= story_completed_level + 1
+
+
+func award_story_win(story_level: int) -> Dictionary:
+	if is_training_session() or _story_transaction_active or not is_story_level_unlocked(story_level):
+		return {}
+	_story_transaction_active = true
+	var previous := story_completed_level
+	var previous_rescued := _rescued_npcs.duplicate()
+	var previous_intros := _npc_rescue_intros_pending.duplicate()
+	# Capture the waiting actors before freeing any of them. The Prisoner
+	# replaces the Jester only for the following Story fight.
+	var waiting := get_imprisoned_npc_ids()
+	for npc_id in waiting:
+		_rescued_npcs[npc_id] = true
+		_npc_rescue_intros_pending[npc_id] = true
+	story_completed_level = maxi(story_completed_level, story_level)
+	var rewards := STORY_RULES.story_rewards(story_level)
+	var result := _add_rewards(int(rewards["xp"]), float(rewards["coins"]), true, story_level >= WEED_STORY_LEVEL, story_level >= COCAINE_STORY_LEVEL, true)
+	if result.is_empty():
+		story_completed_level = previous
+		_rescued_npcs = previous_rescued
+		_npc_rescue_intros_pending = previous_intros
+	else:
+		if not waiting.is_empty():
+			npc_rescue_changed.emit()
+		story_progress_changed.emit(story_completed_level)
+	_story_transaction_active = false
+	return result
 
 const STARTING_COINS := 20
 const CENTS_PER_COIN := 100
@@ -125,6 +312,8 @@ func _refresh_cat_clicker(force_emit: bool = false) -> void:
 
 
 func advance_cat_clicker(delta: float) -> void:
+	if is_training_session():
+		return
 	# The wallet owns this clock, so hidden or duplicate UI instances cannot
 	# pause or multiply income. Nothing accrues while the game is closed.
 	if not _cat_clicker_active or _cat_clicker_advancing or not is_finite(delta) or delta <= 0.0:
@@ -153,6 +342,8 @@ func advance_cat_clicker(delta: float) -> void:
 
 
 func advance_auto_clicker(delta: float) -> void:
+	if is_training_session():
+		return
 	# Elapsed play time only: no clock timestamp is saved or recovered. Batch
 	# income once per interval, rather than saving the profile every frame.
 	# Ownership changes refresh the rate through collection_changed, so the
@@ -191,6 +382,8 @@ func add_coin_cents(amount: int) -> void:
 
 
 func _credit_regular_income(base_cents: float) -> void:
+	if is_training_session():
+		return
 	if base_cents <= 0.0:
 		return
 	var gained := _boosted_coin_cents(base_cents)
@@ -492,14 +685,18 @@ func get_match_coins(outcome: String, difficulty: String = "normal") -> float:
 
 
 func award_match(outcome: String, difficulty: String = "normal") -> Dictionary:
-	return _add_rewards(get_match_xp(outcome, difficulty), get_match_coins(outcome, difficulty))
+	return _add_rewards(get_match_xp(outcome, difficulty), get_match_coins(outcome, difficulty), true, false, false, outcome == "win")
 
 
 func add_xp(amount: int) -> Dictionary:
 	return _add_rewards(amount, 0)
 
 
-func _add_rewards(xp_amount: int, coin_amount: float) -> Dictionary:
+func _add_rewards(xp_amount: int, coin_amount: float, require_saved: bool = false, unlock_weed: bool = false, unlock_cocaine: bool = false, queue_package: bool = false) -> Dictionary:
+	if is_training_session():
+		return {}
+	var previous_state := [_coin_cents, level, xp, _coin_reward_remainder, _xp_reward_remainder, weed_reward_unlocked, cocaine_reward_unlocked]
+	var previous_pending := [weed_package_pending, cocaine_package_pending]
 	var gained := 0
 	if xp_amount > 0:
 		var precise_xp := xp_amount * CollectionManager.get_xp_multiplier() + _xp_reward_remainder
@@ -518,8 +715,32 @@ func _add_rewards(xp_amount: int, coin_amount: float) -> Dictionary:
 			bonus_cents += level_bonus_cents
 			earned_levels.append({"level": level, "coins_bonus": float(level_bonus_cents) / CENTS_PER_COIN})
 		_coin_cents += coin_reward_cents + bonus_cents
+		# Only completing story level seven (or later) unlocks this reward.
+		if unlock_weed:
+			weed_reward_unlocked = true
+		if unlock_cocaine:
+			cocaine_reward_unlocked = true
+		if queue_package or unlock_weed or unlock_cocaine:
+			if get_story_package_kind() == "cocaine" and cocaine_reward_unlocked:
+				if not CollectionManager.has_discovered_card(CollectionManager.BOILER_REWARD_CARD_ID):
+					cocaine_package_pending = true
+			elif weed_reward_unlocked and not CollectionManager.has_discovered_card(CollectionManager.PUMP_REWARD_CARD_ID):
+				weed_package_pending = true
 		# Match coins, XP and every level bonus are saved as one transaction.
-		save()
+		var saved := save()
+		if require_saved and not saved:
+			_coin_cents = previous_state[0]
+			level = previous_state[1]
+			xp = previous_state[2]
+			_coin_reward_remainder = previous_state[3]
+			_xp_reward_remainder = previous_state[4]
+			weed_reward_unlocked = previous_state[5]
+			cocaine_reward_unlocked = previous_state[6]
+			weed_package_pending = previous_pending[0]
+			cocaine_package_pending = previous_pending[1]
+			return {}
+		if saved and (queue_package or unlock_weed or unlock_cocaine):
+			story_package_queued.emit()
 		if coin_reward_cents + bonus_cents > 0:
 			coins_changed.emit(coins)
 		if gained > 0:
@@ -538,6 +759,18 @@ func _add_rewards(xp_amount: int, coin_amount: float) -> Dictionary:
 
 
 func clear_profile_state() -> void:
+	weed_package_pending = false
+	cocaine_package_pending = false
+	greeting_completed = false
+	weed_consumed = false
+	weed_reward_unlocked = false
+	cocaine_consumed = false
+	cocaine_reward_unlocked = false
+	admin_weed_drop_pending = false
+	story_completed_level = 0
+	_rescued_npcs.clear()
+	_npc_rescue_intros_pending.clear()
+	_story_transaction_active = false
 	coins = STARTING_COINS
 	level = 1
 	xp = 0
@@ -577,10 +810,21 @@ func reset_progression(persist: bool = true) -> void:
 	coins_changed.emit(coins)
 	progression_changed.emit(level, xp, get_xp_required())
 	basement_cat_choice_changed.emit(_basement_cat_choice)
+	npc_rescue_changed.emit()
 
 
 func save() -> bool:
 	var cfg := ConfigFile.new()
+	cfg.set_value("progression", "weed_package_pending", weed_package_pending)
+	cfg.set_value("progression", "cocaine_package_pending", cocaine_package_pending)
+	cfg.set_value("intro", "greeting_completed", greeting_completed)
+	cfg.set_value("progression", "weed_consumed", weed_consumed)
+	cfg.set_value("progression", "weed_reward_unlocked", weed_reward_unlocked)
+	cfg.set_value("progression", "cocaine_consumed", cocaine_consumed)
+	cfg.set_value("story", "completed_level", story_completed_level)
+	cfg.set_value("story", "rescued_npcs", _rescued_npcs)
+	cfg.set_value("story", "angel_rescue_intro_pending", angel_rescue_intro_pending)
+	cfg.set_value("story", "npc_rescue_intros_pending", _npc_rescue_intros_pending)
 	cfg.set_value("currency", "coins", coins)
 	cfg.set_value("currency", "coin_cents", _coin_cents)
 	cfg.set_value("currency", "reward_remainder", _coin_reward_remainder)
@@ -606,6 +850,23 @@ func load_currency() -> void:
 	clear_profile_state()
 	var cfg := ConfigFile.new()
 	if cfg.load(save_path) == OK:
+		# Existing profiles predate the greeting; only fresh/reset slots start it.
+		greeting_completed = bool(cfg.get_value("intro", "greeting_completed", true))
+		story_completed_level = clampi(int(cfg.get_value("story", "completed_level", 0)), 0, STORY_RULES.LEVEL_COUNT)
+		var rescued: Variant = cfg.get_value("story", "rescued_npcs", {"angel": story_completed_level > 0})
+		if rescued is Dictionary:
+			for npc_id in RESCUE_NPC_IDS:
+				if rescued.get(npc_id, false) == true:
+					_rescued_npcs[npc_id] = true
+		var pending_intros: Variant = cfg.get_value("story", "npc_rescue_intros_pending", {})
+		if not cfg.has_section_key("story", "npc_rescue_intros_pending"):
+			# The earlier version introduced only the Angel. Other already-freed
+			# NPCs receive their new greeting on the next station visit.
+			pending_intros = {"angel": bool(cfg.get_value("story", "angel_rescue_intro_pending", false)), "dealer": true, "jester": true, "prisoner": true}
+		if pending_intros is Dictionary:
+			for npc_id in RESCUE_NPC_IDS:
+				if is_npc_rescued(npc_id) and pending_intros.get(npc_id, false) == true:
+					_npc_rescue_intros_pending[npc_id] = true
 		if cfg.has_section_key("currency", "coin_cents"):
 			_coin_cents = maxi(int(cfg.get_value("currency", "coin_cents", STARTING_COINS * CENTS_PER_COIN)), 0)
 		else:
@@ -613,6 +874,14 @@ func load_currency() -> void:
 			coins = float(cfg.get_value("currency", "coins", STARTING_COINS))
 		# Existing currency-only saves start at level 1 without losing any coins.
 		level = maxi(int(cfg.get_value("progression", "level", 1)), 1)
+		weed_consumed = bool(cfg.get_value("progression", "weed_consumed", false))
+		# Existing story completion is reliable evidence of the required win.
+		# Ignore eligibility saved by the earlier player-level implementation.
+		weed_reward_unlocked = weed_consumed or story_completed_level >= WEED_STORY_LEVEL
+		cocaine_consumed = bool(cfg.get_value("progression", "cocaine_consumed", false))
+		cocaine_reward_unlocked = cocaine_consumed or story_completed_level >= COCAINE_STORY_LEVEL
+		weed_package_pending = bool(cfg.get_value("progression", "weed_package_pending", weed_reward_unlocked and not weed_consumed))
+		cocaine_package_pending = bool(cfg.get_value("progression", "cocaine_package_pending", cocaine_reward_unlocked and not cocaine_consumed))
 		xp = clampi(int(cfg.get_value("progression", "xp", 0)), 0, get_xp_required() - 1)
 		_coin_reward_remainder = _load_reward_remainder(cfg, "currency", "reward_remainder")
 		_xp_reward_remainder = _load_reward_remainder(cfg, "progression", "xp_reward_remainder")
@@ -639,6 +908,7 @@ func load_currency() -> void:
 	progression_changed.emit(level, xp, get_xp_required())
 	basement_cat_choice_changed.emit(_basement_cat_choice)
 	_on_collection_changed([])
+	npc_rescue_changed.emit()
 
 
 func _load_reward_remainder(cfg: ConfigFile, section: String, key: String) -> float:

@@ -5,6 +5,7 @@ signal detail_open_changed(open: bool)
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 const FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
+const DETAIL_ROTATION := preload("res://scripts/card/CardDetailRotation.gd")
 const CARD_GROUPS := {
 	"upgrade_group_clicker": ["clicker", "clicker_upgrade", "golden_clicker", "auto_clicker"],
 	"upgrade_group_starting_hand": ["starting_hand_1", "starting_hand_2", "starting_hand_3", "starting_hand_4", "starting_hand_5"],
@@ -12,7 +13,8 @@ const CARD_GROUPS := {
 	"upgrade_group_xp": ["xp_boost_1", "xp_boost_2", "xp_boost_3", "xp_boost_4"],
 	"upgrade_group_fusion": ["fusion_upgrade_1", "fusion_upgrade_2"],
 	"upgrade_group_trade": ["lucky_coin", "dealer_license"],
-	"upgrade_group_access": ["black_market_access", "graveyard_key", "basement_key"],
+	"upgrade_group_access": ["slot_room_key", "black_market_access", "graveyard_key", "basement_key"],
+	"upgrade_group_story": [],
 	"upgrade_group_other": [],
 }
 const CARD_SIZE := Vector2(0.792, 1.14)
@@ -57,10 +59,12 @@ var _detail_caption: Label
 var _detail_phase := DetailPhase.CLOSED
 var _detail_progress := 0.0
 var _detail_start_transform := Transform3D.IDENTITY
+var _detail_rotation := DETAIL_ROTATION.new()
 var focus_area: Area3D
 
 
 func _ready() -> void:
+	get_window().focus_exited.connect(_detail_rotation.stop)
 	_build_wall()
 	_build_detail_controls()
 	CollectionManager.collection_changed.connect(_queue_refresh)
@@ -92,6 +96,18 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if _detail_rotation.dragging:
+		if not _can_rotate_detail():
+			_detail_rotation.stop()
+		elif event is InputEventMouseMotion:
+			_detail_rotation.drag(_detail_card, camera, event)
+			get_viewport().set_input_as_handled()
+			return
+		elif event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+				_detail_rotation.stop()
+			get_viewport().set_input_as_handled()
+			return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		_scroll_dragging = false
 	if not is_detail_open() or get_tree().paused:
@@ -99,6 +115,15 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		close_detail()
 		get_viewport().set_input_as_handled()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_detail_rotation.stop()
+
+
+func _can_rotate_detail() -> bool:
+	return _detail_phase == DetailPhase.OPEN and is_instance_valid(_detail_card) and is_visible_in_tree() and not get_tree().paused and is_instance_valid(camera) and get_viewport().get_camera_3d() == camera
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -149,6 +174,7 @@ func is_detail_open() -> bool:
 
 
 func close_detail(immediate: bool = false) -> void:
+	_detail_rotation.stop()
 	if not is_detail_open():
 		return
 	if immediate or not is_instance_valid(_detail_card):
@@ -164,6 +190,7 @@ func close_detail(immediate: bool = false) -> void:
 
 
 func _finish_detail_close() -> void:
+	_detail_rotation.reset()
 	if is_instance_valid(_detail_card) and _base_positions.has(_detail_id):
 		_detail_card.global_transform = _wall_card_transform(_detail_id)
 	_detail_card = null
@@ -184,6 +211,7 @@ func open_detail(card_id: String) -> void:
 	if not CardData.is_upgrade_collection_card(data) or CollectionManager.get_amount(card_id) <= 0:
 		return
 	_detail_id = card_id
+	_detail_rotation.reset()
 	# Move the mounted card itself so its place on the wall stays empty.
 	_detail_card = _cards[card_id]
 	_detail_start_transform = _detail_card.global_transform
@@ -275,7 +303,12 @@ func _build_group_rows(ids: Array[String]) -> void:
 	var remaining := ids.duplicate()
 	for group: String in CARD_GROUPS:
 		var members: Array[String] = []
-		if group == "upgrade_group_other":
+		if group == "upgrade_group_story":
+			for card_id: String in remaining.duplicate():
+				if CardData.is_story_card(CardDatabase.get_card(card_id)):
+					members.append(card_id)
+					remaining.erase(card_id)
+		elif group == "upgrade_group_other":
 			members.assign(remaining)
 			members.sort_custom(func(a: String, b: String) -> bool: return a.naturalnocasecmp_to(b) < 0)
 		else:
@@ -291,10 +324,15 @@ func _build_group_rows(ids: Array[String]) -> void:
 			_rows.append({"group": group, "ids": row_ids, "part": part + 1, "parts": parts})
 
 
-func _queue_refresh(_card_ids: Array = []) -> void:
+func _queue_refresh(card_ids: Array = []) -> void:
 	# Acquisitions can emit several times in a pack or cheat. Rebuild once,
 	# outside CollectionManager's signal and any physics input callback.
-	_refresh_pending = true
+	if card_ids.is_empty():
+		_refresh_pending = true
+	for card_id: String in card_ids:
+		if CardData.is_upgrade_collection_card(CardDatabase.get_card(card_id)):
+			_refresh_pending = true
+			break
 
 
 func _can_interact() -> bool:
@@ -422,6 +460,7 @@ func _wall_card_transform(card_id: String) -> Transform3D:
 func _update_detail_transform(delta: float) -> void:
 	if _detail_phase == DetailPhase.OPEN:
 		_detail_card.global_transform = _detail_target_transform()
+		_detail_rotation.apply(_detail_card, camera)
 		return
 	_detail_progress = minf(_detail_progress + delta / detail_flight_duration, 1.0)
 	var target := _wall_card_transform(_detail_id) if _detail_phase == DetailPhase.CLOSING else _detail_target_transform()
@@ -555,6 +594,10 @@ func _build_detail_controls() -> void:
 
 
 func _on_detail_background_input(event: InputEvent) -> void:
+	if _can_rotate_detail() and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if _detail_rotation.begin(_detail_card, camera, event.position):
+			_detail_controls.accept_event()
+			return
 	if event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
 		close_detail()
 		_detail_controls.accept_event()

@@ -1,0 +1,32 @@
+{
+  "validated_date": "2026-11-15",
+  "engine": "Godot 4.4.1 Forward+",
+  "isolated_saves": true,
+  "tests": {
+    "jester_station_test": {"checks": 86, "status": "PASS"},
+    "jester_focus_test": {"checks": 76, "status": "PASS"},
+    "jester_offering_test": {"checks": 49, "status": "PASS"}
+  },
+  "total_checks": 211,
+  "script_errors": 0,
+  "shader_errors": 0,
+  "button_locales": ["de", "en", "es", "fr", "pl"],
+  "card_entry": {
+    "direction": "from below viewport to existing camera-relative preview",
+    "duration_seconds": 0.24,
+    "easing": "cubic out, shared dialog tween",
+    "offscreen_start_verified": true,
+    "intermediate_position_verified": true,
+    "arrival_verified": true,
+    "confirmation_blocked_until_arrival": true
+  },
+  "captures": ["offering-entry.png", "offering-de.png", "offering-en.png", "offering-es.png", "offering-fr.png", "offering-pl.png"],
+  "visually_reviewed": ["offering-entry.png", "offering-de.png", "offering-fr.png", "offering-pl.png"],
+  "notes": [
+    "Sacrifice commits the exact displayed copy. Decline preserves collection and save bytes.",
+    "Text and outside clicks neither confirm nor decline and do not fall through to the world.",
+    "Unavailable/stale protected copies disable confirmation. Existing atomic backend and one-time reward rules remain unchanged.",
+    "Station/focus jobs emitted ObjectDB shutdown warnings; no script or shader errors.",
+    "No exported build or live Steam validation performed."
+  ]
+}

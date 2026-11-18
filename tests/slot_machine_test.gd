@@ -12,6 +12,8 @@ var _game_viewport: SubViewport
 var _record_spin_cadence := false
 var _spin_click_times: Array[float] = []
 var _last_click_threshold := 0.0
+var _rolling_levels: Array[Vector2] = []
+var _jackpot_levels: Array[float] = []
 
 
 func _ready() -> void:
@@ -19,8 +21,14 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	if is_instance_valid(machine) and machine.is_spinning:
+		for entry: Dictionary in machine._model_text._atlas_labels:
+			if entry["source"] == "JACKPOT":
+				_jackpot_levels.append((entry["label"] as Label3D).modulate.r)
 	if not _record_spin_cadence or not is_instance_valid(machine):
 		return
+	if machine._rolling_audio.playing:
+		_rolling_levels.append(Vector2(machine._rolling_audio.pitch_scale, machine._rolling_audio.volume_db))
 	if machine._spin_next_click_angle > _last_click_threshold:
 		_spin_click_times.append(Time.get_ticks_msec() / 1000.0)
 		_last_click_threshold = machine._spin_next_click_angle
@@ -46,7 +54,7 @@ func _run() -> void:
 		return
 	for color in range(5):
 		var triple: Array[int] = [color, color, color]
-		check(SoulSlotMachine.payout_for(triple, 137) == 137 * [5, 10, 15, 30, 50][color], "color %d pays its advertised multiplier without losing fractional coins" % color)
+		check(SoulSlotMachine.payout_for(triple, 137) == 137 * [5, 10, 15, 35, 55][color], "color %d pays its advertised multiplier without losing fractional coins" % color)
 	check(SoulSlotMachine.payout_for([0, 1, 0], 100) == 0 and SoulSlotMachine.payout_for([5, 5, 5], 100) == 0 and SoulSlotMachine.payout_for([0, 0], 100) == 0 and SoulSlotMachine.payout_for([0, 0, 0], 0) == 0, "mixed, invalid and incomplete results cannot pay")
 	var seeds := _find_triple_seeds()
 	check(seeds.size() == 5, "bounded seed search finds every real triple outcome")
@@ -101,10 +109,28 @@ func _run() -> void:
 	await _wait_for_arrival()
 	check(main._active_room == 1 and main._active_side == 0 and machine.interaction_enabled, "arrival enables the machine on its visible cardinal side")
 	await _capture("start")
+	for step in range(5):
+		machine.choose_bet(1)
+	check(machine.get_selected_bet_cents() == 5000 and machine.button_areas["increase"].input_ray_pickable, "50 SC keeps the increase button available")
+	await _click_button("increase")
+	check(machine.get_selected_bet_cents() == 6000, "plus increases 50 SC to 60 SC")
+	await _click_button("increase")
+	await _click_button("bet")
+	check(machine.get_selected_bet_cents() == 7000 and machine.committed_bet_cents == 7000, "70 SC can be selected and confirmed")
+	await _click_button("decrease")
+	check(machine.get_selected_bet_cents() == 6000 and machine.committed_bet_cents == 0, "minus returns to 60 SC and clears confirmation")
+	await _click_button("decrease")
+	check(machine.get_selected_bet_cents() == 5000, "minus returns from 60 SC to 50 SC")
+	for step in range(6):
+		machine.choose_bet(1)
+	check(machine.get_selected_bet_cents() == 11000 and not machine.confirm_bet(), "stakes continue beyond 100 SC but insufficient funds prevent confirmation")
+	while machine.selected_bet_index > 0:
+		machine.choose_bet(-1)
 	var balance := GameCurrency.get_coin_cents()
 	await _click_button("spin")
 	check(not machine.is_spinning and starts.is_empty() and GameCurrency.get_coin_cents() == balance, "SPIN without BET cannot charge or animate")
 	check(not machine._spin_audio.playing, "a rejected spin does not play the spinning sound")
+	check(not machine._rolling_audio.playing, "a rejected spin never starts the rolling loop")
 	await _click_button("increase")
 	check(machine.selected_bet_index == 1 and machine.committed_bet_cents == 0, "projected green plus chooses the next stake")
 	await _click_button("decrease")
@@ -140,6 +166,8 @@ func _run() -> void:
 			machine.start_spin()
 		check(machine.is_spinning and machine.last_result == [color, color, color] and GameCurrency.get_coin_cents() == balance - 100 and GameCurrency.has_pending_slot_spin(), "seeded color %d starts a real spin and charges precisely once" % color)
 		check(machine._spin_audio.playing and not (machine._spin_audio.stream as AudioStreamMP3).loop and machine._spin_audio.bus == &"SFX", "accepted spins start individual clicks from the uploaded sound on the SFX bus")
+		check(machine._rolling_audio.playing and (machine._rolling_audio.stream as AudioStreamMP3).loop and machine._rolling_audio.bus == &"SFX" and is_equal_approx(machine._rolling_audio.pitch_scale, 1.0) and is_equal_approx(machine._rolling_audio.volume_db, machine.ROLLING_VOLUME_DB), "each accepted spin starts a fresh full-speed rolling loop on SFX")
+		check(not (machine.ROLLING_SOUND as AudioStreamMP3).loop, "looping the machine never changes the source sound resource")
 		if color == 0:
 			# A refused wallet settlement must retain the pending win without
 			# claiming it visually. Retrying uses the same committed spin.
@@ -147,14 +175,19 @@ func _run() -> void:
 			check(not machine.start_spin() and not machine.confirm_bet() and not machine.choose_bet(1) and _all_buttons_disabled() and starts.size() == 1 and GameCurrency.get_coin_cents() == balance - 100, "running animation rejects duplicate SPIN and all stake changes")
 			await _capture("spinning")
 		await _wait_for_spin()
+		check(not _jackpot_levels.is_empty() and _jackpot_levels.min() < 0.3 and _jackpot_levels.max() > 0.8, "actual jackpot lettering flickers during reel movement")
+		for entry: Dictionary in machine._model_text._atlas_labels:
+			if entry["source"] == "JACKPOT":
+				check((entry["label"] as Label3D).modulate == Color("e3cfc0"), "jackpot returns to steady light when reels stop, including failed settlement")
 		check(not machine._spin_audio.playing, "the last reel silences its clicks even if payout saving fails")
+		check(not machine._rolling_audio.playing and machine._rolling_tail_tween == null, "the last revealed symbol stops rolling audio and its fade even if payout saving fails")
 		if color == 0:
 			check(rewards.is_empty() and not machine._win_effect.active and finishes.is_empty() and machine._owns_pending_spin and GameCurrency.has_pending_slot_spin() and GameCurrency.get_coin_cents() == balance - 100, "failed settlement emits no reward effect or payout announcement")
 			GameCurrency._slot_transaction_active = false
 			check(not machine.start_spin() and starts.size() == 1 and rewards == [Vector2i(0, 500)], "successful settlement retry reveals its original reward once without a new spin")
 			await _settle()
 		check(_faces_match_result(color), "all three actual mesh facets face the payline at color %d's stop angle" % color)
-		var expected: int = balance - 100 + 100 * [5, 10, 15, 30, 50][color]
+		var expected: int = balance - 100 + 100 * [5, 10, 15, 35, 55][color]
 		machine._finish_spin()
 		check(GameCurrency.get_coin_cents() == expected and not GameCurrency.has_pending_slot_spin() and finishes.size() == color + 1, "color %d settles its exact payout once, even after duplicate completion" % color)
 		var effect := machine._win_effect
@@ -196,6 +229,11 @@ func _run() -> void:
 	check(machine._spin_next_click_angle > departure_click_angle, "leaving the slot room keeps triggering spatial clicks as the reel moves")
 	await _wait_for_spin()
 	_record_spin_cadence = false
+	check(_rolling_levels.size() > 5 and _rolling_levels[0].x > 0.95 and _rolling_levels.back().x < 0.8 and _rolling_levels.back().y < machine.ROLLING_VOLUME_DB - 10.0, "rolling audio slows down and fades as the final symbols are revealed")
+	var rolling_is_monotonic := true
+	for index in range(1, _rolling_levels.size()):
+		rolling_is_monotonic = rolling_is_monotonic and _rolling_levels[index].x <= _rolling_levels[index - 1].x + 0.001 and _rolling_levels[index].y <= _rolling_levels[index - 1].y + 0.001
+	check(rolling_is_monotonic, "rolling pitch and volume decrease smoothly without restarting during a spin")
 	check(_spin_click_times.size() >= 10, "a normal spin produces a rapid sequence of rotation-driven clicks")
 	if _spin_click_times.size() >= 10:
 		var early_gap := (_spin_click_times[5] - _spin_click_times[0]) / 5.0
@@ -203,7 +241,7 @@ func _run() -> void:
 		check(early_gap < 0.08 and late_gap > early_gap * 2.0, "click spacing grows with actual reel deceleration")
 		print("SLOT_CLICK_CADENCE: first clicks %.3f s apart, last clicks %.3f s apart" % [early_gap, late_gap])
 	machine._finish_spin()
-	check(GameCurrency.get_coin_cents() == balance - 100 + 5000 and starts.size() == 6 and finishes.size() == 6 and not GameCurrency.has_pending_slot_spin(), "spin finishing in the hub credits its committed win exactly once")
+	check(GameCurrency.get_coin_cents() == balance - 100 + 5500 and starts.size() == 6 and finishes.size() == 6 and not GameCurrency.has_pending_slot_spin(), "spin finishing in the hub credits its committed win exactly once")
 	check(rewards.size() == 5 and not machine._win_effect.active and not machine._win_effect._layer.visible, "off-room payout does not flash the hub or show a distant announcement")
 	await _click_area(main.hub_door.doorway_area, "hub doorway on second visit")
 	await _wait_for_arrival()
@@ -218,6 +256,7 @@ func _run() -> void:
 	machine._finish_spin(old_generation)
 	check(machine.is_spinning and GameCurrency.has_pending_slot_spin() and GameCurrency.get_coin_cents() == balance - 100 and finishes.size() == 6 and is_equal_approx(machine._reel_angles[2], unsettled_angle), "callbacks from the previous generation cannot stop a reel or settle the new spin")
 	check(machine._spin_audio.playing, "stale completion callbacks cannot silence a new spin")
+	check(machine._rolling_audio.playing and is_equal_approx(machine._rolling_audio.pitch_scale, 1.0), "stale callbacks cannot fade or stop the new rolling loop")
 	await _wait_for_spin()
 	check(GameCurrency.get_coin_cents() == balance - 100 and machine.last_payout_cents == 0 and finishes.size() == 7 and finishes.back() == 0 and not GameCurrency.has_pending_slot_spin(), "natural losing-spin completion pays zero and clears the pending transaction")
 	check(rewards.size() == 5 and not machine._win_effect.active, "a losing spin never emits a reward reveal")
@@ -229,7 +268,7 @@ func _run() -> void:
 	main.queue_free()
 	await _settle()
 	check(AudioServer.get_bus_index(room_music_bus) == -1, "scene exit during a spin leaves no room music filter behind")
-	var after_exit := balance - 100 + 3000
+	var after_exit := balance - 100 + 3500
 	check(GameCurrency.get_coin_cents() == after_exit and not GameCurrency.has_pending_slot_spin() and starts.size() == 8 and finishes.size() == 7, "freeing Main mid-win settles exactly once while cancelling its animation")
 	check(rewards.size() == 5, "scene-exit settlement cannot create an orphaned reward overlay")
 	GameCurrency.load_currency()

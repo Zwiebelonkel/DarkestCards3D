@@ -1,0 +1,156 @@
+{
+  "reviewed_at_utc": "2026-11-17 23:33:09 UTC",
+  "project": "C:/Users/Luca/Documents/DarkestCards3D",
+  "engine": "Godot 4.4.1",
+  "isolated_project": "C:/Users/Luca/AppData/Local/Temp/darkestcards-match-features-a8c6af5c582440249fd916f141861575",
+  "scope": "New legendary Piss event; existing Piss Bucket remains collectible.",
+  "local_validation_only": true,
+  "live_steam_verified": false,
+  "export_verified": false,
+  "results": [
+    {
+      "key": "piss_render_result",
+      "result": [
+        {
+          "success": true,
+          "exit_code": 0,
+          "signal": null,
+          "timed_out": false,
+          "output_overflow": false,
+          "completion_marker_found": true,
+          "engine_errors": [],
+          "elapsed_ms": 12298,
+          "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\nVulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600\r\n\r\nCardDatabase geladen: 122 Karten\r\nPASS one targetless legendary Piss joins the existing events\r\nPASS the collectible Piss Bucket remains a separate combat card\r\nPASS Piss Bucket stays eligible for collection, packs and the journal\r\nPASS Piss rejects a target without consuming the event\r\nPASS one real hand click immediately plays Piss without target selection\r\nPASS the caster still sees all ten cards while the opponent receives two turns of blindness\r\nPASS Piss preserves the current attack and spends the turn's event allowance\r\nPASS the event starts the existing yellow stream and audio\r\nPASS a local caster's stream starts on the near side\r\nPASS the caster can attack after the event reveal\r\nPASS ending the caster's turn does not consume the opponent's first blinded turn\r\nPASS the first opposing turn consumes exactly one turn\r\nPASS the normal hover displays live card effects before Piss\r\nPASS an AI Piss conceals both players' stats, effect icons and status counts\r\nPASS an already-open hover and card description cannot reveal hidden values\r\nPASS an opposing caster's stream starts on the far side\r\nPASS the ballistic stream lands at its table target\r\nPASS the circling landing stays on the actual tabletop\r\nPASS damage, healing, curse, strength, block and snapshots update real stats without revealing them\r\nPASS viewer concealment never becomes a card's transferable combat state\r\nPASS floating damage and healing numbers remain concealed\r\nPASS language changes preserve concealment and translate Piss: de\r\nPASS language changes preserve concealment and translate Piss: en\r\nPASS language changes preserve concealment and translate Piss: es\r\nPASS language changes preserve concealment and translate Piss: fr\r\nPASS language changes preserve concealment and translate Piss: pl\r\nPASS newly drawn cards inherit the viewer's active blindness\r\nPASS blindness starts with two complete affected-player turns\r\nPASS passing the first fully blocked affected turn keeps every card concealed\r\nPASS the other side's turn cannot shorten blindness\r\nPASS all values return after the second affected turn\r\nPASS restoration reveals the latest real values and available effects\r\nPASS a later Piss refreshes an existing duration to two turns\r\nPASS spectators retain the normal table view\r\nPASS match cleanup clears duration, particles and audio immediately\r\nPASS the separate hub stream remains idle throughout the event\r\nPISS_EVENT_TESTS: PASS (36 checks)\r\n",
+          "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n",
+          "pid": 28296
+        }
+      ]
+    },
+    {
+      "key": "piss_event_cards_test",
+      "result": [
+        {
+          "success": true,
+          "exit_code": 0,
+          "signal": null,
+          "timed_out": false,
+          "output_overflow": false,
+          "completion_marker_found": true,
+          "engine_errors": [],
+          "elapsed_ms": 13596,
+          "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 122 Karten\r\nPASS The third shared pile contains 25 shuffled events\r\nPASS Building the shared pile alone does not deal the separate opening hands\r\nPASS Ordinary combat-card draws never grant event cards\r\nPASS Both players draw into separate hands from the same pile\r\nPASS An event draw never fills a combat slot\r\nPASS The shared pile cannot award one physical event to both players\r\nPASS Switch rejects attempts to supply a combat-card target\r\nPASS Switch can be played without a table target\r\nPASS Switch preserves both draw-pile sizes\r\nPASS Switch exchanges exactly one complete card instance in each direction\r\nPASS Playing an event discards it and leaves the attack available\r\nPASS Switch rejects an empty opponent draw pile\r\nPASS An impossible event stays in hand and does not spend the turn's event\r\nPASS One click on the actual Switch hand card immediately exchanges the draw cards\r\nPASS A successful Switch never waits for a table target and leaves the hand immediately\r\nPASS After the Switch animation, the same player can still attack\r\nPASS An impossible Switch click never enters table-target selection\r\nPASS An impossible Switch click preserves its card and the turn's event allowance\r\nPASS An impossible Switch explains the problem while leaving normal attacks available\r\nPASS Clicking targeted Block still waits for the chosen enemy card\r\nPASS Interleaved identical events share five visual stacks without changing the eight physical cards\r\nPASS The Switch stack contains all three copies and exposes one actual UID\r\nPASS All three strength multipliers remain separate stacks in first-occurrence order\r\nPASS Selecting a non-front copy keeps its exact UID and highlights the shared stack\r\nPASS Clicking the selected stack cancels targeting without spending either copy\r\nPASS Matching names and IDs do not stack events whose effect data differs\r\nPASS Clicking a three-card stack plays and discards exactly one physical event\r\nPASS The remaining Switch copies stay stacked with an updated count and playable UID\r\nPASS The third physical copy remains available in the authoritative hand\r\nPASS A stack cannot bypass the one-event-per-turn rule\r\nPASS A targeted event can play the exact selected copy from a stack\r\nPASS Playing one targeted copy leaves the other as a single card\r\nPASS Strength rejects an empty table slot\r\nPASS Unknown event identities cannot be played\r\nPASS strength_120 strengthens a selected allied card\r\nPASS Strength scales current attack, max HP and damaged current HP, rounding up\r\nPASS Strength leaves the opposing card unchanged\r\nPASS Only one event can be played before a turn's attack\r\nPASS A rejected second event remains in hand\r\nPASS Strength survives card state serialization\r\nPASS Strength rejects an empty table slot\r\nPASS Unknown event identities cannot be played\r\nPASS strength_150 strengthens a selected allied card\r\nPASS Strength scales current attack, max HP and damaged current HP, rounding up\r\nPASS Strength leaves the opposing card unchanged\r\nPASS Only one event can be played before a turn's attack\r\nPASS A rejected second event remains in hand\r\nPASS Strength survives card state serialization\r\nPASS Strength rejects an empty table slot\r\nPASS Unknown event identities cannot be played\r\nPASS strength_200 strengthens a selected allied card\r\nPASS Strength scales current attack, max HP and damaged current HP, rounding up\r\nPASS Strength leaves the opposing card unchanged\r\nPASS Only one event can be played before a turn's attack\r\nPASS A rejected second event remains in hand\r\nPASS Strength survives card state serialization\r\nPASS Block requires an explicit enemy target\r\nPASS Block marks the selected enemy card\r\nPASS Block starts at two turns on its target only\r\nPASS A blocked attacker cannot resolve a duel\r\nPASS A blocked defender takes damage without counterattacking\r\nPASS The attack ends the player's turn without consuming an opposing blocked turn\r\nPASS The first completed enemy turn leaves one blocked turn\r\nPASS The other player's turns do not age the block\r\nPASS Remaining block duration survives card state serialization\r\nPASS The second completed enemy turn releases the blocked card\r\nPASS Steel accepts the chosen opponent card even while it is blocked\r\nPASS Steel moves one card to the player's draw pile and consumes one enemy replacement\r\nPASS The opponent's empty slot receives the replacement card\r\nPASS The stolen physical card returns through the new owner's combat draw pile\r\nPASS Stealing preserves modified attack and existing damage\r\nPASS Stealing preserves consumed one-shot effects and poison\r\nPASS Stealing preserves remaining block duration\r\nPASS Steel still works when the opponent cannot draw a replacement\r\nPASS An exhausted enemy draw pile leaves the stolen slot empty\r\nPASS Only the dying card's Draw On Death grants its owner an event\r\nPASS Draw On Death never grants an extra combat card\r\nPASS The attack immediately ends its turn\r\nPASS Only the dying card's Draw On Death grants its owner an event\r\nPASS Draw On Death never grants an extra combat card\r\nPASS The attack immediately ends its turn\r\nPASS The opposing deceased fighter earns its own event hand\r\nPASS Mutual deaths grant each eligible fighter its own death event\r\nPASS A mutual kill removes exactly two cards from the shared pile\r\nPASS A simultaneous Lava multi-kill grants exactly one event per deceased effect carrier\r\nPASS Multi-kill rewards are distinct events in the deceased fighters' hand\r\nPASS The AI plays a useful event from its own hand\r\nPASS The AI strengthens its fighter before using the stronger attack\r\nPASS The AI attack hands over the turn and renews the event allowance\r\nPASS A fighter with an available attacker cannot skip its attack\r\nPASS A fully blocked player can pass and consume its first blocked turn\r\nPASS A fully blocked AI also passes instead of deadlocking the match\r\nPASS Passing two blocked turns restores both fighters' attack choices\r\nPASS Passing blocked turns causes no attacks or damage\r\nPASS An online client cannot mutate authoritative event state directly\r\nPASS A spectator cannot play an event\r\nPASS Rejected network actions leave the hand and target untouched\r\nPASS Leaving a match clears both shared event piles\r\nPASS Leaving a match clears both event hands\r\nEVENT_CARD_TESTS: PASS (99 checks)\r\n",
+          "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n",
+          "pid": 2608
+        }
+      ]
+    },
+    {
+      "key": "piss_event_cards_network_test",
+      "result": [
+        {
+          "success": true,
+          "exit_code": 0,
+          "signal": null,
+          "timed_out": false,
+          "output_overflow": false,
+          "completion_marker_found": true,
+          "engine_errors": [],
+          "elapsed_ms": 10732,
+          "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 122 Karten\r\nPASS event test starts a loopback ENet authority\r\nPASS event test starts a separate guest transport\r\nPASS host and guest event peers connect\r\nPASS real online match start deals and synchronizes three guest events before releasing turn one\r\nPASS host deals exactly three opening events to each fighter from the 25-card shared pile\r\nPASS opening hand synchronization completes the real ENet ACK barrier\r\nPASS opening events are available on the first host turn without a next-turn notice\r\nPASS guest receives exactly its random opening hand and no host event identities\r\nPASS requesting the opening snapshot again neither rerolls nor duplicates starting events\r\nPASS public opening snapshot exposes equal hand counts without private cards\r\nPASS production sender authorization recognizes the actual guest peer\r\nPASS default broadcast-safe snapshot omits private event identities\r\nPASS public snapshot carries both hand counts\r\nPASS public state never serializes shuffled event order or whole hands\r\nPASS recipient snapshot includes only that fighter's event hand\r\nPASS recipient snapshot deep-copies authoritative hand data\r\nPASS unknown snapshot recipient receives no private cards\r\nPASS connected spectator receives no fighter hand\r\nPASS recipient snapshot delivers the guest hand through production ENet RPC\r\nPASS guest turn and combat-card coordinates are mirrored together\r\nPASS guest receives its event identities without learning the host hand\r\nPASS stale-turn event request cannot spend a card or change stats\r\nPASS foreign event UID, out-of-range target and empty slot are rejected over ENet\r\nPASS guest cannot play an event during the host turn\r\nPASS event requests cannot interrupt an attack or synchronization barrier\r\nPASS valid guest event is resolved on the authority and mirrored back to its own card\r\nPASS strength leaves opponent stats and the player's pending attack turn intact\r\nPASS event consumption and the once-per-turn flag remain authoritative\r\nPASS both peers keep input locked while the event is being revealed\r\nPASS host and guest begin the same public reveal before its lock expires\r\nPASS a duplicate event snapshot neither replays nor extends the reveal\r\nPASS duplicate snapshots cannot acknowledge or unlock an unfinished reveal\r\nPASS guest event snapshot ACK releases the real host barrier before timeout\r\nPASS the event barrier releases only after the guest reveal has finished\r\nPASS replayed requests and a second distinct event cannot double-spend the turn\r\nPASS guest Block targets the opposing host card and keeps mirrored block duration\r\nPASS networked block has a visible remaining-turn badge\r\nPASS Block presentation completes its real ENet ACK barrier\r\nPASS production authorization excludes a connected spectator\r\nPASS spectator cannot spend a known fighter event UID\r\nPASS spectator event and pass commands cannot change decks or advance the turn\r\nPASS spectator snapshot removes any previous private hand data\r\nPASS fully blocked guest can pass through an authorized RPC and synchronized turn barrier\r\nPASS passing ticks the blocked owner's card once on both peers\r\nPASS replayed pass cannot skip another turn or tick block twice\r\nPASS player Piss duration and public reveal arrive over real ENet\r\nPASS both host-side rows are concealed only when the guest casts Piss\r\nPASS both mirrored guest rows are concealed only when the host casts Piss\r\nPASS concealment leaves synchronized combat values intact\r\nPASS each peer plays the public stream locally\r\nPASS duplicate snapshots cannot restart the Piss stream\r\nPASS ending the caster turn preserves two complete blinded turns\r\nPASS the first affected turn ticks once and mirrors over ENet\r\nPASS a spectator sees normal values during a fighter's Piss status\r\nPASS returning to the affected fighter view restores concealment\r\nPASS the second affected turn restores values on both peers\r\nPASS stale Piss requests cannot blind either player or consume the card\r\nPASS enemy Piss duration and public reveal arrive over real ENet\r\nPASS both host-side rows are concealed only when the guest casts Piss\r\nPASS both mirrored guest rows are concealed only when the host casts Piss\r\nPASS concealment leaves synchronized combat values intact\r\nPASS each peer plays the public stream locally\r\nPASS duplicate snapshots cannot restart the Piss stream\r\nPASS ending the caster turn preserves two complete blinded turns\r\nPASS the first affected turn ticks once and mirrors over ENet\r\nPASS the second affected turn restores values on both peers\r\nEVENT_CARDS_NETWORK_TESTS: PASS\r\n",
+          "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n",
+          "pid": 11900
+        }
+      ]
+    },
+    {
+      "key": "piss_starting_events_test",
+      "result": [
+        {
+          "success": true,
+          "exit_code": 0,
+          "signal": null,
+          "timed_out": false,
+          "output_overflow": false,
+          "completion_marker_found": true,
+          "engine_errors": [],
+          "elapsed_ms": 4588,
+          "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 122 Karten\r\nPASS the shared starting event hand rule is three\r\nPASS easy starts through the real offline match path with both combat hands\r\nPASS easy offline receives exactly three events per player\r\nPASS easy offline deals six from the shared 25-card pile, leaving nineteen\r\nPASS easy offline deals six distinct match identities with no copy remaining in the pile\r\nPASS easy offline does not treat its received events as collectible discoveries or new cards\r\nPASS easy offline hand presentation leaves collection state and save bytes unchanged\r\nPASS normal starts through the real offline match path with both combat hands\r\nPASS normal offline receives exactly three events per player\r\nPASS normal offline deals six from the shared 25-card pile, leaving nineteen\r\nPASS normal offline deals six distinct match identities with no copy remaining in the pile\r\nPASS normal offline does not treat its received events as collectible discoveries or new cards\r\nPASS normal offline hand presentation leaves collection state and save bytes unchanged\r\nPASS hard starts through the real offline match path with both combat hands\r\nPASS hard offline receives exactly three events per player\r\nPASS hard offline deals six from the shared 25-card pile, leaving nineteen\r\nPASS hard offline deals six distinct match identities with no copy remaining in the pile\r\nPASS hard offline does not treat its received events as collectible discoveries or new cards\r\nPASS hard offline hand presentation leaves collection state and save bytes unchanged\r\nPASS insane starts through the real offline match path with both combat hands\r\nPASS insane offline receives exactly three events per player\r\nPASS insane offline deals six from the shared 25-card pile, leaving nineteen\r\nPASS insane offline deals six distinct match identities with no copy remaining in the pile\r\nPASS insane offline does not treat its received events as collectible discoveries or new cards\r\nPASS insane offline hand presentation leaves collection state and save bytes unchanged\r\nPASS a randomly dealt event is playable before the first attack of the first turn\r\nPASS starting with three cards still permits only one event per turn\r\nPASS duplicate initial-deal call cannot refill a partially played hand or consume RNG\r\nPASS a second real match resets used events and deals exactly three new cards to each hand\r\nPASS plain event-pile initialization remains separate from starting-hand dealing\r\nPASS online client cannot deal a local starting hand or consume its guard/RNG\r\nPASS spectator cannot deal a local starting hand or consume its guard/RNG\r\nPASS authorized offline helper deals normally after rejected remote-role calls\r\nPASS real online authority startup deals both valid combat decks\r\nPASS online authority receives exactly three events per player\r\nPASS online authority deals six from the shared 25-card pile, leaving nineteen\r\nPASS online authority deals six distinct match identities with no copy remaining in the pile\r\nPASS online authority does not treat its received events as collectible discoveries or new cards\r\nPASS online authority hand presentation leaves collection state and save bytes unchanged\r\nPASS online authority cannot double-deal starting events\r\nPASS public snapshot advertises three cards per hand and nineteen in the pile without private identities\r\nPASS guest snapshot contains exactly its own three starting event identities\r\nPASS guest snapshot exposes neither the host's starting events nor hidden pile order\r\nPASS spectator receives counts but none of the six starting event identities\r\nPASS unknown recipient receives no starting hand\r\nPASS starting events preserve owned inventory, deck, upgrades, currency and unrelated metadata\r\nPASS offline and online event dealing leaves every save file unchanged, including collection history\r\nPASS save isolated combat inventory fixture\r\nPASS spectator presentation writes no event collection or discovery state\r\nPASS online guest receives its event hand without permanent copies, discoveries or save writes\r\nPASS repeated event-hand refreshes preserve collection and save bytes\r\nPASS match cleanup clears both event hands, pile and the initial-deal guard\r\nSTARTING_EVENTS_TESTS: PASS (52 checks)\r\n",
+          "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n",
+          "pid": 20720
+        }
+      ]
+    },
+    {
+      "key": "piss_event_deck_runner",
+      "result": [
+        {
+          "success": true,
+          "exit_code": 0,
+          "signal": null,
+          "timed_out": false,
+          "output_overflow": false,
+          "completion_marker_found": true,
+          "engine_errors": [],
+          "elapsed_ms": 1005,
+          "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 122 Karten\r\nEVENT_DECK_TESTS: PASS (43 checks)\r\n",
+          "stderr": "",
+          "pid": 31972
+        }
+      ]
+    },
+    {
+      "key": "piss_satan_stream_test",
+      "result": [
+        {
+          "success": true,
+          "exit_code": 0,
+          "signal": null,
+          "timed_out": false,
+          "output_overflow": false,
+          "completion_marker_found": true,
+          "engine_errors": [],
+          "elapsed_ms": 10487,
+          "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 122 Karten\r\nPASS the imported scene is idle on entry\r\nPASS Piss is an authored child of Satan inside GameTable.tscn\r\nPASS the supplied ribbon scene stays within its three-node, one-emitter budget\r\nPASS right clicks, releases and a single click cannot start the stream\r\nPASS two of four clicks trigger only the stream\r\nPASS the actual two-click stream unlocks the Piss achievement\r\nPASS Satan immediately starts fast looping laughter with faster voice during the stream\r\nPASS pointer hover cannot replace the stream's fast laughing animation\r\nPASS moving the scene node changes the actual emission point without resetting the authored position\r\nPASS the aim moves in a small circle around the lower player target\r\nPASS circling preserves the authored source transform and ballistic landing\r\nPASS the third click does not restart or stack the stream\r\nPASS the halfway effect leaves normal controls available\r\nPASS the stream and looping sound stop after their bounded duration\r\nPASS fast laughter stops and the ordinary animation returns as emission ends, before particles finish draining\r\nPASS remaining particles drain and the effect returns to idle\r\nPASS an odd threshold waits until half the clicks are reached\r\nPASS three of five clicks trigger the halfway effect\r\nPASS slow clicks expire without triggering the halfway effect\r\nPASS jumpscare cooldown also suppresses the halfway stream\r\nPASS starting another table interaction immediately clears particles and audio\r\nPASS an incoming lobby cancels a halfway stream before a jumpscare exists\r\nPASS lobby cancellation also immediately ends the stream laughter\r\nSATAN_STREAM_TESTS: PASS (23 checks)\r\n",
+          "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n",
+          "pid": 25400
+        }
+      ]
+    },
+    {
+      "key": "piss_card_combat_indicators_test",
+      "result": [
+        {
+          "success": true,
+          "exit_code": 0,
+          "signal": null,
+          "timed_out": false,
+          "output_overflow": false,
+          "completion_marker_found": true,
+          "engine_errors": [],
+          "elapsed_ms": 5078,
+          "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 122 Karten\r\nPASS: zero damage keeps the shield seal available\r\nPASS: real shield absorption immediately consumes only its own effect\r\nPASS: an already-open hover overview immediately removes the spent shield\r\nPASS: the two lethal hits trigger the actual one-use survival paths\r\nPASS: consumed seal visibly shrinks before removal: SHIELD\r\nPASS: consumed seal fades during its shrink: SHIELD\r\nPASS: consumed seal visibly shrinks before removal: REBIRTH\r\nPASS: consumed seal fades during its shrink: REBIRTH\r\nPASS: consumed seal visibly shrinks before removal: LAST STAND\r\nPASS: consumed seal fades during its shrink: LAST STAND\r\nPASS: duplicate online snapshots preserve the ongoing consumption animation\r\nPASS: network refresh leaves the unused passive seal untouched\r\nPASS: using a one-shot effect does not remove it from the owned card data\r\nPASS: active status sits in the card's upper-right row: poison\r\nPASS: status uses its distinct color: poison\r\nPASS: active status sits in the card's upper-right row: stun\r\nPASS: status uses its distinct color: stun\r\nPASS: active status sits in the card's upper-right row: curse\r\nPASS: status uses its distinct color: curse\r\nPASS: poison badge displays its remaining three turns\r\nPASS: curse badge displays the actual attack reduction\r\nPASS: spent seal and its area disappear while the passive remains: SHIELD\r\nPASS: spent seal and its area disappear while the passive remains: REBIRTH\r\nPASS: spent seal and its area disappear while the passive remains: LAST STAND\r\nPASS: new online replicas immediately hide already-consumed seals without replay\r\nPASS: joining with a consumed seal starts no consumption animation\r\nPASS: new online replica restores active status without an entrance replay: poison\r\nPASS: new online replica restores active status without an entrance replay: stun\r\nPASS: new online replica restores active status without an entrance replay: curse\r\nPASS: a live online transition from intact to spent starts its own seal exit\r\nPASS: repeated remote impact state never restarts the seal exit\r\nPASS: the remotely consumed seal finishes disappearing\r\nPASS: stealing and redrawing preserves consumed seals and all status values\r\nPASS: stolen cards retain all three status indicators\r\nPASS: stun is consumed by exactly one selected attack\r\nPASS: the next poison tick updates the remaining-turn number\r\nPASS: the last poison tick clears both transient fields\r\nPASS: reapplied poison and stun survive the previous exit animation\r\nPASS: expired poison and consumed stun disappear while permanent curse remains\r\nPASS: online updates remove ended statuses without losing permanent debuffs\r\nPASS: a fresh battle clears the curse indicator and its transient penalty\r\nPASS: using the first of two one-shot saves preserves the second seal\r\nPASS: the next lethal hit independently consumes the second survival seal\r\nPASS: both spent seals and their open hover overview disappear completely\r\nPASS: the real shielded hit applies no poison and creates no poison badge\r\nPASS: a real damaging poison hit immediately marks the target\r\nPASS: the production turn-start tick deals damage and removes a one-turn poison badge\r\nPASS: a fresh battle restores the intact seal at full size\r\nPASS: death during seal consumption cancels indicators without resurrecting the seal\r\nCARD_COMBAT_INDICATORS_TESTS: PASS (49 checks)\r\n",
+          "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n",
+          "pid": 25368
+        }
+      ]
+    },
+    {
+      "key": "piss_journal_content_test",
+      "result": [
+        {
+          "success": true,
+          "exit_code": 0,
+          "signal": null,
+          "timed_out": false,
+          "output_overflow": false,
+          "completion_marker_found": true,
+          "engine_errors": [],
+          "elapsed_ms": 2592,
+          "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 122 Karten\r\nJOURNAL_CONTENT_ENTRIES: 93 combat cards, 29 special cards, 7 event cards, 39 effects, 31 mechanics; 324 total; longest body 1111 characters\r\nJOURNAL_CONTENT_TESTS: PASS (1256 checks)\r\n",
+          "stderr": "",
+          "pid": 26752
+        }
+      ]
+    }
+  ]
+}

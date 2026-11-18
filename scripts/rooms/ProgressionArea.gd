@@ -60,8 +60,6 @@ func open() -> bool:
 		return false
 	if area_id.is_empty() or not CollectionManager.has_area_access(area_id):
 		return false
-	if not CollectionManager.unlock_area(area_id):
-		return false
 	if room_index > 0:
 		travel_requested.emit(door)
 		return true

@@ -1,0 +1,95 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "Story 20 cocaine package",
+  "scene": "res://scenes/props/CocainePackage.tscn",
+  "units": "meters at import scale; pickup instances normalize to 0.22",
+  "forward": "-Z",
+  "origin": "center",
+  "footprint_m": [
+    2.3,
+    3.164
+  ],
+  "height_m": 0.502,
+  "interaction_sides": [
+    "front",
+    "left",
+    "right"
+  ],
+  "style_references": [
+    {
+      "reason": "Preserve the established table pickup scale, silhouette and yellow hover outline.",
+      "path": "res://scenes/props/WeedPickup.tscn"
+    },
+    {
+      "reason": "Reuse the supplied textured model without geometry or texture edits.",
+      "path": "res://assets/environments/props/cocaine/cocaine.glb"
+    },
+    {
+      "reason": "Reveal the existing animated red Hint2 at its authored wall location.",
+      "path": "res://scenes/rooms/EmptyHospitalRoom.tscn"
+    }
+  ],
+  "collision": {
+    "required": false,
+    "strategy": "shares the pickup controller's primitive mouse-picking box"
+  },
+  "budgets": {
+    "nodes": 4,
+    "mesh_instances": 1,
+    "triangles": 2600,
+    "surfaces": 1,
+    "unique_materials": 1,
+    "collision_shapes": 0,
+    "lights": 0,
+    "particles": 0,
+    "nonuniform_scales": 1
+  },
+  "review": {
+    "required_views": [
+      "front",
+      "back",
+      "left",
+      "right",
+      "drop",
+      "landed",
+      "hover",
+      "active"
+    ]
+  },
+  "notes": [
+    "Source model is reused unchanged.",
+    "The inherited weed controller supplies the level gate, fall, exact ground contact, outline, save and effect lifetime.",
+    "Only one of the two package meshes is visible at a time."
+  ],
+  "measured": {
+    "bounds": {
+      "position": [
+        -1.1421537399292,
+        -0.250816136598587,
+        -1.55308556556702
+      ],
+      "size": [
+        2.29927253723145,
+        0.501632213592529,
+        3.16359734535217
+      ]
+    },
+    "collision_shapes": 0,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 1,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 4,
+    "nonuniform_scales": 1,
+    "particles": 0,
+    "surfaces": 1,
+    "triangles": 2512,
+    "unique_materials": 1
+  }
+}

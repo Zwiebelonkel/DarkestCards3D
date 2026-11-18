@@ -249,6 +249,7 @@ func _check_restored(label: String) -> void:
 	check(not table._hearing_recovery_active and is_equal_approx(AudioServer.get_bus_volume_db(master_bus), master_before) and is_equal_approx(lowpass.cutoff_hz, filter_before) and not AudioServer.is_bus_effect_enabled(master_bus, 0), label + ": original hearing volume, filter frequency and enabled state return")
 	check(is_equal_approx(main.music.volume_db, music_before) and not main._loss_music_restore_pending, label + ": background music returns to its original volume")
 	check(is_equal_approx(float(main._wakeup_blur_material.get_shader_parameter("blur_strength")), MainScene.WAKEUP_BLUR_END), label + ": wakeup blur cannot linger after the skip")
+	check(not main.blood_overlay.active and not main.blood_overlay.blood_rect.visible, label + ": blood border cannot linger after the skip")
 	check(not main.pause_menu._cinematic_locked and table.satan_hover_area.input_ray_pickable, label + ": pause and scene interactions are available again")
 	check(_balance() == balance_after_result, label + ": settled coins, level and XP remain unchanged")
 

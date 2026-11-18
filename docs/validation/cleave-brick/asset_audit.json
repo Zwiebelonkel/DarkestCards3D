@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/effects/CleaveBrick.manifest.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -0.250084161758423,
+        -0.0600000657141209,
+        -0.120041891932487
+      ],
+      "size": [
+        0.500133872032166,
+        0.12019819766283,
+        0.24007822573185
+      ]
+    },
+    "collision_shapes": 1,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 1,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 8,
+    "nonuniform_scales": 0,
+    "particles": 0,
+    "surfaces": 1,
+    "triangles": 919,
+    "unique_materials": 1
+  },
+  "passed": true,
+  "target": "res://scenes/effects/CleaveBrick.tscn"
+}

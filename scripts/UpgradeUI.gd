@@ -1,5 +1,6 @@
 extends Control
 class_name UpgradeUI
+const UI_AUDIO := preload("res://scripts/ui/InterfaceSounds.gd")
 
 signal card_selected(card_id: String)
 signal deck_filter_toggled(deck_only: bool)
@@ -9,8 +10,6 @@ signal effect_pressed
 signal remove_effect_pressed(effect_source: String, effect_index: int)
 
 const VCR_FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
-const EFFECT_ICON_PATH := "res://assets/effects/"
-const EFFECT_PLACEHOLDER := preload("res://assets/effects/placeholder.png")
 const MAX_EFFECT_SLOTS := 2
 
 const COLOR_SURFACE := Color("141118")
@@ -55,6 +54,7 @@ var effect_cost := 12
 
 func _ready() -> void:
 	add_to_group("upgrade_ui")
+	UI_AUDIO.connect_buttons(self)
 	Localization.locale_changed.connect(_refresh_localized_text)
 	effect_slot_buttons = [effect_slot_1, effect_slot_2]
 	card_filter_button.toggled.connect(_on_deck_filter_toggled)
@@ -154,6 +154,7 @@ func set_cards(card_ids: Array, owned_counts: Dictionary = {}) -> void:
 		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		button.set_meta("owned_amount", int(entry.get("amount", 0)))
 		button.pressed.connect(_on_card_button_pressed.bind(card_id, button))
+		UI_AUDIO.connect_button(button, self)
 
 		_style_card_button(button, str(entry.get("rarity", "common")))
 		_update_card_button_content(card_id, button)
@@ -419,27 +420,7 @@ func _on_remove_effect_button_pressed() -> void:
 
 
 func _load_effect_icon(effect: Dictionary) -> Texture2D:
-	var effect_type := str(effect.get("type", "")).strip_edges().to_lower()
-	if effect_type.is_empty():
-		return EFFECT_PLACEHOLDER
-
-	var file_name := effect_type
-	if effect_type == "armor":
-		var value := float(effect.get("value", 0.0))
-		if is_equal_approx(value, 0.25):
-			file_name = "armor_25"
-		elif is_equal_approx(value, 0.5):
-			file_name = "armor_50"
-		elif is_equal_approx(value, 0.75):
-			file_name = "armor_75"
-
-	var path := EFFECT_ICON_PATH + file_name + ".png"
-	if ResourceLoader.exists(path):
-		return load(path) as Texture2D
-	var vector_path := EFFECT_ICON_PATH + file_name + ".svg"
-	if ResourceLoader.exists(vector_path):
-		return load(vector_path) as Texture2D
-	return EFFECT_PLACEHOLDER
+	return EffectPresentation.get_icon(effect)
 
 
 func _format_effect_name(effect: Dictionary) -> String:

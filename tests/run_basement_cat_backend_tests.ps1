@@ -8,7 +8,7 @@ $sourcePaths = @(
     'scripts/autoload/Localization.gd', 'scripts/autoload/CardDatabase.gd',
     'scripts/autoload/SaveManager.gd', 'scripts/autoload/CollectionManager.gd',
     'scripts/autoload/EffectDatabase.gd', 'scripts/autoload/DeckManager.gd',
-    'scripts/GameCurrency.gd', 'scripts/CardUpgradeManager.gd',
+    'scripts/GameCurrency.gd', 'scripts/CardUpgradeManager.gd', 'scripts/match/OfflineMatchRules.gd',
     'scripts/card/CardData.gd', 'scripts/events/EventDeck.gd',
     'tests/basement_cat_collection_fixture.gd', 'tests/basement_cat_currency_fixture.gd',
     'tests/basement_cat_backend_test.gd', 'tests/basement_cat_backend_test.tscn',

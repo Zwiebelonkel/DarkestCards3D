@@ -1,0 +1,13 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS idle overlay is invisible and costs no full-screen draw
+PASS each overlay has independent animation and shader settings
+PASS blood stays for nine seconds with an initial hold
+PASS blood never captures mouse input
+PASS blood retreats and fades gradually without affecting another overlay
+PASS offline pause freezes the blood animation
+PASS natural completion fully hides the blood
+PASS another hit replaces the previous animation
+PASS cancellation removes the blood completely
+BLOOD_OVERLAY_TESTS: PASS (9 checks)

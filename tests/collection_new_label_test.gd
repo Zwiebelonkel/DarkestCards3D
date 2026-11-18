@@ -160,11 +160,87 @@ func _run() -> void:
 	await _settle()
 	check(not CollectionManager.is_card_new(card_ids[0]) and not _has_badge(_table_card(card_ids[0])) and not _has_badge(_journal_card(card_ids[0])), "receiving another copy of a seen type does not restart the NEW notification")
 	book.close_journal(true)
+	await _check_detail_wheel_acknowledgement()
 	table_view.queue_free()
 	journal_view.queue_free()
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_finish()
+
+
+func _check_detail_wheel_acknowledgement() -> void:
+	# Keep the pointer away from every card so only opening/scrolling the
+	# detail view can acknowledge these freshly acquired types.
+	table_view.physics_object_picking = false
+	_move_pointer(table_view, Vector2(8, 8))
+	screen._reset_collection_hover()
+	CollectionManager.clear_profile_state()
+	var fixture_ids: Array[String] = []
+	for entry: Dictionary in _collection_chapter(CONTENT.build_chapters())["entries"]:
+		var data: Dictionary = entry["card_data"]
+		var card_id := str(data.get("id", ""))
+		if CardData.is_combat_card(data) and CollectionManager.can_obtain_card(card_id):
+			fixture_ids.append(card_id)
+			CollectionManager.add_card_instance({"card_id": card_id, "instance_id": "wheel-badge-" + card_id, "level": 1, "effects": [], "is_holo": false})
+			if fixture_ids.size() == 4:
+				break
+	screen.detail_duration = 0.04
+	screen.add_button_slide_duration = 0.02
+	screen.detail_mouse_tilt_strength = 0.0
+	screen.refresh_collection()
+	await _settle()
+	_disable_table_picking()
+	var ordered: Array[Card3D] = []
+	for rarity in screen.RARITY_ORDER:
+		for card: Card3D in screen._row_cards.get(rarity, []):
+			ordered.append(card)
+	check(ordered.size() == 4 and fixture_ids.all(func(card_id: String): return CollectionManager.is_card_new(card_id) and _has_badge(_table_card(card_id))), "detail-wheel fixture begins with four genuinely unread card types")
+	if ordered.size() != 4:
+		return
+	var hover_events: Array[int] = [0]
+	for card in ordered:
+		card.area.mouse_entered.connect(func(): hover_events[0] += 1)
+	var previous := ordered[0]
+	var first := ordered[1]
+	var next := ordered[2]
+	var untouched := ordered[3]
+	var first_id := str(first.card_data["id"])
+	var next_id := str(next.card_data["id"])
+	var previous_id := str(previous.card_data["id"])
+	var untouched_id := str(untouched.card_data["id"])
+	await screen._open_detail_card(first)
+	await _settle()
+	check(screen._detail_card == first and not CollectionManager.is_card_new(first_id) and not _has_badge(first), "opening detail without a prior hover acknowledges the inspected card and removes its NEW label")
+	check(CollectionManager.is_card_new(next_id) and CollectionManager.is_card_new(previous_id) and CollectionManager.is_card_new(untouched_id), "opening one detail leaves every uninspected neighbor unread")
+	await _scroll_detail(MOUSE_BUTTON_WHEEL_DOWN)
+	check(screen._detail_card == next and not CollectionManager.is_card_new(next_id) and not _has_badge(next), "real wheel-down input acknowledges the next unhovered detail card and removes its NEW label")
+	var saved_after_next := FileAccess.get_file_as_bytes(CollectionManager.SAVE_PATH)
+	await _scroll_detail(MOUSE_BUTTON_WHEEL_UP)
+	check(screen._detail_card == first and FileAccess.get_file_as_bytes(CollectionManager.SAVE_PATH) == saved_after_next, "scrolling back to an already inspected detail does not rewrite its save")
+	await _scroll_detail(MOUSE_BUTTON_WHEEL_UP)
+	check(screen._detail_card == previous and not CollectionManager.is_card_new(previous_id) and not _has_badge(previous), "real wheel-up input acknowledges the previous unhovered detail card and removes its NEW label")
+	check(hover_events[0] == 0 and CollectionManager.is_card_new(untouched_id) and _has_badge(untouched), "detail browsing never needs a hover event and leaves the unvisited fourth card NEW")
+	await _capture(table_view, "detail-after-wheel")
+	_move_pointer(table_view, Vector2(8, 8))
+	await screen._close_detail_card()
+	CollectionManager.reload_profile()
+	var inspected_ids: Array[String] = [first_id, next_id, previous_id]
+	check(inspected_ids.all(func(card_id: String): return not CollectionManager.is_card_new(card_id)) and CollectionManager.is_card_new(untouched_id), "reload preserves all wheel-inspected seen flags while the unvisited card remains unread")
+	screen.refresh_collection()
+	await _settle()
+	_disable_table_picking()
+	check(inspected_ids.all(func(card_id: String): return not _has_badge(_table_card(card_id))) and _has_badge(_table_card(untouched_id)), "rebuilding the collection restores only the unvisited card's NEW label")
+
+
+func _scroll_detail(button: MouseButton) -> void:
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = button
+		event.pressed = pressed
+		event.position = Vector2(640, 360)
+		event.global_position = event.position
+		table_view.push_input(event, true)
+	await _settle(0.12)
 
 
 func _collection_chapter(chapters: Array) -> Dictionary:

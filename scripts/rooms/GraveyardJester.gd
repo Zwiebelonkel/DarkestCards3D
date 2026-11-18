@@ -9,6 +9,7 @@ enum Mode { NONE, DIALOG, CANDIDATE, OFFERING, RECEIVED }
 
 const CARD_SCENE := preload("res://scenes/table/Card3D.tscn")
 const LAUGH_AUDIO_SCRIPT := preload("res://scripts/SatanLaughAudio.gd")
+const DIALOGUE_STYLE := preload("res://scripts/ui/DialogueStyle.gd")
 const SENTENCE_END_SOUND := preload("res://assets/sounds/SFX/sentenceEnd.mp3")
 const FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 const GRAVES := {"chick": "Burials/Grave_27", "harald": "Burials/Grave_28"}
@@ -17,6 +18,8 @@ const CLICK_LAYER := 1 << 15
 const LAUGH_PITCH_OFFSET := 6.0
 const IDLE_BOB_HEIGHT := 0.06
 const IDLE_BOB_PERIOD := 2.8
+const PANEL_SWIPE_DURATION := 0.24
+const PANEL_EDGE_MARGIN := 24.0
 
 @export var camera: Camera3D
 @export var view_side := 1
@@ -30,7 +33,11 @@ var _mode := Mode.NONE
 var _candidate: Dictionary = {}
 var _body_label: RichTextLabel
 var _title_label: Label
+var _choice_buttons: BoxContainer
+var _sacrifice_button: Button
+var _decline_button: Button
 var _preview_card: Card3D
+var _preview_entry_progress := 1.0
 var _layer: CanvasLayer
 var _panel: PanelContainer
 var _modal_root: Control
@@ -45,6 +52,12 @@ var _actor: Node3D
 var _actor_base_y := 0.0
 var _idle_bob_phase := 0.0
 var _seen_slot := 0
+var _dialogue_sentences := PackedStringArray()
+var _dialogue_sentence_index := -1
+var _dialogue_waiting_for_continue := false
+var _panel_swipe_tween: Tween
+var _panel_slide_offset_y := 0.0
+var _is_closing := false
 
 
 func _ready() -> void:
@@ -113,6 +126,7 @@ func set_interaction_enabled(enabled: bool) -> void:
 	interaction_enabled = enabled
 	if not enabled:
 		close_dialog()
+		_set_actor_hovered(false)
 	if not is_instance_valid(focus_area):
 		return
 	focus_area.input_ray_pickable = enabled
@@ -133,7 +147,7 @@ func _click_areas() -> Array[Area3D]:
 
 
 func is_busy() -> bool:
-	return _mode != Mode.NONE
+	return _mode != Mode.NONE or _is_closing
 
 
 func is_dialog_open() -> bool:
@@ -147,11 +161,14 @@ func _can_open() -> bool:
 func _set_mode(value: Mode) -> void:
 	var was_busy := is_busy()
 	_mode = value
+	if is_busy():
+		_set_actor_hovered(false)
 	if _mode != Mode.DIALOG and is_instance_valid(_sentence_end_audio):
 		_sentence_end_audio.stop()
 	_sync_dialog_audio()
 	if is_instance_valid(_layer):
 		_layer.visible = is_busy()
+	_refresh_choice_buttons()
 	if was_busy != is_busy():
 		modal_changed.emit(is_busy())
 
@@ -159,13 +176,42 @@ func _set_mode(value: Mode) -> void:
 func open_dialog() -> bool:
 	if not _can_open():
 		return false
-	_message = "Dein Opfer ist nicht vergessen." if CollectionManager.get_jester_offering_state()["completed"] else DIALOGUE
+	_dialogue_sentences = _get_localized_dialogue_sentences()
+	if _dialogue_sentences.is_empty():
+		return false
+	_dialogue_sentence_index = 0
+	_dialogue_waiting_for_continue = false
 	_set_mode(Mode.DIALOG)
-	_refresh_modal_text()
+	_show_dialogue_sentence()
+	_start_panel_swipe_in()
+	return true
+
+
+func _get_localized_dialogue_sentences() -> PackedStringArray:
+	var dialogue_key := "Dein Opfer ist nicht vergessen." if CollectionManager.get_jester_offering_state()["completed"] else DIALOGUE
+	return Localization.text(dialogue_key).split("\n", false)
+
+
+func _show_dialogue_sentence() -> void:
+	if _dialogue_sentence_index < 0 or _dialogue_sentence_index >= _dialogue_sentences.size():
+		return
+	# Replace the previous line instead of accumulating it in the panel.
+	_body_label.text = ""
+	_body_label.visible_characters = 0
+	_message = _dialogue_sentences[_dialogue_sentence_index]
+	_dialogue_waiting_for_continue = false
 	_typing_characters = 0.0
+	_refresh_modal_text()
 	_body_label.visible_characters = 0
 	_sync_dialog_audio()
-	return true
+
+
+func _advance_to_next_dialogue_sentence() -> void:
+	if _dialogue_sentence_index + 1 >= _dialogue_sentences.size():
+		close_dialog()
+		return
+	_dialogue_sentence_index += 1
+	_show_dialogue_sentence()
 
 
 func open_grave(card_id: String) -> bool:
@@ -181,11 +227,12 @@ func open_grave(card_id: String) -> bool:
 	if _candidate.get("ok", false):
 		_create_preview(_candidate["card_data"])
 	_refresh_modal_text()
+	_start_panel_swipe_in()
 	return true
 
 
 func _confirm_offering() -> void:
-	if _mode != Mode.CANDIDATE or not interaction_enabled or get_tree().paused or not _candidate.get("ok", false):
+	if _mode != Mode.CANDIDATE or not interaction_enabled or get_tree().paused or not _candidate.get("ok", false) or _preview_entry_progress < 1.0:
 		return
 	var instance: Dictionary = _candidate.get("instance", {})
 	var instance_id := str(instance.get("instance_id", ""))
@@ -228,6 +275,9 @@ func _finish_offering(result: Dictionary) -> void:
 
 
 func close_dialog() -> void:
+	if not is_busy() or _is_closing:
+		return
+	_is_closing = true
 	if _offering_tween != null and _offering_tween.is_valid():
 		_offering_tween.kill()
 	_offering_tween = null
@@ -236,7 +286,11 @@ func close_dialog() -> void:
 	_reward_data = {}
 	_selected_card_id = ""
 	_message = ""
+	_dialogue_sentences = PackedStringArray()
+	_dialogue_sentence_index = -1
+	_dialogue_waiting_for_continue = false
 	_set_mode(Mode.NONE)
+	_start_panel_swipe_out()
 
 
 func refresh_state(_ids: Array[String] = []) -> void:
@@ -258,8 +312,27 @@ func _card_name(card_id: String) -> String:
 
 func _on_locale_changed() -> void:
 	refresh_state()
-	if is_busy():
-		_refresh_modal_text()
+	if _mode != Mode.DIALOG:
+		if is_busy() and not _is_closing:
+			_refresh_modal_text()
+		return
+	var was_typing := _body_label.visible_characters >= 0 and _body_label.visible_characters < _body_label.get_total_character_count()
+	var previous_total := maxi(_body_label.get_total_character_count(), 1)
+	var reveal_fraction := clampf(_typing_characters / float(previous_total), 0.0, 1.0)
+	_dialogue_sentences = _get_localized_dialogue_sentences()
+	_dialogue_sentence_index = clampi(_dialogue_sentence_index, 0, _dialogue_sentences.size() - 1)
+	if _dialogue_sentences.is_empty() or _dialogue_sentence_index < 0:
+		close_dialog()
+		return
+	_message = _dialogue_sentences[_dialogue_sentence_index]
+	_refresh_modal_text()
+	if was_typing:
+		_typing_characters = reveal_fraction * _body_label.get_total_character_count()
+		_body_label.visible_characters = int(_typing_characters)
+	else:
+		_body_label.visible_characters = -1
+	_layout_modal()
+	_sync_dialog_audio()
 
 
 func _on_npc_input(_camera: Node, event: InputEvent, _position: Vector3, _normal: Vector3, _shape: int) -> void:
@@ -277,6 +350,8 @@ func _on_grave_input(_camera: Node, event: InputEvent, _position: Vector3, _norm
 func _pointer_hits_area(pointer: Vector2, area: Area3D) -> bool:
 	if not _can_open() or not is_instance_valid(area):
 		return false
+	if not area.input_ray_pickable or not get_viewport().get_visible_rect().has_point(pointer):
+		return false
 	var origin := camera.project_ray_origin(pointer)
 	var query := PhysicsRayQueryParameters3D.create(origin, origin + camera.project_ray_normal(pointer) * camera.far, CLICK_LAYER)
 	query.collide_with_areas = true
@@ -285,6 +360,15 @@ func _pointer_hits_area(pointer: Vector2, area: Area3D) -> bool:
 	# Picking can emit for overlapping boxes. Only the frontmost station
 	# target may react, independently of the engine's callback order.
 	return hit.get("collider") == area
+
+
+func _set_actor_hovered(hovered: bool) -> void:
+	if is_instance_valid(_actor) and _actor.has_method("set_hovered"):
+		_actor.call("set_hovered", hovered)
+
+
+func _update_pointer_hover() -> void:
+	_set_actor_hovered(_pointer_hits_area(get_viewport().get_mouse_position(), npc_area))
 
 
 func _input(event: InputEvent) -> void:
@@ -296,6 +380,11 @@ func _input(event: InputEvent) -> void:
 		return
 	if not event is InputEventMouseButton:
 		return
+	# The full-screen modal GUI consumes background clicks. Only its two real
+	# buttons decide an offering; GUI dispatch needs both press and release.
+	if _mode == Mode.CANDIDATE and not _is_closing:
+		if event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+			return
 	# Handle before GUI and physics dispatch. A click that closes a modal must
 	# never open the grave or NPC behind it, or repeat an offering transaction.
 	get_viewport().set_input_as_handled()
@@ -304,22 +393,31 @@ func _input(event: InputEvent) -> void:
 	match _mode:
 		Mode.DIALOG:
 			if _body_label.visible_characters >= 0 and _body_label.visible_characters < _body_label.get_total_character_count():
+				_typing_characters = float(_body_label.get_total_character_count())
 				_body_label.visible_characters = -1
+				_dialogue_waiting_for_continue = true
 				_play_sentence_end()
 			else:
-				close_dialog()
-		Mode.CANDIDATE:
-			if _candidate.get("ok", false) and _panel.get_global_rect().has_point(event.position):
-				_confirm_offering()
-			else:
-				close_dialog()
+				_advance_to_next_dialogue_sentence()
 		Mode.OFFERING, Mode.RECEIVED:
 			close_dialog()
 
 
+func _on_sacrifice_pressed() -> void:
+	get_viewport().set_input_as_handled()
+	if not _is_closing:
+		_confirm_offering()
+
+
+func _on_decline_pressed() -> void:
+	get_viewport().set_input_as_handled()
+	if _mode == Mode.CANDIDATE and not _is_closing:
+		close_dialog()
+
+
 func _sync_dialog_audio() -> void:
 	if is_instance_valid(_laugh_audio):
-		_laugh_audio.set_laughing(_mode == Mode.DIALOG and _body_label.visible_characters >= 0 and _body_label.visible_characters < _body_label.get_total_character_count() and not _sentence_end_audio.playing)
+		_laugh_audio.set_laughing(_mode == Mode.DIALOG and not _dialogue_waiting_for_continue and _body_label.visible_characters >= 0 and _body_label.visible_characters < _body_label.get_total_character_count() and not _sentence_end_audio.playing)
 
 
 func _play_sentence_end() -> void:
@@ -329,24 +427,20 @@ func _play_sentence_end() -> void:
 
 
 func _advance_dialog_text(delta: float) -> void:
-	if _sentence_end_audio.playing:
+	if _dialogue_waiting_for_continue or _sentence_end_audio.playing:
 		return
 	var dialogue := _body_label.get_parsed_text()
-	var previous_count := _body_label.visible_characters
 	_typing_characters = minf(_typing_characters + delta * 32.0, dialogue.length())
-	var next_count := int(_typing_characters)
-	for index in range(previous_count, next_count):
-		if dialogue[index] in [".", "!", "?", "…"] and (index + 1 == dialogue.length() or dialogue[index + 1].strip_edges().is_empty()):
-			# Stop at the first sentence even when a slow frame reveals many characters.
-			next_count = index + 1
-			_typing_characters = float(next_count)
-			_play_sentence_end()
-			break
-	_body_label.visible_characters = next_count
+	_body_label.visible_characters = int(_typing_characters)
+	if _typing_characters >= dialogue.length():
+		_body_label.visible_characters = -1
+		_dialogue_waiting_for_continue = true
+		_play_sentence_end()
 	_sync_dialog_audio()
 
 
 func _process(delta: float) -> void:
+	_update_pointer_hover()
 	if is_instance_valid(_actor) and _actor.is_visible_in_tree():
 		_idle_bob_phase = fmod(_idle_bob_phase + delta * TAU / IDLE_BOB_PERIOD, TAU)
 		# Move the sprite around its authored height; keep camera focus and picking steady.
@@ -365,6 +459,7 @@ func _process(delta: float) -> void:
 
 func _create_preview(data: Dictionary) -> void:
 	_clear_preview()
+	_preview_entry_progress = 0.0 if _mode == Mode.CANDIDATE else 1.0
 	_preview_card = CARD_SCENE.instantiate() as Card3D
 	add_child(_preview_card)
 	_preview_card.setup(data)
@@ -387,8 +482,16 @@ func _position_preview() -> void:
 	if not is_instance_valid(_preview_card) or not is_instance_valid(camera):
 		return
 	var viewport_size := get_viewport().get_visible_rect().size
-	var origin := camera.project_position(Vector2(viewport_size.x * 0.5, viewport_size.y * 0.31), 2.5)
+	# Match the dialog's slide-in while keeping the whole starting card below
+	# the viewport. The camera-plane path preserves the authored size and pose.
+	var screen_y := lerpf(viewport_size.y * 1.5, viewport_size.y * 0.31, _preview_entry_progress)
+	var origin := camera.project_position(Vector2(viewport_size.x * 0.5, screen_y), 2.5)
 	_preview_card.global_transform = Transform3D(camera.global_basis.orthonormalized().scaled(Vector3.ONE * 0.85), origin)
+
+
+func _set_preview_entry_progress(progress: float) -> void:
+	_preview_entry_progress = clampf(progress, 0.0, 1.0)
+	_position_preview()
 
 
 func _clear_preview() -> void:
@@ -396,6 +499,7 @@ func _clear_preview() -> void:
 		_preview_card.hide()
 		_preview_card.queue_free()
 	_preview_card = null
+	_preview_entry_progress = 1.0
 
 
 func _create_modal() -> void:
@@ -425,7 +529,7 @@ func _create_modal() -> void:
 	_title_label = Label.new()
 	_title_label.add_theme_font_override("font", FONT)
 	_title_label.add_theme_font_size_override("font_size", 24)
-	_title_label.add_theme_color_override("font_color", Color(0.9, 0.93, 0.81))
+	_title_label.add_theme_color_override("font_color", DIALOGUE_STYLE.JESTER)
 	_title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(_title_label)
 	_body_label = RichTextLabel.new()
@@ -438,7 +542,66 @@ func _create_modal() -> void:
 	_body_label.add_theme_font_size_override("normal_font_size", 21)
 	_body_label.add_theme_color_override("default_color", Color(0.82, 0.86, 0.79))
 	column.add_child(_body_label)
+	_choice_buttons = BoxContainer.new()
+	_choice_buttons.name = "OfferingChoices"
+	_choice_buttons.add_theme_constant_override("separation", 14)
+	column.add_child(_choice_buttons)
+	_sacrifice_button = _create_choice_button("SacrificeButton", true)
+	_decline_button = _create_choice_button("DeclineButton", false)
+	_sacrifice_button.pressed.connect(_on_sacrifice_pressed)
+	_decline_button.pressed.connect(_on_decline_pressed)
+	_refresh_choice_buttons()
 	_layer.hide()
+
+
+func _create_choice_button(button_name: String, sacrifice: bool) -> Button:
+	var button := Button.new()
+	button.name = button_name
+	button.custom_minimum_size.y = 48
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	button.add_theme_font_override("font", FONT)
+	button.add_theme_font_size_override("font_size", 21)
+	button.add_theme_color_override("font_color", Color(0.92, 0.94, 0.85))
+	button.add_theme_color_override("font_disabled_color", Color(0.4, 0.44, 0.4))
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.19, 0.24, 0.14) if sacrifice else Color(0.055, 0.075, 0.075)
+	normal.border_color = Color(0.58, 0.66, 0.4) if sacrifice else Color(0.36, 0.43, 0.36)
+	normal.set_border_width_all(2)
+	normal.content_margin_left = 18
+	normal.content_margin_right = 18
+	normal.content_margin_top = 10
+	normal.content_margin_bottom = 10
+	button.add_theme_stylebox_override("normal", normal)
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = normal.bg_color.lightened(0.13)
+	button.add_theme_stylebox_override("hover", hover)
+	var pressed := normal.duplicate() as StyleBoxFlat
+	pressed.bg_color = normal.bg_color.darkened(0.24)
+	button.add_theme_stylebox_override("pressed", pressed)
+	var disabled := normal.duplicate() as StyleBoxFlat
+	disabled.bg_color = Color(0.04, 0.05, 0.045)
+	disabled.border_color = Color(0.19, 0.23, 0.19)
+	button.add_theme_stylebox_override("disabled", disabled)
+	var focus := StyleBoxFlat.new()
+	focus.bg_color = Color.TRANSPARENT
+	focus.border_color = Color(0.88, 0.91, 0.74)
+	focus.set_border_width_all(2)
+	button.add_theme_stylebox_override("focus", focus)
+	_choice_buttons.add_child(button)
+	return button
+
+
+func _refresh_choice_buttons() -> void:
+	if not is_instance_valid(_choice_buttons):
+		return
+	var choosing := _mode == Mode.CANDIDATE and not _is_closing
+	# Preserve the outgoing panel's shape during its existing swipe animation.
+	_choice_buttons.visible = choosing or (_is_closing and _choice_buttons.visible)
+	_sacrifice_button.text = Localization.text("Opfern")
+	_decline_button.text = Localization.text("Nicht opfern")
+	_sacrifice_button.disabled = not choosing or not _candidate.get("ok", false) or not interaction_enabled or get_tree().paused or _preview_entry_progress < 1.0
+	_decline_button.disabled = not choosing
 
 
 func _refresh_modal_text() -> void:
@@ -448,23 +611,86 @@ func _refresh_modal_text() -> void:
 	_body_label.visible_characters = -1
 	if _mode == Mode.CANDIDATE:
 		_title_label.text = Localization.format_text("Opfer für %s", [_card_name(_selected_card_id)])
-		if _candidate.get("ok", false):
-			_body_label.text += "\n\n" + Localization.text("Ins Textfeld klicken: opfern · Daneben klicken: abbrechen.")
 	elif _mode == Mode.RECEIVED and not _reward_data.is_empty():
 		_title_label.text = Localization.format_text("Erhalten: %s", [Localization.text(str(_reward_data.get("name", "")))])
 		_body_label.text = Localization.text("Dein Opfer ist nicht vergessen.")
+	_refresh_choice_buttons()
 	_sync_dialog_audio()
 	_layout_modal()
 
 
 func _layout_modal() -> void:
 	var viewport_size := get_viewport().get_visible_rect().size
-	var width := maxf(280.0, minf(760.0, viewport_size.x - 48.0))
+	var width := maxf(280.0, minf(760.0, viewport_size.x - PANEL_EDGE_MARGIN * 2.0))
+	_choice_buttons.vertical = width < 520.0
 	_panel.size.x = width
 	_panel.size.y = _panel.get_combined_minimum_size().y
-	_panel.position = Vector2((viewport_size.x - width) * 0.5, viewport_size.y - _panel.size.y - 24.0)
+	_panel.position = _panel_rest_position(viewport_size) + Vector2(0, _panel_slide_offset_y)
+
+
+func _panel_rest_position(viewport_size: Vector2) -> Vector2:
+	return Vector2((viewport_size.x - _panel.size.x) * 0.5, viewport_size.y - _panel.size.y - PANEL_EDGE_MARGIN)
+
+
+func _panel_swipe_distance() -> float:
+	var viewport_size := get_viewport().get_visible_rect().size
+	return maxf(PANEL_EDGE_MARGIN * 2.0, viewport_size.y - _panel_rest_position(viewport_size).y + PANEL_EDGE_MARGIN)
+
+
+func _set_panel_slide_offset(offset_y: float) -> void:
+	_panel_slide_offset_y = offset_y
+	if is_instance_valid(_panel):
+		_layout_modal()
+
+
+func _cancel_panel_swipe() -> void:
+	if _panel_swipe_tween != null and _panel_swipe_tween.is_valid():
+		_panel_swipe_tween.kill()
+	_panel_swipe_tween = null
+
+
+func _start_panel_swipe_in() -> void:
+	if not is_instance_valid(_panel):
+		return
+	_cancel_panel_swipe()
+	_set_panel_slide_offset(_panel_swipe_distance())
+	_panel_swipe_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS).set_parallel(true)
+	_panel_swipe_tween.tween_method(_set_panel_slide_offset, _panel_slide_offset_y, 0.0, PANEL_SWIPE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	if _mode == Mode.CANDIDATE and is_instance_valid(_preview_card):
+		_panel_swipe_tween.tween_method(_set_preview_entry_progress, 0.0, 1.0, PANEL_SWIPE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_panel_swipe_tween.chain().tween_callback(_finish_panel_swipe_in)
+
+
+func _finish_panel_swipe_in() -> void:
+	if not _is_closing:
+		_panel_swipe_tween = null
+		_refresh_choice_buttons()
+
+
+func _start_panel_swipe_out() -> void:
+	if not is_instance_valid(_panel) or not is_inside_tree():
+		_finish_close()
+		return
+	_cancel_panel_swipe()
+	_layout_modal()
+	_panel_swipe_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_panel_swipe_tween.tween_method(_set_panel_slide_offset, _panel_slide_offset_y, _panel_swipe_distance(), PANEL_SWIPE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_panel_swipe_tween.tween_callback(_finish_close)
+
+
+func _finish_close() -> void:
+	if not _is_closing:
+		return
+	_panel_swipe_tween = null
+	_panel_slide_offset_y = 0.0
+	_is_closing = false
+	if is_instance_valid(_layer):
+		_layer.hide()
+	modal_changed.emit(false)
 
 
 func _exit_tree() -> void:
 	if _offering_tween != null and _offering_tween.is_valid():
 		_offering_tween.kill()
+	_cancel_panel_swipe()
+	_is_closing = false

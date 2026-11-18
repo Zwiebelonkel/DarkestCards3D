@@ -1,0 +1,112 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: direct damage updates current HP and its printed number
+PASS: nonpositive damage never heals or emits a death
+PASS: ordinary healing restores missing HP without increasing maximum HP
+PASS: ordinary healing caps at maximum HP
+PASS: explicit overheal preserves the separate maximum
+PASS: capped, negative and zero heals cannot remove preexisting overheal
+PASS: Curse reduces the current attack and its label
+PASS: nonpositive Curse never becomes a stat increase
+PASS: Curse cannot make attack negative
+PASS: a lethal hit clamps HP and emits one death notification
+PASS: further hits on a dead card never emit duplicate death notifications
+PASS: ordinary healing cannot resurrect a card without an available death save
+PASS: damage, healing and curses remain transient combat state
+PASS: catalog default armor is 25 percent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.1
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.25
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.35
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.5
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 0.75
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: 1.0
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: pure armor mitigation rounds and clamps without consuming state: -0.2
+PASS: first-hit shield precedes armor and blocks exactly one positive hit
+PASS: later hits use the configured armor after the shield is spent
+PASS: a type-only armor effect uses the actual 25-percent catalog default
+PASS: type-only armor uses the matching default 25-percent icon
+PASS: pure armor never turns negative damage into healing
+PASS: nonpositive incoming damage leaves both one-use defenses available
+PASS: nonpositive incoming damage leaves both one-use defenses available
+PASS: the next actual hit still consumes only the intact shield
+PASS: raw-damage helper bypasses armor and preserves the first-hit shield
+PASS: overkill reports only the three HP actually removed
+PASS: checking a living card does not consume either survival charge
+PASS: Last Stand has priority, prevents the final HP of damage and creates no healing
+PASS: the resolver consumes only the used charge and clears its presentation marker
+PASS: saving a Holo card never starts dissolve or replaces its live material
+PASS: a zero-damage continuation cannot consume the second survival effect
+PASS: Grave Return reports the actual lethal hit separately from its restored half-health
+PASS: a third lethal hit kills after both independent survival charges are consumed
+PASS: already dead cards cannot consume or recreate survival state
+PASS: odd maximum HP uses rounded half-health revival without hiding damage already taken
+PASS: a two-HP grave return still reports its real hit and separate ten-HP revival
+PASS: one-HP Grave Return never rounds down to a dead card
+PASS: dissolving the confirmed dead card leaves another Holo card and its survival untouched
+PASS: ordinary cards get one hit and no implicit identical-card bonus
+PASS: multi-strike uses its configured bounded hit count: { "type": "double_strike" }
+PASS: multi-strike uses its configured bounded hit count: { "type": "double_strike", "hits": 4 }
+PASS: multi-strike uses its configured bounded hit count: { "type": "triple_strike" }
+PASS: multi-strike uses its configured bounded hit count: { "type": "triple_strike", "hits": 6 }
+PASS: multi-strike uses its configured bounded hit count: { "type": "double_strike", "hits": 0 }
+PASS: multi-strike uses its configured bounded hit count: { "type": "triple_strike", "hits": 500 }
+PASS: Triple Strike retains precedence when both effects are present
+PASS: type-only strike defaults match both catalog entries
+PASS: Swarm Power multiplies by identical living copies with a minimum factor of one
+PASS: Swarm Power uses cursed current attack rather than immutable catalog attack
+PASS: attacks without Random Damage do not consume RNG
+PASS: custom random-damage bounds produce a reproducible variable damage sequence
+PASS: Random Damage multiplies the swarm total using its explicit custom parameters
+PASS: type-only random-damage bounds match the catalog
+PASS: Lifesteal and Thorns catalog percentages match combat defaults
+PASS: type-only Lifesteal heals 20 percent of real damage
+PASS: Lifesteal returns only the health actually restored at its cap
+PASS: full-health Lifesteal produces zero effective healing
+PASS: capped Lifesteal preserves existing overheal and reports no gain
+PASS: a custom 10-percent Lifesteal uses whole-HP rounding
+PASS: small and nonpositive lifesteal amounts do not invent a heal
+PASS: Lifesteal never revives a dead attacker
+PASS: Thorns rounds its percentage and bypasses armor and the first-hit shield: { "type": "thorns" }
+PASS: Thorns rounds its percentage and bypasses armor and the first-hit shield: { "type": "thorns", "percent": 0.15 }
+PASS: Thorns rounds its percentage and bypasses armor and the first-hit shield: { "type": "thorns", "percent": 0.2 }
+PASS: Thorns rounds its percentage and bypasses armor and the first-hit shield: { "type": "thorns", "percent": 0.25 }
+PASS: zero damage received never reflects phantom thorns
+PASS: the real heal method applies the catalog's three-HP regeneration value
+PASS: a mixed live state retains damage saves, overheal, Curse and refreshed block duration
+PASS: network round-trip preserves exact HP, attack, effects, Holo, poison, stun and consumed survival flags
+PASS: restored state immediately prints its actual combat values and block badge
+PASS: restored one-use states cannot be replayed
+PASS: stolen-card redraw restores transient state once without leaking the embedded match snapshot into card data
+PASS: network dictionaries are detached from both original and replica card effects
+PASS: Swap Stats exchanges the supplied upgraded attack and maximum HP exactly once
+PASS: Strength scales current swapped and cursed values while preserving proportional damage with rounding
+PASS: network update and stolen redraw never apply Swap Stats a second time
+PASS: changing language does not heal, re-swap or restore consumed combat state
+PASS: fresh setup resets mutable values and one-use charges for a new match
+PASS: fresh setup clears poison and stale survival presentation metadata
+PASS: every authored combat card initializes its exact stats, including active Swap Stats
+PASS: reusing one node across the complete catalog neither leaks survival charges nor activates them on special/event cards
+PASS: combat methods and card setup never mutate either shared catalog
+PASS: unit combat leaves file bytes unchanged: collection.json
+PASS: unit combat leaves file bytes unchanged: card_upgrades.cfg
+PASS: unit combat leaves file bytes unchanged: battle_deck.cfg
+PASS: unit combat leaves file bytes unchanged: currency.cfg
+PASS: unit combat leaves file bytes unchanged: settings.cfg
+PASS: unit combat leaves file bytes unchanged: cards.json
+PASS: unit combat leaves file bytes unchanged: effects.json
+CARD_EFFECT_UNIT_TESTS: PASS (106 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

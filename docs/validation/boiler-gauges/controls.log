@@ -1,0 +1,121 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 122 Karten
+PASS boiler fixture explicitly activates basement access
+PASS the isolated boiler fixture saves successfully
+PASS all four authored boilers have their own interactive controller
+PASS the hub cannot hover or operate remote basement boilers
+PASS a real basement door click starts travel with boiler input disabled
+PASS the physical doorway flight arrives in the basement
+PASS MainBoiler_2 exposes a visible body hover target
+PASS MainBoiler_2 enables its own wheel in the visible basement view
+PASS MainBoiler_2 real body hover selects this boiler's camera focus
+PASS MainBoiler_2 focus stays stable with a stationary pointer
+PASS rendered evidence: MainBoiler_2-focused
+PASS MainBoiler_2 focused camera keeps the valve visible and reachable
+PASS MainBoiler_2 real left press on the wheel begins circular dragging
+PASS an active valve drag owns navigation until released
+PASS MainBoiler_2 clockwise gesture moves from the wheel top toward screen right
+PASS MainBoiler_2 circular dragging leaves the shared battle and reward RNG untouched
+PASS MainBoiler_2 clockwise input raises pressure within the gauge range
+PASS MainBoiler_2 higher pressure turns the needle clockwise along the printed scale
+PASS MainBoiler_2 turns the complete valve wheel and both spokes together
+PASS MainBoiler_2 moves its needle and updates the displayed pressure together
+PASS MainBoiler_2 leaves every other boiler's pressure unchanged
+PASS MainBoiler_2 counterclockwise input lowers pressure
+PASS rendered evidence: MainBoiler_2-turned
+PASS MainBoiler_2 retains camera framing while dragging outside the boiler
+PASS MainBoiler_2 releasing outside ends dragging and returns the camera
+PASS MainBoiler_2 pointer movement after release cannot keep turning the wheel
+PASS MainBoiler_1 exposes a visible body hover target
+PASS MainBoiler_1 enables its own wheel in the visible basement view
+PASS MainBoiler_1 real body hover selects this boiler's camera focus
+PASS MainBoiler_1 focus stays stable with a stationary pointer
+PASS rendered evidence: MainBoiler_1-focused
+PASS MainBoiler_1 focused camera keeps the valve visible and reachable
+PASS MainBoiler_1 real left press on the wheel begins circular dragging
+PASS an active valve drag owns navigation until released
+PASS MainBoiler_1 clockwise gesture moves from the wheel top toward screen right
+PASS MainBoiler_1 circular dragging leaves the shared battle and reward RNG untouched
+PASS MainBoiler_1 clockwise input raises pressure within the gauge range
+PASS MainBoiler_1 higher pressure turns the needle clockwise along the printed scale
+PASS MainBoiler_1 turns the complete valve wheel and both spokes together
+PASS MainBoiler_1 moves its needle and updates the displayed pressure together
+PASS MainBoiler_1 leaves every other boiler's pressure unchanged
+PASS MainBoiler_1 counterclockwise input lowers pressure
+PASS rendered evidence: MainBoiler_1-turned
+PASS MainBoiler_1 retains camera framing while dragging outside the boiler
+PASS MainBoiler_1 releasing outside ends dragging and returns the camera
+PASS MainBoiler_1 pointer movement after release cannot keep turning the wheel
+PASS MainBoiler_4 exposes a visible body hover target
+PASS MainBoiler_4 enables its own wheel in the visible basement view
+PASS MainBoiler_4 real body hover selects this boiler's camera focus
+PASS MainBoiler_4 focus stays stable with a stationary pointer
+PASS rendered evidence: MainBoiler_4-focused
+PASS MainBoiler_4 focused camera keeps the valve visible and reachable
+PASS MainBoiler_4 real left press on the wheel begins circular dragging
+PASS an active valve drag owns navigation until released
+PASS MainBoiler_4 clockwise gesture moves from the wheel top toward screen right
+PASS MainBoiler_4 circular dragging leaves the shared battle and reward RNG untouched
+PASS MainBoiler_4 clockwise input raises pressure within the gauge range
+PASS MainBoiler_4 higher pressure turns the needle clockwise along the printed scale
+PASS MainBoiler_4 turns the complete valve wheel and both spokes together
+PASS MainBoiler_4 moves its needle and updates the displayed pressure together
+PASS MainBoiler_4 leaves every other boiler's pressure unchanged
+PASS MainBoiler_4 counterclockwise input lowers pressure
+PASS rendered evidence: MainBoiler_4-turned
+PASS MainBoiler_4 retains camera framing while dragging outside the boiler
+PASS MainBoiler_4 releasing outside ends dragging and returns the camera
+PASS MainBoiler_4 pointer movement after release cannot keep turning the wheel
+PASS MainBoiler_3 exposes a visible body hover target
+PASS MainBoiler_3 enables its own wheel in the visible basement view
+PASS MainBoiler_3 real body hover selects this boiler's camera focus
+PASS MainBoiler_3 focus stays stable with a stationary pointer
+PASS rendered evidence: MainBoiler_3-focused
+PASS MainBoiler_3 focused camera keeps the valve visible and reachable
+PASS MainBoiler_3 real left press on the wheel begins circular dragging
+PASS an active valve drag owns navigation until released
+PASS MainBoiler_3 clockwise gesture moves from the wheel top toward screen right
+PASS MainBoiler_3 circular dragging leaves the shared battle and reward RNG untouched
+PASS MainBoiler_3 clockwise input raises pressure within the gauge range
+PASS MainBoiler_3 higher pressure turns the needle clockwise along the printed scale
+PASS MainBoiler_3 turns the complete valve wheel and both spokes together
+PASS MainBoiler_3 moves its needle and updates the displayed pressure together
+PASS MainBoiler_3 leaves every other boiler's pressure unchanged
+PASS MainBoiler_3 counterclockwise input lowers pressure
+PASS rendered evidence: MainBoiler_3-turned
+PASS MainBoiler_3 retains camera framing while dragging outside the boiler
+PASS MainBoiler_3 releasing outside ends dragging and returns the camera
+PASS MainBoiler_3 pointer movement after release cannot keep turning the wheel
+PASS MainBoiler_2 exposes a visible body hover target
+PASS MainBoiler_2 focused camera keeps the valve visible and reachable
+PASS clockwise turns cross the angle wrap and clamp at six bar
+PASS six-bar pointer reaches the lower-right end of the printed scale
+PASS reversing immediately leaves the upper stop without a dead zone
+PASS counterclockwise turns cross the angle wrap and clamp at zero bar
+PASS zero-bar pointer reaches the lower-left end of the printed scale
+PASS an endpoint release preserves the exact displayed pressure
+PASS MainBoiler_1 exposes a visible body hover target
+PASS the adjacent boiler remains reachable from a focused boiler
+PASS real hover directly into another boiler on the same side replaces the focus target
+PASS direct boiler-to-boiler focus also updates the camera pose
+PASS MainBoiler_2 exposes a visible body hover target
+PASS opening the real journal disables boiler input and releases focus
+PASS a journal-covered valve cannot be dragged
+PASS MainBoiler_2 exposes a visible body hover target
+PASS MainBoiler_2 focused camera keeps the valve visible and reachable
+PASS the wheel can be dragged again after the journal closes
+PASS Pause cancels an in-progress wheel drag and disables all boiler picking
+PASS Pause immediately returns the camera before the tree stops
+PASS MainBoiler_2 exposes a visible body hover target
+PASS MainBoiler_2 focused camera keeps the valve visible and reachable
+PASS the online pause overlay also cancels dragging while networking stays active
+PASS starting a normal cardinal turn disables boiler picking immediately
+PASS settling back at the boiler wall restores interaction
+PASS turning the valves changes neither cards nor currency
+PASS cosmetic boiler interaction leaves the catalog and all profile save bytes unchanged
+PASS the real return door remains usable after boiler interaction
+PASS leaving the basement releases boiler input and camera focus
+BASEMENT_BOILER_TESTS: PASS (115 checks)
+

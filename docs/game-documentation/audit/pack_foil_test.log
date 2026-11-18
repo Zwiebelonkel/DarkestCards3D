@@ -1,0 +1,104 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS insufficient funds cannot create a bought pack or opening signal
+PASS an unbought pack cannot be grabbed or opened
+PASS basic can be purchased after the previous pack is collected
+PASS basic charges the displayed price once
+PASS an already bought basic rejects a second purchase without replacing its model
+PASS basic starts sealed with no tear from the previous model
+PASS basic deforms its own mesh without mutating the imported pack resource
+PASS basic receives a fresh foil mesh after model switching
+PASS basic has independent foil material state
+PASS basic retains every original foil surface with complete texture coordinates
+PASS basic foil keeps its own model's print textures
+PASS basic starts a camera-projected drag on the bought foil
+PASS basic follows a partial pull without opening early
+PASS basic never repairs its tear when the pointer moves backward
+PASS basic progressively tears to a second partial distance
+PASS basic stays bought and unopened after an incomplete release
+PASS basic retains the existing tear while released foil settles
+PASS basic released foil relaxes its pull instead of staying stretched
+PASS basic visible curled grip remains inside its real ray-picking hitbox after release
+PASS basic cannot be replaced by another purchase after a partial peel
+PASS basic can be regrabbed without jumping or resetting the torn edge
+PASS basic continues the remaining tear from its new grab point
+PASS basic focus loss safely releases the foil without undoing its tear
+PASS basic navigating away cancels a pending full pull before it can open the pack
+PASS basic automatically opens once the final tear completes without requiring button release
+PASS basic rejects purchasing while its cards are being opened
+PASS basic spawns exactly its paid number of cards
+PASS basic repeated open or release callbacks neither reroll nor duplicate rewards
+PASS basic rewards enter the collection only when explicitly collected
+PASS basic reveal queues each paid card exactly once
+PASS basic duplicate collect submission awards the cards only once
+PASS basic collection clears the reveal and returns to the purchase state
+PASS basic reset removes foil progress and disables the hidden wrapper's input
+PASS basic complete peel/reveal/reset never charges another purchase
+PASS ultra can be purchased after the previous pack is collected
+PASS ultra charges the displayed price once
+PASS an already bought ultra rejects a second purchase without replacing its model
+PASS ultra starts sealed with no tear from the previous model
+PASS ultra deforms its own mesh without mutating the imported pack resource
+PASS ultra receives a fresh foil mesh after model switching
+PASS ultra has independent foil material state
+PASS ultra retains every original foil surface with complete texture coordinates
+PASS ultra foil keeps its own model's print textures
+PASS ultra starts a camera-projected drag on the bought foil
+PASS ultra follows a partial pull without opening early
+PASS ultra never repairs its tear when the pointer moves backward
+PASS ultra progressively tears to a second partial distance
+PASS ultra stays bought and unopened after an incomplete release
+PASS ultra retains the existing tear while released foil settles
+PASS ultra released foil relaxes its pull instead of staying stretched
+PASS ultra visible curled grip remains inside its real ray-picking hitbox after release
+PASS ultra cannot be replaced by another purchase after a partial peel
+PASS ultra can be regrabbed without jumping or resetting the torn edge
+PASS ultra continues the remaining tear from its new grab point
+PASS ultra focus loss safely releases the foil without undoing its tear
+PASS ultra navigating away cancels a pending full pull before it can open the pack
+PASS ultra automatically opens once the final tear completes without requiring button release
+PASS ultra rejects purchasing while its cards are being opened
+PASS ultra spawns exactly its paid number of cards
+PASS ultra repeated open or release callbacks neither reroll nor duplicate rewards
+PASS ultra rewards enter the collection only when explicitly collected
+PASS ultra reveal queues each paid card exactly once
+PASS ultra duplicate collect submission awards the cards only once
+PASS ultra collection clears the reveal and returns to the purchase state
+PASS ultra reset removes foil progress and disables the hidden wrapper's input
+PASS ultra complete peel/reveal/reset never charges another purchase
+PASS god can be purchased after the previous pack is collected
+PASS god charges the displayed price once
+PASS an already bought god rejects a second purchase without replacing its model
+PASS god starts sealed with no tear from the previous model
+PASS god deforms its own mesh without mutating the imported pack resource
+PASS god receives a fresh foil mesh after model switching
+PASS god has independent foil material state
+PASS god retains every original foil surface with complete texture coordinates
+PASS god foil keeps its own model's print textures
+PASS god starts a camera-projected drag on the bought foil
+PASS god follows a partial pull without opening early
+PASS god never repairs its tear when the pointer moves backward
+PASS god progressively tears to a second partial distance
+PASS god stays bought and unopened after an incomplete release
+PASS god retains the existing tear while released foil settles
+PASS god released foil relaxes its pull instead of staying stretched
+PASS god visible curled grip remains inside its real ray-picking hitbox after release
+PASS god cannot be replaced by another purchase after a partial peel
+PASS god can be regrabbed without jumping or resetting the torn edge
+PASS god continues the remaining tear from its new grab point
+PASS god focus loss safely releases the foil without undoing its tear
+PASS god navigating away cancels a pending full pull before it can open the pack
+PASS god automatically opens once the final tear completes without requiring button release
+PASS god rejects purchasing while its cards are being opened
+PASS god spawns exactly its paid number of cards
+PASS god repeated open or release callbacks neither reroll nor duplicate rewards
+PASS god rewards enter the collection only when explicitly collected
+PASS god reveal queues each paid card exactly once
+PASS god duplicate collect submission awards the cards only once
+PASS god collection clears the reveal and returns to the purchase state
+PASS god reset removes foil progress and disables the hidden wrapper's input
+PASS god complete peel/reveal/reset never charges another purchase
+PASS three paid packs emit exactly three purchase and completion signals
+PASS all three real pack sizes award exactly 5 + 7 + 10 cards
+PACK_FOIL_TESTS: PASS (100 checks)

@@ -1,0 +1,43 @@
+{
+  "flight_seconds": 0.95,
+  "idle_sample": {
+    "average_draw_calls": 375.9,
+    "average_process_ms": 12.203,
+    "p95_process_ms": 12.203
+  },
+  "particle_capacity": 420,
+  "recorded_at": "2026-11-13T21:49:15",
+  "source": "(-0.009925, 0.302346, -5.196765)",
+  "source_node": "/root/SatanStreamVisual/@SubViewport@2/Main/ScenePivot/GameTable/dealer/SatanMotionRoot/satan/Piss",
+  "source_scene_modified": 1794606473,
+  "stream_sample": {
+    "average_draw_calls": 377.35,
+    "average_process_ms": 11.4378,
+    "p95_process_ms": 12.203
+  },
+  "target": "(0.119941, 0.553769, -0.259582)",
+  "views": [
+    "context",
+    "front",
+    "back",
+    "left",
+    "right"
+  ],
+  "visual_review": {
+    "context": "pass",
+    "front": "pass",
+    "back": "pass",
+    "left": "pass",
+    "right": "pass"
+  },
+  "screenshot_directory": "C:\\Users\\Luca\\AppData\\Local\\Temp\\darkestcards-collection-tests-90296fcdfcb54f98a7bdd8b6c2d9a0e3",
+  "runtime_checks": {
+    "satan_stream": 18,
+    "satan_jumpscare": 51
+  },
+  "circle": {
+    "radius": 0.12,
+    "turns_per_second": 0.9,
+    "authored_source_preserved": true
+  }
+}

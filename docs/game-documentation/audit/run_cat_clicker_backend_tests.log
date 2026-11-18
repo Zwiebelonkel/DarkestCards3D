@@ -1,0 +1,47 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: an undecided cat cannot leave the basement
+PASS: a shot cat never becomes a helper
+PASS: sparing alone leaves the cat in the basement
+PASS: leaving is recorded while Clicker remains locked
+PASS: departure does not bypass the Clicker card
+PASS: locked helper accumulates neither coins nor frame time
+PASS: locked departure survives a reload
+PASS: unlock activates the already departed cat against durable state
+PASS: repeated room exits cannot restart or resave departure
+PASS: owned Clicker without a spared cat grants no helper
+PASS: spared cat waits for the first completed basement departure
+PASS: spare plus departure plus owned Clicker activates the helper
+PASS: failed departure persistence returns failure
+PASS: failed departure rolls back memory and helper activation
+PASS: failed save publishes no activation and preserves the original file
+PASS: departure succeeds after storage recovers
+PASS: successful departure emits once and rejects callback reentry
+PASS: successful departure is restored after restart
+PASS: invalid or nonpositive frame deltas cannot award income
+PASS: second sprite appears before any click
+PASS: third sprite pays exactly one manual click
+PASS: remaining on the click sprite never pays twice
+PASS: loop restart does not create another click
+PASS: a long frame counts every third-frame crossing exactly once
+PASS: long frames batch wallet persistence and UI pulses
+PASS: frame signal reports only visible frame changes
+PASS: reload resets animation time without offline income
+PASS: reload discards partial time instead of resuming toward an early click
+PASS: loss of the required Clicker resets and deactivates the clock
+PASS: inactive helpers award no accumulated income
+PASS: fixture includes two upgrades and the Golden Clicker bonus
+PASS: 50 helper clicks apply the 2 percent boost once and retain fractional cents
+PASS: batched cat income matches repeated manual clicks exactly
+PASS: Auto Clicker and the cat award their separate boosted income together
+PASS: progression reset removes helper state and frame progress
+PASS: second isolated slot can be selected
+PASS: profile switch publishes inactive state without leaking the old helper
+PASS: original isolated slot can be restored
+PASS: restoring a slot publishes its helper and starts a fresh animation
+PASS: legacy spared saves wait for their next basement departure
+PASS: invalid saved departure never revives a shot cat
+PASS: SceneTree pause stops the shared helper clock
+CAT_CLICKER_BACKEND_TESTS: PASS (42 checks)
+Isolated test output: C:\Users\Luca\AppData\Local\Temp\darkestcards-cat-clicker-9aa95e0eca3146af90634d61c379acad

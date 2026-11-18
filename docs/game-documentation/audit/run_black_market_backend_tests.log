@@ -1,0 +1,40 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS: market excludes keys, access cards and discovery-only unlocks
+PASS: even combat cards with an acquisition-only flag never enter the market
+PASS: every market card is an eligible combat reward outside Secret rarity
+PASS: reading offers does not consume the shared combat/pack RNG
+PASS: each day contains four distinct cards
+PASS: reopening a board never rerolls the daily stock
+PASS: saved profile reload keeps the same daily stock
+PASS: Dealer License never discounts or rerolls Black Market prices
+PASS: the next local calendar day rotates the board
+PASS: a board left open over midnight cannot purchase yesterday's offer
+PASS: callers cannot mutate displayed prices or backend stock
+PASS: direct purchase API requires permanent Black Market access
+PASS: unaffordable purchases do not consume stock
+PASS: forged offer identities are rejected
+PASS: successful purchase debits the exact displayed price once
+PASS: synchronous wallet listeners see durable card ownership and cannot reenter purchase
+PASS: purchase adds and discovers exactly one owned card
+PASS: the returned card contains the exact acquired instance
+PASS: a repeated click cannot buy today's sold offer again
+PASS: reload preserves stock and price without a second debit
+PASS: new-day stock starts unsold
+PASS: returning the clock to an older day does not restock purchased offers
+PASS: failed currency reservation preserves coins and stock
+PASS: failed collection commit fully refunds without granting a card
+PASS: even a failed refund write leaves the full balance available in memory
+PASS: reload recovers an unwritten refund exactly once
+PASS: a committed purchase remains successful when wallet cleanup cannot be written
+PASS: receipt recovery neither refunds a committed purchase nor duplicates the acquired card
+PASS: interrupted purchase fixture reserves a durable debit
+PASS: closing after debit but before collection commit recovers all coins without consuming stock
+PASS: first profile buys its daily offer
+PASS: a different save profile can be selected
+PASS: new profile inherits neither daily purchases nor area access
+PASS: returning to the original profile restores its sold stock and wallet
+PASS: resetting a profile clears its purchase receipts
+BLACK_MARKET_BACKEND_TESTS: PASS (35 checks)
+Isolated test output: C:\Users\Luca\AppData\Local\Temp\darkestcards-black-market-b642cbbc5aa144e193bc747daadc4179

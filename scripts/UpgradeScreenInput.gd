@@ -29,6 +29,8 @@ func _on_screen_input_event(
 	_normal: Vector3,
 	_shape_idx: int
 ) -> void:
+	if not is_instance_valid(machine) or not machine.is_operational():
+		return
 	if not event is InputEventMouse:
 		return
 

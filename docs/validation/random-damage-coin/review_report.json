@@ -1,0 +1,101 @@
+{
+  "captured_utc": "2026-11-17T23:55:33",
+  "junctions": {
+    "face_text_clearance": "pass: raised text overlaps the face without z-fighting",
+    "table_contact": "pass: body clears table by 0.005m; underside lettering is hidden"
+  },
+  "performance": {
+    "with_coin": {
+      "average_ms": 16.6514333333333,
+      "draw_calls": 1382.0,
+      "frames": 30,
+      "p95_ms": 16.98,
+      "render_objects": 2521.0,
+      "video_memory_bytes": 399442016.0
+    },
+    "without_coin": {
+      "average_ms": 16.6551666666667,
+      "draw_calls": 1371.0,
+      "frames": 30,
+      "p95_ms": 21.907,
+      "render_objects": 2510.0,
+      "video_memory_bytes": 399402816.0
+    }
+  },
+  "scene_modified": 1794958946,
+  "shots": [
+    {
+      "mean_luminance_sample": 0.307078511258094,
+      "name": "context-0.75",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/random-damage-coin/context-0.75.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.374019481187597,
+      "name": "face-0.75",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/random-damage-coin/face-0.75.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.307039506580525,
+      "name": "context-2.0",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/random-damage-coin/context-2.0.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.375458570047611,
+      "name": "face-2.0",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/random-damage-coin/face-2.0.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.291869872390653,
+      "name": "edge--1.0",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/random-damage-coin/edge--1.0.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.305860743572349,
+      "name": "edge-1.0",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/random-damage-coin/edge-1.0.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.306954490317963,
+      "name": "context-flight",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/random-damage-coin/context-flight.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.127586709653858,
+      "name": "context-dissolve",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/random-damage-coin/context-dissolve.png",
+      "resolution": [
+        1918,
+        1078
+      ]
+    }
+  ],
+  "review_result": "Accepted: correct faces and contact, metallic body without emission, readable numbers, coherent dissolve."
+}

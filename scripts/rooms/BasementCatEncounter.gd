@@ -5,9 +5,9 @@ class_name BasementCatEncounter
 signal modal_changed(opened: bool)
 signal encounter_finished(choice: String)
 
-const LIVE_TEXTURE := preload("res://assets/characters/cat.png")
-const DEAD_TEXTURE := preload("res://assets/characters/catDead.png")
-const SPARE_TEXTURE := preload("res://assets/characters/catSpare.png")
+const LIVE_TEXTURE := preload("res://assets/characters/cat/cat.png")
+const DEAD_TEXTURE := preload("res://assets/characters/cat/catDead.png")
+const SPARE_TEXTURE := preload("res://assets/characters/cat/catSpare.png")
 const PRESENTATION := preload("res://scripts/ui/CatChoicePresentation.gd")
 
 @export var camera: Camera3D

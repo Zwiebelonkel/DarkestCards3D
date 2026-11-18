@@ -1,9 +1,9 @@
 [gd_scene load_steps=11 format=3 uid="uid://cd72kehtehl53"]
 
 [ext_resource type="Script" uid="uid://dptmwo7iopji3" path="res://scripts/ui/MatchHUD.gd" id="1_hud"]
-[ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan.png" id="2_idle"]
-[ext_resource type="Texture2D" uid="uid://ro4ri6d4s3vm" path="res://assets/characters/satanHover.png" id="3_speaking"]
-[ext_resource type="Texture2D" uid="uid://b6eoswry28qul" path="res://assets/characters/satanLaught.png" id="4_loud"]
+[ext_resource type="Texture2D" uid="uid://b26rifst7qh4k" path="res://assets/characters/satan/satan.png" id="2_idle"]
+[ext_resource type="Texture2D" uid="uid://ro4ri6d4s3vm" path="res://assets/characters/satan/satanHover.png" id="3_speaking"]
+[ext_resource type="Texture2D" uid="uid://b6eoswry28qul" path="res://assets/characters/satan/satanLaught.png" id="4_loud"]
 [ext_resource type="FontFile" uid="uid://byj0nnjh637o8" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="5_font"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SatanVoicePortrait.tscn" id="6_portrait"]
 

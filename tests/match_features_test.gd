@@ -124,21 +124,11 @@ func _run() -> void:
 	root.add_child(menu)
 	await get_tree().process_frame
 	check(menu.get_node_or_null("ProfileCanvas") == null, "main menu has no remaining flat profile overlay")
-	var menu_progress := menu.get_node("Camera3D/LevelProgress") as Node3D
-	menu_progress.set_process(false)
-	menu_progress._notification(NOTIFICATION_WM_WINDOW_FOCUS_IN)
-	menu_progress._notification(NOTIFICATION_WM_MOUSE_ENTER)
-	menu_progress.set_pointer_position(Vector2(640, 2))
-	await get_tree().create_timer(0.7).timeout
-	check(menu_progress.visible and menu_progress.is_expanded(), "same 3D visor opens in the main menu")
-	await _check_coin_clicker(menu_progress, "main menu")
-	if DisplayServer.get_name() != "headless":
-		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://level-visor-main-menu.png")
+	check(menu.get_node_or_null("Camera3D/LevelProgress") == null, "main menu contains no clicker visor")
 	menu.settings_menu.visible = true
 	await get_tree().process_frame
 	await get_tree().process_frame
-	check(menu_progress.visible and not menu_progress.is_expanded(), "settings fold the visor and preserve its hinge without interrupting menu input")
+	check(menu.get_node_or_null("Camera3D/LevelProgress") == null, "opening settings does not restore the main-menu clicker")
 	menu.queue_free()
 	await get_tree().process_frame
 	await get_tree().process_frame

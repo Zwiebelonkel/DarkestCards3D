@@ -1,0 +1,32 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS the exchange requires owned toilet paper
+PASS a failed save retains the exact offered item and cannot grant Holy Water
+PASS retry commits both sides of the exchange together
+PASS both acquisition histories survive consumption
+PASS historical Holy Water ownership prevents duplicate exchanges even after losing the reward
+PASS using Klopapier from the hub cannot remotely trade with the prisoner
+PASS the normal doorway enters the graveyard
+PASS standing far from the crypt cannot use the toilet-paper card
+PASS the actual grille click reaches the prisoner viewpoint
+PASS only the prisoner's item can be used at the near view
+PASS Pause blocks the exchange
+PASS the prisoner conversation opens after Pause releases input
+PASS the active conversation blocks item usage
+PASS turning away from the prisoner disables the exchange
+PASS bottom-edge hover opens the owned item tray directly in front of the prisoner
+PASS the tray explains the prisoner's item action
+PASS a real tray click consumes Klopapier and grants exactly one Weihwasser
+PASS the Holy Water reward is revealed in front of the exploration camera
+PASS the consumed item leaves the tray without changing money
+PASS repeated item callbacks cannot grant additional Holy Water
+PASS the exact exchange survives reloading the save slot
+PASS consuming the toilet-paper key cannot farm the pump puzzle again
+PASS Holy Water is a special Story Cards item, excluded from combat, door keys and packs
+PASS the German reward name is Weihwasser
+PASS the collection wall puts Holy Water under the new Story Cards heading
+PRISONER_TRADE_TESTS: PASS (25 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

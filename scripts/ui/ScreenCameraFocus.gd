@@ -14,6 +14,7 @@ var _screens: Dictionary = {}
 var _screen_rooms: Dictionary = {}
 var _active_room := -1
 var _hovered_screen: Area3D = null
+var _focused_screen: Area3D = null
 var _active_side := -1
 var _interaction_allowed := false
 var _is_focused := false
@@ -21,6 +22,8 @@ var _camera_tween: Tween = null
 
 var _base_position := Vector3.ZERO
 var _base_fov := 75.0
+var _base_basis := Basis.IDENTITY
+var _owns_orientation := false
 var _focus_position := Vector3.ZERO
 var _initialized := false
 var _pointer_miss_time := 0.0
@@ -38,6 +41,7 @@ func _ready() -> void:
 
 	_base_position = camera.position
 	_base_fov = camera.fov
+	_base_basis = camera.basis
 	_focus_position = _base_position
 	_initialized = true
 
@@ -100,20 +104,61 @@ func restore_immediately() -> void:
 		_camera_tween = null
 
 	_hovered_screen = null
+	_focused_screen = null
 	_is_focused = false
 	_reset_pointer_tracking()
 	camera.position = _base_position
 	camera.fov = _base_fov
+	if _owns_orientation:
+		camera.basis = _base_basis
+		_owns_orientation = false
+
+
+func release_camera() -> void:
+	# Hand the current pose to a match/menu transition without leaving a
+	# competing focus tween alive. The new camera owner handles restoration.
+	if _camera_tween != null:
+		_camera_tween.kill()
+		_camera_tween = null
+	_hovered_screen = null
+	_focused_screen = null
+	_is_focused = false
+	_owns_orientation = false
+	_reset_pointer_tracking()
 
 
 func is_focused() -> bool:
 	return _is_focused
 
 
+func suspend_for_cinematic() -> Dictionary:
+	var resume := {"screen": _focused_screen, "returning": not _is_focused and _camera_tween != null and _camera_tween.is_running()}
+	set_context(_active_side, false)
+	release_camera()
+	return resume
+
+
+func resume_after_cinematic(resume: Dictionary) -> void:
+	var screen := resume.get("screen") as Area3D
+	if is_instance_valid(screen) and _interaction_allowed and _is_screen_available_for_active_side(screen):
+		focus_screen(screen)
+	elif resume.get("returning", false):
+		_tween_camera(false)
+
+
 func _on_screen_mouse_entered(screen_area: Area3D) -> void:
 	if not _interaction_allowed or _hover_suspended:
 		return
 	if not _is_screen_available_for_active_side(screen_area):
+		return
+	if _hovered_screen != null and _hovered_screen != screen_area and _has_pointer_position:
+		if camera.get_viewport().get_mouse_position().distance_to(_last_pointer_position) <= pointer_motion_epsilon:
+			return
+	focus_screen(screen_area)
+
+
+func focus_screen(screen_area: Area3D) -> void:
+	if not _interaction_allowed or not _is_screen_available_for_active_side(screen_area):
 		return
 
 	_hovered_screen = screen_area
@@ -155,6 +200,10 @@ func _update_pointer_hover_at(pointer_position: Vector2, delta: float) -> void:
 
 	var pointed_screen := _find_screen_under_pointer(pointer_position)
 	if pointed_screen != null:
+		# Moving between camera targets may bring another prop under a
+		# still pointer. Only an actual pointer move should switch that target.
+		if _hovered_screen != null and _hovered_screen != pointed_screen and not pointer_moved:
+			return
 		_last_pointer_position = pointer_position
 		_pointer_miss_time = 0.0
 		_pointer_moved_since_hit = false
@@ -252,10 +301,12 @@ func _refresh_focus_target() -> void:
 		return
 
 	var should_focus := _can_focus_hovered_screen()
-	if should_focus == _is_focused:
+	var next_screen: Area3D = _hovered_screen if should_focus else null
+	if should_focus == _is_focused and next_screen == _focused_screen:
 		return
 
 	_is_focused = should_focus
+	_focused_screen = next_screen
 	_tween_camera(should_focus)
 
 
@@ -269,6 +320,9 @@ func _calculate_focus_position(screen_area: Area3D) -> Vector3:
 	var camera_parent := camera.get_parent() as Node3D
 	if camera_parent == null or screen_area == null:
 		return _base_position
+	var marker := screen_area.get_meta("focus_camera_marker") as Node3D if screen_area.has_meta("focus_camera_marker") else null
+	if is_instance_valid(marker):
+		return camera_parent.to_local(marker.global_position)
 
 	# Work in the camera parent's coordinate space so the target remains
 	# compatible with the existing side rotation and mouse-tilt hierarchy.
@@ -303,6 +357,8 @@ func _tween_camera(focus: bool) -> void:
 
 	var target_position := _focus_position if focus else _base_position
 	var target_fov := minf(focus_fov, _base_fov) if focus else _base_fov
+	if focus and is_instance_valid(_focused_screen):
+		target_fov = minf(float(_focused_screen.get_meta("focus_fov", focus_fov)), _base_fov)
 	var duration := focus_duration if focus else return_duration
 
 	_camera_tween = create_tween().set_parallel(true)
@@ -310,7 +366,18 @@ func _tween_camera(focus: bool) -> void:
 	_camera_tween.set_ease(Tween.EASE_OUT if focus else Tween.EASE_IN_OUT)
 	_camera_tween.tween_property(camera, "position", target_position, duration)
 	_camera_tween.tween_property(camera, "fov", target_fov, duration)
-	_camera_tween.finished.connect(func(): _camera_tween = null)
+	var marker := _focused_screen.get_meta("focus_camera_marker") as Node3D if focus and is_instance_valid(_focused_screen) and _focused_screen.has_meta("focus_camera_marker") else null
+	if is_instance_valid(marker):
+		var target_basis := (camera.get_parent() as Node3D).global_basis.inverse() * marker.global_basis
+		_camera_tween.tween_property(camera, "quaternion", target_basis.orthonormalized().get_rotation_quaternion(), duration)
+		_owns_orientation = true
+	elif _owns_orientation:
+		_camera_tween.tween_property(camera, "quaternion", _base_basis.get_rotation_quaternion(), duration)
+	_camera_tween.finished.connect(func():
+		_camera_tween = null
+		if not focus:
+			_owns_orientation = false
+	)
 
 
 func _exit_tree() -> void:

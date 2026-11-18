@@ -1,0 +1,570 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+FAIL collection contains only the 117 collectible definitions and no event slots
+ERROR: collection contains only the 117 collectible definitions and no event slots
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS gallery fixture acquires one exact combat copy from the first spread
+PASS journal opens using a real reading camera
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS collection tab opens its grid with the correct pagination size
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS first spread has a three-by-three grid on each physical page
+PASS pointer ray reaches the known card's fixed slot
+PASS hover raises the card above its paper slot
+PASS hover turns the front-face normal toward the actual player camera
+PASS raising and rotating the card keeps its original hover target stable
+PASS leaving the card restores its complete fixed-slot transform
+PASS mouse wheel advances one complete grid spread
+PASS mouse wheel returns to the first fixed-slot spread
+PASS physical pagination reaches spread 0
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS fixed catalog slot appears only once: collection:card:alley_lurker
+PASS fixed catalog slot appears only once: collection:card:angry_pigeon
+PASS fixed catalog slot appears only once: collection:card:bat
+PASS fixed catalog slot appears only once: collection:card:bench_sleeper
+PASS fixed catalog slot appears only once: collection:card:bottle
+PASS fixed catalog slot appears only once: collection:card:brick
+PASS fixed catalog slot appears only once: collection:card:burned_cigarette
+PASS fixed catalog slot appears only once: collection:card:chick
+PASS fixed catalog slot appears only once: collection:card:clicker
+PASS fixed catalog slot appears only once: collection:card:corpse
+PASS fixed catalog slot appears only once: collection:card:crimescene
+PASS fixed catalog slot appears only once: collection:card:eg
+PASS fixed catalog slot appears only once: collection:card:fliege
+PASS fixed catalog slot appears only once: collection:card:froggy
+PASS fixed catalog slot appears only once: collection:card:jerk
+PASS fixed catalog slot appears only once: collection:card:joe
+PASS fixed catalog slot appears only once: collection:card:moldy_bread
+PASS fixed catalog slot appears only once: collection:card:plastic_chair
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical pagination reaches spread 1
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS fixed catalog slot appears only once: collection:card:rat
+PASS fixed catalog slot appears only once: collection:card:sewer_rat
+PASS fixed catalog slot appears only once: collection:card:shopping_cart
+PASS fixed catalog slot appears only once: collection:card:sock
+PASS fixed catalog slot appears only once: collection:card:street_dog
+PASS fixed catalog slot appears only once: collection:card:yarn
+PASS fixed catalog slot appears only once: collection:card:alpaka
+PASS fixed catalog slot appears only once: collection:card:angry_goose
+PASS fixed catalog slot appears only once: collection:card:ant
+PASS fixed catalog slot appears only once: collection:card:big_yarn
+PASS fixed catalog slot appears only once: collection:card:broken_robot
+PASS fixed catalog slot appears only once: collection:card:cactus_dealer
+PASS fixed catalog slot appears only once: collection:card:chicken
+PASS fixed catalog slot appears only once: collection:card:clicker_upgrade
+PASS fixed catalog slot appears only once: collection:card:crab
+PASS fixed catalog slot appears only once: collection:card:drunk_guy
+PASS fixed catalog slot appears only once: collection:card:living_yarn
+PASS fixed catalog slot appears only once: collection:card:rat_king
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical pagination reaches spread 2
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS fixed catalog slot appears only once: collection:card:raupe
+PASS fixed catalog slot appears only once: collection:card:sea_urchin
+PASS fixed catalog slot appears only once: collection:card:security_guard
+PASS fixed catalog slot appears only once: collection:card:sewer_worker
+PASS fixed catalog slot appears only once: collection:card:starting_hand_1
+PASS fixed catalog slot appears only once: collection:card:stray_cat
+PASS fixed catalog slot appears only once: collection:card:trash_monster
+PASS fixed catalog slot appears only once: collection:card:wanderer
+PASS fixed catalog slot appears only once: collection:card:bouncer
+PASS fixed catalog slot appears only once: collection:card:butcher
+PASS fixed catalog slot appears only once: collection:card:chainsaw_guy
+PASS fixed catalog slot appears only once: collection:card:cultist
+PASS fixed catalog slot appears only once: collection:card:dealer
+PASS fixed catalog slot appears only once: collection:card:fisher
+PASS fixed catalog slot appears only once: collection:card:mailman
+PASS fixed catalog slot appears only once: collection:card:mampa
+PASS fixed catalog slot appears only once: collection:card:mariachi
+PASS fixed catalog slot appears only once: collection:card:mechanic
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical pagination reaches spread 3
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS fixed catalog slot appears only once: collection:card:mini_man
+PASS fixed catalog slot appears only once: collection:card:paramedic
+PASS fixed catalog slot appears only once: collection:card:pepe
+PASS fixed catalog slot appears only once: collection:card:pickpocket
+PASS fixed catalog slot appears only once: collection:card:rabid_dog
+PASS fixed catalog slot appears only once: collection:card:repair_bot
+PASS fixed catalog slot appears only once: collection:card:slave
+PASS fixed catalog slot appears only once: collection:card:soulcoin_boost_1
+PASS fixed catalog slot appears only once: collection:card:starting_hand_2
+PASS fixed catalog slot appears only once: collection:card:toaster
+PASS fixed catalog slot appears only once: collection:card:wandering_soul
+PASS fixed catalog slot appears only once: collection:card:xp_boost_1
+PASS fixed catalog slot appears only once: collection:card:adrenaline_junkie
+PASS fixed catalog slot appears only once: collection:card:golden_clicker
+PASS fixed catalog slot appears only once: collection:card:harald
+PASS fixed catalog slot appears only once: collection:card:jd
+PASS fixed catalog slot appears only once: collection:card:mrfork
+PASS fixed catalog slot appears only once: collection:card:piss
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical pagination reaches spread 4
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS fixed catalog slot appears only once: collection:card:soulcoin_boost_2
+PASS fixed catalog slot appears only once: collection:card:starting_hand_3
+PASS fixed catalog slot appears only once: collection:card:xp_boost_2
+PASS fixed catalog slot appears only once: collection:card:basement_key
+PASS fixed catalog slot appears only once: collection:card:black_market_access
+PASS fixed catalog slot appears only once: collection:card:deer_watcher
+PASS fixed catalog slot appears only once: collection:card:fusion_upgrade_1
+PASS fixed catalog slot appears only once: collection:card:graveyard_key
+PASS fixed catalog slot appears only once: collection:card:heart_monitor
+PASS fixed catalog slot appears only once: collection:card:lamp
+PASS fixed catalog slot appears only once: collection:card:lucky_coin
+PASS fixed catalog slot appears only once: collection:card:microwave
+PASS fixed catalog slot appears only once: collection:card:plinky
+PASS fixed catalog slot appears only once: collection:card:slot_room_key
+PASS fixed catalog slot appears only once: collection:card:snaker
+PASS fixed catalog slot appears only once: collection:card:soulcoin_boost_3
+PASS fixed catalog slot appears only once: collection:card:starting_hand_4
+PASS fixed catalog slot appears only once: collection:card:voidcat
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical pagination reaches spread 5
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS fixed catalog slot appears only once: collection:card:xp_boost_3
+PASS fixed catalog slot appears only once: collection:card:auto_clicker
+PASS fixed catalog slot appears only once: collection:card:bus_driver
+PASS fixed catalog slot appears only once: collection:card:cctv_watcher
+PASS fixed catalog slot appears only once: collection:card:credit_card
+PASS fixed catalog slot appears only once: collection:card:dealer_license
+PASS fixed catalog slot appears only once: collection:card:falling
+PASS fixed catalog slot appears only once: collection:card:fusion_upgrade_2
+PASS fixed catalog slot appears only once: collection:card:mr_mr
+PASS fixed catalog slot appears only once: collection:card:roulette_man
+PASS fixed catalog slot appears only once: collection:card:soulcoin_boost_4
+PASS fixed catalog slot appears only once: collection:card:starting_hand_5
+PASS fixed catalog slot appears only once: collection:card:taxman
+PASS fixed catalog slot appears only once: collection:card:tree
+PASS fixed catalog slot appears only once: collection:card:walker
+PASS fixed catalog slot appears only once: collection:card:xp_boost_4
+PASS fixed catalog slot appears only once: collection:card:developer
+PASS fixed catalog slot appears only once: collection:card:haendler
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical pagination reaches spread 6
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS fixed catalog slot appears only once: collection:card:headshot
+PASS fixed catalog slot appears only once: collection:card:missing_texture
+PASS fixed catalog slot appears only once: collection:card:observer
+PASS fixed catalog slot appears only once: collection:card:princess
+PASS fixed catalog slot appears only once: collection:card:red_light_figure
+PASS fixed catalog slot appears only once: collection:card:ultracockhaze
+PASS fixed catalog slot appears only once: collection:card:cigarettes
+PASS fixed catalog slot appears only once: collection:card:dman
+PASS fixed catalog slot appears only once: collection:card:moewenmilch
+PASS fixed catalog slot appears only once: collection:card:usb_stick
+PASS all authored collectible slots are reachable without gaps, duplicates or event slots
+PASS last spread disables the next-page arrow
+PASS pagination cannot go past the last catalog spread
+PASS locale change preserves fixed card slots and current spread: de
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS locale change preserves fixed card slots and current spread: en
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS locale change preserves fixed card slots and current spread: es
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS locale change preserves fixed card slots and current spread: fr
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS locale change preserves fixed card slots and current spread: pl
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS physical journal control exists: index_prev
+PASS physical journal control is visible and pointer-reachable: index_prev
+PASS physical journal click completes: index_prev
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_prev
+PASS physical journal control is visible and pointer-reachable: index_prev
+PASS physical journal click completes: index_prev
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_prev
+PASS physical journal control is visible and pointer-reachable: index_prev
+PASS physical journal click completes: index_prev
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_prev
+PASS physical journal control is visible and pointer-reachable: index_prev
+PASS physical journal click completes: index_prev
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_prev
+PASS physical journal control is visible and pointer-reachable: index_prev
+PASS physical journal click completes: index_prev
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_prev
+PASS physical journal control is visible and pointer-reachable: index_prev
+PASS physical journal click completes: index_prev
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS first spread disables the previous-page arrow
+PASS physical journal control exists: chapter:0
+PASS physical journal control is visible and pointer-reachable: chapter:0
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:0
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS returning to combat cards restores the existing article layout
+PASS physical journal control exists: chapter:5
+PASS physical journal control is visible and pointer-reachable: chapter:5
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:5
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS profile tab restores its live text
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS immediate closing safely interrupts a raised collection preview
+PASS collection can reopen after closing during hover
+PASS reopened collection cards return to their fixed rest poses
+PASS opening, paging, hovering, translating and closing collection preserve shared gameplay RNG
+PASS collection browsing preserves catalog, owned copies, upgrades, deck, wallet and every save/settings byte
+PASS physical journal control exists: chapter:2
+PASS physical journal control is visible and pointer-reachable: chapter:2
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:2
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS dedicated event tab contains all six authored events immediately
+PASS physical journal control exists: entry:0
+PASS physical journal control is visible and pointer-reachable: entry:0
+PASS physical journal click completes: entry:0
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS event article is readable without discovery or a NEW badge: event:block
+PASS physical journal control exists: entry:1
+PASS physical journal control is visible and pointer-reachable: entry:1
+PASS physical journal click completes: entry:1
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS event article is readable without discovery or a NEW badge: event:steel
+PASS physical journal control exists: entry:2
+PASS physical journal control is visible and pointer-reachable: entry:2
+PASS physical journal click completes: entry:2
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS event article is readable without discovery or a NEW badge: event:strength_120
+PASS physical journal control exists: entry:3
+PASS physical journal control is visible and pointer-reachable: entry:3
+PASS physical journal click completes: entry:3
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS event article is readable without discovery or a NEW badge: event:strength_150
+PASS physical journal control exists: entry:4
+PASS physical journal control is visible and pointer-reachable: entry:4
+PASS physical journal click completes: entry:4
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS event article is readable without discovery or a NEW badge: event:strength_200
+PASS physical journal control exists: entry:5
+PASS physical journal control is visible and pointer-reachable: entry:5
+PASS physical journal click completes: entry:5
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS event article is readable without discovery or a NEW badge: event:switch
+PASS reading all event articles creates no discovery, seen status or save changes
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+FAIL legacy event discovery and seen flags cannot create collection slots
+ERROR: legacy event discovery and seen flags cannot create collection slots
+   at: push_error (core/variant/variant_utility.cpp:1098)
+PASS save a fixture whose previously discovered copy has been consumed
+PASS card remains revealed after its last owned copy is consumed
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS acquire an unknown card while its placeholder is visible
+PASS acquisition replaces only its fixed placeholder while preserving the current spread
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS current spread contains an unknown slot for click coverage
+PASS fixed collection slot receives the expected pointer target
+PASS physical collection-slot click finishes its page turn
+PASS clicking an unknown placeholder keeps the collection open without revealing details
+PASS navigation fixture includes a combat card on later collection and article-index pages
+PASS navigation fixtures cover consumed combat, later combat and special cards
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS localized collection retains the source entry identity: card:alley_lurker
+PASS physical journal control exists: index_prev
+PASS physical journal control is visible and pointer-reachable: index_prev
+PASS physical journal click completes: index_prev
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS fixed collection slot receives the expected pointer target
+PASS physical collection-slot click finishes its page turn
+PASS physical collection click opens the exact descriptive article in its chapter: card:alley_lurker (de)
+PASS destination index page includes and selects the opened article
+PASS destination displays the matching title and first page of card information
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS localized collection retains the source entry identity: card:dealer
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS fixed collection slot receives the expected pointer target
+PASS physical collection-slot click finishes its page turn
+PASS physical collection click opens the exact descriptive article in its chapter: card:dealer (de)
+PASS destination index page includes and selects the opened article
+PASS destination displays the matching title and first page of card information
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS localized collection retains the source entry identity: card:xp_boost_3
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS fixed collection slot receives the expected pointer target
+PASS physical collection-slot click finishes its page turn
+PASS physical collection click opens the exact descriptive article in its chapter: card:xp_boost_3 (de)
+PASS destination index page includes and selects the opened article
+PASS destination displays the matching title and first page of card information
+PASS following familiar-card links preserves gameplay state and save bytes: de
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS localized collection retains the source entry identity: card:alley_lurker
+PASS fixed collection slot receives the expected pointer target
+PASS physical collection-slot click finishes its page turn
+PASS physical collection click opens the exact descriptive article in its chapter: card:alley_lurker (en)
+PASS destination index page includes and selects the opened article
+PASS destination displays the matching title and first page of card information
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS localized collection retains the source entry identity: card:dealer
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS fixed collection slot receives the expected pointer target
+PASS physical collection-slot click finishes its page turn
+PASS physical collection click opens the exact descriptive article in its chapter: card:dealer (en)
+PASS destination index page includes and selects the opened article
+PASS destination displays the matching title and first page of card information
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS localized collection retains the source entry identity: card:xp_boost_3
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS physical journal control exists: index_next
+PASS physical journal control is visible and pointer-reachable: index_next
+PASS physical journal click completes: index_next
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS fixed collection slot receives the expected pointer target
+PASS physical collection-slot click finishes its page turn
+PASS physical collection click opens the exact descriptive article in its chapter: card:xp_boost_3 (en)
+PASS destination index page includes and selects the opened article
+PASS destination displays the matching title and first page of card information
+PASS following familiar-card links preserves gameplay state and save bytes: en
+PASS physical journal control exists: chapter:6
+PASS physical journal control is visible and pointer-reachable: chapter:6
+PASS chapter tabs stay visible as the physical page begins turning
+PASS tab backgrounds and captions render above the turning page instead of being occluded
+PASS all chapter tab nodes remain unchanged and visible midway through the page turn
+PASS physical journal click completes: chapter:6
+PASS spread rebuild preserves all existing chapter tab nodes
+PASS journal closes from the keyboard without a Close or X control
+PASS closing hides both page contents and the persistent tabs
+PASS Escape finishes closing the journal
+PASS collection opens in a portrait viewport
+PASS current spread contains exactly its fixed catalog slots
+PASS collection has no article titles, descriptions, entry list or body navigation
+PASS collection has no Close or X button
+PASS collection numbers each physical page consecutively across spreads
+PASS page numbers sit at the bottom of their respective physical pages
+PASS collection shows only cards, controls and its two numeric page labels
+PASS discovered slots display real base Card3D previews without owned-instance bindings or gameplay input
+PASS undiscovered slots show static placeholders without hidden card art or hover targets
+PASS all seven tabs, grid navigation and both page numbers fit the portrait viewport
+PASS journal closes from the keyboard without a Close or X control
+PASS closing hides both page contents and the persistent tabs
+PASS Escape finishes closing the journal
+JOURNAL_COLLECTION_TESTS: FAIL (562 checks)

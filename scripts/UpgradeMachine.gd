@@ -33,6 +33,34 @@ func _ready() -> void:
 	_connect_global_refresh_signals()
 	ui.configure_costs(attack_cost, health_cost, effect_cost)
 	_refresh_card_list()
+	GameCurrency.npc_rescue_changed.connect(_sync_rescue_lock)
+	CollectionManager.collection_changed.connect(_sync_rescue_lock_from_collection)
+	_sync_rescue_lock()
+
+
+func is_operational() -> bool:
+	return GameCurrency.is_npc_rescued("angel")
+
+
+func _sync_rescue_lock_from_collection(_ids: Array[String]) -> void:
+	_sync_rescue_lock()
+
+
+func _sync_rescue_lock() -> void:
+	var enabled := is_operational()
+	ui.visible = enabled
+	upgrade_viewport.gui_disable_input = not enabled
+	var area := get_node_or_null("ScreenArea") as Area3D
+	if area != null:
+		area.input_ray_pickable = enabled
+		area.set_meta("keep_input_ray_pickable_disabled", not enabled)
+	var mat := screen_mesh.get_surface_override_material(0) as StandardMaterial3D
+	mat.albedo_texture = upgrade_viewport.get_texture() if enabled else null
+	mat.albedo_color = Color.WHITE if enabled else Color.BLACK
+	mat.emission_enabled = enabled
+	if not enabled:
+		selected_card_id = ""
+		_remove_preview_card()
 
 
 func _setup_screen_material() -> void:
@@ -78,7 +106,7 @@ func _connect_global_refresh_signals() -> void:
 		GameCurrency.connect("coins_changed", coins_callback)
 	
 func _remove_effect(effect_source: String, effect_index: int) -> void:
-	if selected_card_id == "":
+	if not is_operational() or selected_card_id == "":
 		return
 
 	if not CardUpgradeManager.remove_effect_at(selected_card_id, effect_source, effect_index):
@@ -121,6 +149,8 @@ func _on_coins_changed(_coins: float) -> void:
 
 
 func _on_card_selected(card_id: String) -> void:
+	if not is_operational():
+		return
 	selected_card_id = card_id
 	_spawn_preview_card()
 	ui.set_selected_card(card_id)
@@ -134,6 +164,8 @@ func _process(delta: float) -> void:
 		preview_card.rotate_y(deg_to_rad(preview_card_spin_speed) * delta)
 
 func _spawn_preview_card() -> void:
+	if not is_operational():
+		return
 	if card_preview_point == null:
 		card_preview_point = get_node_or_null("CardPreviewPoint") as Marker3D
 
@@ -241,7 +273,7 @@ func _upgrade_health() -> void:
 
 func _can_buy_upgrade() -> bool:
 	return (
-		not selected_card_id.is_empty()
+		is_operational() and not selected_card_id.is_empty()
 		and CollectionManager.get_amount(selected_card_id) > 0
 		and CardData.is_combat_card(CardDatabase.get_card(selected_card_id))
 	)

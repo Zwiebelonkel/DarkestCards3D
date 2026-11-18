@@ -1,0 +1,115 @@
+{
+  "captured_utc": "2026-11-18T00:37:43",
+  "performance": {
+    "context": {
+      "average_ms": 16.6610333333333,
+      "draw_calls": 791.0,
+      "frames": 60,
+      "objects": 3514.0,
+      "p95_ms": 16.689,
+      "video_memory_bytes": 322380282.0
+    },
+    "focused": {
+      "average_ms": 16.66185,
+      "draw_calls": 914.0,
+      "frames": 60,
+      "objects": 3492.0,
+      "p95_ms": 16.711,
+      "video_memory_bytes": 322380282.0
+    }
+  },
+  "scene_modified": 1794961850,
+  "shots": [
+    {
+      "camera": "[X: (-1.0, 0.0, 0.0), Y: (0.0, 0.978148, 0.207912), Z: (-0.0, 0.207912, -0.978148), O: (29.1164, -6.95, 0.021202)]",
+      "fov": 58.0,
+      "height": 720,
+      "mean_luminance": 0.0873256065103602,
+      "name": "context",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (-1.0, 0.0, 0.0), Y: (0.0, 0.978148, 0.207912), Z: (-0.0, 0.207912, -0.978148), O: (29.11643, -7.951505, 2.836915)]",
+      "fov": 49.0,
+      "height": 720,
+      "mean_luminance": 0.0459242288847478,
+      "name": "focused",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (-1.0, 0.0, -0.000003), Y: (0.0, 1.0, 0.0), Z: (0.000003, 0.0, -1.0), O: (29.33469, -8.040107, 5.388087)]",
+      "fov": 40.0,
+      "height": 720,
+      "mean_luminance": 0.158374336575513,
+      "name": "detail-0.0",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (-1.0, 0.0, -0.000003), Y: (0.0, 1.0, 0.0), Z: (0.000003, 0.0, -1.0), O: (29.33469, -8.040107, 5.388087)]",
+      "fov": 40.0,
+      "height": 720,
+      "mean_luminance": 0.15841656817779,
+      "name": "detail-2.8",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (-1.0, 0.0, -0.000003), Y: (0.0, 1.0, 0.0), Z: (0.000003, 0.0, -1.0), O: (29.33469, -8.040107, 5.388087)]",
+      "fov": 40.0,
+      "height": 720,
+      "mean_luminance": 0.158329517407693,
+      "name": "detail-6.0",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (-0.0, 0.0, 1.0), O: (200.0, 0.0, 0.95)]",
+      "fov": 40.0,
+      "height": 720,
+      "mean_luminance": 0.370883125951508,
+      "name": "isolated-front",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (-1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, -1.0), O: (200.0, 0.0, -0.95)]",
+      "fov": 40.0,
+      "height": 720,
+      "mean_luminance": 0.527802302758208,
+      "name": "isolated-back",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (0.0, 0.0, 1.0), Y: (0.0, 1.0, 0.0), Z: (-1.0, 0.0, 0.0), O: (199.05, 0.0, 0.0)]",
+      "fov": 40.0,
+      "height": 720,
+      "mean_luminance": 0.254894127867581,
+      "name": "isolated-left",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (0.0, 1.0, 0.0), Z: (1.0, 0.0, -0.0), O: (200.95, 0.0, 0.0)]",
+      "fov": 40.0,
+      "height": 720,
+      "mean_luminance": 0.626866204760751,
+      "name": "isolated-right",
+      "width": 1280
+    },
+    {
+      "camera": "[X: (0.85749, 0.0, -0.514501), Y: (-0.107845, 0.977785, -0.179739), Z: (0.503071, 0.20961, 0.838441), O: (200.57, 0.2375, 0.95)]",
+      "fov": 40.0,
+      "height": 720,
+      "mean_luminance": 0.368491637197193,
+      "name": "isolated-bezel",
+      "width": 1280
+    }
+  ],
+  "manual_review": {
+    "native_resolution_inspection": true,
+    "accepted_images": 10,
+    "interfaces": {
+      "navigation": "not_applicable",
+      "needle_pivot": "pass",
+      "ground_contact": "not_applicable",
+      "rear_mount": "pass",
+      "bezel_dial": "pass"
+    }
+  }
+}

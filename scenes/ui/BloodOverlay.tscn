@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/BloodOverlay.gd" id="1_script"]
+[ext_resource type="Shader" path="res://assets/shader/blood_border.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blood"]
+shader = ExtResource("2_shader")
+shader_parameter/fade_progress = 1.0
+
+[node name="BloodOverlay" type="CanvasLayer" groups=["screen_overlay_effects"]]
+layer = 0
+script = ExtResource("1_script")
+
+[node name="BloodRect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_blood")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

@@ -6,11 +6,11 @@ class_name CatChoicePresentation
 signal choice_requested(choice: String)
 signal shot_fired
 
-const ANGEL_TEXTURE := preload("res://assets/characters/angel.png")
-const SATAN_TEXTURE := preload("res://assets/characters/satan.png")
-const SATAN_HOVER_TEXTURE := preload("res://assets/characters/satanHover.png")
-const GUN_TEXTURE := preload("res://assets/characters/gun_back.png")
-const FLASH_TEXTURE := preload("res://assets/characters/flash.png")
+const ANGEL_TEXTURE := preload("res://assets/characters/angel/angel.png")
+const SATAN_TEXTURE := preload("res://assets/characters/satan/satan.png")
+const SATAN_HOVER_TEXTURE := preload("res://assets/characters/satan/satanHover.png")
+const GUN_TEXTURE := preload("res://assets/characters/gun/gun_back.png")
+const FLASH_TEXTURE := preload("res://assets/characters/gun/flash.png")
 const SHOT_SOUND := preload("res://assets/sounds/SFX/shot.mp3")
 const FONT := preload("res://fonts/VCR_OSD_MONO_1.001.ttf")
 const SHOOT_MESSAGE := "Click me to shoot the cat and earn %d Soul Coins."

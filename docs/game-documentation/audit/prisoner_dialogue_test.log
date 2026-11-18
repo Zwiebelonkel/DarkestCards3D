@@ -1,0 +1,76 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS fixture activates the real graveyard key
+PASS the authored Prisoner sprite keeps its position, orientation and scale
+PASS neither the Prisoner sprite nor its glowing-eye material uses billboard rendering
+PASS the authored twelve-frame animation is preserved
+PASS the prisoner cannot be activated remotely from the hub
+PASS the real doorway flight arrives in the graveyard
+PASS the crossing only allows approaching the grille, not a distant prisoner conversation
+PASS a real grille click walks to the crypt viewpoint
+PASS the actual prisoner hit box is reachable through the grille
+PASS the prisoner hit box matches the fixed authored sprite plane
+PASS hover switches to the authored animation while preserving its frame and timer
+PASS leaving the prisoner restores the idle animation without restarting it
+PASS the prisoner hover animation continues playing
+PASS a real prisoner click starts the first authored dialog window
+PASS the first window keeps the requested asterisks literally
+PASS the prisoner uses the same speaking sample and syllable rhythm as the Jester
+PASS the prisoner's voice is three semitones lower than the Jester
+PASS the prisoner has voice and fart audio without the Jester's sentence-end sound
+PASS the fart uses the SFX setting and stays silent during the first window
+PASS the conversation locks turns, travel, beacon return and journal
+PASS journal, turn arrows and right-click cannot escape the open dialog
+PASS the first click reveals only the current line and silences the voice
+PASS the next click clears the first window and starts the second in order
+PASS the same deeper voice resumes for the second window
+PASS entering the second window immediately plays the authored fart.mp3
+PASS revealing the second line keeps it visible without an ending cue
+PASS revealing the current line cannot restart an already finished fart
+PASS only a further click after the second line closes the dialog
+PASS closing the dialog keeps the exact near view and restores turning
+PASS reopening always starts at the first window in de
+PASS the first window has a translation in de
+PASS natural first-line completion is silent in de
+PASS the translated second window stays in order in de
+PASS the fart plays on entering the second window in de
+PASS natural second-line completion has no end sound in de
+PASS closing the conversation stops the fart in de
+PASS reopening always starts at the first window in en
+PASS the first window has a translation in en
+PASS natural first-line completion is silent in en
+PASS the translated second window stays in order in en
+PASS the fart plays on entering the second window in en
+PASS natural second-line completion has no end sound in en
+PASS closing the conversation stops the fart in en
+PASS reopening always starts at the first window in es
+PASS the first window has a translation in es
+PASS natural first-line completion is silent in es
+PASS the translated second window stays in order in es
+PASS the fart plays on entering the second window in es
+PASS natural second-line completion has no end sound in es
+PASS closing the conversation stops the fart in es
+PASS reopening always starts at the first window in fr
+PASS the first window has a translation in fr
+PASS natural first-line completion is silent in fr
+PASS the translated second window stays in order in fr
+PASS the fart plays on entering the second window in fr
+PASS natural second-line completion has no end sound in fr
+PASS closing the conversation stops the fart in fr
+PASS reopening always starts at the first window in pl
+PASS the first window has a translation in pl
+PASS natural first-line completion is silent in pl
+PASS the translated second window stays in order in pl
+PASS the fart plays on entering the second window in pl
+PASS natural second-line completion has no end sound in pl
+PASS closing the conversation stops the fart in pl
+PASS Escape closes the conversation without walking back or opening Pause
+PASS Pause immediately stops both prisoner sounds and disables its click area
+PASS the dialog finishes closing even while the game is paused
+PASS turning away from the crypt disables prisoner hover and clicks
+PASS turning away clears the prisoner's hover animation
+PASS hover and conversation leave cards, currency and profile save bytes unchanged
+PRISONER_DIALOGUE_TESTS: PASS (70 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

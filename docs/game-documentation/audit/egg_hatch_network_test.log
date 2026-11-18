@@ -1,0 +1,75 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS event test starts a loopback ENet authority
+PASS event test starts a separate guest transport
+PASS host and guest event peers connect
+PASS initial host eggs arrive in the guest's mirrored slots over ENet
+PASS draw_replacement=false remote egg death neither hatches nor consumes a deck card
+PASS remote death presentation consumes no hatch randomness
+PASS authoritative simultaneous deaths clear both exact slots before replacement
+PASS one authoritative snapshot mirrors a hatch together with an ordinary replacement
+PASS host alone creates a fresh chick identity which the guest preserves
+PASS only the normal replacement changes deck counts on either peer
+PASS remote hatch appears at its egg slot instead of flying from the deck
+PASS a simultaneous ordinary replacement still starts at the correct previous stack height
+PASS hatch presentation marker travels outside persistent card data
+PASS ordinary replacement snapshot is not marked as hatching
+PASS hatch and ordinary draw release the actual guest ACK barrier before turn progression
+PASS remote hatch settles exactly into the original slot
+PASS replayed authoritative snapshot reuses the chick without replaying or duplicating its hatch
+PASS moving a hatched chick into a deck cannot retain its one-time spawn animation marker
+PASS guest-owned last egg hatches with an empty deck through the same authority path
+PASS last-card hatch preserves play and never fabricates a deck draw
+PASS both owners receive distinct, identically replicated chick instances
+PASS network hatching changes neither persistent collection nor saved battle deck
+PASS new hatch starts with zero survived turns on authority and guest
+PASS the unfinished turn in which a Chick hatched does not count toward its growth
+PASS complete survived turn 1 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 1
+PASS complete survived turn 2 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 2
+PASS complete survived turn 3 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 3
+PASS complete survived turn 4 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 4
+PASS Chick age is transported as runtime state outside authored card data
+PASS Steel exports the same four-turn Chick age inside battle-only combat state
+PASS redrawing a stolen Chick restores age without retaining the transport envelope in card data
+PASS applying a Chick snapshot preserves its exact identity and age
+PASS a snapshot without age starts the Chick at zero instead of leaking prior age
+PASS fresh Chicken setup clears Chick age and excludes it from subsequent snapshots
+PASS complete survived turn 5 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 5
+PASS complete survived turn 6 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 6
+PASS complete survived turn 7 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 7
+PASS complete survived turn 8 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 8
+PASS complete survived turn 9 advances age exactly once on both peers
+PASS Chick identities remain unchanged before five complete rounds at turn 9
+PASS replaying a growth snapshot cannot age either Chick again
+PASS a remote guest cannot advance age or evolve a Chick locally
+PASS five full rounds evolve both owners' Chicks to Chickens through the actual ENet turn barrier
+PASS authority creates fresh Chicken identities and mirrors them exactly
+PASS growth replaces occupied slots without consuming or adding any deck cards
+PASS grown Chicken starts with its full base combat values and no Chick age
+PASS growth's in-place presentation marker stays outside persistent card data
+PASS remote grown Chicken settles in the exact former Chick slot
+PASS replaying growth preserves the same remote Chicken without duplicating its replacement
+PASS moving a grown Chicken into a deck removes its one-time growth presentation marker
+PASS network growth and replicated age never change persistent collection or saved battle deck
+PASS spectator snapshot shows the grown host Chicken on its canonical side
+PASS spectators receive the same unique grown Chickens and exact public deck counts
+PASS hatch snapshots do not reveal private event hands to spectators
+PASS the second Egg reaches the guest before a failed hatch
+PASS duplicate authority death cannot reroll a failed hatch
+PASS a failed 25-percent roll replicates an ordinary deck replacement over ENet
+PASS failed-hatch peers agree on the replacement identity and remaining pile
+PASS replaying a failed-hatch snapshot neither rerolls nor creates a Chick
+PASS all guest snapshots and hatch presentations leave hatch randomness untouched
+EVENT_CARDS_NETWORK_TESTS: PASS
+EGG_HATCH_NETWORK_TESTS: PASS (68 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

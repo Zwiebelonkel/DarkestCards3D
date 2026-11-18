@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "output_overflow": false,
+  "completion_marker_found": true,
+  "engine_errors": [],
+  "elapsed_ms": 1378,
+  "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\n{\"nodes\":[{\"path\":\".\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]\",\"type\":\"RigidBody3D\"},{\"path\":\"Model\",\"scale\":\"(0.01, 0.01, 0.01)\",\"transform\":\"[X: (0.01, 0.0, 0.0), Y: (0.0, 0.01, 0.0), Z: (0.0, 0.0, 0.01), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"path\":\"Model/Sketchfab_model\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 0.0, -1.0), Z: (0.0, 1.0, 0.0), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"path\":\"Model/Sketchfab_model/d218e2492ed4440fb7f061bc70d82342_fbx\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 0.0, 1.0), Z: (0.0, -1.0, 0.0), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"path\":\"Model/Sketchfab_model/d218e2492ed4440fb7f061bc70d82342_fbx/RootNode\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"path\":\"Model/Sketchfab_model/d218e2492ed4440fb7f061bc70d82342_fbx/RootNode/lp\",\"scale\":\"(100.0, 100.0, 100.0)\",\"transform\":\"[X: (100.0, 0.0, 0.0), Y: (0.0, -0.000016, -100.0), Z: (0.0, 100.0, -0.000016), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"aabb\":\"[P: (-0.250084, -0.120036, -0.06), S: (0.500134, 0.240078, 0.120198)]\",\"materials\":[\"res://assets/effects/brick/scene.gltf::StandardMaterial3D_560nv\"],\"mesh_present\":true,\"path\":\"Model/Sketchfab_model/d218e2492ed4440fb7f061bc70d82342_fbx/RootNode/lp/lp_Material_0\",\"scale\":\"(1.0, 1.0, 1.0)\",\"surfaces\":1,\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]\",\"triangles\":919,\"type\":\"MeshInstance3D\"},{\"disabled\":false,\"path\":\"CollisionShape3D\",\"scale\":\"(1.0, 1.0, 1.0)\",\"shape\":\"BoxShape3D\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]\",\"type\":\"CollisionShape3D\"}],\"scene\":\"res://scenes/effects/CleaveBrick.tscn\",\"warnings\":[]}\r\nASSET_INSPECTION_COMPLETE\r\nCardDatabase geladen: 122 Karten\r\n[OnlineSession 1109] steam shutdown begin\r\n[OnlineSession 1135] steam shutdown returned\r\n",
+  "stderr": "Setting breakpad minidump AppID = 5412220\r\nSteamInternal_SetMinidumpSteamID:  Caching Steam ID:  76561199583698143 [API loaded no]\r\n",
+  "pid": 6228
+}

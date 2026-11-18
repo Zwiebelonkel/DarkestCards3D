@@ -16,6 +16,7 @@ func check(condition: bool, message: String) -> void:
 
 
 func _run() -> void:
+	GameCurrency._rescued_npcs = {"angel": true, "dealer": true, "jester": true, "prisoner": true}
 	if not str(CollectionManager.SAVE_PATH).begins_with("res://test-user/"):
 		push_error("Run world_localization_test with the isolated match feature runner.")
 		get_tree().quit(1)

@@ -103,7 +103,7 @@ func _run() -> void:
 	var wall_transform := flying_card.global_transform
 	_click(main.main_camera.unproject_position(flying_card.global_position))
 	check(wall.is_detail_open() and wall._detail_card == flying_card and flying_card.global_transform.is_equal_approx(wall_transform), "the real clicked Card3D starts flying from its exact captured wall transform")
-	check(_count_cards(wall) == 7, "opening creates no second copy of the selected wall card")
+	check(_count_cards(wall) == wall._cards.size(), "opening creates no second copy of the selected wall card")
 	await settle(0.15)
 	var entry_position := flying_card.global_position
 	check(entry_position.distance_to(wall_transform.origin) > 0.1, "the card visibly travels between its wall slot and the detail view")
@@ -133,7 +133,7 @@ func _run() -> void:
 	await _capture("card-return")
 	await settle(0.85)
 	check(not wall.is_detail_open() and not main.pause_menu.visible, "Escape closes the focused detail without opening Pause")
-	check(wall._cards["starting_hand_3"] == flying_card and flying_card.global_transform.is_equal_approx(wall_transform) and _count_cards(wall) == 7, "return restores the same card to its original wall slot without leaving a duplicate")
+	check(wall._cards["starting_hand_3"] == flying_card and flying_card.global_transform.is_equal_approx(wall_transform) and _count_cards(wall) == wall._cards.size(), "return restores the same card to its original wall slot without leaving a duplicate")
 	check(_at_base(base_position, base_fov), "closing detail after a real pointer exit restores the original camera position and field of view")
 	await _capture("released")
 	await _focus_wall()
@@ -155,7 +155,7 @@ func _run() -> void:
 	_click(Vector2(45, 45))
 	check(wall.is_detail_open() and rapid_card.global_position.is_equal_approx(interrupted_position), "a background click during entry reverses the current card without teleporting")
 	await settle(0.7)
-	check(not wall.is_detail_open() and wall._cards["starting_hand_3"] == rapid_card and rapid_card.position.is_equal_approx(wall._base_positions["starting_hand_3"]) and _count_cards(wall) == 7, "rapid open-close finishes with one card in the correct slot")
+	check(not wall.is_detail_open() and wall._cards["starting_hand_3"] == rapid_card and rapid_card.position.is_equal_approx(wall._base_positions["starting_hand_3"]) and _count_cards(wall) == wall._cards.size(), "rapid open-close finishes with one card in the correct slot")
 	_move_pointer(Vector2(-50, -50))
 	await settle(0.45)
 	await _focus_wall()

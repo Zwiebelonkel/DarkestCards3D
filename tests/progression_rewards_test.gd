@@ -136,10 +136,13 @@ func _test_secret_graveyard_key() -> void:
 	_expect(CardDatabase.get_random_card_by_rarity("legendary").get("id") == "plinky", "Ordinary legendary rewards remain obtainable beside a hidden secret")
 	CardDatabase.cards = original_cards
 	CardDatabase.set_pack_rarity_weights({})
-	_expect(not CollectionManager.add_card("graveyard_key").is_empty() and CollectionManager.has_area_access("graveyard"), "Explicit world discovery still grants the unique Graveyard Key and access")
+	_expect(not CollectionManager.add_card("graveyard_key").is_empty() and not CollectionManager.has_area_access("graveyard"), "World discovery grants the unique Graveyard Key while its entrance stays locked")
 	_expect(CollectionManager.add_card("graveyard_key").is_empty() and CollectionManager.get_amount("graveyard_key") == 1, "Repeated discovery cannot duplicate an owned secret")
-	# Older saves may already contain the card or a visited entrance; changing
-	# reward eligibility must not revoke either form of existing progress.
+	CollectionManager.reload_profile()
+	_expect(CollectionManager.get_amount("graveyard_key") == 1 and not CollectionManager.has_area_access("graveyard") and not CollectionManager.is_access_key_used("graveyard_key"), "Reloading an acquired but unused key keeps the entrance locked")
+	_expect(CollectionManager.use_access_key("graveyard_key") and CollectionManager.has_area_access("graveyard"), "Explicitly using the discovered key unlocks its entrance")
+	# Existing persisted activations remain valid; ownership by itself is not
+	# silently migrated into a completed activation.
 	CollectionManager.collection = {"cards": {"graveyard_key": 1}, "instances": [], "metadata": {"area_access": {"graveyard": true}}}
 	CollectionManager.save_collection()
 	CollectionManager.collection = {"cards": {}, "instances": []}

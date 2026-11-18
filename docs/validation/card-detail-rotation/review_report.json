@@ -1,0 +1,25 @@
+{
+  "validated_date": "2026-11-15",
+  "godot": "4.4.1 Forward+",
+  "isolated_saves": true,
+  "rotation_checks": 34,
+  "regressions": {
+    "collection_interaction": 29,
+    "upgrade_wall_collection": 21,
+    "wall_collection_focus": 46
+  },
+  "total_checks": 130,
+  "render_exit_code": 0,
+  "render_engine_errors": [],
+  "captures": [
+    "collection-front.png",
+    "collection-angled.png",
+    "collection-back.png",
+    "wall-back.png"
+  ],
+  "visually_reviewed": true,
+  "notes": [
+    "Existing collection_interaction_test emits an ObjectDB cleanup warning; no script/shader errors.",
+    "No changes to card materials, saved card data or gameplay values."
+  ]
+}

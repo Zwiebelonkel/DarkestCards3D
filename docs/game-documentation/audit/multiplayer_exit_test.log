@@ -1,0 +1,39 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+[OnlineSession 1904] leave requested: Der Host hat das Online-Match beendet.
+PASS Disconnect callbacks never synchronously destroy the native peer
+PASS Reentrant disconnects share one active teardown
+PASS Leaving immediately blocks new match and voice traffic
+PASS Consumers stop once before deferred peer cleanup
+[OnlineSession 1908] ignored callback for a retired lobby
+PASS Late Steam create/join callbacks cannot restart a peer during teardown
+[OnlineSession 1911] peer teardown completed
+PASS Repeated disconnect and leave notifications close the peer exactly once
+PASS Peer cleanup runs after the callback has returned
+PASS Session closed is emitted once after peer cleanup
+PASS Teardown unlocks joining another lobby
+[OnlineSession 1930] ignored callback for a retired lobby
+PASS Retired lobby callbacks remain rejected after teardown finishes
+PASS An early enter notification preserves an in-flight host create request
+PASS Final ACK alone cannot close the host while the guest peer remains attached
+PASS Host transport remains available until guest departure
+PASS Guest departure releases the host without an additional timeout
+PASS An obsolete exit wait cannot retain a later session
+PASS Starting exit invalidates delayed battle callbacks and their queued snapshots
+PASS Late snapshot cannot reopen the battle after cinematic cleanup
+PASS Late snapshot cannot recreate freed cards while the peer is still attached
+PASS Late snapshot cannot restart stack or replacement animations during exit
+PASS Battle presentation closes before the exit handshake detaches the session
+[OnlineSession 4916] local exit finalization started
+PASS Duplicate finalize packets wait for the guest cinematic to finish
+[OnlineSession 4981] leave requested: Online-Match beendet.
+[OnlineSession 4983] local exit returned to menu
+[OnlineSession 4997] peer teardown completed
+PASS Guest returns to local mode after the animation completes
+PASS Guest releases its lobby after its cinematic
+PASS Completed exit clears its barrier for subsequent matches
+PASS Completed guest exit restores the mode menu
+MULTIPLAYER_EXIT_TESTS: PASS
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

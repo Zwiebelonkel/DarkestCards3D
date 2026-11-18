@@ -61,6 +61,7 @@ func _run() -> void:
 	DeckManager.clear_profile_state()
 	CardUpgradeManager.clear_profile_state()
 	GameCurrency.set_process(false)
+	GameCurrency._rescued_npcs["dealer"] = true
 	GameCurrency.coins = 1000000.0
 	GameCurrency.save()
 	SettingsManager.set_fullscreen(false)
@@ -102,8 +103,10 @@ func _run() -> void:
 	check(area.door.locked and not area.open(), "fresh profile cannot bypass Black Market access")
 	check(not board.focus_area.input_ray_pickable and _offers_disabled(), "market board is inactive from the hub")
 	CollectionManager.add_card("black_market_access")
+	check(not CollectionManager.has_area_access("black_market") and area.door.locked, "owning the access card leaves the market entrance locked")
+	check(CollectionManager.use_access_key("black_market_access"), "market fixture explicitly activates its access card")
 	await _settle()
-	check(not area.door.locked and main.hub_door.locked, "access card unlocks only the physical market entrance")
+	check(not area.door.locked and main.hub_door.locked, "using the access card unlocks only the physical market entrance")
 	await _face_door(area.door)
 	var hub_pose := main.camera_pivot.global_transform
 	var hub_side := main._active_side

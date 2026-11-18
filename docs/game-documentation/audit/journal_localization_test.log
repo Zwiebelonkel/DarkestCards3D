@@ -1,0 +1,7 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+JOURNAL_LOCALIZATION_LAYOUT: 980 localized entries and 1064 body pages measured
+JOURNAL_LOCALIZATION_TESTS: PASS (8841 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

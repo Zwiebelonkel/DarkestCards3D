@@ -116,14 +116,14 @@ static func get_combat_description(effect: Dictionary, compact: bool = false) ->
 			var text := Localization.text("Reflektiert %s%% des tatsächlich erlittenen Schadens von Haupt- und Lava-Treffern (gerundet). Cleave und umgeleiteter Schaden lösen keine Dornen aus.") % _format_number(float(effect.get("percent", 0.25)) * 100.0)
 			return text if compact else text + Localization.text(" Umgeht Rüstung und Ersttrefferschild. Last Stand und Grave Return können vor dem Tod retten.")
 		"cleave":
-			return Localization.text("Trifft nach dem überlebten Angriff die beiden Nachbarplätze des Ziels mit %s%% des Angriffswerts (gerundet). Zählt für Lebensraub und Kill-Effekte. Entfällt bei Lava.") % _format_number(clampf(float(effect.get("side_damage", 0.5)), 0.0, 1.0) * 100.0)
+			return Localization.text("Trifft nach dem Angriff die beiden Nachbarplätze des Ziels mit %s%% des Angriffswerts (gerundet), auch wenn der Angreifer stirbt. Zählt für Lebensraub und Kill-Effekte. Entfällt bei Lava.") % _format_number(clampf(float(effect.get("side_damage", 0.5)), 0.0, 1.0) * 100.0)
 		"lava":
 			return Localization.text("Trifft alle beim Angriffsstart vorhandenen Gegner gleichzeitig mit vollem Angriffsschaden. Nur das Hauptziel kontert; frisch nachgezogene Gegner werden nicht mitgetroffen.")
 		"double_strike", "triple_strike":
 			var hits := clampi(int(effect.get("hits", 3 if str(effect.get("type", "")) == "triple_strike" else 2)), 1, 8)
 			return Localization.text("Bis zu %d Treffer; Gegenschlag nur beim ersten. Endet bei Tod des Angreifers oder Ziels. Dornen wirken pro Treffer; Triple Strike hat Vorrang.") % hits
 		"stun":
-			return Localization.text("Nach einem überlebten Angriff mit tatsächlichem Trefferschaden setzt das überlebende Ziel mit %s%% Chance seinen nächsten gewählten Angriff aus; sein Zug endet. Gegenschläge bleiben möglich.") % _format_number(clampf(float(effect.get("chance", 1.0)), 0.0, 1.0) * 100.0)
+			return Localization.text("Nach einem Angriff mit tatsächlichem Trefferschaden setzt das überlebende Ziel mit %s%% Chance seinen nächsten gewählten Angriff aus; sein Zug endet. Gilt auch, wenn der Angreifer stirbt. Gegenschläge bleiben möglich.") % _format_number(clampf(float(effect.get("chance", 1.0)), 0.0, 1.0) * 100.0)
 		"chain_attack":
 			return Localization.text("Tötet ein Haupt-, Lava- oder Cleave-Treffer ein Ziel und überlebt der Angreifer, greift er nach dem Nachziehen einen zufälligen lebenden Gegner an. Die Kette kann weitergehen.")
 		"last_stand":
@@ -136,14 +136,16 @@ static func get_combat_description(effect: Dictionary, compact: bool = false) ->
 			return Localization.text("Multipliziert eigenen Angriffsschaden mit der Zahl identischer Karten auf beiden Tischseiten, einschließlich dieser Karte. Gegenschaden wird nicht vervielfacht.")
 		"grave_return":
 			return Localization.text("Überlebt einmal tödlichen Schaden mit 50% der maximalen HP (gerundet, mindestens 1), auch Gift, Dornen und Execute. Ein im selben Treffer verbrauchter Überlebensschutz verhindert einen weiteren Execute-Versuch.")
-		"draw_on_kill":
-			return Localization.text("Ein Kill durch Treffer, Gegenschlag, Dornen oder Cleave zieht eine Ereigniskarte aus dem gemeinsamen Stapel. Pro getöteter Karte einmal; Gift gewährt keinen solchen Kill-Zug.")
+		"draw_on_death":
+			return Localization.text("Zieht beim tatsächlichen Tod dieser Karte genau eine Event-Karte vom gemeinsamen Stapel auf die Hand ihres Besitzers. Gilt auch bei Gift, Ewigem Leiden und Selbstopferung; Überlebenseffekte lösen keinen Kartenzug aus.")
+		"eternal_suffering":
+			return Localization.text("Nur der Creditkarte angeboren. Stirbt beim eigenen Angriff sofort und belegt das überlebende Ziel auch durch Schilde mit Ewigem Leiden. Das Ziel erleidet zu Beginn seiner eigenen Züge 1, 3, 5, 7 … Schaden. Nur Nachbarheilung entfernt den Zustand; das Ziel gibt ihn nicht weiter.") + Localization.text(" Stirbt eine infizierte Karte, vergiftet sie einmalig ihre lebenden direkten Nachbarn für 3 eigene Züge. Der Giftschaden entspricht ihrem Leidens-Schadenswert beim Tod. Dieses Gift verbreitet sich nicht weiter.")
 		"curse":
-			return Localization.text("Senkt nach einem überlebten Angriff mit tatsächlichem Trefferschaden den Angriff überlebender Ziele um %d, mindestens auf 0. Die Senkung gilt für diese Karte im laufenden Kampf.") % int(effect.get("value", 2))
+			return Localization.text("Senkt nach einem Angriff mit tatsächlichem Trefferschaden den Angriff überlebender Ziele um %d, mindestens auf 0. Gilt auch, wenn der Angreifer stirbt. Die Senkung gilt für diese Karte im laufenden Kampf.") % int(effect.get("value", 2))
 		"swap_stats":
 			return Localization.text("Vertauscht beim Aufstellen die Ausgangswerte für Angriff und maximale HP. Der Effekt tauscht nicht nach jedem Treffer erneut.")
 		"random_damage":
-			return Localization.text("Würfelt pro eigenem Treffer einen Faktor zwischen %s× und %s× auf den Angriffsschaden; das Ergebnis wird gerundet. Gegenschlag nutzt den normalen Angriffswert.") % [_format_number(float(effect.get("min", 0.75))), _format_number(float(effect.get("max", 1.25)))]
+			return Localization.text("Wirft vor jedem eigenen Treffer eine Münze: je 50%% Chance auf %s× oder %s× Angriffsschaden (gerundet). Gegenschlag nutzt den normalen Angriffswert.") % [_format_number(0.75), _format_number(2.0)]
 		"bodyguard":
 			var text := Localization.text("Übernimmt %s%% des Rohschadens eines direkt benachbarten Verbündeten (gerundet). Bei zwei lebenden Beschützern hat der linke Vorrang; beide Karten nutzen ihre eigene Rüstung und ihren eigenen Schild.") % _format_number(clampf(float(effect.get("percent", 0.5)), 0.0, 1.0) * 100.0)
 			return text if compact else text + Localization.text(" Der Schild des ursprünglichen Ziels blockiert den ganzen Treffer vor der Aufteilung. Umgeleiteter Schaden wird nicht erneut geteilt; Gift und Dornen werden nie geteilt.")
@@ -157,6 +159,8 @@ static func get_value_badge(effect: Dictionary) -> String:
 	var effect_type := str(effect.get("type", "")).strip_edges().to_lower()
 
 	match effect_type:
+		"eternal_suffering":
+			return "1, 3, 5, 7 …"
 		"armor":
 			return Localization.text("%d%% ARMOR") % _as_percent(clampf(float(effect.get("value", 0.25)), 0.0, 0.95))
 		"lifesteal":
@@ -183,10 +187,7 @@ static func get_value_badge(effect: Dictionary) -> String:
 				int(effect.get("turns", 3)),
 			]
 		"random_damage":
-			return "%s–%s×" % [
-				_format_number(float(effect.get("min", 0.75))),
-				_format_number(float(effect.get("max", 1.25))),
-			]
+			return "0.75× / 2×"
 		"double_strike", "triple_strike":
 			return Localization.text("%d HITS") % clampi(int(effect.get("hits", 2 if effect_type == "double_strike" else 3)), 1, 8)
 
@@ -213,10 +214,12 @@ static func get_icon_path(effect: Dictionary) -> String:
 		return EFFECT_PLACEHOLDER
 
 	var file_name := effect_type
+	if effect_type == "eternal_suffering":
+		file_name = "eternalSuffering"
+	elif effect_type == "draw_on_death":
+		file_name = "draw_on_kill"
 	if effect_type == "armor":
-		var percentage := _as_percent(effect.get("value", 0.25))
-		if percentage == 25 or percentage == 50 or percentage == 75:
-			file_name = "armor_%d" % percentage
+		file_name = "armor_%d" % _as_percent(effect.get("value", 0.25))
 
 	var candidate := EFFECT_ICON_PATH + file_name + ".png"
 	if ResourceLoader.exists(candidate):

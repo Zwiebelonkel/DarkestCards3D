@@ -68,7 +68,7 @@ func _check_catalog() -> void:
 		check(CardDatabase.get_random_card().is_empty() and CardDatabase.get_random_card_by_rarity("secret").is_empty() and CardDatabase.get_random_card_for_current_pack().is_empty(), "all random card APIs reject " + card_id + " even when it is the only candidate")
 		CardDatabase.cards = cards
 	var secret_ids: Array = cards.filter(func(card: Dictionary): return card.get("rarity") == "secret").map(func(card: Dictionary): return card["id"])
-	check(secret_ids.size() == 3 and secret_ids.all(func(card_id: String): return card_id in CollectionManager.PROP_SECRET_CARD_IDS), "only USB, Cigarettes and Seagull Milk are Secret")
+	check(secret_ids.size() == 4 and secret_ids.all(func(card_id: String): return card_id in CollectionManager.PROP_SECRET_CARD_IDS or card_id == "dman"), "prop Secrets and the separate DMAN wall discovery use Secret rarity")
 	for card_id: String in ["developer", "missing_texture"]:
 		var data := CardDatabase.get_card(card_id)
 		check(data.get("rarity") == "exotic" and CardDatabase.get_cards_by_rarity("exotic").has(data), card_id + " is again an ordinary Exotic reward")

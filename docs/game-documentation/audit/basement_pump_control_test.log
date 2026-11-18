@@ -1,0 +1,71 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 118 Karten
+PASS fixture unlocks the basement through its access key
+PASS fixture saves to its isolated profile
+PASS the pump cabinet cannot receive input from the hub
+PASS initial positions match two green lamps and one yellow lamp
+PASS actual doorway travel keeps cabinet input disabled
+PASS actual door flight enters the basement
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS hover physically moves the shared camera toward the box
+PASS stationary hover keeps the camera stable
+PASS left click flips lever 0 exactly once
+PASS lever 0 and its LED agree: up yellow, down green
+PASS lever 0 leaves both other levers and lamps unchanged
+PASS a second click reverses lever 0
+PASS left click flips lever 1 exactly once
+PASS lever 1 and its LED agree: up yellow, down green
+PASS lever 1 leaves both other levers and lamps unchanged
+PASS a second click reverses lever 1
+PASS left click flips lever 2 exactly once
+PASS lever 2 and its LED agree: up yellow, down green
+PASS lever 2 leaves both other levers and lamps unchanged
+PASS a second click reverses lever 2
+PASS all three levers can be up together
+PASS all three levers can be down together
+PASS rapid repeated clicks settle at the latest requested position
+PASS right click does not operate a lever
+PASS journal releases camera focus and blocks all levers
+PASS clicks through the journal do not operate the box
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS pause blocks the box and releases camera ownership
+PASS pause restores the camera before the tree stops
+PASS paused clicks cannot flip a switch
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS online pause also blocks input while the tree keeps running
+PASS online pause clicks cannot flip a switch
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS moving away returns the camera to its ordinary view
+PASS starting a turn immediately blocks the switches
+PASS the cabinet remains disabled on another wall
+PASS the actual return door is usable after operating the box
+PASS leaving the basement releases cabinet input and focus
+PASS the real door permits another basement visit
+PASS the box exposes a real hover target in the normal basement view
+PASS hover selects the box in the shared camera focus controller
+PASS the focused view keeps lever 0 visible and reachable
+PASS the focused view keeps lever 1 visible and reachable
+PASS the focused view keeps lever 2 visible and reachable
+PASS room travel preserves the positions during the current game session
+PASS operating the box does not change cards or currency
+PASS operating the box leaves the catalog and profile save bytes unchanged
+BASEMENT_PUMP_CONTROL_TESTS: PASS (65 checks)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)
