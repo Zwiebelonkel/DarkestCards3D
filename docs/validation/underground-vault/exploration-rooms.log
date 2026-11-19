@@ -1,0 +1,107 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 123 Karten
+PASS: Main starts in its normal hub
+PASS: only the normal ambience plays before visiting an exploration room
+PASS: GraveyardRoom is a permanent child of Main
+PASS: GraveyardRoom uses Main's existing world and viewport
+PASS: GraveyardRoom has no separate camera or destination viewport
+PASS: GraveyardRoom supplies a shared-camera anchor and physical return door
+PASS: BasementRoom is a permanent child of Main
+PASS: BasementRoom uses Main's existing world and viewport
+PASS: BasementRoom has no separate camera or destination viewport
+PASS: BasementRoom supplies a shared-camera anchor and physical return door
+PASS: black_market remains inaccessible with a fresh collection
+PASS: graveyard remains inaccessible with a fresh collection
+PASS: basement remains inaccessible with a fresh collection
+PASS: new room access does not bypass the independent slot-room key
+PASS: graveyard ownership waits for explicit key use
+PASS: graveyard fixture explicitly activates its access key
+PASS: graveyard key activation unlocks the existing physical entrance
+PASS: graveyard entrance requests Main travel without opening a screen
+PASS: graveyard-outbound source opening is visible from a normal cardinal camera view
+PASS: graveyard-outbound source opening is unobstructed to the actual camera ray
+PASS: graveyard-outbound real mouse down/up starts a flight before changing the current room
+PASS: graveyard-outbound flight blocks turns, repeat travel and both doorway hitboxes
+PASS: graveyard-outbound both physical doors open during the camera flight
+PASS: graveyard-outbound actual turn and Escape input cannot interrupt the flight
+PASS: graveyard-outbound camera visibly traverses the passage before arrival
+PASS: graveyard-outbound old and new atmospheres crossfade during actual door travel
+PASS: graveyard-outbound finishes at the requested room
+PASS: graveyard-outbound arrival keeps only the destination atmosphere at its normal level
+PASS: graveyard-outbound ambience loops independently of the filtered music
+PASS: graveyard-outbound keeps the same active Main camera and World3D throughout the flight
+PASS: graveyard-outbound sampled camera path passes through both physical doorway volumes
+PASS: graveyard arrival uses its exact shared-camera anchor position and facing at unit scale
+PASS: graveyard arrival preserves Main's camera lens orientation
+PASS: graveyard arrival retains the existing room and creates no overlay
+PASS: graveyard accepts its return door while remote doors stay inactive
+PASS: graveyard rejects distant hub screen hover while preserving its own room focus
+PASS: graveyard eight real A/D inputs preserve its center and exact cardinal facing
+PASS: graveyard one D key turns the shared camera by exactly 90 degrees
+PASS: graveyard Escape opens normal Pause without returning or deleting the room
+PASS: graveyard closing Pause restores the same physical room and pose
+PASS: graveyard key removal locks entry while preserving the physical return route
+PASS: graveyard-return source opening is visible from a normal cardinal camera view
+PASS: graveyard-return source opening is unobstructed to the actual camera ray
+PASS: graveyard-return real mouse down/up starts a flight before changing the current room
+PASS: graveyard-return flight blocks turns, repeat travel and both doorway hitboxes
+PASS: graveyard-return both physical doors open during the camera flight
+PASS: graveyard-return actual turn and Escape input cannot interrupt the flight
+PASS: graveyard-return camera visibly traverses the passage before arrival
+PASS: graveyard-return old and new atmospheres crossfade during actual door travel
+PASS: graveyard-return finishes at the requested room
+PASS: graveyard-return arrival keeps only the destination atmosphere at its normal level
+PASS: graveyard-return ambience loops independently of the filtered music
+PASS: graveyard-return keeps the same active Main camera and World3D throughout the flight
+PASS: graveyard-return sampled camera path passes through both physical doorway volumes
+PASS: graveyard return restores the original hub position facing inward toward its normal station
+PASS: graveyard cannot be reentered after its key was removed
+PASS: graveyard restoring the saved key makes the same entrance available again
+PASS: basement ownership waits for explicit key use
+PASS: basement fixture explicitly activates its access key
+PASS: basement key activation unlocks the existing physical entrance
+PASS: basement entrance requests Main travel without opening a screen
+PASS: basement-outbound source opening is visible from a normal cardinal camera view
+PASS: basement-outbound source opening is unobstructed to the actual camera ray
+PASS: basement-outbound real mouse down/up starts a flight before changing the current room
+PASS: basement-outbound flight blocks turns, repeat travel and both doorway hitboxes
+PASS: basement-outbound both physical doors open during the camera flight
+PASS: basement-outbound actual turn and Escape input cannot interrupt the flight
+PASS: basement-outbound camera visibly traverses the passage before arrival
+PASS: basement-outbound old and new atmospheres crossfade during actual door travel
+PASS: basement-outbound finishes at the requested room
+PASS: basement-outbound arrival keeps only the destination atmosphere at its normal level
+PASS: basement-outbound ambience loops independently of the filtered music
+PASS: basement-outbound keeps the same active Main camera and World3D throughout the flight
+PASS: basement-outbound sampled camera path passes through both physical doorway volumes
+PASS: basement arrival uses its exact shared-camera anchor position and facing at unit scale
+PASS: basement arrival preserves Main's camera lens orientation
+PASS: basement arrival retains the existing room and creates no overlay
+PASS: basement accepts its return door while remote doors stay inactive
+PASS: basement rejects distant hub screen hover while preserving its own room focus
+PASS: basement eight real A/D inputs preserve its center and exact cardinal facing
+PASS: basement one D key turns the shared camera by exactly 90 degrees
+PASS: basement Escape opens normal Pause without returning or deleting the room
+PASS: basement closing Pause restores the same physical room and pose
+PASS: basement key removal locks entry while preserving the physical return route
+PASS: basement-return source opening is visible from a normal cardinal camera view
+PASS: basement-return source opening is unobstructed to the actual camera ray
+PASS: basement-return real mouse down/up starts a flight before changing the current room
+PASS: basement-return flight blocks turns, repeat travel and both doorway hitboxes
+PASS: basement-return both physical doors open during the camera flight
+PASS: basement-return actual turn and Escape input cannot interrupt the flight
+PASS: basement-return camera visibly traverses the passage before arrival
+PASS: basement-return old and new atmospheres crossfade during actual door travel
+PASS: basement-return finishes at the requested room
+PASS: basement-return arrival keeps only the destination atmosphere at its normal level
+PASS: basement-return ambience loops independently of the filtered music
+PASS: basement-return keeps the same active Main camera and World3D throughout the flight
+PASS: basement-return sampled camera path passes through both physical doorway volumes
+PASS: basement return restores the original hub position facing inward toward its normal station
+PASS: basement cannot be reentered after its key was removed
+PASS: basement restoring the saved key makes the same entrance available again
+PASS: both round trips emit exactly one room_changed event per arrival
+PASS: physical room visits preserve slot access and return to an unpaused hub
+EXPLORATION_ROOMS_TESTS: PASS (102 checks)

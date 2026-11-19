@@ -5,6 +5,7 @@ const CURSED_THEME := preload("res://assets/sounds/theme4cursed.mp3")
 const TRANSITION_DURATION := 0.3
 const SILENT_DB := -80.0
 const COCAINE_SPEED := 1.35
+const MDMA_SPEED := 0.85
 
 var _layers: AudioStreamSynchronized
 var _mix := 0.0
@@ -12,6 +13,8 @@ var _cursed := false
 var _transition: Tween
 var _cocaine_pitch_active := false
 var _cocaine_base_pitch := 1.0
+var _mdma_pitch_active := false
+var _mdma_base_pitch := 1.0
 
 
 func _ready() -> void:
@@ -62,3 +65,14 @@ func set_cocaine_effect_strength(strength: float) -> void:
 		pitch_scale = _cocaine_base_pitch * lerpf(1.0, COCAINE_SPEED, weight)
 		if weight <= 0.0:
 			_cocaine_pitch_active = false
+
+
+func set_mdma_effect_strength(strength: float) -> void:
+	var weight := clampf(strength, 0.0, 1.0)
+	if weight > 0.0 and not _mdma_pitch_active:
+		_mdma_base_pitch = pitch_scale
+		_mdma_pitch_active = true
+	if _mdma_pitch_active:
+		pitch_scale = _mdma_base_pitch * lerpf(1.0, MDMA_SPEED, weight)
+		if weight <= 0.0:
+			_mdma_pitch_active = false

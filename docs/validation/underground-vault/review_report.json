@@ -1,0 +1,599 @@
+{
+	"audio_driver": "Dummy",
+	"captures": [
+		"res://test-user/vault/graveyard-closed.png",
+		"res://test-user/vault/graveyard-sliding.png",
+		"res://test-user/vault/graveyard-fading.png",
+		"res://test-user/vault/graveyard-open.png",
+		"res://test-user/vault/stair-hover.png",
+		"res://test-user/vault/stair-descent.png",
+		"res://test-user/vault/vault-nave.png",
+		"res://test-user/vault/vault-side-1.png",
+		"res://test-user/vault/vault-side-2.png",
+		"res://test-user/vault/vault-side-3.png",
+		"res://test-user/vault/vault-side-0.png",
+		"res://test-user/vault/vault-exit-hover.png",
+		"res://test-user/vault/graveyard-return.png",
+		"res://test-user/vault/asset-front.png",
+		"res://test-user/vault/asset-back.png",
+		"res://test-user/vault/asset-left.png",
+		"res://test-user/vault/asset-right.png",
+		"res://test-user/vault/asset-roof.png",
+		"res://test-user/vault/portal-exterior.png",
+		"res://test-user/vault/portal-interior.png",
+		"res://test-user/vault/capital-junction.png",
+		"res://test-user/vault/roof-junction.png",
+		"res://test-user/vault/side-aisle.png"
+	],
+	"checks": 59,
+	"diagnostics": {
+		"asset-back": {
+			"camera": "[X: (-1.0, 0.0, 0.0), Y: (0.0, 0.98995, 0.141421), Z: (-0.0, 0.141421, -0.98995), O: (0.0, 14.0, -70.0)]",
+			"mean_luminance": 0.0354844973014231,
+			"utc": "2026-11-18T22:22:16"
+		},
+		"asset-front": {
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.98995, -0.141421), Z: (0.0, 0.141421, 0.98995), O: (0.0, 14.0, 70.0)]",
+			"mean_luminance": 0.0372406284813685,
+			"utc": "2026-11-18T22:22:16"
+		},
+		"asset-left": {
+			"camera": "[X: (-0.0, 0.0, 1.0), Y: (0.203954, 0.97898, 0.0), Z: (-0.97898, 0.203954, -0.0), O: (-48.0, 14.0, 0.0)]",
+			"mean_luminance": 0.0635907987059381,
+			"utc": "2026-11-18T22:22:17"
+		},
+		"asset-right": {
+			"camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.203954, 0.97898, 0.0), Z: (0.97898, 0.203954, -0.0), O: (48.0, 14.0, 0.0)]",
+			"mean_luminance": 0.0637367963010694,
+			"utc": "2026-11-18T22:22:17"
+		},
+		"asset-roof": {
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.287348, -0.957826), Z: (0.0, 0.957826, 0.287348), O: (0.0, 50.0, 15.0)]",
+			"mean_luminance": 0.0818806671765297,
+			"utc": "2026-11-18T22:22:17"
+		},
+		"capital-junction": {
+			"camera": "[X: (0.503871, 0.0, 0.863779), Y: (-0.02486, 0.999586, 0.014502), Z: (-0.863421, -0.028781, 0.503662), O: (6.0, 4.1, 22.0)]",
+			"mean_luminance": 0.201214750335705,
+			"utc": "2026-11-18T22:22:17"
+		},
+		"graveyard-closed": {
+			"camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, 0.0), Z: (0.978148, 0.207912, -0.0), O: (-4.359581, 2.050003, 42.6094)]",
+			"mean_luminance": 0.0174369067354658,
+			"utc": "2026-11-18T22:22:00"
+		},
+		"graveyard-fading": {
+			"camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, 0.0), Z: (0.978148, 0.207912, -0.0), O: (-4.359581, 2.050003, 42.6094)]",
+			"mean_luminance": 0.0313768465711011,
+			"utc": "2026-11-18T22:22:08"
+		},
+		"graveyard-open": {
+			"camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, 0.0), Z: (0.978148, 0.207912, -0.0), O: (-4.359581, 2.050003, 42.6094)]",
+			"mean_luminance": 0.0314262685696603,
+			"utc": "2026-11-18T22:22:09"
+		},
+		"graveyard-return": {
+			"camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, 0.0), Z: (0.978148, 0.207912, -0.0), O: (-4.359581, 2.050003, 42.6094)]",
+			"mean_luminance": 0.0581650706014673,
+			"utc": "2026-11-18T22:22:15"
+		},
+		"graveyard-sliding": {
+			"camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, 0.0), Z: (0.978148, 0.207912, -0.0), O: (-4.359581, 2.050003, 42.6094)]",
+			"mean_luminance": 0.0322830740148807,
+			"utc": "2026-11-18T22:22:06"
+		},
+		"portal-exterior": {
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 2.1, 35.0)]",
+			"mean_luminance": 0.176737844002254,
+			"utc": "2026-11-18T22:22:17"
+		},
+		"portal-interior": {
+			"camera": "[X: (-0.907959, 0.0, -0.419058), Y: (0.0, 1.0, 0.0), Z: (0.419058, 0.0, -0.907959), O: (3.0, 2.1, 25.0)]",
+			"mean_luminance": 0.204520368984799,
+			"utc": "2026-11-18T22:22:17"
+		},
+		"roof-junction": {
+			"camera": "[X: (-1.0, 0.0, 0.0), Y: (-0.0, 0.972806, -0.23162), Z: (-0.0, -0.23162, -0.972806), O: (0.0, 10.8, 27.0)]",
+			"mean_luminance": 0.100876329140655,
+			"utc": "2026-11-18T22:22:18"
+		},
+		"side-aisle": {
+			"camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (12.0, 2.0, 24.0)]",
+			"mean_luminance": 0.170681696316814,
+			"utc": "2026-11-18T22:22:18"
+		},
+		"stair-descent": {
+			"camera": "[X: (0.0, 0.0, -1.0), Y: (-0.561676, 0.827357, -0.0), Z: (0.827357, 0.561676, 0.0), O: (-19.81433, -7.406118, 42.69153)]",
+			"mean_luminance": 0.0950790773695367,
+			"utc": "2026-11-18T22:22:10"
+		},
+		"stair-hover": {
+			"camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, 0.0), Z: (0.978148, 0.207912, -0.0), O: (-4.359581, 2.050003, 42.6094)]",
+			"mean_luminance": 0.0319568119396713,
+			"utc": "2026-11-18T22:22:10"
+		},
+		"vault-exit-hover": {
+			"camera": "[X: (-0.0, 0.0, 1.0), Y: (0.207912, 0.978148, 0.0), Z: (-0.978148, 0.207912, -0.0), O: (-47.76167, -16.52492, 42.69153)]",
+			"mean_luminance": 0.30412802446906,
+			"utc": "2026-11-18T22:22:14"
+		},
+		"vault-nave": {
+			"camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, 0.0), Z: (0.978148, 0.207912, -0.0), O: (-47.88083, -16.52492, 42.69153)]",
+			"mean_luminance": 0.323624323641043,
+			"utc": "2026-11-18T22:22:11"
+		},
+		"vault-side-0": {
+			"camera": "[X: (0.0, 0.0, -1.0), Y: (-0.207912, 0.978148, -0.0), Z: (0.978148, 0.207912, 0.0), O: (-47.88083, -16.52492, 42.69153)]",
+			"mean_luminance": 0.324166616932435,
+			"utc": "2026-11-18T22:22:13"
+		},
+		"vault-side-1": {
+			"camera": "[X: (-1.0, 0.0, 0.0), Y: (0.0, 0.978148, 0.207912), Z: (-0.0, 0.207912, -0.978148), O: (-47.82125, -16.52492, 42.75111)]",
+			"mean_luminance": 0.289420729717719,
+			"utc": "2026-11-18T22:22:12"
+		},
+		"vault-side-2": {
+			"camera": "[X: (0.0, 0.0, 1.0), Y: (0.207912, 0.978148, -0.0), Z: (-0.978148, 0.207912, 0.0), O: (-47.76167, -16.52492, 42.69153)]",
+			"mean_luminance": 0.303137159309837,
+			"utc": "2026-11-18T22:22:12"
+		},
+		"vault-side-3": {
+			"camera": "[X: (1.0, 0.0, -0.0), Y: (-0.0, 0.978148, -0.207912), Z: (0.0, 0.207912, 0.978148), O: (-47.82125, -16.52492, 42.63195)]",
+			"mean_luminance": 0.289868579612133,
+			"utc": "2026-11-18T22:22:13"
+		}
+	},
+	"failures": 0,
+	"fog_discontinuities": 0,
+	"graveyard_before": {
+		"draw_calls": 38,
+		"mean_frame_ms": 16.6652333333333,
+		"p95_frame_ms": 16.704
+	},
+	"graveyard_open": {
+		"draw_calls": 38,
+		"mean_frame_ms": 16.6656666666667,
+		"p95_frame_ms": 16.781
+	},
+	"route_obstructions": 0,
+	"route_samples": [
+		{
+			"obstructions": 0,
+			"position": "(-5.999819, 1.292341, 42.63696)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-6.818614, 0.902511, 42.65074)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-7.636077, 0.505463, 42.66452)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-8.451727, 0.100811, 42.6783)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-9.262593, -0.315477, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-10.01787, -0.817971, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-10.77247, -1.322166, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-11.52622, -1.828481, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-12.27913, -2.336914, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-13.03139, -2.846991, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-13.78335, -3.357809, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-14.53542, -3.868391, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-15.28778, -4.378225, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-16.0406, -4.886909, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-16.79401, -5.394125, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-17.54808, -5.899668, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-18.30284, -6.403458, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-19.05828, -6.905548, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-19.81433, -7.406118, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-19.81433, -7.406118, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-21.26531, -8.362909, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-22.08846, -8.882106, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-22.84987, -9.359333, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-23.60973, -9.839594, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-24.36809, -10.32341, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-25.12508, -10.81124, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-25.8809, -11.30342, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-26.63582, -11.80015, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-27.39014, -12.30148, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-28.14418, -12.8073, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-28.89823, -13.31735, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-29.65253, -13.83124, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-30.4073, -14.34847, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-31.16264, -14.86853, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-31.9186, -15.39086, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-32.67515, -15.91495, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-33.4322, -16.44038, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-34.27092, -16.67605, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-35.17801, -16.66554, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-36.0848, -16.65358, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-36.99139, -16.64023, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-37.89782, -16.62539, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-38.80423, -16.60955, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-39.71085, -16.5939, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-40.61778, -16.57953, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-41.52507, -16.56721, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-42.43266, -16.5573, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-43.34046, -16.54971, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-44.24836, -16.54392, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-45.15625, -16.53922, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-46.06408, -16.53482, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-46.97184, -16.53014, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-47.87956, -16.52493, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-47.88083, -16.52492, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-45.97022, -16.4719, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-45.07433, -16.45214, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-44.17817, -16.43682, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-43.28147, -16.4264, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-42.38381, -16.4216, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-41.48458, -16.42316, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-40.58304, -16.43166, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-39.67846, -16.44729, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-38.77028, -16.46978, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-37.8587, -16.49835, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-36.94287, -16.53192, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-36.02362, -16.5694, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-35.10121, -16.61019, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-34.17571, -16.65386, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-33.34236, -16.40036, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-32.58717, -15.90047, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-31.83334, -15.39926, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-31.0809, -14.89683, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-30.32957, -14.39322, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-29.57918, -13.88869, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-28.82944, -13.38353, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-28.07999, -12.87809, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-27.33044, -12.3727, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-26.58047, -11.86775, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-25.82972, -11.36354, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-25.07799, -10.8604, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-24.32499, -10.35844, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-23.57062, -9.857759, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-22.81492, -9.358388, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-22.05807, -8.86028, 42.69153)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-21.30064, -8.362366, 42.69156)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-20.54437, -7.862554, 42.69167)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-19.7876, -7.363331, 42.69176)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-19.03073, -6.864373, 42.69182)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-18.27413, -6.365308, 42.69186)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-17.51809, -5.865756, 42.69189)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-16.76297, -5.365452, 42.69189)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-16.00885, -4.864059, 42.69189)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-15.25594, -4.361485, 42.69188)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-14.50412, -3.857574, 42.69186)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-13.75337, -3.3524, 42.69184)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-13.00377, -2.845888, 42.69183)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-12.25492, -2.338394, 42.69181)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-11.50595, -1.83075, 42.69179)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-10.75625, -1.323862, 42.69176)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-10.00537, -0.818361, 42.6917)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-9.253098, -0.314535, 42.69161)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-8.546875, 0.045329, 42.97694)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-7.710433, 0.44506, 43.18737)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-6.798361, 0.870448, 43.2552)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-5.888554, 1.295624, 43.16003)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-5.057649, 1.694859, 42.925)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-4.360919, 2.049294, 42.61011)"
+		},
+		{
+			"obstructions": 0,
+			"position": "(-4.359581, 2.050003, 42.6094)"
+		}
+	],
+	"scene_modified_unix": 1795038092,
+	"vault": {
+		"draw_calls": 22,
+		"mean_frame_ms": 16.6658333333333,
+		"p95_frame_ms": 16.748
+	}
+}

@@ -30,6 +30,7 @@ const NPC_RESCUE_FACE_UVS := {
 const ROOM_AMBIENCE := {
 	2: preload("res://assets/sounds/atmoGraveyard.mp3"),
 	3: preload("res://assets/sounds/atmoBasement.mp3"),
+	5: preload("res://assets/sounds/atmoBasement.mp3"),
 }
 const SIDE_NAMES := [
 	"Game Table",
@@ -107,6 +108,15 @@ const SIDE_NAMES := [
 @onready var slot_machine: SoulSlotMachine = $EmptyRoom/SlotMachine
 @onready var secret_wall_input: Node3D = $EmptyRoom/SecretWallInput
 @onready var graveyard_jester: GraveyardJester = $GraveyardRoom
+var grave_puzzle: Node3D
+var grave_vault_entrance: Node3D
+var underground_vault: Node3D
+var _vault_grave_pose := Transform3D.IDENTITY
+var _vault_grave_origin_y := 0.0
+var _vault_grave_step := 0
+var _vault_grave_side := 0
+var _vault_grave_environment: Environment
+@export_range(0.1, 20.0, 0.1) var vault_travel_duration := 5.5
 @onready var black_market_board: BlackMarketBoard = $BlackMarketRoom/OfferBoard
 @onready var dealer_dialogue: DealerDialogue = $BlackMarketRoom/DealerDialogue
 @onready var basement_cat: BasementCatEncounter = $BasementRoom/BasementCatEncounter
@@ -226,6 +236,7 @@ var _playtime_encounter: Node3D
 var _greeting: Node3D
 var _satan_jumpscare: JUMPSCARE_SCRIPT
 var _satan_stream: Node3D
+var shotgun_encounter: Node3D
 var _jumpscare_active := false
 var _cinematic_input_block_frame := -1
 var _loss_music_tween: Tween = null
@@ -284,6 +295,8 @@ func _ready() -> void:
 	_setup_screen_camera_focus()
 	graveyard_jester.camera = main_camera
 	graveyard_jester.modal_changed.connect(_on_jester_modal_changed)
+	_setup_grave_puzzle()
+	_setup_underground_vault()
 	_connect_pack_opening_focus_state()
 	_connect_loss_exit_cinematic()
 	_disable_embedded_scene_controls()
@@ -315,6 +328,10 @@ func _ready() -> void:
 	imprisoned_npcs.presentation_changed.connect(_refresh_npc_rescue_state)
 	_refresh_npc_rescue_state()
 	_setup_satan_jumpscare()
+	shotgun_encounter = preload("res://scripts/main/ShotgunEncounter.gd").new()
+	shotgun_encounter.name = "ShotgunEncounter"
+	add_child(shotgun_encounter)
+	shotgun_encounter.configure(self, scene_pivot.get_node("GameTable") as GameTable)
 	weed_pickup.configure(self, $Hint1, $EmptyRoom/hint2)
 	GameCurrency.mark_basement_cat_left()
 	PlaytimeManager.timer_reset.connect(_on_playtime_timer_reset)
@@ -480,6 +497,8 @@ func _on_playtime_timer_reset() -> void:
 
 
 func _try_start_playtime_encounter() -> bool:
+	if is_instance_valid(shotgun_encounter) and shotgun_encounter.blocks_satan_interactions():
+		return false
 	if is_instance_valid(_playtime_encounter):
 		return true
 	if not PlaytimeManager.is_encounter_pending() or _active_room != 0:
@@ -597,6 +616,8 @@ func _setup_satan_jumpscare() -> void:
 
 
 func _satan_jumpscare_context_is_safe() -> bool:
+	if is_instance_valid(shotgun_encounter) and shotgun_encounter.blocks_satan_interactions():
+		return false
 	if _jumpscare_active or not _can_turn(false) or _active_room != 0 or _active_side != 0:
 		return false
 	if NetworkManager.has_active_session() or NetworkManager.is_lobby_operation_pending():
@@ -681,6 +702,9 @@ func _input(event: InputEvent) -> void:
 	if _npc_rescue_intro_active:
 		return
 	if _greeting_active or _jumpscare_active:
+		get_viewport().set_input_as_handled()
+		return
+	if is_instance_valid(shotgun_encounter) and shotgun_encounter.handle_input(event):
 		get_viewport().set_input_as_handled()
 		return
 	if is_instance_valid(bed_seating) and bed_seating.handle_input(event):
@@ -771,6 +795,8 @@ func _process(delta: float) -> void:
 		return
 	if _greeting_active or _jumpscare_active or _npc_rescue_intro_active:
 		return
+	if is_instance_valid(shotgun_encounter) and shotgun_encounter.is_busy():
+		return
 	if _try_start_npc_rescue_intro():
 		return
 	_update_walking_steps(delta)
@@ -790,6 +816,7 @@ func _process(delta: float) -> void:
 		and not _is_angel_busy()
 		and not _is_basement_cat_busy()
 		and not _is_boiler_dragging()
+		and not _is_ritual_busy()
 		and not _is_journal_active()
 		and not _is_progression_area_open()
 		and not (pause_menu != null and pause_menu.visible)
@@ -831,6 +858,12 @@ func _setup_turn_arrows() -> void:
 
 
 func _can_turn(allow_interrupt: bool = true) -> bool:
+	if is_instance_valid(shotgun_encounter) and shotgun_encounter.is_busy():
+		return false
+	if _is_ritual_busy():
+		return false
+	if _is_grave_vault_opening():
+		return false
 	if is_instance_valid(_playtime_encounter):
 		return false
 	if _is_bed_busy():
@@ -1039,6 +1072,10 @@ func _ease(t: float, kind: EaseKind) -> float:
 
 
 func _can_travel_between_rooms() -> bool:
+	if _is_ritual_busy():
+		return false
+	if _is_grave_vault_opening():
+		return false
 	if _is_bed_busy():
 		return false
 	if _greeting_active or _jumpscare_active or _is_boiler_dragging():
@@ -1081,6 +1118,8 @@ func _update_room_door_interaction() -> void:
 	_update_angel_interaction()
 	_update_black_market_interaction()
 	_update_basement_cat_context()
+	_update_grave_puzzle_interaction()
+	_update_underground_vault_interaction()
 	_update_basement_boiler_interaction()
 	basement_pump_control.set_interaction_enabled(_pump_control_context_is_safe())
 	crypt_gate.set_interaction_enabled(_crypt_gate_context_is_safe())
@@ -1271,6 +1310,10 @@ func _is_journal_active() -> bool:
 
 
 func _journal_context_is_safe() -> bool:
+	if _is_ritual_busy():
+		return false
+	if _is_grave_vault_opening():
+		return false
 	if _is_bed_busy():
 		return false
 	if _greeting_active or _jumpscare_active or _is_boiler_dragging():
@@ -1317,7 +1360,7 @@ func _toggle_journal() -> void:
 
 
 func _set_journal_input_blocked(blocked: bool) -> void:
-	blocked = blocked or is_instance_valid(_playtime_encounter) or _greeting_active or _jumpscare_active or _is_progression_area_open()
+	blocked = blocked or is_instance_valid(_playtime_encounter) or _greeting_active or _jumpscare_active or _is_progression_area_open() or (is_instance_valid(shotgun_encounter) and shotgun_encounter.is_busy())
 	var game_table := scene_pivot.get_node_or_null("GameTable") as GameTable
 	if game_table != null:
 		game_table.set_journal_input_blocked(blocked)
@@ -1550,6 +1593,180 @@ func _jester_context_is_safe() -> bool:
 func _update_jester_interaction() -> void:
 	if is_instance_valid(graveyard_jester):
 		graveyard_jester.set_interaction_enabled(_jester_context_is_safe())
+
+
+func _setup_grave_puzzle() -> void:
+	grave_puzzle = preload("res://scripts/rooms/GraveNamePuzzle.gd").new()
+	grave_puzzle.name = "GraveNamePuzzle"
+	grave_puzzle.camera = main_camera
+	grave_puzzle.context_available = _grave_puzzle_context_is_safe
+	$GraveyardRoom.add_child(grave_puzzle)
+
+
+func _grave_puzzle_context_is_safe() -> bool:
+	return (_active_room == 2 and not _crypt_gate_close and _can_travel_between_rooms()
+		and not _door_key_view_active and not pause_menu.settings_menu.visible)
+
+
+func _update_grave_puzzle_interaction() -> void:
+	if is_instance_valid(grave_puzzle):
+		var opened: bool = is_instance_valid(grave_vault_entrance) and (grave_vault_entrance.is_open or grave_vault_entrance.is_opening)
+		grave_puzzle.set_interaction_enabled(_grave_puzzle_context_is_safe() and not opened)
+		if _active_room != 2:
+			grave_puzzle.cancel_attempt()
+
+
+func _setup_underground_vault() -> void:
+	grave_vault_entrance = preload("res://scripts/rooms/GraveVaultEntrance.gd").new()
+	grave_vault_entrance.name = "GraveVaultEntrance"
+	grave_vault_entrance.position = Vector3(3.0, 0, -6.045)
+	grave_vault_entrance.rotation.y = -PI * 0.5
+	grave_vault_entrance.camera = main_camera
+	grave_vault_entrance.context_available = _grave_puzzle_context_is_safe
+	$GraveyardRoom.add_child(grave_vault_entrance)
+	grave_vault_entrance.enter_requested.connect(_enter_underground_vault)
+	grave_vault_entrance.opening_changed.connect(_on_grave_vault_opening_changed)
+	grave_vault_entrance.configure(grave_puzzle)
+	underground_vault = preload("res://scenes/rooms/UndergroundVault.tscn").instantiate()
+	underground_vault.name = "UndergroundVault"
+	underground_vault.camera = main_camera
+	underground_vault.context_available = _underground_vault_context_is_safe
+	add_child(underground_vault)
+	var basis := grave_vault_entrance.global_basis.orthonormalized()
+	var bottom := grave_vault_entrance.stairs.get_node("BottomFloor") as Marker3D
+	var entrance := underground_vault.get_node("EntranceFloor") as Marker3D
+	underground_vault.global_transform = Transform3D(basis, bottom.global_position - basis * entrance.position)
+	underground_vault.hide()
+	underground_vault.exit_requested.connect(_leave_underground_vault)
+	var shrine := underground_vault.get_node_or_null("RitualShrine")
+	if shrine != null:
+		shrine.camera = main_camera
+		shrine.focus_controller = screen_camera_focus
+		screen_camera_focus.register_screen(shrine.focus_area, 0, 5)
+
+
+func _is_grave_vault_opening() -> bool:
+	return is_instance_valid(grave_vault_entrance) and grave_vault_entrance.is_opening
+
+
+func _on_grave_vault_opening_changed(_opening: bool) -> void:
+	_update_room_door_interaction()
+	_update_screen_camera_focus_context()
+	if is_instance_valid(turn_arrows):
+		turn_arrows.refresh()
+
+
+func _underground_vault_context_is_safe() -> bool:
+	return _active_room == 5 and _can_travel_between_rooms() and not pause_menu.settings_menu.visible
+
+
+func _update_underground_vault_interaction() -> void:
+	if is_instance_valid(grave_vault_entrance):
+		grave_vault_entrance.set_interaction_enabled(_grave_puzzle_context_is_safe())
+	if is_instance_valid(underground_vault):
+		underground_vault.set_interaction_enabled(_underground_vault_context_is_safe())
+		var shrine := underground_vault.get_node_or_null("RitualShrine")
+		if shrine != null:
+			shrine.set_interaction_enabled(_ritual_context_is_safe())
+
+
+func _ritual_context_is_safe() -> bool:
+	return (_active_room == 5 and _active_side == 0 and _phase == Phase.IDLE
+		and not _room_transition_active and not _loss_cinematic_active
+		and not _door_key_view_active and not pause_menu.visible
+		and not pause_menu.settings_menu.visible and not get_tree().paused
+		and not table_lobby.visible and not _pack_opening_blocks_screen_focus
+		and not _is_journal_active() and not _is_progression_area_open())
+
+
+func _is_ritual_busy() -> bool:
+	if not is_instance_valid(underground_vault):
+		return false
+	var shrine := underground_vault.get_node_or_null("RitualShrine")
+	return shrine != null and shrine.is_busy()
+
+
+func _enter_underground_vault() -> void:
+	if not _grave_puzzle_context_is_safe() or not is_instance_valid(grave_vault_entrance) or not grave_vault_entrance.is_open:
+		return
+	_vault_grave_pose = camera_pivot.global_transform
+	_vault_grave_origin_y = _settle_origin_y
+	_vault_grave_step = _settle_step_index
+	_vault_grave_side = _active_side
+	_vault_grave_environment = main_camera.environment
+	var atmosphere := main_camera.environment
+	if atmosphere == null:
+		atmosphere = main_camera.get_world_3d().environment
+	underground_vault.inherit_fog(atmosphere)
+	await _travel_vault_stairs(true)
+
+
+func _leave_underground_vault() -> void:
+	if not _underground_vault_context_is_safe():
+		return
+	await _travel_vault_stairs(false)
+
+
+func _travel_vault_stairs(descending: bool) -> void:
+	_room_transition_active = true
+	_pending_direction = 0
+	pause_menu.set_cinematic_locked(true)
+	_update_active_scene_interaction()
+	_update_room_door_interaction()
+	screen_camera_focus.set_context(_active_side, false)
+	screen_camera_focus.restore_immediately()
+	_claim_shared_camera_for_hub_rotation(false)
+	camera_tilt.rotation = Vector3.ZERO
+	main_camera.transform = _hub_camera_base_transform
+	var destination_pivot: Transform3D = underground_vault.get_node("CameraAnchor").global_transform if descending else _vault_grave_pose
+	var destination_camera := destination_pivot * _hub_camera_base_transform
+	var points: Array[Vector3] = []
+	var marker_names: Array[String] = ["TopRoute", "MiddleRoute", "BottomRoute"]
+	if not descending:
+		marker_names.reverse()
+	for marker_name in marker_names:
+		points.append((grave_vault_entrance.stairs.get_node(marker_name) as Marker3D).global_position)
+	points.append(destination_camera.origin)
+	var poses: Array[Transform3D] = [main_camera.global_transform]
+	for index in range(points.size() - 1):
+		poses.append(Transform3D(Basis.looking_at((points[index + 1] - points[index]).normalized(), Vector3.UP), points[index]))
+	poses.append(destination_camera)
+	underground_vault.show()
+	_transition_room_ambience(5 if descending else 2)
+	var distance := 0.0
+	for index in range(1, poses.size()):
+		distance += poses[index - 1].origin.distance_to(poses[index].origin)
+	_room_travel_tween = create_tween()
+	for index in range(1, poses.size()):
+		var leg_distance := poses[index - 1].origin.distance_to(poses[index].origin)
+		var duration := maxf(vault_travel_duration * leg_distance / maxf(distance, 0.001), 0.01)
+		_room_travel_tween.tween_method(_apply_room_travel_pose.bind(poses[index - 1] * _hub_camera_base_transform.affine_inverse(), poses[index] * _hub_camera_base_transform.affine_inverse()), 0.0, 1.0, duration)
+	_start_walking_sequence(vault_travel_duration)
+	await _room_travel_tween.finished
+	_stop_walking_sequence()
+	_room_travel_tween = null
+	camera_pivot.global_transform = destination_pivot
+	_active_room = 5 if descending else 2
+	if descending:
+		_settle_origin_y = camera_pivot.rotation.y
+		_settle_step_index = 0
+		_active_side = 0
+		main_camera.environment = underground_vault.room_environment
+	else:
+		_settle_origin_y = _vault_grave_origin_y
+		_settle_step_index = _vault_grave_step
+		_active_side = _vault_grave_side
+		main_camera.environment = _vault_grave_environment
+		underground_vault.hide()
+	_snap_camera_pivot_to_cardinal_target()
+	_finish_room_ambience(_active_room)
+	_room_transition_active = false
+	pause_menu.set_cinematic_locked(false)
+	_update_labels()
+	_update_active_scene_interaction()
+	_update_screen_camera_focus_context()
+	_update_room_door_interaction()
+	room_changed.emit(_active_room)
 
 
 func _black_market_context_is_safe() -> bool:
@@ -1960,6 +2177,8 @@ func _on_room_door_activated(door: HospitalDoor) -> void:
 			await _play_crucifix_return_dialogue()
 		if CollectionManager.claim_holy_water_return_dialogue():
 			await _play_holy_water_return_dialogue()
+		if CollectionManager.claim_silver_bullet_return_dialogue():
+			await _play_silver_bullet_return_dialogue()
 	_room_transition_active = false
 	pause_menu.set_cinematic_locked(false)
 	_update_labels()
@@ -1975,6 +2194,10 @@ func _play_holy_water_return_dialogue() -> void:
 
 func _play_crucifix_return_dialogue() -> void:
 	await _play_story_item_return_dialogue(preload("res://scripts/main/SatanCrucifixDialogue.gd"), "SatanCrucifixDialogue")
+
+
+func _play_silver_bullet_return_dialogue() -> void:
+	await _play_story_item_return_dialogue(preload("res://scripts/main/SatanSilverBulletDialogue.gd"), "SatanSilverBulletDialogue")
 
 
 func _play_story_item_return_dialogue(dialogue_script: Script, dialogue_name: String) -> void:
@@ -2190,7 +2413,7 @@ func _update_labels() -> void:
 		side_label.text = ""
 		hint_label.text = ""
 		return
-	if _active_room == 2 or _active_room == 3:
+	if _active_room in [2, 3, 5]:
 		side_label.text = ""
 		hint_label.text = ""
 		return
@@ -2288,7 +2511,7 @@ func _update_screen_camera_focus_context() -> void:
 	)
 	var secret_input_active: bool = _active_room == 1 and _active_side == secret_wall_input.VIEW_SIDE
 	var focus_allowed := (
-		(board_active or hub_screen_active or wall_screen_active or forge_screen_active or secret_input_active or _jester_context_is_safe() or _black_market_context_is_safe() or _dealer_context_is_safe() or _boiler_context_is_safe() or _pump_control_context_is_safe())
+		(board_active or hub_screen_active or wall_screen_active or forge_screen_active or secret_input_active or _jester_context_is_safe() or _black_market_context_is_safe() or _dealer_context_is_safe() or _boiler_context_is_safe() or _pump_control_context_is_safe() or _ritual_context_is_safe())
 		and not _is_bed_busy()
 		and not _is_progression_area_open()
 		and not _room_transition_active
@@ -2301,7 +2524,7 @@ func _update_screen_camera_focus_context() -> void:
 		and not _pack_opening_blocks_screen_focus
 		and not _is_journal_active()
 	)
-	screen_camera_focus.set_hover_suspended(board_active or secret_wall_input.is_busy() or _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_boiler_dragging() or (is_instance_valid(turn_arrows) and turn_arrows.is_pointer_over_arrow()))
+	screen_camera_focus.set_hover_suspended(board_active or secret_wall_input.is_busy() or _is_upgrade_collection_detail_open() or _is_fusion_workbench_busy() or _is_jester_busy() or _is_angel_busy() or _is_dealer_busy() or _is_boiler_dragging() or _is_ritual_busy() or (is_instance_valid(turn_arrows) and turn_arrows.is_pointer_over_arrow()))
 	screen_camera_focus.set_context(_active_side, focus_allowed, _active_room)
 	if board_active and focus_allowed and not screen_camera_focus.is_focused():
 		screen_camera_focus.focus_screen(table._offline_board.focus_area)

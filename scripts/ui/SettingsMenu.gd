@@ -42,6 +42,7 @@ var cheat_level_button: Button
 var cheat_story_level_button: Button
 var cheat_coins_button: Button
 var cheat_starting_hand_button: Button
+var cheat_access_keys_button: Button
 var cheat_weed_button: Button
 var cheat_characters_button: Button
 var cheat_brain_timer_button: Button
@@ -92,6 +93,7 @@ func _ready() -> void:
 	cheat_story_level_button.pressed.connect(_cheat_story_level_up)
 	cheat_coins_button.pressed.connect(_cheat_add_coins)
 	cheat_starting_hand_button.pressed.connect(_cheat_unlock_starting_hand)
+	cheat_access_keys_button.pressed.connect(_cheat_grant_access_keys)
 	cheat_weed_button.pressed.connect(_cheat_drop_weed)
 	cheat_characters_button.pressed.connect(_cheat_unlock_characters)
 	cheat_brain_timer_button.pressed.connect(_cheat_reset_brain_timer)
@@ -215,6 +217,7 @@ func _build_cheats_section() -> void:
 	cheat_coins_button = _make_cheat_button("CheatCoinsButton", "+50 Soul Coins", cheats_actions)
 	cheat_starting_hand_button = _make_cheat_button("CheatStartingHandButton", "Startdeck-Karten freischalten", cheats_actions)
 	cheat_starting_hand_button.tooltip_text = "Erhält Starthand I–V und schaltet alle fünf Startplätze frei."
+	cheat_access_keys_button = _make_cheat_button("CheatAccessKeysButton", "Alle Access Keys erhalten", cheats_actions)
 	cheat_weed_button = _make_cheat_button("CheatWeedButton", "Weed-Paket fallen lassen", cheats_actions)
 	_build_cheat_rarities()
 	cheat_characters_button = _make_cheat_button("CheatCharactersButton", "Alle Charaktere freischalten", cheats_actions)
@@ -314,6 +317,19 @@ func _cheat_drop_weed() -> void:
 	_set_cheat_status("Das Paket fällt, sobald du zum freien Spieltisch zurückkehrst.")
 
 
+func _cheat_grant_access_keys() -> void:
+	var instances: Array[Dictionary] = []
+	for card: Dictionary in CardDatabase.get_all_cards():
+		var card_id := str(card.get("id", ""))
+		if CardData.is_access_key(card) and CollectionManager.get_amount(card_id) == 0:
+			instances.append(CardData.create_instance(card_id))
+	var result := CollectionManager.add_card_instances(instances)
+	if result.get("success", false):
+		_set_cheat_status("Alle Access Keys erhalten · Schlüsselablage aktualisiert")
+	else:
+		_set_cheat_status("Access Keys konnten nicht gespeichert werden.")
+
+
 func _cheat_unlock_characters() -> void:
 	if GameCurrency.cheat_unlock_all_characters():
 		_set_cheat_status("Alle Charaktere freigeschaltet · Dialoge bleiben erhalten")
@@ -345,7 +361,8 @@ func _refresh_cheat_controls() -> void:
 
 
 func _refresh_package_button() -> void:
-	cheat_weed_button.text = Localization.text("Kokain-Paket fallen lassen" if GameCurrency.get_story_package_kind() == "cocaine" else "Weed-Paket fallen lassen")
+	var labels := {"weed": "Weed-Paket fallen lassen", "cocaine": "Kokain-Paket fallen lassen", "mdma": "MDMA-Paket fallen lassen"}
+	cheat_weed_button.text = Localization.text(labels[GameCurrency.get_story_package_kind()])
 
 
 func _update_scale_3d_label(value: float) -> void:

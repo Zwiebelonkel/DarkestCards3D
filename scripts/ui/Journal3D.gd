@@ -57,6 +57,8 @@ var _collection_rest_transforms: Array[Transform3D] = []
 var _collection_hover_amounts: Array[float] = []
 var _collection_border: MultiMesh
 var _collection_refresh_pending := false
+var _effect_icon: Sprite3D
+var _effect_motion_time := 0.0
 
 
 func _ready() -> void:
@@ -198,6 +200,8 @@ func _process(delta: float) -> void:
 		return
 	if _phase == Phase.OPEN:
 		camera.fov = _reading_fov()
+		if is_instance_valid(_effect_icon):
+			_update_effect_motion(delta)
 		if is_open() and _collection_refresh_pending and _is_collection_chapter():
 			_build_spread()
 		if is_open() and str(chapters[chapter_index]["id"]) == "profile":
@@ -214,6 +218,16 @@ func _process(delta: float) -> void:
 			if index >= 0 and index < _collection_cards.size() and is_instance_valid(_collection_cards[index]):
 				CollectionManager.mark_card_seen(str(_collection_cards[index].card_data.get("id", "")))
 	_update_collection_hover(delta)
+
+
+func _update_effect_motion(delta: float) -> void:
+	_effect_motion_time = fmod(_effect_motion_time + delta, TAU * 100.0)
+	var t := _effect_motion_time
+	# A 0.80-wide icon stays inside its 1.04-wide backing even at the
+	# combined maximum drift, rotation and pulse (including square icons).
+	_effect_icon.position = Vector3(1.66 + 0.065 * sin(t * 0.7), 0.84 + 0.065 * sin(t * 0.9), 0.14)
+	_effect_icon.rotation.z = 0.05 * sin(t * 0.6)
+	_effect_icon.scale = Vector3.ONE * (1.0 + 0.025 * sin(t * 1.1))
 
 
 func _input(event: InputEvent) -> void:
@@ -424,6 +438,8 @@ func _build_spread() -> void:
 	_collection_rest_transforms.clear()
 	_collection_hover_amounts.clear()
 	_body_label = null
+	_effect_icon = null
+	_effect_motion_time = 0.0
 	_entry_title = null
 	_body_pages.clear()
 	_hover = ""
@@ -492,6 +508,7 @@ func _build_spread() -> void:
 		icon.position = Vector3(1.66, 0.84, 0.14)
 		_box(_paper_contents, Vector3(1.04, 1.04, 0.009), Vector3(1.66, 0.84, 0.12), INK)
 		_paper_contents.add_child(icon)
+		_effect_icon = icon
 	# Larger combat cards get more page space; their text continues below them.
 	var body_top := -0.60 if combat_preview else (0.12 if illustrated else 1.14)
 	_body_pages = _paginate(str(entry.get("body", "")), 36, 12 if illustrated else 20, body_top + 1.71)

@@ -1,0 +1,71 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 123 Karten
+PASS: helper fixture explicitly activates basement access
+PASS: the isolated fresh profile saves successfully
+PASS: an unlocked Clicker alone cannot summon or pay the unspared cat
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 3
+PASS: the real D key starts a right turn without starting the cat during camera rotation
+PASS: the cat starts walking only after the right turn settles
+PASS: right-facing basement view reveals the moving cat and owns the encounter
+PASS: the moral-choice UI waits until the cat finishes crossing the floor
+PASS: walking blocks turns, doorway travel and underlying crate interaction
+PASS: the live cat advances from the back corner toward the player
+PASS: arrival completes before the player receives the angel and Satan choice
+PASS: the raised portraits and pistol finish their entrance before accepting input
+PASS: the cat stays alive in front of the player while the choice is displayed
+PASS: the real angel choice completes before the cat can become a helper
+PASS: newly spared cat remains on the basement floor until the player leaves
+PASS: starting the real exit trip keeps the spared cat on the floor until travel finishes
+PASS: the basement return door finishes its normal camera journey
+PASS: completed basement departure persistently activates the spared helper
+PASS: the cat leaves the floor and sits on the existing LevelProgress click button
+PASS: the helper uses all three 32 by 32 frames of the supplied Cat Click sheet
+PASS: the second animation frame is visible before any automatic reward
+PASS: entering frame three visibly pays exactly one current manual click
+PASS: rendering the same third frame does not pay repeatedly
+PASS: a visor outside the scene tree safely rejects display checks before initialization
+PASS: a newly created visor immediately mirrors the shared cat frame
+PASS: two visor instances share one animation clock and cannot double the automatic payout
+PASS: a detached visor safely rejects display checks during scene changes
+PASS: a cat click received after detaching cannot animate the removed visor or interrupt the shared payout
+PASS: reattaching the visor restores its display eligibility
+PASS: the helper continues earning like Auto Clicker while its panel is disabled and folded
+PASS: a real pointer click still reaches the coin button beneath the cat exactly once
+PASS: cat and manual earnings immediately update the visible coin balance
+PASS: ordinary Pause freezes both the shared cat animation and automatic rewards
+PASS: after unpausing the live game clock resumes automatic third-frame income
+PASS: the real process-driven reward arrives together with the third visible frame
+PASS: the online pause overlay preserves Auto Clicker style income without pausing network play
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 3
+PASS: returning to the basement never clones the helper back onto the floor
+PASS: saving and reloading restores the same helper without another basement visit
+PASS: loading the helper has no offline or scene-instantiation payout
+PASS: locked-Clicker fixture still explicitly activates basement access
+PASS: the isolated fresh profile saves successfully
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 3
+PASS: the locked-Clicker profile records a valid mercy outcome
+PASS: a real doorway click starts travel while the cat remains inactive
+PASS: physical room travel finishes
+PASS: door travel arrives in room 0
+PASS: leaving records mercy but a locked Clicker keeps the cat in the basement and grants no income
+PASS: owning an upgrade alone cannot move the cat onto a locked click button
+PASS: unlocking Clicker later immediately moves the previously spared cat without another visit
+PASS: the helper uses the current upgraded manual click value on its first third frame
+PASS: the isolated fresh profile saves successfully
+PASS: an existing mercy save can predate the new departure flag
+PASS: loading an older spared save outside the basement moves its cat to the unlocked Clicker
+PASS: migrating an existing spared cat awards no extra coins
+PASS: the isolated fresh profile saves successfully
+PASS: the alternative shot profile is committed normally
+PASS: a shot cat never becomes a helper or pays even when Clicker is unlocked
+CAT_CLICKER_INTEGRATION_TESTS: PASS (64 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

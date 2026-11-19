@@ -56,6 +56,9 @@ func _run() -> void:
 		push_error("Use the isolated runner to protect player saves.")
 		get_tree().quit(1)
 		return
+	# Exercise room navigation without unrelated timed/story cinematics.
+	PlaytimeManager.set_process(false)
+	PlaytimeManager.encounter_completed = true
 	# Keep room-navigation checks independent of the one-time moral choice.
 	if GameCurrency.get_basement_cat_choice().is_empty():
 		GameCurrency.resolve_basement_cat_choice("spared")
@@ -74,6 +77,7 @@ func _run() -> void:
 	add_child(viewport)
 	viewport.notify_mouse_entered()
 	main = (load("res://scenes/main/Main.tscn") as PackedScene).instantiate() as MainScene
+	main.greeting_enabled = false
 	main.wakeup_blur_duration = 0.01
 	main.rotation_duration = 0.03
 	main.settle_duration = 0.02
@@ -97,8 +101,8 @@ func _run() -> void:
 		check(area.door.locked and not area.open(), area.area_id + " remains inaccessible with a fresh collection")
 	check(main.hub_door.locked, "new room access does not bypass the independent slot-room key")
 	for specification in [
-		{"area": "graveyard", "card": "graveyard_key", "node": "GraveyardRoom", "index": 2},
-		{"area": "basement", "card": "basement_key", "node": "BasementRoom", "index": 3},
+		{"area": "graveyard", "card": "graveyard_key", "node": "GraveyardRoom", "index": 2, "return_side": 0},
+		{"area": "basement", "card": "basement_key", "node": "BasementRoom", "index": 3, "return_side": 1},
 	]:
 		await _check_room(specification)
 	check(arrivals == [2, 0, 3, 0], "both round trips emit exactly one room_changed event per arrival")
@@ -131,7 +135,10 @@ func _check_room(specification: Dictionary) -> void:
 	check(area.room_index == room_index and not area.is_open(), label + " entrance requests Main travel without opening a screen")
 	await _face_door(area.door)
 	var hub_pose := main.camera_pivot.global_transform
-	var hub_side := main._active_side
+	# Returns already face inward: graveyard -> table, basement -> pack shop.
+	var hub_side := int(specification.return_side)
+	hub_pose.basis = Basis.from_euler(Vector3(main._base_x_rotation,
+		main._hub_settle_origin_y + deg_to_rad(main.rotation_step_degrees) * hub_side, 0.0))
 	var camera_local_basis := main.main_camera.basis
 	await _capture(label + "-hub-entrance")
 	await _fly(area.door, destination, room_index, label + "-outbound")
@@ -178,7 +185,7 @@ func _check_room(specification: Dictionary) -> void:
 	await _settle()
 	check(area.door.locked and not destination.locked and destination.doorway_area.input_ray_pickable and main._active_room == room_index, label + " key removal locks entry while preserving the physical return route")
 	await _fly(destination, area.door, 0, label + "-return")
-	check(main._active_side == hub_side and main.camera_pivot.global_transform.is_equal_approx(hub_pose), label + " return restores the original hub position and cardinal facing")
+	check(main._active_side == hub_side and main.camera_pivot.global_transform.is_equal_approx(hub_pose), label + " return restores the original hub position facing inward toward its normal station")
 	check(not area.open() and not main._room_transition_active, label + " cannot be reentered after its key was removed")
 	CollectionManager.collection = saved
 	CollectionManager.collection_changed.emit(changed)

@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "output_overflow": false,
+  "completion_marker_found": true,
+  "engine_errors": [],
+  "elapsed_ms": 1058,
+  "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\n{\"nodes\":[{\"path\":\".\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.1, 0.05, -0.3)]\",\"type\":\"Node3D\"},{\"path\":\"PinMotion\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"path\":\"PinMotion/Orientation\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (0.984808, 0.0, -0.173648), Y: (0.024167, 0.990268, 0.137059), Z: (0.171958, -0.139173, 0.975224), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"path\":\"PinMotion/Orientation/Model\",\"scale\":\"(0.302075, 0.302075, 0.302075)\",\"transform\":\"[X: (0.302075, 0.0, 0.0), Y: (0.0, 0.302075, 0.0), Z: (0.0, 0.0, 0.302075), O: (0.02054, 0.000121, 0.80457)]\",\"type\":\"Node3D\"},{\"path\":\"PinMotion/Orientation/Model/Empty\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (0.511436, -0.0, 0.859322), Y: (0.0, -1.0, -0.0), Z: (0.859322, 0.0, -0.511436), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"aabb\":\"[P: (-1.931384, -1.32702, -1.184142), S: (3.862768, 2.558136, 2.368285)]\",\"materials\":[\"res://assets/environments/props/knife/knife.glb::StandardMaterial3D_e52o6\"],\"mesh_present\":true,\"path\":\"PinMotion/Orientation/Model/Cylinder\",\"scale\":\"(0.248589, 0.844539, 0.192985)\",\"surfaces\":1,\"transform\":\"[X: (0.248589, 0.0, 0.0), Y: (0.0, -0.000006, 0.844539), Z: (0.0, -0.192985, -0.000001), O: (0.073395, 0.0, 1.610082)]\",\"triangles\":256,\"type\":\"MeshInstance3D\"},{\"aabb\":\"[P: (-0.249643, 0.0, -2.759536), S: (0.622372, 0.078892, 3.19964)]\",\"materials\":[\"res://assets/environments/props/knife/knife.glb::StandardMaterial3D_ucpbu\"],\"mesh_present\":true,\"path\":\"PinMotion/Orientation/Model/Plane\",\"scale\":\"(1.0, 1.0, 1.0)\",\"surfaces\":1,\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.020719, -0.03875, 0.094572)]\",\"triangles\":432,\"type\":\"MeshInstance3D\"}],\"scene\":\"res://scenes/effects/EventBlockKnife.tscn\",\"warnings\":[]}\r\nASSET_INSPECTION_COMPLETE\r\nCardDatabase geladen: 122 Karten\r\n",
+  "stderr": "",
+  "pid": 24688
+}

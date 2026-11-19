@@ -1,0 +1,38 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://dg77esgav3urb"
+path.s3tc="res://.godot/imported/cross_cross.png-7c58173e41c29ac1065a753f1c9f6f4d.s3tc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "82a86776fb89ab6bb555bf8a9f6795af"
+}
+
+[deps]
+
+source_file="res://assets/environments/props/cruzifix/cross_cross.png"
+dest_files=["res://.godot/imported/cross_cross.png-7c58173e41c29ac1065a753f1c9f6f4d.s3tc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0

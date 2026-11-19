@@ -74,7 +74,7 @@ func _run() -> void:
 		check(card.get_network_state() == before, "language change preserves complete live combat state in " + locale)
 		check(card._rng.state == rng_state and card._current_frame == artwork_frame, "language change preserves RNG and artwork frame in " + locale)
 		check(card.attack_label.text == "6" and card.defense_label.text == "13", "damaged and cursed numeric labels remain in " + locale)
-		check(card._event_block_label.text.begins_with(Localization.text("BLOCK\n%d %s").get_slice("\n", 0)), "block badge refreshes in " + locale)
+		check(is_instance_valid(card._event_block_badge) and card._event_block_badge.visible and card._event_block_badge.find_children("*", "Label3D", true, false).is_empty(), "the pinning knife remains visible without a text badge in " + locale)
 		for effect: Dictionary in original_effects:
 			var presentation := EffectPresentation.build(effect)
 			check(presentation["title"] == Localization.text(str(effect["name"])) and presentation["description"] == Localization.text(str(effect["description"])), "effect title and description use " + locale)

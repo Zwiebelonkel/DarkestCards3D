@@ -1,0 +1,178 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 123 Karten
+PASS: profile storage initialized before progression autoloads
+PASS: select_slot(1) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: isolated setup clears slot 1
+PASS: isolated setup clears slot 2
+PASS: isolated setup clears slot 3
+PASS: select_slot(1) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: new slot 1 has no inherited cards
+PASS: new slot 1 has no inherited permanent unlocks
+PASS: new slot 1 has no inherited deck, hand or upgrades
+PASS: new slot 1 starts with twenty coins and level one
+PASS: new slot 1 has no inherited income or elapsed clicker time
+PASS: new slot 1 has no inherited pending transactions
+PASS: slot 1 stores its exact combat instance 0
+PASS: slot 1 selects owned combat copy 0
+PASS: slot 1 stores a chosen starting-hand copy
+PASS: slot one persists both area and legacy door unlock metadata
+PASS: slot 1 persists cents, XP and fractional rewards
+PASS: slot 1 explicitly persists its populated profile
+PASS: slot 1 summary reads its own saved wallet
+PASS: slot 1 summary counts its own collection copies
+PASS: select_slot(2) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: new slot 2 has no inherited cards
+PASS: new slot 2 has no inherited permanent unlocks
+PASS: new slot 2 has no inherited deck, hand or upgrades
+PASS: new slot 2 starts with twenty coins and level one
+PASS: new slot 2 has no inherited income or elapsed clicker time
+PASS: new slot 2 has no inherited pending transactions
+PASS: slot 2 stores its exact combat instance 0
+PASS: slot 2 selects owned combat copy 0
+PASS: slot 2 stores its exact combat instance 1
+PASS: slot 2 selects owned combat copy 1
+PASS: slot 2 stores a chosen starting-hand copy
+PASS: slot 2 persists cents, XP and fractional rewards
+PASS: slot 2 explicitly persists its populated profile
+PASS: slot 2 summary reads its own saved wallet
+PASS: slot 2 summary counts its own collection copies
+PASS: select_slot(3) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: new slot 3 has no inherited cards
+PASS: new slot 3 has no inherited permanent unlocks
+PASS: new slot 3 has no inherited deck, hand or upgrades
+PASS: new slot 3 starts with twenty coins and level one
+PASS: new slot 3 has no inherited income or elapsed clicker time
+PASS: new slot 3 has no inherited pending transactions
+PASS: slot 3 stores its exact combat instance 0
+PASS: slot 3 selects owned combat copy 0
+PASS: slot 3 stores its exact combat instance 1
+PASS: slot 3 selects owned combat copy 1
+PASS: slot 3 stores its exact combat instance 2
+PASS: slot 3 selects owned combat copy 2
+PASS: slot 3 stores a chosen starting-hand copy
+PASS: slot 3 persists cents, XP and fractional rewards
+PASS: slot 3 explicitly persists its populated profile
+PASS: slot 3 summary reads its own saved wallet
+PASS: slot 3 summary counts its own collection copies
+PASS: select_slot(1) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: restored slot 1 restores only its own instances, Holo/level data and unlock metadata
+PASS: restored slot 1 restores the exact deck and starting-hand identities
+PASS: restored slot 1 restores only its own combat upgrades
+PASS: restored slot 1 restores its wallet, level and XP
+PASS: restored slot 1 restores its own fractional income remainders
+PASS: restored slot 1 derives automatic income from its own collection
+PASS: collection observers see one completed slot 1, never a mixed profile
+PASS: switch resets fractional clicker time in slot 1
+PASS: select_slot(2) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: restored slot 2 restores only its own instances, Holo/level data and unlock metadata
+PASS: restored slot 2 restores the exact deck and starting-hand identities
+PASS: restored slot 2 restores only its own combat upgrades
+PASS: restored slot 2 restores its wallet, level and XP
+PASS: restored slot 2 restores its own fractional income remainders
+PASS: restored slot 2 derives automatic income from its own collection
+PASS: collection observers see one completed slot 2, never a mixed profile
+PASS: switch resets fractional clicker time in slot 2
+PASS: select_slot(3) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: restored slot 3 restores only its own instances, Holo/level data and unlock metadata
+PASS: restored slot 3 restores the exact deck and starting-hand identities
+PASS: restored slot 3 restores only its own combat upgrades
+PASS: restored slot 3 restores its wallet, level and XP
+PASS: restored slot 3 restores its own fractional income remainders
+PASS: restored slot 3 derives automatic income from its own collection
+PASS: collection observers see one completed slot 3, never a mixed profile
+PASS: switch resets fractional clicker time in slot 3
+PASS: select_slot(1) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: restored slot 1 restores only its own instances, Holo/level data and unlock metadata
+PASS: restored slot 1 restores the exact deck and starting-hand identities
+PASS: restored slot 1 restores only its own combat upgrades
+PASS: restored slot 1 restores its wallet, level and XP
+PASS: restored slot 1 restores its own fractional income remainders
+PASS: restored slot 1 derives automatic income from its own collection
+PASS: collection observers see one completed slot 1, never a mixed profile
+PASS: switch resets fractional clicker time in slot 1
+PASS: slot one commits an interrupted spin before its animation
+PASS: slot one reserves two later packs after its paid first pack
+PASS: select_slot(2) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: other slot during recovery restores only its own instances, Holo/level data and unlock metadata
+PASS: other slot during recovery restores the exact deck and starting-hand identities
+PASS: other slot during recovery restores only its own combat upgrades
+PASS: other slot during recovery restores its wallet, level and XP
+PASS: other slot during recovery restores its own fractional income remainders
+PASS: other slot during recovery derives automatic income from its own collection
+PASS: switching invalidates old reservations and does not transfer pending payouts
+PASS: stale pack callbacks cannot consume or refund another profile
+PASS: select_slot(1) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: original slot recovers its 2500-cent payout and 450-cent queued-pack refund exactly
+PASS: recovery clears both committed transaction records
+PASS: reloaded recovered slot restores only its own instances, Holo/level data and unlock metadata
+PASS: reloaded recovered slot restores the exact deck and starting-hand identities
+PASS: reloaded recovered slot restores only its own combat upgrades
+PASS: reloaded recovered slot restores its wallet, level and XP
+PASS: reloaded recovered slot restores its own fractional income remainders
+PASS: reloaded recovered slot derives automatic income from its own collection
+PASS: repeated load cannot pay or refund either transaction twice
+PASS: recovery persists both cleared records in their original wallet file
+PASS: invalid slot -1 cannot be selected or reset
+PASS: invalid slot 0 cannot be selected or reset
+PASS: invalid slot 4 cannot be selected or reset
+PASS: active online lobby blocks selection and reset
+PASS: pending invite join blocks profile switching before the lobby exists
+PASS: rejected IDs and online operations leave memory and active-slot registry unchanged
+PASS: inactive fixture collection can be replaced with an invalid profile shape
+PASS: corrupted target returns an error instead of silently selecting an empty profile
+PASS: corrupted target preserves the previous active profile and registry
+PASS: failed selection does not overwrite the damaged save
+PASS: the inactive fixture save is restored after corruption testing
+PASS: same-slot selection can persist without reloading the profile
+PASS: synchronous slot listeners cannot reenter a switch
+PASS: fixture supplies a retained legacy collection to detect accidental reimport
+PASS: reset targets the selected slot without changing the selection
+PASS: reset slot one has no inherited cards
+PASS: reset slot one has no inherited permanent unlocks
+PASS: reset slot one has no inherited deck, hand or upgrades
+PASS: reset slot one starts with twenty coins and level one
+PASS: reset slot one has no inherited income or elapsed clicker time
+PASS: reset slot one has no inherited pending transactions
+PASS: reset leaves every other slot's four files byte-identical
+PASS: reset preserves the retained legacy original
+PASS: reset preserves the global one-time migration marker
+PASS: storage can initialize again after resetting the migrated slot
+PASS: select_slot(2) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: untouched slot two after reset restores only its own instances, Holo/level data and unlock metadata
+PASS: untouched slot two after reset restores the exact deck and starting-hand identities
+PASS: untouched slot two after reset restores only its own combat upgrades
+PASS: untouched slot two after reset restores its wallet, level and XP
+PASS: untouched slot two after reset restores its own fractional income remainders
+PASS: untouched slot two after reset derives automatic income from its own collection
+PASS: select_slot(1) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: reset slot one after storage reinitialization has no inherited cards
+PASS: reset slot one after storage reinitialization has no inherited permanent unlocks
+PASS: reset slot one after storage reinitialization has no inherited deck, hand or upgrades
+PASS: reset slot one after storage reinitialization starts with twenty coins and level one
+PASS: reset slot one after storage reinitialization has no inherited income or elapsed clicker time
+PASS: reset slot one after storage reinitialization has no inherited pending transactions
+PASS: retained legacy data never resurrects a reset slot
+PASS: select_slot(3) succeeds through the public API
+PASS: all four managers use the selected slot directory
+PASS: untouched slot three after reset restores only its own instances, Holo/level data and unlock metadata
+PASS: untouched slot three after reset restores the exact deck and starting-hand identities
+PASS: untouched slot three after reset restores only its own combat upgrades
+PASS: untouched slot three after reset restores its wallet, level and XP
+PASS: untouched slot three after reset restores its own fractional income remainders
+PASS: untouched slot three after reset derives automatic income from its own collection
+PASS: fixture removes only its own temporary legacy file
+PASS: slot selection, recovery and reset preserve global settings byte for byte
+SAVE_SLOTS_TESTS: PASS (174 checks)

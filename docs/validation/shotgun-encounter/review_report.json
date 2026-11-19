@@ -1,0 +1,76 @@
+{
+  "reviewed_at_utc": "2026-11-18T23:18:32.4840634Z",
+  "engine": "Godot 4.4.1 / Vulkan Forward+ / AMD Radeon RX 7600",
+  "scene_modified_at_utc": "2026-11-18T23:06:35.1270526Z",
+  "loaded_scene_audit": "asset_audit.json",
+  "isolated_saves": true,
+  "off_desktop_rendering": true,
+  "dummy_audio": true,
+  "tests": [
+    "Shotgun encounter: 46 checks passed",
+    "Ritual shrine: 44 checks passed",
+    "Satan jumpscare: 52 checks passed",
+    "Cat clicker integration: 64 checks passed"
+  ],
+  "fixture_note": "The legacy cat-clicker fixture first stopped at the unrelated first-entry greeting. Explicitly disabling the greeting in the isolated fixture restored its intended already-entered hub context; production greeting is unchanged.",
+  "warnings": [
+    "The selected Main fixtures all reported ObjectDB instances leaked at exit. No engine errors in the final passing runs."
+  ],
+  "performance_note": "30 warm-up frames and 30 measured render-frame intervals per stage. Rack adds 4 visible draw calls and 268 primitives over the unowned open visor in this fixture. Timing includes the complete scene and is a local observation.",
+  "captures": [
+    {
+      "file": "rack.png",
+      "width": 1280,
+      "height": 720,
+      "captured_at_utc": "2026-11-18T23:17:45.5033112Z",
+      "sampled_mean_luminance": 0.12084347254902007,
+      "view": "Real Main player camera, 1280x720; standard scene and lens effects"
+    },
+    {
+      "file": "held.png",
+      "width": 1280,
+      "height": 720,
+      "captured_at_utc": "2026-11-18T23:17:47.4337203Z",
+      "sampled_mean_luminance": 0.17753004226579594,
+      "view": "Real Main player camera, 1280x720; standard scene and lens effects"
+    },
+    {
+      "file": "panic-dialogue.png",
+      "width": 1280,
+      "height": 720,
+      "captured_at_utc": "2026-11-18T23:17:49.6808239Z",
+      "sampled_mean_luminance": 0.14363487342047923,
+      "view": "Real Main player camera, 1280x720; standard scene and lens effects"
+    },
+    {
+      "file": "panic-ready.png",
+      "width": 1280,
+      "height": 720,
+      "captured_at_utc": "2026-11-18T23:17:50.2465473Z",
+      "sampled_mean_luminance": 0.17782591089324692,
+      "view": "Real Main player camera, 1280x720; standard scene and lens effects"
+    },
+    {
+      "file": "kill-playing.png",
+      "width": 1280,
+      "height": 720,
+      "captured_at_utc": "2026-11-18T23:17:50.5110838Z",
+      "sampled_mean_luminance": 0.18012621437908558,
+      "view": "Real Main player camera, 1280x720; standard scene and lens effects"
+    },
+    {
+      "file": "kill-finished.png",
+      "width": 1280,
+      "height": 720,
+      "captured_at_utc": "2026-11-18T23:17:51.5020948Z",
+      "sampled_mean_luminance": 0.09079476884531794,
+      "view": "Real Main player camera, 1280x720; standard scene and lens effects"
+    }
+  ],
+  "visual_review": [
+    "Rack: whole weapon below coin button, brass surround, no text overlap",
+    "Held: barrel forward, stock at lower right, target remains unobscured",
+    "Panic: red artwork emits consistently, two frames animate, localized dialogue fits",
+    "Kill: all nine frames play once; final frame holds"
+  ]
+}

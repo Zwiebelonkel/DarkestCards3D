@@ -1,0 +1,60 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS no qualifying match win means there is no reward to consume
+PASS failed persistence keeps the reward unconsumed
+PASS a failed victory save rolls back rewards and package eligibility together
+PASS training cannot unlock the package
+PASS older consumed rewards remain evidence of a prior trip
+PASS older unconsumed high-level saves do not gain a package without winning
+PASS older saves that already beat story seven receive the unclaimed reward
+PASS before a qualifying win the weed and Hint1 are hidden
+PASS level seven alone cannot drop the package
+PASS losses and draws at level seven cannot drop the package
+PASS winning a normal match at player level seven cannot unlock the package
+PASS the actual story-six victory path keeps the package locked
+PASS the actual table grants a repeated result only once
+PASS winning story level seven unlocks the package but waits until the match has exited
+PASS returning to the idle table after story seven starts the drop
+PASS the object drops from above and cannot be clicked mid-fall
+PASS the falling object settles on the table
+PASS the real mesh rests on the authored tabletop with less than 8mm clearance
+PASS landing leaves the sixty-second effect inactive
+PASS real pointer picking applies the yellow outline
+PASS hover uses the existing yellow interaction color
+PASS leaving the weed restores its original material
+PASS right clicks and releases do not consume the weed
+PASS Pause blocks pickup and clears hover
+PASS an active match cannot consume the reward
+PASS a multiplayer lobby cannot consume the reward
+PASS a real picked left click saves consumption and immediately removes the weed
+PASS the camera filter and authored Hint1 become visible without blocking input
+PASS Hint1 has a three-times emissive arrow map while retaining its authored orientation
+PASS the dedicated Master high cut starts open for a gradual fade-in
+PASS the gunshot hearing filter and unrelated EQ remain intact
+PASS repeat clicks never restart the timer or duplicate audio effects
+PASS the filter and emissive arrows gradually fade in over five seconds
+PASS the full visual effect and 1200 Hz high cut are reached after fading in
+PASS active weed replaces theme4 with the synchronized cursed arrangement
+PASS pausing also pauses the effect's countdown
+PASS the final five seconds smoothly remove the filter, hint and high cut
+PASS filter, high cut and Hint1 remain active until the end of sixty seconds
+PASS the filter and Hint1 disappear when the effect ends
+PASS expiry removes only the owned high cut and preserves audio settings
+PASS expiry crossfades back to theme4 within 0.3 seconds
+PASS consumption survives saving and loading the profile
+PASS re-entering the hub cannot respawn a consumed reward
+PASS an existing high-level profile still needs a qualifying win
+PASS an early story victory cannot unlock the package at a high player level
+PASS the high-level profile receives its package after winning story seven
+PASS another fresh profile can consume its own reward
+PASS the admin section exposes the drop-package button
+PASS the scrolled admin drop button is reachable on screen
+PASS the admin button queues a drop while the menu is open
+PASS the admin package drops again despite prior consumption and no story completion
+PASS the admin pickup activates the effect without changing story progress
+PASS leaving the scene during an active effect removes its audio filter
+WEED_REWARD_TESTS: PASS (53 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

@@ -1,5 +1,8 @@
 # Story level 7 weed reward and pump puzzle
 
+Package progression continues with cocaine at story 20 and [MDMA](mdma-reward.md)
+at story 25, using the same shared table pickup.
+
 After a saved victory in **story level 7** (or later), the supplied `weed.glb`
 bag falls from above the hub table, bounces once and rests on the right side,
 clear of the mode buttons. The drop waits until the match has exited and the

@@ -270,6 +270,9 @@ offset_bottom = 0.0
 [node name="satan" parent="ScenePivot/GameTable/dealer/SatanMotionRoot" index="0"]
 material_override = ExtResource("12_satan_glow")
 
+[node name="blood" parent="ScenePivot/GameTable" index="15"]
+visible = false
+
 [node name="hospitalRoom" parent="." instance=ExtResource("5_blefk")]
 transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.925, 0.179363, -2.21619, 0.438384)
 

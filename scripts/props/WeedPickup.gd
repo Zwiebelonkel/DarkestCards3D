@@ -1,10 +1,11 @@
 extends Node3D
-## Shared story reward flow: weed after story 7, cocaine replaces it after 20.
+## Shared story rewards: weed at 7, cocaine at 20, MDMA at 25.
 
 const OUTLINE := preload("res://assets/shader/inventory_outline.gdshader")
 const PICK_LAYER := 1 << 22
 const WEED_SHADER := preload("res://assets/shader/lsd.gdshader")
 const COCAINE_SHADER := preload("res://assets/shader/cocaine.gdshader")
+const MDMA_SHADER := preload("res://assets/shader/mdma.gdshader")
 
 @export_range(1.0, 300.0, 1.0) var effect_duration := 60.0
 @export_range(0.1, 20.0, 0.1) var fade_in_duration := 5.0
@@ -18,6 +19,7 @@ const COCAINE_SHADER := preload("res://assets/shader/cocaine.gdshader")
 @onready var area: Area3D = $PickArea
 @onready var overlay: CanvasLayer = $PsychedelicOverlay
 @onready var effect_rect: ColorRect = $PsychedelicOverlay/EffectRect
+@onready var mdma_audio: Node3D = $MdmaAudio
 
 var landed := false
 var dropping := false
@@ -45,7 +47,7 @@ var _hint_colors: Dictionary = {}
 
 func _ready() -> void:
 	_rest = model.transform
-	_models = {"weed": model, "cocaine": $CocaineModel}
+	_models = {"weed": model, "cocaine": $CocaineModel, "mdma": $MdmaModel}
 	for kind: String in _models:
 		_model_rests[kind] = (_models[kind] as Node3D).transform
 		(_models[kind] as Node3D).hide()
@@ -102,13 +104,13 @@ func _select_kind(kind: String) -> void:
 		_hint.hide()
 	package_kind = kind
 	model = _models[kind] as Node3D
-	mesh = model.get_node("Model/Cube" if kind == "cocaine" else "Cube") as MeshInstance3D
+	mesh = model.get_node("Cube" if kind == "weed" else "Model/Cube") as MeshInstance3D
 	_rest = _model_rests[kind]
 	model.transform = _rest
 	_original_overlay = mesh.material_overlay
 	_hint = _hints.get(kind) as Sprite3D
 	_hint_modulate = _hint_colors.get(kind, Color.WHITE)
-	_effect_material.shader = COCAINE_SHADER if kind == "cocaine" else WEED_SHADER
+	_effect_material.shader = {"weed": WEED_SHADER, "cocaine": COCAINE_SHADER, "mdma": MDMA_SHADER}[kind]
 	landed = false
 	dropping = false
 	_set_pickable(false)
@@ -186,6 +188,10 @@ func _set_effect_strength(strength: float) -> void:
 		_high_cut.cutoff_hz = exp(lerpf(log(20000.0), log(high_cut_hz), strength))
 	if package_kind == "cocaine" and is_instance_valid(_main) and is_instance_valid(_main.music):
 		_main.music.set_cocaine_effect_strength(strength)
+	if package_kind == "mdma":
+		mdma_audio.set_strength(strength)
+		if is_instance_valid(_main) and is_instance_valid(_main.music):
+			_main.music.set_mdma_effect_strength(strength)
 
 
 func _set_pickable(enabled: bool) -> void:
@@ -239,6 +245,11 @@ func _start_effect() -> void:
 	overlay.show()
 	if is_instance_valid(_hint):
 		_hint.show()
+	if package_kind == "mdma":
+		# Voices start once the image has faded in, then follow the same lifetime.
+		_main.scene_pivot.get_node("GameTable")._get_or_create_lowpass()
+		mdma_audio.start(_camera, minf(fade_in_duration, effect_duration * 0.5))
+		return
 	if package_kind == "cocaine":
 		return
 	# The existing gunshot hearing recovery owns the first Master effect.
@@ -254,10 +265,14 @@ func _start_effect() -> void:
 
 
 func clear_effect() -> void:
+	if is_instance_valid(mdma_audio):
+		mdma_audio.stop()
 	if active and is_instance_valid(_main) and is_instance_valid(_main.music):
 		_main.music.set_weed_effect_active(false)
 		if package_kind == "cocaine":
 			_main.music.set_cocaine_effect_strength(0.0)
+		if package_kind == "mdma":
+			_main.music.set_mdma_effect_strength(0.0)
 	active = false
 	remaining = 0.0
 	if is_instance_valid(overlay):

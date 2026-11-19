@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-18",
+  "fixture": "Isolated saves and transport-free NetworkManager; off-desktop Forward+ rendering",
+  "runs": [
+    {
+      "scene": "swarm_power_display_test.tscn",
+      "success": true,
+      "exit_code": 0,
+      "engine_errors": [],
+      "completion": "SWARM_POWER_DISPLAY_TESTS: PASS (36 checks)",
+      "warnings": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)",
+      "elapsed_ms": 9016
+    },
+    {
+      "scene": "card_effect_unit_test.tscn",
+      "success": true,
+      "exit_code": 0,
+      "engine_errors": [],
+      "completion": "CARD_EFFECT_UNIT_TESTS: PASS (106 checks)",
+      "warnings": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)",
+      "elapsed_ms": 1628
+    },
+    {
+      "scene": "card_combat_indicators_test.tscn",
+      "success": true,
+      "exit_code": 0,
+      "engine_errors": [],
+      "completion": "CARD_COMBAT_INDICATORS_TESTS: PASS (49 checks)",
+      "warnings": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)",
+      "elapsed_ms": 5066
+    },
+    {
+      "scene": "combat_effect_audit_test.tscn",
+      "success": true,
+      "exit_code": 0,
+      "engine_errors": [],
+      "completion": "COMBAT_EFFECT_AUDIT_TESTS: PASS (283 checks)",
+      "warnings": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)",
+      "elapsed_ms": 15050
+    }
+  ]
+}

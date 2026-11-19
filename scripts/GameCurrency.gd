@@ -91,11 +91,15 @@ var weed_consumed := false
 signal story_package_queued
 var weed_package_pending := false
 var cocaine_package_pending := false
+var mdma_package_pending := false
 var weed_reward_unlocked := false
 const WEED_STORY_LEVEL := 7
 const COCAINE_STORY_LEVEL := 20
+const MDMA_STORY_LEVEL := 25
 var cocaine_consumed := false
 var cocaine_reward_unlocked := false
+var mdma_consumed := false
+var mdma_reward_unlocked := false
 var admin_weed_drop_pending := false
 var _story_transaction_active := false
 var _training_owner: WeakRef
@@ -127,6 +131,8 @@ func consume_weed_reward(admin_package: bool = false) -> bool:
 
 
 func get_story_package_kind() -> String:
+	if story_completed_level >= MDMA_STORY_LEVEL:
+		return "mdma"
 	return "cocaine" if story_completed_level >= COCAINE_STORY_LEVEL else "weed"
 
 
@@ -135,15 +141,20 @@ func is_story_package_available(kind: String) -> bool:
 		return false
 	if kind == "weed":
 		return weed_reward_unlocked and weed_package_pending and not CollectionManager.has_discovered_card(CollectionManager.PUMP_REWARD_CARD_ID)
-	return cocaine_reward_unlocked and cocaine_package_pending and not CollectionManager.has_discovered_card(CollectionManager.BOILER_REWARD_CARD_ID)
+	if kind == "cocaine":
+		return cocaine_reward_unlocked and cocaine_package_pending and not CollectionManager.has_discovered_card(CollectionManager.BOILER_REWARD_CARD_ID)
+	return kind == "mdma" and mdma_reward_unlocked and mdma_package_pending and not CollectionManager.has_discovered_card(CollectionManager.GRAVE_REWARD_CARD_ID)
 
 
 func consume_story_package(kind: String, admin_package: bool = false) -> bool:
-	if kind not in ["weed", "cocaine"] or is_training_session() or (not admin_package and not is_story_package_available(kind)):
+	if kind not in ["weed", "cocaine", "mdma"] or is_training_session() or (not admin_package and not is_story_package_available(kind)):
 		return false
-	var previous := [weed_consumed, cocaine_consumed]
-	var previous_pending := [weed_package_pending, cocaine_package_pending]
-	if kind == "cocaine":
+	var previous := [weed_consumed, cocaine_consumed, mdma_consumed]
+	var previous_pending := [weed_package_pending, cocaine_package_pending, mdma_package_pending]
+	if kind == "mdma":
+		mdma_consumed = true
+		mdma_package_pending = false
+	elif kind == "cocaine":
 		cocaine_consumed = true
 		cocaine_package_pending = false
 	else:
@@ -153,8 +164,10 @@ func consume_story_package(kind: String, admin_package: bool = false) -> bool:
 		return true
 	weed_consumed = previous[0]
 	cocaine_consumed = previous[1]
+	mdma_consumed = previous[2]
 	weed_package_pending = previous_pending[0]
 	cocaine_package_pending = previous_pending[1]
+	mdma_package_pending = previous_pending[2]
 	return false
 
 
@@ -183,7 +196,7 @@ func award_story_win(story_level: int) -> Dictionary:
 		_npc_rescue_intros_pending[npc_id] = true
 	story_completed_level = maxi(story_completed_level, story_level)
 	var rewards := STORY_RULES.story_rewards(story_level)
-	var result := _add_rewards(int(rewards["xp"]), float(rewards["coins"]), true, story_level >= WEED_STORY_LEVEL, story_level >= COCAINE_STORY_LEVEL, true)
+	var result := _add_rewards(int(rewards["xp"]), float(rewards["coins"]), true, story_level >= WEED_STORY_LEVEL, story_level >= COCAINE_STORY_LEVEL, true, story_level >= MDMA_STORY_LEVEL)
 	if result.is_empty():
 		story_completed_level = previous
 		_rescued_npcs = previous_rescued
@@ -692,11 +705,11 @@ func add_xp(amount: int) -> Dictionary:
 	return _add_rewards(amount, 0)
 
 
-func _add_rewards(xp_amount: int, coin_amount: float, require_saved: bool = false, unlock_weed: bool = false, unlock_cocaine: bool = false, queue_package: bool = false) -> Dictionary:
+func _add_rewards(xp_amount: int, coin_amount: float, require_saved: bool = false, unlock_weed: bool = false, unlock_cocaine: bool = false, queue_package: bool = false, unlock_mdma: bool = false) -> Dictionary:
 	if is_training_session():
 		return {}
-	var previous_state := [_coin_cents, level, xp, _coin_reward_remainder, _xp_reward_remainder, weed_reward_unlocked, cocaine_reward_unlocked]
-	var previous_pending := [weed_package_pending, cocaine_package_pending]
+	var previous_state := [_coin_cents, level, xp, _coin_reward_remainder, _xp_reward_remainder, weed_reward_unlocked, cocaine_reward_unlocked, mdma_reward_unlocked]
+	var previous_pending := [weed_package_pending, cocaine_package_pending, mdma_package_pending]
 	var gained := 0
 	if xp_amount > 0:
 		var precise_xp := xp_amount * CollectionManager.get_xp_multiplier() + _xp_reward_remainder
@@ -720,8 +733,12 @@ func _add_rewards(xp_amount: int, coin_amount: float, require_saved: bool = fals
 			weed_reward_unlocked = true
 		if unlock_cocaine:
 			cocaine_reward_unlocked = true
-		if queue_package or unlock_weed or unlock_cocaine:
-			if get_story_package_kind() == "cocaine" and cocaine_reward_unlocked:
+		if unlock_mdma:
+			mdma_reward_unlocked = true
+		if queue_package or unlock_weed or unlock_cocaine or unlock_mdma:
+			if get_story_package_kind() == "mdma":
+				mdma_package_pending = mdma_reward_unlocked and not CollectionManager.has_discovered_card(CollectionManager.GRAVE_REWARD_CARD_ID)
+			elif get_story_package_kind() == "cocaine" and cocaine_reward_unlocked:
 				if not CollectionManager.has_discovered_card(CollectionManager.BOILER_REWARD_CARD_ID):
 					cocaine_package_pending = true
 			elif weed_reward_unlocked and not CollectionManager.has_discovered_card(CollectionManager.PUMP_REWARD_CARD_ID):
@@ -736,10 +753,12 @@ func _add_rewards(xp_amount: int, coin_amount: float, require_saved: bool = fals
 			_xp_reward_remainder = previous_state[4]
 			weed_reward_unlocked = previous_state[5]
 			cocaine_reward_unlocked = previous_state[6]
+			mdma_reward_unlocked = previous_state[7]
 			weed_package_pending = previous_pending[0]
 			cocaine_package_pending = previous_pending[1]
+			mdma_package_pending = previous_pending[2]
 			return {}
-		if saved and (queue_package or unlock_weed or unlock_cocaine):
+		if saved and (queue_package or unlock_weed or unlock_cocaine or unlock_mdma):
 			story_package_queued.emit()
 		if coin_reward_cents + bonus_cents > 0:
 			coins_changed.emit(coins)
@@ -759,6 +778,9 @@ func _add_rewards(xp_amount: int, coin_amount: float, require_saved: bool = fals
 
 
 func clear_profile_state() -> void:
+	mdma_package_pending = false
+	mdma_consumed = false
+	mdma_reward_unlocked = false
 	weed_package_pending = false
 	cocaine_package_pending = false
 	greeting_completed = false
@@ -815,6 +837,8 @@ func reset_progression(persist: bool = true) -> void:
 
 func save() -> bool:
 	var cfg := ConfigFile.new()
+	cfg.set_value("progression", "mdma_package_pending", mdma_package_pending)
+	cfg.set_value("progression", "mdma_consumed", mdma_consumed)
 	cfg.set_value("progression", "weed_package_pending", weed_package_pending)
 	cfg.set_value("progression", "cocaine_package_pending", cocaine_package_pending)
 	cfg.set_value("intro", "greeting_completed", greeting_completed)
@@ -880,6 +904,9 @@ func load_currency() -> void:
 		weed_reward_unlocked = weed_consumed or story_completed_level >= WEED_STORY_LEVEL
 		cocaine_consumed = bool(cfg.get_value("progression", "cocaine_consumed", false))
 		cocaine_reward_unlocked = cocaine_consumed or story_completed_level >= COCAINE_STORY_LEVEL
+		mdma_consumed = bool(cfg.get_value("progression", "mdma_consumed", false))
+		mdma_reward_unlocked = mdma_consumed or story_completed_level >= MDMA_STORY_LEVEL
+		mdma_package_pending = bool(cfg.get_value("progression", "mdma_package_pending", mdma_reward_unlocked and not mdma_consumed))
 		weed_package_pending = bool(cfg.get_value("progression", "weed_package_pending", weed_reward_unlocked and not weed_consumed))
 		cocaine_package_pending = bool(cfg.get_value("progression", "cocaine_package_pending", cocaine_reward_unlocked and not cocaine_consumed))
 		xp = clampi(int(cfg.get_value("progression", "xp", 0)), 0, get_xp_required() - 1)

@@ -52,8 +52,26 @@ func get_texture() -> ViewportTexture:
 	return _viewport.get_texture() if is_instance_valid(_viewport) else null
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_update_camera()
+	if is_instance_valid(_room) and _room.has_method("follow_card_pointer") and is_instance_valid(_image) and _image.is_visible_in_tree():
+		var source := _image.get_viewport()
+		var viewer := source.get_camera_3d()
+		if not is_instance_valid(viewer):
+			return
+		# Project the real mouse ray onto the card window, then carry that
+		# point into its private room. This also works on tilted cards.
+		var inverse := _image.global_transform.affine_inverse()
+		var pointer := source.get_mouse_position()
+		var origin := inverse * viewer.project_ray_origin(pointer)
+		var direction := inverse.basis * viewer.project_ray_normal(pointer)
+		if absf(direction.z) < 0.0001:
+			return
+		var distance := -origin.z / direction.z
+		if distance < 0.0:
+			return
+		var target := (origin + direction * distance) * (APERTURE_HEIGHT / _aperture_size.y)
+		_room.follow_card_pointer(target, delta)
 
 
 func _update_camera() -> void:

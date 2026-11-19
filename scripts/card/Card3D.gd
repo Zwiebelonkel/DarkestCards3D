@@ -37,6 +37,7 @@ class RarityPreset:
 @onready var rarity_mesh: MeshInstance3D = $card/rarity
 @onready var name_label: Label3D = $NameLabel
 @onready var attack_label: Label3D = $AttackLabel
+@onready var swarm_multiplier_label: Label3D = $AttackLabel/SwarmMultiplier
 @onready var defense_label: Label3D = $DefenseLabel
 @onready var description_label: Label3D = $DescriptionLabel
 @onready var effects_label: Label3D = $EffectsLabel
@@ -51,6 +52,7 @@ var _localized_font_sizes: Dictionary = {}
 var max_hp: int = 0
 var current_hp: int = 0
 var attack_value: int = 0
+var _swarm_multiplier := 1 # Presentation only; attack_value stays unmultiplied.
 var _first_hit_shield_available: bool = false
 var _last_stand_available: bool = false
 var _grave_return_available: bool = false
@@ -62,6 +64,7 @@ var _disabled := false
 var event_block_turns: int = 0
 var stats_hidden := false # Local viewer presentation; never changes combat state.
 var _event_block_badge: Node3D
+var _stat_puddles: Node3D
 
 # Transient match data travels with stolen cards in a battle deck. It is never
 # written back to CardDatabase, the collection, or a player's saved deck.
@@ -114,6 +117,7 @@ const DEATH_DISSOLVE_SCRIPT := preload("res://scripts/card/CardDeathDissolve.gd"
 const DIORAMA_SCRIPT := preload("res://scripts/card/CardDiorama.gd")
 const COMBAT_INDICATORS_SCRIPT := preload("res://scripts/card/CardCombatIndicators.gd")
 const EVENT_BLOCK_KNIFE_SCENE := preload("res://scenes/effects/EventBlockKnife.tscn")
+const STAT_PUDDLES_SCRIPT := preload("res://scripts/card/CardStatPuddles.gd")
 var _death_dissolve: RefCounted
 var _diorama_art: CardDiorama
 var _diorama_scene_path := ""
@@ -226,7 +230,7 @@ func begin_death_dissolve() -> void:
 	_set_effect_icon_areas_enabled(false)
 	for label in find_children("*", "Label3D", true, false):
 		(label as Label3D).hide()
-	for decoration in [card_outline, rarity_mesh, _special_aura, _event_block_badge]:
+	for decoration in [card_outline, rarity_mesh, _special_aura, _event_block_badge, _stat_puddles]:
 		if is_instance_valid(decoration):
 			(decoration as Node3D).hide()
 	# Blood's gameplay-visible state remains intact while its extra render
@@ -287,6 +291,7 @@ func setup(data: Dictionary) -> void:
 		defense = original_attack
 
 	attack_value = attack
+	_swarm_multiplier = 1
 	max_hp = defense
 	current_hp = defense
 	_first_hit_shield_available = CardData.has_effect(data, "shield_first_hit")
@@ -306,7 +311,7 @@ func setup(data: Dictionary) -> void:
 	if has_meta("last_survival_effect"):
 		remove_meta("last_survival_effect")
 
-	attack_label.text = "?" if stats_hidden else str(attack)
+	attack_label.text = "" if stats_hidden else str(attack)
 	_update_hp_label()
 	_refresh_localized_text(true)
 	effects_label.visible = false
@@ -452,8 +457,46 @@ func _clear_blood() -> void:
 
 
 func _update_hp_label() -> void:
-	attack_label.text = "?" if stats_hidden else str(attack_value)
-	defense_label.text = "?" if stats_hidden else str(current_hp)
+	attack_label.text = "" if stats_hidden else str(attack_value)
+	defense_label.text = "" if stats_hidden else str(current_hp)
+	_update_swarm_multiplier_label()
+	_sync_stat_puddles()
+
+
+## Derived locally from the table, including on clients and spectators. Never
+## store the multiplier in combat snapshots or apply it to HP/counterattacks.
+func set_swarm_multiplier(identical_on_board: int) -> void:
+	var multiplier := maxi(identical_on_board, 1) if CardData.has_effect(card_data, "swarm_power") else 1
+	if _swarm_multiplier == multiplier:
+		return
+	_swarm_multiplier = multiplier
+	_update_swarm_multiplier_label()
+
+
+func _update_swarm_multiplier_label() -> void:
+	swarm_multiplier_label.visible = _swarm_multiplier > 1 and not stats_hidden and _death_dissolve == null
+	if not swarm_multiplier_label.visible:
+		return
+	swarm_multiplier_label.text = "×%d" % _swarm_multiplier
+	# Follow the bobbing attack number and keep a small gap even after a curse
+	# or strength event changes its digit count. This suffix multiplies the
+	# printed base attack, rather than an already-multiplied total.
+	var font: Font = attack_label.font if attack_label.font != null else ThemeDB.fallback_font
+	var number_width := font.get_string_size(attack_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, attack_label.font_size).x
+	swarm_multiplier_label.position.x = (number_width * 0.5 + 3.0) * attack_label.pixel_size
+
+
+func _sync_stat_puddles() -> void:
+	if not is_node_ready():
+		return
+	var covered := stats_hidden and not is_stack_decoration and _death_dissolve == null and CardData.is_combat_card(card_data)
+	if covered and not is_instance_valid(_stat_puddles):
+		_stat_puddles = STAT_PUDDLES_SCRIPT.new()
+		_stat_puddles.name = "StatPuddles"
+		add_child(_stat_puddles)
+		_stat_puddles.configure(attack_label.position, defense_label.position, str(card_data.get("instance_id", card_data.get("id", ""))).hash())
+	if is_instance_valid(_stat_puddles):
+		_stat_puddles.visible = covered
 
 
 func _build_effects_summary() -> String:
@@ -678,6 +721,7 @@ func _update_event_block_badge(animate: bool = true) -> void:
 		_event_block_badge = EVENT_BLOCK_KNIFE_SCENE.instantiate() as Node3D
 		_event_block_badge.name = "EventBlockBadge"
 		add_child(_event_block_badge)
+		_event_block_badge.match_decoration(get_parent().get_node_or_null("decortaions/knife") as Node3D)
 	_event_block_badge.sync(event_block_turns, stats_hidden, animate)
 
 

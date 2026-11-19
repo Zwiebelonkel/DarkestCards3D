@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/EventBlockKnife.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/environments/props/knife/knife.glb" id="2"]
+
+[node name="EventBlockKnife" type="Node3D"]
+position = Vector3(0.10, 0.05, -0.30)
+script = ExtResource("1")
+
+[node name="PinMotion" type="Node3D" parent="."]
+
+[node name="Orientation" type="Node3D" parent="PinMotion"]
+rotation_degrees = Vector3(8, 10, 0)
+
+[node name="Model" parent="PinMotion/Orientation" instance=ExtResource("2")]
+position = Vector3(0.020540, 0.000121434, 0.804570039)
+scale = Vector3(0.302075, 0.302075, 0.302075)

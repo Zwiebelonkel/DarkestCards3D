@@ -1,0 +1,51 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 123 Karten
+PASS an empty ritual cannot grant a shotgun
+PASS unowned cards cannot be placed
+PASS non-story cards and invalid sockets are rejected
+PASS training cannot save ritual progress
+PASS a failed placement save leaves all progress and cards unchanged
+PASS a retry can save the first card into any free socket
+PASS duplicates and overwriting an occupied socket are rejected
+PASS two distinct cards cannot unlock the shotgun
+PASS three distinct story cards complete the ritual
+PASS a failed pickup save keeps the pending shotgun available
+PASS shotgun collection is durable and can only happen once
+PASS a fresh profile inherits neither sockets nor shotgun ownership
+PASS room travel reaches 2
+PASS fixture reaches the vault with the real shared camera journey
+PASS shrine and underground hall remain independent saved scenes
+PASS ownership alone never seats cards or drops the shotgun
+PASS the ritual shrine is directly in front of the arriving player
+PASS real shrine hover swings the shared camera to its authored focus marker
+PASS the focused shrine presents the three owned story cards for manual dragging
+PASS hovering the available card hand keeps the altar camera steady before dragging
+PASS real mouse press grabs a story card and locks turns and room exits
+PASS releasing outside the shrine returns the card without recording a socket
+PASS Pause cancels a held card without placing it or leaving a hover outline
+PASS a manually released card snaps into the selected free socket
+PASS one occupied socket cannot spawn the shotgun
+PASS dropping on an occupied socket returns the new card without replacing the seated one
+PASS two sockets still leave the reward locked
+PASS only the third manually seated card starts the shotgun drop
+PASS the shotgun falls from above while repeat input is blocked
+PASS the falling shotgun lands and settles onto the shrine
+PASS all cards remain snapped in while the landed reward is available
+PASS room travel reaches 2
+PASS fixture reaches the vault with the real shared camera journey
+PASS reloading a completed ritual restores the uncollected shotgun without replaying its fall
+PASS the actual shotgun gains a yellow outline under the mouse
+PASS Pause blocks shotgun collection and removes its outline
+PASS a real click finishes collecting the shotgun
+PASS shotgun ownership is saved before the world reward disappears
+PASS placing story cards preserves their unique collection mementos
+PASS leaving the shrine restores the normal room camera
+PASS the completed shrine does not obstruct the normal return stair
+PASS room travel reaches 2
+PASS fixture reaches the vault with the real shared camera journey
+PASS reloading collected progress never respawns or duplicates the shotgun
+RITUAL_SHRINE_TESTS: PASS (44 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

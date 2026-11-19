@@ -89,6 +89,7 @@ func _run() -> void:
 				await _check_piss_rpcs()
 				await _check_heal_rpcs()
 				await _check_rearrange_rpcs()
+				await _check_switch_rpcs()
 	host._online_mode = false
 	guest._online_mode = false
 	NetworkManager.current_lobby_id = 0
@@ -345,6 +346,62 @@ func _check_rearrange_rpcs() -> void:
 		host._broadcast_online_snapshot(0)
 		await get_tree().create_timer(0.1).timeout
 		check(guest._get_card_from_slot(mirrored, 3) == guest_a, "Duplicate snapshots preserve the moved nodes")
+
+
+func _check_switch_rpcs() -> void:
+	for setup: Array in [["player", false], ["enemy", false], ["player", true]]:
+		var caster := str(setup[0])
+		var spectator := bool(setup[1])
+		host._clear_match()
+		guest._clear_match()
+		host._reset_online_sync_tracking()
+		guest._reset_online_sync_tracking()
+		for table: GameTable in [host, guest]:
+			table._online_mode = true
+			table._table_state = GameTable.TableState.PLAYING
+			table._online_turn_sequence = 0
+		host._online_is_host = true
+		host._online_is_spectator = false
+		guest._online_is_host = false
+		guest._online_is_spectator = spectator
+		# This fixture shares the host's autoload. Keep its real opponent for
+		# the ACK barrier while exercising the receiver's spectator view.
+		NetworkManager._participants[guest_id]["role"] = "player"
+		host._current_turn = caster
+		host._online_turn_sequence = 90
+		host._player_deck.assign([_combat_card("switch-host-reserve"), _combat_card("switch-host-face")])
+		host._enemy_deck.assign([_combat_card("switch-guest-reserve"), _combat_card("switch-guest-face")])
+		host._draw_to_slot("player", 0, false)
+		host._draw_to_slot("enemy", 0, false)
+		host._initialize_event_deck()
+		var event := _give_event(caster, "switch")
+		host._broadcast_online_snapshot(0)
+		var ready := await _wait_until(func(): return guest._online_turn_sequence == 90 and not guest._online_action_in_progress)
+		check(ready, "Switch fixture synchronizes for " + ("spectator" if spectator else caster))
+		if not ready:
+			return
+		if caster == "enemy":
+			guest._rpc_request_event.rpc_id(1, event["uid"], -1, 90)
+		else:
+			host._submit_event(event["uid"], -1)
+		var flying := await _wait_until(func(): return guest._event_switch_cards.size() == 2)
+		check(flying and host._event_switch_cards.size() == 2, "Switch launches two physical backs on the authority and receiving peer")
+		check(host._player_deck[0]["instance_id"] == "switch-guest-reserve" and host._enemy_deck[0]["instance_id"] == "switch-host-reserve", "Online Switch exchanges the actual authoritative reserve instances")
+		var public_state := host._build_online_snapshot()
+		check(not str(public_state).contains("switch-host-reserve") and not str(public_state).contains("switch-guest-reserve"), "Switch animation needs no private reserve identities in snapshots")
+		var guest_cards := guest._event_switch_cards.duplicate()
+		host._broadcast_online_snapshot(0)
+		await get_tree().create_timer(0.08).timeout
+		check(guest._event_switch_cards == guest_cards and guest._event_presented_sequence == 1, "Repeated snapshots keep the same two flying cards instead of restarting Switch")
+		check(not guest._player_stack_visuals[0].visible and not guest._enemy_stack_visuals[0].visible, "Online stack reconciliation preserves the temporarily missing top backs")
+		var released := await _wait_until(func(): return not host._online_action_in_progress and not guest._online_action_in_progress)
+		check(released and host._event_switch_cards.is_empty() and guest._event_switch_cards.is_empty(), "Switch finishes on both peers before the event barrier releases the attack")
+		check(guest._player_stack_visuals[0].visible and guest._enemy_stack_visuals[0].visible, "Both complete reserve piles return after the online exchange")
+		host._broadcast_online_snapshot(0)
+		await get_tree().create_timer(0.08).timeout
+		check(guest._event_switch_cards.is_empty(), "A completed Switch never replays on a duplicate snapshot")
+	NetworkManager._participants[guest_id]["role"] = "player"
+	guest._online_is_spectator = false
 
 
 func _check_heal_rpcs() -> void:

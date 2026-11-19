@@ -4,6 +4,12 @@ uniform vec4 base_color : source_color = vec4(0.29, 0.23, 0.19, 1.0);
 uniform vec4 mortar_color : source_color = vec4(0.12, 0.13, 0.12, 1.0);
 uniform bool masonry = false;
 uniform float roughness_amount : hint_range(0.0, 1.0) = 0.92;
+// Only the graveyard's selected floor instances set these. Other surfaces stay unchanged.
+instance uniform vec3 grave_opening_origin = vec3(0.0);
+instance uniform vec3 grave_opening_right = vec3(1.0, 0.0, 0.0);
+instance uniform vec3 grave_opening_forward = vec3(0.0, 0.0, -1.0);
+instance uniform vec2 grave_opening_half_size = vec2(0.0);
+instance uniform float grave_opening_amount = 0.0;
 varying vec3 surface_position;
 varying vec3 surface_normal;
 
@@ -18,6 +24,13 @@ void vertex() {
 
 void fragment() {
 	vec3 point = surface_position;
+	if (grave_opening_amount > 0.0) {
+		vec3 offset = point - grave_opening_origin;
+		if (abs(dot(offset, grave_opening_right)) < grave_opening_half_size.x * grave_opening_amount
+			&& abs(dot(offset, grave_opening_forward)) < grave_opening_half_size.y) {
+			discard;
+		}
+	}
 	float broad_grain = grain(floor(point * 5.0));
 	float fine_grain = grain(floor(point * 95.0));
 	vec3 color = base_color.rgb * (0.84 + broad_grain * 0.22 + fine_grain * 0.09);

@@ -7,9 +7,13 @@ var outside_area_id := "graveyard"
 var outside_room := 2
 var expected_return_side := 0
 var success_marker := "HOLY_WATER_RETURN_TESTS"
+var expected_sentence_count := 4
+var expected_laugh_index := 3
 
 
 func _claim_return_dialogue() -> bool:
+	if reward_card_id == "silver_bullet":
+		return CollectionManager.claim_silver_bullet_return_dialogue()
 	if reward_card_id == "crucifix":
 		return CollectionManager.claim_crucifix_return_dialogue()
 	return CollectionManager.claim_holy_water_return_dialogue()
@@ -78,12 +82,13 @@ func _run() -> void:
 	await _settle(0.35)
 	await _capture(reward_card_id + "-return")
 	var sentences: Array[String] = conversation._get_story_sentences()
-	check(sentences.size() == 4, "the return conversation has four sentences")
+	check(sentences.size() == expected_sentence_count, "the return conversation has the expected number of sentences")
 	if reward_card_id == "crucifix":
 		check(sentences != conversation.SENTENCES, "the Crucifix uses its own dialogue instead of the Holy Water lines")
 		check("Auge" not in " ".join(sentences) and "Kreuz" in " ".join(sentences), "the dialogue talks about the cross without mentioning the eye")
-	for index in range(4):
-		check(table._satan_is_laughing == (index == 3), "Satan laughs only in the fourth dialogue part")
+	for index in range(expected_sentence_count):
+		check(table._satan_is_laughing == (index == expected_laugh_index), "Satan laughs only in the intended dialogue part")
+		check(conversation._uses_laughing_text() == (index == expected_laugh_index), "laughing text matches the actor animation")
 		check(conversation._message == sentences[index], "ordered sentence %d" % (index + 1))
 		for locale in Localization.SUPPORTED_LOCALES:
 			Localization.set_locale(locale)
@@ -91,6 +96,9 @@ func _run() -> void:
 			if locale != "de":
 				check(conversation._body_label.text != sentences[index], "translated %s part %d" % [locale, index + 1])
 		conversation._advance_dialog_text(100.0)
+		if reward_card_id == "silver_bullet":
+			Localization.set_locale("de")
+			await _capture("silver-bullet-part-%d" % (index + 1))
 		conversation.continue_dialog()
 	check(await _wait_until(func(): return not main._room_transition_active), "slow return completes and releases movement")
 	check(main.camera_pivot.global_position.is_equal_approx(saved_pose.origin) and is_equal_approx(main.main_camera.fov, saved_fov), "normal hub position and lens restored")

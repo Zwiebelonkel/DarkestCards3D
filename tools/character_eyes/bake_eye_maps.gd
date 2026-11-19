@@ -2,7 +2,7 @@ extends Node
 ## One-shot baker. The saved maps are normal textures, including in exports.
 
 const SHEETS := {
-	"satan": ["satan", "satanHover", "satanLaught", "satanDeath"],
+	"satan": ["satan", "satanHover", "satanLaught", "satanDeath", "satanPanic", "satanKill"],
 	"angel": ["angel", "angelHover"],
 	"baclmarketDealer": ["blackmarketDealer", "dealerHover"],
 	"jester": ["jester", "jesterHover"],

@@ -5,6 +5,8 @@ const EYE_EMISSION_MAPS := {
 	"satanHover": preload("res://assets/characters/satan/satanHover_eyes.res"),
 	"satanLaught": preload("res://assets/characters/satan/satanLaught_eyes.res"),
 	"satanDeath": preload("res://assets/characters/satan/satanDeath_eyes.res"),
+	"satanPanic": preload("res://assets/characters/satan/satanPanic_eyes.res"),
+	"satanKill": preload("res://assets/characters/satan/satanKill_eyes.res"),
 	"angel": preload("res://assets/characters/angel/angel_eyes.res"),
 	"angelHover": preload("res://assets/characters/angel/angelHover_eyes.res"),
 	"blackmarketDealer": preload("res://assets/characters/baclmarketDealer/blackmarketDealer_eyes.res"),

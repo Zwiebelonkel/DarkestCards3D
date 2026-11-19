@@ -1,0 +1,59 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 123 Karten
+PASS the idle hub allows Satan spam detection
+PASS ordinary hub entry has no blood border
+PASS four clicks in 1.5 seconds trigger with an eight-second cooldown
+PASS jumpscare uses its dedicated sound resource
+PASS right clicks and releases never count
+PASS non-idle table state 3 rejects spam
+PASS non-idle table state 4 rejects spam
+PASS non-idle table state 1 rejects spam
+PASS the intro cannot queue a jumpscare
+PASS Pause cannot queue a jumpscare
+PASS slow clicks expire rather than accumulating forever
+PASS half of the required real picked clicks starts the supplied particles and sound
+PASS the stream starts at lower Satan and aims at the player's lower body
+PASS the ballistic trajectory lands at the lower player target
+PASS the stream clears the actual table surface throughout its crossing
+PASS clicks below the threshold leave Satan idle
+PASS the final required real picked click starts the jumpscare
+PASS the actual jumpscare unlocks its Steam achievement
+PASS the full jumpscare immediately removes the stream and stops its sound
+PASS the actual Satan sprite fills the view directly in front of the camera
+PASS ordinary hover cannot overwrite the jumpscare's laughing sprite
+PASS the jumpscare sound and dedicated strobe start together
+PASS the blood border waits for waking up rather than covering the close-up
+PASS lens and screen overlays retain their visibility and materials when the jumpscare starts
+PASS both Satan and the camera independently shake
+PASS the actual light alternates between lit and dark during the scare
+PASS lens and screen overlays stay visible throughout the close-up
+PASS the scare flows into waking up without releasing input or emitting finished
+PASS waking up on the floor triggers the blood border underneath the preserved effects
+PASS the player wakes just above the actual hub floor looking at the ceiling
+PASS the room returns and the strobe disappears before waking up
+PASS Satan returns to his place while the player remains on the floor
+PASS all navigation, interaction, HUD and pause controls stay locked while waking
+PASS the camera holds the lying pose before starting to get up
+PASS the camera gradually rises from the floor toward the original eye height
+PASS input stays blocked throughout getting up and finishes exactly once
+PASS the blood border continues fading after the player has finished getting up
+PASS the same overlay effects persist throughout waking up and getting up
+PASS spam and gameplay keys cannot interrupt recovery or leak into navigation
+PASS camera pose, render layers and environment restore exactly
+PASS Satan keeps his existing idle position and rendering state
+PASS HUD visibility is restored after getting up
+PASS normal controls and Satan picking recover after the scare
+PASS continued spam cannot retrigger during cooldown
+PASS the scare never changes cards or currency
+PASS a later spam burst can trigger again after cooldown
+PASS a previously hidden overlay stays hidden while the other overlay remains visible
+PASS cancelling during the close-up restores the camera immediately
+PASS cancelling preserves the original visibility of each overlay effect
+PASS the second recovery is mid-rise before a lobby interrupts
+PASS an incoming lobby cancels getting up and restores camera and input
+PASS lobby cancellation also clears the blood border
+SATAN_JUMPSCARE_TESTS: PASS (52 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

@@ -1,0 +1,54 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 123 Karten
+PASS unowned shotgun has no rack or camera model
+PASS ritual grants the real saved shotgun
+PASS the ownership signal immediately mounts the shotgun by the clicker
+PASS fixture tests pickup without a Clicker card
+PASS ownership survives profile reload
+PASS mounted gun is visible and mesh-pickable within the visor
+PASS Pause blocks pickup
+PASS a real rack click equips without firing or requiring Clicker ownership
+PASS the same model moves to the camera and the visor folds away
+PASS holding the shotgun disables ordinary Satan click reactions
+PASS clicking away from Satan cannot fire
+PASS Pause blocks shooting
+PASS training blocks story shots
+PASS an online lobby blocks story shots
+PASS a pending lobby operation blocks story shots
+PASS looking at another hub side cannot fire
+PASS the clicker still awards coins without firing the held weapon
+PASS the actual Satan pick area is reachable in the normal player view
+PASS clicking Satan fires exactly the first shot
+PASS shot starts sound and a muzzle flash
+PASS first hit loops the supplied two-frame Panic animation
+PASS movement and the visor are blocked during the shot and dialogue
+PASS rapid repeat clicks during recoil cannot skip Panic
+PASS the first shot opens Satan's dialogue automatically
+PASS Satan remains panicked while talking
+PASS shotgun dialogue is localized in de
+PASS shotgun dialogue is localized in en
+PASS shotgun dialogue is localized in es
+PASS shotgun dialogue is localized in fr
+PASS shotgun dialogue is localized in pl
+PASS the supplied Panic sheet advances during the dialogue
+PASS clicking Satan during the conversation advances only text
+PASS the dialogue-closing click cannot also fire
+PASS dialogue dismissal releases movement and the second shot
+PASS hover changes cannot overwrite Panic after the dialogue
+PASS a competing laughter request cannot overwrite the story reaction
+PASS the next aimed click fires and starts the supplied Kill animation
+PASS all nine Kill frames play once
+PASS the full Kill animation completes and unlocks movement
+PASS the encounter stays busy until the last Kill frame has actually played
+PASS Kill holds its final frame without returning to idle
+PASS the finished encounter cannot fire a third shot or reopen dialogue
+PASS right click returns the shotgun to the rack
+PASS story shooting awards no currency and does not end a card match
+PASS a reloaded hub restores the owned rack with a fresh encounter
+PASS normal hub loading restores Satan's normal pose
+SHOTGUN_ENCOUNTER_TESTS: 46 checks, 0 failures
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

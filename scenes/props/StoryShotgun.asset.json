@@ -1,0 +1,27 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "Ritual shotgun: clicker rack and held weapon",
+  "scene": "res://scenes/props/StoryShotgun.tscn",
+  "units": "meters before camera/visor scaling",
+  "forward": "+Z in the imported model; rotated toward camera -Z when held",
+  "origin": "authored model center",
+  "footprint_m": [0.089, 1.283],
+  "height_m": 0.236,
+  "interaction_sides": ["camera-facing side in the clicker rack"],
+  "style_references": [
+    {"path": "res://assets/environments/props/shotgun/shotgun.tscn", "reason": "Reuse the supplied textured low-poly double barrel without changing the world pickup."},
+    {"path": "res://scenes/ui/LevelProgress.tscn", "reason": "Match the visor's dark face, brass edge and physical hinge."},
+    {"path": "res://assets/characters/satan/satanPanic.png", "reason": "Use the supplied two-frame panic pose and existing colored eye emission."},
+    {"path": "res://assets/characters/satan/satanKill.png", "reason": "Play all nine authored Kill frames once."}
+  ],
+  "collision": {"required": false, "strategy": "Mesh-space picking in the visor; existing Satan pick area for shots."},
+  "routes": [],
+  "budgets": {"nodes": 9, "mesh_instances": 2, "multimesh_instances": 0, "collision_shapes": 0, "surfaces": 2, "triangles": 300, "unique_materials": 2, "lights": 1, "particles": 0, "nonuniform_scales": 0},
+  "review": {"required_views": ["rack", "held", "panic-dialogue", "panic-ready", "kill-playing", "kill-finished"]},
+  "notes": [
+    "Existing prop geometry is reused. No new building envelopes, terrain interfaces or navigation routes.",
+    "The muzzle effect is hidden except for 0.06 seconds per shot; the light casts no shadow.",
+    "Verify the rack stays below the original coin button and remains reachable within the visor release zone."
+  ]
+}

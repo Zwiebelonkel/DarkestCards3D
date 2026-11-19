@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/effects/EventBlockKnife.manifest.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -0.0482306256890297,
+        -0.291615128517151,
+        -0.0262308120727539
+      ],
+      "size": [
+        0.510787606239319,
+        0.303805828094482,
+        1.61872148513794
+      ]
+    },
+    "collision_shapes": 0,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 2,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 7,
+    "nonuniform_scales": 1,
+    "particles": 0,
+    "surfaces": 2,
+    "triangles": 688,
+    "unique_materials": 2
+  },
+  "passed": true,
+  "target": "res://scenes/effects/EventBlockKnife.tscn"
+}

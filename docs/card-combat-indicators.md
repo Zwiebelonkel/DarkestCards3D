@@ -18,8 +18,8 @@ corner, using the existing effect symbols:
 
 New statuses pop into view. Expired poison and consumed stun shrink and fade
 away; refreshing either during its exit cancels the pending hide. Curse lasts
-for the battle instance. The existing event-block badge continues to show its
-own remaining turns.
+for the battle instance. Event Block uses an embedded knife for its remaining
+owner turns; see `docs/event-block-knife.md`.
 
 `Card3D` owns gameplay state and updates `CardCombatIndicators`, which handles
 only presentation. Poison application and ticking now use card methods so the
@@ -28,6 +28,27 @@ penalty is included in network and stolen-card snapshots. Repeated snapshots of
 unchanged card data update combat state without rebuilding the artwork or
 restarting seal animations. Initial snapshots and stolen-card redraws hide
 already-spent seals immediately.
+
+## Swarm Power multiplier
+
+On table cards, Swarm Power appends a smaller orange `×2`, `×3`, etc. to the
+printed base attack. A single living copy has no suffix. For example, `2 ×3`
+means six outgoing attack damage before other damage modifiers; HP stays
+unchanged. As in combat, only identical card IDs count, including living copies
+on either side. Different Swarm species do not combine. Counterattack damage
+continues to use the base attack.
+
+The table derives the suffix from its current board each frame, using the same
+copy-count helper as combat. Only factor changes rebuild the suffix. Draws,
+deaths, growth and online snapshots therefore update it without extra network
+state or changes to owned cards. The suffix follows the attack number's motion,
+adapts its spacing to curses/strength changes, and hides with obscured stats or
+the card's death dissolve.
+
+`tests/swarm_power_display_test.tscn` covers one/two/three/ten copies, different
+species, current attack changes, hidden stats, local fighter/spectator snapshot
+reconciliation, death/refill and Chick growth. Its rendered run captures the
+actual match table and closeups in `docs/validation/swarm-power-display/`.
 
 ## Validation
 

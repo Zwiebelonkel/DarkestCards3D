@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "profile": "prop",
-  "asset_name": "Story package reward: weed 7 / cocaine 20",
+  "asset_name": "Story packages: weed 7 / cocaine 20 / MDMA 25",
   "scene": "res://scenes/props/WeedPickup.tscn",
   "units": "meters in table-local space (hub scale 0.72)",
   "forward": "-Z",
@@ -40,19 +40,19 @@
   },
   "routes": [],
   "budgets": {
-    "nodes": 13,
-    "mesh_instances": 2,
+    "nodes": 22,
+    "mesh_instances": 3,
     "multimesh_instances": 0,
     "multimesh_elements": 0,
     "collision_shapes": 1,
     "concave_collision_shapes": 0,
     "collision_triangles": 0,
-    "surfaces": 2,
-    "triangles": 4700,
-    "unique_materials": 2,
+    "surfaces": 3,
+    "triangles": 7200,
+    "unique_materials": 3,
     "lights": 0,
     "particles": 0,
-    "nonuniform_scales": 2
+    "nonuniform_scales": 3
   },
   "review": {
     "required_views": [
@@ -72,16 +72,26 @@
     ],
     "runtime": [
       "tests/weed_reward_test.tscn",
-      "tests/cocaine_reward_test.tscn"
+      "tests/cocaine_reward_test.tscn",
+      "tests/mdma_reward_test.tscn"
     ],
     "performance": [
       "test-user/weed/review_report.json"
     ],
     "visual": [
       "docs/validation/weed-reward/",
-      "docs/validation/cocaine-reward/"
+      "docs/validation/cocaine-reward/",
+      "docs/validation/mdma-reward/"
     ]
   },
+  "notes": [
+    "Inherits the imported mesh's authored nonuniform scale; no source asset changes.",
+    "Root rests 4mm above the actual tabletop in the hub; model base is zero in prop space.",
+    "Outline adds a conditional second mesh pass; the screen filter is one full-screen pass plus a back-buffer copy.",
+    "Weed owns a dedicated Master low-pass; cocaine instead scales the existing music pitch and speed. No lights or particles.",
+    "Building construction joins and navigation are not applicable to this non-blocking pickup.",
+    "MDMA reuses the primitive picking box and adds a camera-relative positional clue; only one of three models is visible. Audio creates four child nodes, included in the runtime node budget."
+  ],
   "measured": {
     "bounds": {
       "position": [
@@ -99,24 +109,17 @@
     "collision_triangles": 0,
     "concave_collision_shapes": 0,
     "lights": 0,
-    "mesh_instances": 2,
+    "mesh_instances": 3,
     "multimesh_buffer_floats": 0,
     "multimesh_elements": 0,
     "multimesh_instances": 0,
     "multimesh_invalid_buffers": 0,
     "multimesh_missing_custom_aabb": 0,
-    "nodes": 13,
-    "nonuniform_scales": 2,
+    "nodes": 22,
+    "nonuniform_scales": 3,
     "particles": 0,
-    "surfaces": 2,
-    "triangles": 4656,
-    "unique_materials": 2
-  },
-  "notes": [
-    "Inherits the imported mesh's authored nonuniform scale; no source asset changes.",
-    "Root rests 4mm above the actual tabletop in the hub; model base is zero in prop space.",
-    "Outline adds a conditional second mesh pass; the screen filter is one full-screen pass plus a back-buffer copy.",
-    "Weed owns a dedicated Master low-pass; cocaine instead scales the existing music pitch and speed. No lights or particles.",
-    "Building construction joins and navigation are not applicable to this non-blocking pickup."
-  ]
+    "surfaces": 3,
+    "triangles": 7168,
+    "unique_materials": 3
+  }
 }

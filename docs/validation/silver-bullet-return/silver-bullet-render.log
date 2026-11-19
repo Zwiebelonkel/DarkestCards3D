@@ -1,0 +1,76 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 123 Karten
+PASS without the Silver Bullet there is no return conversation
+PASS other story items cannot trigger the bullet conversation
+PASS training cannot consume the pending bullet conversation
+PASS a failed save preserves the pending conversation for a later return
+PASS retry durably claims the Silver Bullet return
+PASS the bullet conversation can only be claimed once
+PASS bullet, Holy Water and Crucifix conversations have independent one-time flags
+PASS a new profile has no inherited bullet conversation
+PASS the dialogue contains exactly the requested three lines in order
+PASS no scene without the story item
+PASS fixture leaves the hub while facing the collection
+PASS acquisition outside does not start the scene
+PASS real return opens Satan dialogue after the swing
+PASS movement stays locked throughout the conversation
+PASS camera zooms in slightly
+PASS music is paused during the sequence
+PASS camera points at Satan
+PASS camera approaches Satan's face only a small distance
+PASS the return conversation has the expected number of sentences
+PASS Satan laughs only in the intended dialogue part
+PASS laughing text matches the actor animation
+PASS ordered sentence 1
+PASS live language refresh de part 1
+PASS live language refresh en part 1
+PASS translated en part 1
+PASS live language refresh es part 1
+PASS translated es part 1
+PASS live language refresh fr part 1
+PASS translated fr part 1
+PASS live language refresh pl part 1
+PASS translated pl part 1
+PASS Satan laughs only in the intended dialogue part
+PASS laughing text matches the actor animation
+PASS ordered sentence 2
+PASS live language refresh de part 2
+PASS live language refresh en part 2
+PASS translated en part 2
+PASS live language refresh es part 2
+PASS translated es part 2
+PASS live language refresh fr part 2
+PASS translated fr part 2
+PASS live language refresh pl part 2
+PASS translated pl part 2
+PASS Satan laughs only in the intended dialogue part
+PASS laughing text matches the actor animation
+PASS ordered sentence 3
+PASS live language refresh de part 3
+PASS live language refresh en part 3
+PASS translated en part 3
+PASS live language refresh es part 3
+PASS translated es part 3
+PASS live language refresh fr part 3
+PASS translated fr part 3
+PASS live language refresh pl part 3
+PASS translated pl part 3
+PASS slow return completes and releases movement
+PASS normal hub position and lens restored
+PASS the item sequence ends facing away from the arrival door (side 0, expected 0; look (0.0, 0.0, -0.978148), inward (4.3, 0.0, -11.7094))
+PASS the turn state agrees with the inward-facing view
+PASS idle frames preserve the arrival direction
+PASS music resumes after the return swing
+PASS Satan stops laughing after the dialogue
+PASS the return sequence preserves the item, other cards and money
+PASS the next normal turn starts from the arrival side
+PASS turning back restores the arrival direction without a jump
+PASS saved one-time flag survives reload
+PASS second return does not replay
+PASS a return without an item conversation also ends facing away from the door
+SILVER_BULLET_RETURN_TESTS: 68 checks, 0 failures
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

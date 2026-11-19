@@ -167,6 +167,25 @@ func _run() -> void:
 	check(GameCurrency.cocaine_reward_unlocked and settings.cheat_weed_button.text == Localization.text("Kokain-Paket fallen lassen"), "Story twenty unlocks cocaine and updates the package cheat")
 	GameCurrency.load_currency()
 	check(GameCurrency.story_completed_level == 20, "Cheated story progress survives reload")
+	main.pause_menu.open()
+	main.pause_menu._open_settings()
+	await settle()
+	var owned_key := CollectionManager.add_card(CollectionManager.SLOT_ROOM_KEY_ID)
+	await click(settings.cheat_access_keys_button)
+	var key_instances: Dictionary = {}
+	for card: Dictionary in CardDatabase.get_all_cards():
+		if not CardData.is_access_key(card):
+			continue
+		var card_id := str(card.id)
+		check(CollectionManager.get_amount(card_id) == 1, "Access key cheat grants exactly one " + card_id)
+		key_instances[card_id] = str(CollectionManager.get_instances_for_card(card_id)[0].instance_id)
+		check(CollectionManager.get_access_key_area_id(card_id).is_empty() or not CollectionManager.is_access_key_used(card_id), "Receiving key leaves door activation available: " + card_id)
+	check(key_instances[CollectionManager.SLOT_ROOM_KEY_ID] == str(owned_key.instance_id), "Access key cheat preserves existing key identity")
+	check(CollectionManager.get_unused_access_key_ids().size() == key_instances.size(), "All keys are immediately available in the tray")
+	settings._cheat_grant_access_keys()
+	CollectionManager.load_collection()
+	for card_id: String in key_instances:
+		check(CollectionManager.get_amount(card_id) == 1 and str(CollectionManager.get_instances_for_card(card_id)[0].instance_id) == key_instances[card_id], "Repeated access key cheat and reload preserve " + card_id)
 	GameCurrency.reset_progression(false)
 	main.pause_menu.open()
 	main.pause_menu._open_settings()

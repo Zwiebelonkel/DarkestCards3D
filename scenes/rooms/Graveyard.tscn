@@ -2592,7 +2592,7 @@ omni_attenuation = 1.3
 [node name="Burials" type="Node3D" parent="."]
 
 [node name="Grave_01" type="Node3D" parent="Burials"]
-transform = Transform3D(0.995953, 0, -0.0898786, 0, 1, 0, 0.0898786, 0, 0.995953, -3.7, 0, 0.3)
+transform = Transform3D(-0.0102515, 0, 0.999948, 0, 1, 0, -0.999948, 0, -0.0102515, -3.7, 0, 0.3)
 
 [node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_01"]
 transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
@@ -2659,7 +2659,7 @@ material_override = SubResource("warm_glow")
 mesh = SubResource("unit_cylinder")
 
 [node name="Grave_02" type="Node3D" parent="Burials"]
-transform = Transform3D(0.998988, 0, -0.0449848, 0, 1, 0, 0.0449848, 0, 0.998988, -3.7, 0, -2.5)
+transform = Transform3D(-0.0102515, 0, 0.999948, 0, 1, 0, -0.999948, 0, -0.0102515, -3.7, 0, -2.32433)
 
 [node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_02"]
 transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
@@ -2678,23 +2678,347 @@ mesh = SubResource("unit_box")
 
 [node name="Footstone" type="MeshInstance3D" parent="Burials/Grave_02"]
 transform = Transform3D(1.29, 0, 0, 0, 0.28, 0, 0, 0, 0.19, 0, 0.17, 0.99)
-material_override = SubResource("granite")
+material_override = SubResource("old_stone")
 mesh = SubResource("unit_box")
 
 [node name="HeadstoneBase" type="MeshInstance3D" parent="Burials/Grave_02"]
 transform = Transform3D(1.15, 0, 0, 0, 0.26, 0, 0, 0, 0.58, 0, 0.2, -0.82)
-material_override = SubResource("granite")
+material_override = SubResource("old_stone")
 mesh = SubResource("unit_box")
 
-[node name="StoneCrossUpright" type="MeshInstance3D" parent="Burials/Grave_02"]
-transform = Transform3D(0.22, 0, 0, 0, 1.48, 0, 0, 0, 0.24, 0, 0.94, -0.83)
-material_override = SubResource("granite")
+[node name="Headstone" type="MeshInstance3D" parent="Burials/Grave_02"]
+transform = Transform3D(0.739408, 0.0351906, 0, -0.0295921, 0.879296, 0, 0, 0, 0.25, 0, 0.8, -0.83)
+material_override = SubResource("old_stone")
 mesh = SubResource("unit_box")
 
-[node name="StoneCrossArms" type="MeshInstance3D" parent="Burials/Grave_02"]
-transform = Transform3D(0.85, 0, 0, 0, 0.21, 0, 0, 0, 0.24, 0, 1.18, -0.83)
-material_override = SubResource("granite")
+[node name="Crown" type="MeshInstance3D" parent="Burials/Grave_02"]
+transform = Transform3D(0.84, 0, 0, 0, 0.15, 0, 0, 0, 0.35, 0, 1.27, -0.83)
+material_override = SubResource("old_stone")
 mesh = SubResource("unit_box")
+
+[node name="RecessedInscription" type="MeshInstance3D" parent="Burials/Grave_02"]
+transform = Transform3D(0.481, 0, 0, 0, 0.4, 0, 0, 0, 0.012, 0, 0.72, -0.689)
+material_override = SubResource("path_dark")
+mesh = SubResource("unit_box")
+
+[node name="Inscription" type="Label3D" parent="Burials/Grave_02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, -0.67)
+pixel_size = 0.0028
+modulate = Color(0.49, 0.53, 0.47, 1)
+text = "R.I.P."
+font = ExtResource("2_font")
+font_size = 30
+outline_size = 3
+
+[node name="WeatheredCrack" type="MeshInstance3D" parent="Burials/Grave_02"]
+transform = Transform3D(0.0175662, -0.0829273, 0, 0.00392813, 0.370841, 0, 0, 0, 0.016, 0.2072, 0.9, -0.681)
+material_override = SubResource("dark")
+mesh = SubResource("unit_box")
+
+[node name="Offering" type="MeshInstance3D" parent="Burials/Grave_02"]
+transform = Transform3D(0.273251, 0, 0.0545574, 0, 0.12, 0, -0.0611043, 0, 0.243974, -0.2, 0.2, 0.48)
+material_override = SubResource("pale_stone")
+mesh = SubResource("unit_box")
+
+[node name="Candle" type="MeshInstance3D" parent="Burials/Grave_02"]
+transform = Transform3D(0.09, 0, 0, 0, 0.19, 0, 0, 0, 0.09, -0.2, 0.33, 0.48)
+material_override = SubResource("warm_glow")
+mesh = SubResource("unit_cylinder")
+
+[node name="Grave_Hannah" type="Node3D" parent="Burials"]
+transform = Transform3D(0.029446, 0, -0.999567, 0, 1, 0, 0.999567, 0, 0.029446, 3.46209, 0, -8.08654)
+
+[node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
+material_override = SubResource("grave_soil")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_-1" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, -0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_1" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, 0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Footstone" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(1.29, 0, 0, 0, 0.28, 0, 0, 0, 0.19, 0, 0.17, 0.99)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="HeadstoneBase" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(1.15, 0, 0, 0, 0.26, 0, 0, 0, 0.58, 0, 0.2, -0.82)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Headstone" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(0.739408, 0.0351906, 0, -0.0295921, 0.879296, 0, 0, 0, 0.25, 0, 0.8, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Crown" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(0.84, 0, 0, 0, 0.15, 0, 0, 0, 0.35, 0, 1.27, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="RecessedInscription" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(0.481, 0, 0, 0, 0.4, 0, 0, 0, 0.012, 0, 0.72, -0.689)
+material_override = SubResource("path_dark")
+mesh = SubResource("unit_box")
+
+[node name="Inscription" type="Label3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, -0.67)
+pixel_size = 0.0028
+modulate = Color(0.49, 0.53, 0.47, 1)
+text = "H. Johnson"
+font = ExtResource("2_font")
+font_size = 30
+outline_size = 3
+
+[node name="WeatheredCrack" type="MeshInstance3D" parent="Burials/Grave_Hannah"]
+transform = Transform3D(0.0175662, -0.0829273, 0, 0.00392813, 0.370841, 0, 0, 0, 0.016, 0.2072, 0.9, -0.681)
+material_override = SubResource("dark")
+mesh = SubResource("unit_box")
+
+[node name="Grave_Steward" type="Node3D" parent="Burials"]
+transform = Transform3D(0.029446, 0, -0.999567, 0, 1, 0, 0.999567, 0, 0.029446, 3.46209, 0, -6.75156)
+
+[node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
+material_override = SubResource("grave_soil")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_-1" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, -0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_1" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, 0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Footstone" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(1.29, 0, 0, 0, 0.28, 0, 0, 0, 0.19, 0, 0.17, 0.99)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="HeadstoneBase" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(1.15, 0, 0, 0, 0.26, 0, 0, 0, 0.58, 0, 0.2, -0.82)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Headstone" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(0.739408, 0.0351906, 0, -0.0295921, 0.879296, 0, 0, 0, 0.25, 0, 0.8, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Crown" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(0.84, 0, 0, 0, 0.15, 0, 0, 0, 0.35, 0, 1.27, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="RecessedInscription" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(0.481, 0, 0, 0, 0.4, 0, 0, 0, 0.012, 0, 0.72, -0.689)
+material_override = SubResource("path_dark")
+mesh = SubResource("unit_box")
+
+[node name="Inscription" type="Label3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, -0.67)
+pixel_size = 0.0028
+modulate = Color(0.49, 0.53, 0.47, 1)
+text = "S. Miller"
+font = ExtResource("2_font")
+font_size = 30
+outline_size = 3
+
+[node name="WeatheredCrack" type="MeshInstance3D" parent="Burials/Grave_Steward"]
+transform = Transform3D(0.0175662, -0.0829273, 0, 0.00392813, 0.370841, 0, 0, 0, 0.016, 0.2072, 0.9, -0.681)
+material_override = SubResource("dark")
+mesh = SubResource("unit_box")
+
+[node name="Grave_Pablo" type="Node3D" parent="Burials"]
+transform = Transform3D(0.029446, 0, -0.999567, 0, 1, 0, 0.999567, 0, 0.029446, 3.46209, 0, -5.36966)
+
+[node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
+material_override = SubResource("grave_soil")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_-1" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, -0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_1" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, 0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Footstone" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(1.29, 0, 0, 0, 0.28, 0, 0, 0, 0.19, 0, 0.17, 0.99)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="HeadstoneBase" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(1.15, 0, 0, 0, 0.26, 0, 0, 0, 0.58, 0, 0.2, -0.82)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Headstone" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(0.739408, 0.0351906, 0, -0.0295921, 0.879296, 0, 0, 0, 0.25, 0, 0.8, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Crown" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(0.84, 0, 0, 0, 0.15, 0, 0, 0, 0.35, 0, 1.27, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="RecessedInscription" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(0.481, 0, 0, 0, 0.4, 0, 0, 0, 0.012, 0, 0.72, -0.689)
+material_override = SubResource("path_dark")
+mesh = SubResource("unit_box")
+
+[node name="Inscription" type="Label3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, -0.67)
+pixel_size = 0.0028
+modulate = Color(0.49, 0.53, 0.47, 1)
+text = "P. Dilly"
+font = ExtResource("2_font")
+font_size = 30
+outline_size = 3
+
+[node name="WeatheredCrack" type="MeshInstance3D" parent="Burials/Grave_Pablo"]
+transform = Transform3D(0.0175662, -0.0829273, 0, 0.00392813, 0.370841, 0, 0, 0, 0.016, 0.2072, 0.9, -0.681)
+material_override = SubResource("dark")
+mesh = SubResource("unit_box")
+
+[node name="Grave_Trinity" type="Node3D" parent="Burials"]
+transform = Transform3D(0.029446, 0, -0.999567, 0, 1, 0, 0.999567, 0, 0.029446, 3.46209, 0, -3.9761)
+
+[node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
+material_override = SubResource("grave_soil")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_-1" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, -0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_1" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, 0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Footstone" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(1.29, 0, 0, 0, 0.28, 0, 0, 0, 0.19, 0, 0.17, 0.99)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="HeadstoneBase" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(1.15, 0, 0, 0, 0.26, 0, 0, 0, 0.58, 0, 0.2, -0.82)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Headstone" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(0.739408, 0.0351906, 0, -0.0295921, 0.879296, 0, 0, 0, 0.25, 0, 0.8, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Crown" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(0.84, 0, 0, 0, 0.15, 0, 0, 0, 0.35, 0, 1.27, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="RecessedInscription" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(0.481, 0, 0, 0, 0.4, 0, 0, 0, 0.012, 0, 0.72, -0.689)
+material_override = SubResource("path_dark")
+mesh = SubResource("unit_box")
+
+[node name="Inscription" type="Label3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, -0.67)
+pixel_size = 0.0028
+modulate = Color(0.49, 0.53, 0.47, 1)
+text = "T. Jackson"
+font = ExtResource("2_font")
+font_size = 30
+outline_size = 3
+
+[node name="WeatheredCrack" type="MeshInstance3D" parent="Burials/Grave_Trinity"]
+transform = Transform3D(0.0175662, -0.0829273, 0, 0.00392813, 0.370841, 0, 0, 0, 0.016, 0.2072, 0.9, -0.681)
+material_override = SubResource("dark")
+mesh = SubResource("unit_box")
+
+[node name="Grave_15" type="Node3D" parent="Burials"]
+transform = Transform3D(0.029446, 0, -0.999567, 0, 1, 0, 0.999567, 0, 0.029446, 3.51247, 0, -0.0849108)
+
+[node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
+material_override = SubResource("grave_soil")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_-1" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, -0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="GraveEdging_1" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, 0.59, 0.12, 0)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Footstone" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(1.29, 0, 0, 0, 0.28, 0, 0, 0, 0.19, 0, 0.17, 0.99)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="HeadstoneBase" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(1.15, 0, 0, 0, 0.26, 0, 0, 0, 0.58, 0, 0.2, -0.82)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Headstone" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(0.739408, 0.0351906, 0, -0.0295921, 0.879296, 0, 0, 0, 0.25, 0, 0.8, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="Crown" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(0.84, 0, 0, 0, 0.15, 0, 0, 0, 0.35, 0, 1.27, -0.83)
+material_override = SubResource("old_stone")
+mesh = SubResource("unit_box")
+
+[node name="RecessedInscription" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(0.481, 0, 0, 0, 0.4, 0, 0, 0, 0.012, 0, 0.72, -0.689)
+material_override = SubResource("path_dark")
+mesh = SubResource("unit_box")
+
+[node name="Inscription" type="Label3D" parent="Burials/Grave_15"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, -0.67)
+pixel_size = 0.0028
+modulate = Color(0.49, 0.53, 0.47, 1)
+text = "R.I.P."
+font = ExtResource("2_font")
+font_size = 30
+outline_size = 3
+
+[node name="WeatheredCrack" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(0.0175662, -0.0829273, 0, 0.00392813, 0.370841, 0, 0, 0, 0.016, 0.2072, 0.9, -0.681)
+material_override = SubResource("dark")
+mesh = SubResource("unit_box")
+
+[node name="Offering" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(0.273251, 0, 0.0545574, 0, 0.12, 0, -0.0611043, 0, 0.243974, -0.2, 0.2, 0.48)
+material_override = SubResource("pale_stone")
+mesh = SubResource("unit_box")
+
+[node name="Candle" type="MeshInstance3D" parent="Burials/Grave_15"]
+transform = Transform3D(0.09, 0, 0, 0, 0.19, 0, 0, 0, 0.09, -0.2, 0.33, 0.48)
+material_override = SubResource("warm_glow")
+mesh = SubResource("unit_cylinder")
 
 [node name="Grave_03" type="Node3D" parent="Burials"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7, 0, -10)
@@ -3412,92 +3736,6 @@ mesh = SubResource("unit_box")
 transform = Transform3D(0.09, 0, 0, 0, 0.19, 0, 0, 0, 0.09, -0.2, 0.33, 0.48)
 material_override = SubResource("warm_glow")
 mesh = SubResource("unit_cylinder")
-
-[node name="Grave_14" type="Node3D" parent="Burials"]
-transform = Transform3D(0.998988, 0, 0.0449848, 0, 1, 0, -0.0449848, 0, 0.998988, 3.7, 0, 0.3)
-
-[node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_14"]
-transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
-material_override = SubResource("grave_soil")
-mesh = SubResource("unit_box")
-
-[node name="GraveEdging_-1" type="MeshInstance3D" parent="Burials/Grave_14"]
-transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, -0.59, 0.12, 0)
-material_override = SubResource("old_stone")
-mesh = SubResource("unit_box")
-
-[node name="GraveEdging_1" type="MeshInstance3D" parent="Burials/Grave_14"]
-transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, 0.59, 0.12, 0)
-material_override = SubResource("old_stone")
-mesh = SubResource("unit_box")
-
-[node name="Footstone" type="MeshInstance3D" parent="Burials/Grave_14"]
-transform = Transform3D(1.29, 0, 0, 0, 0.28, 0, 0, 0, 0.19, 0, 0.17, 0.99)
-material_override = SubResource("granite")
-mesh = SubResource("unit_box")
-
-[node name="HeadstoneBase" type="MeshInstance3D" parent="Burials/Grave_14"]
-transform = Transform3D(1.15, 0, 0, 0, 0.26, 0, 0, 0, 0.58, 0, 0.2, -0.82)
-material_override = SubResource("granite")
-mesh = SubResource("unit_box")
-
-[node name="StoneCrossUpright" type="MeshInstance3D" parent="Burials/Grave_14"]
-transform = Transform3D(0.22, 0, 0, 0, 1.48, 0, 0, 0, 0.24, 0, 0.94, -0.83)
-material_override = SubResource("granite")
-mesh = SubResource("unit_box")
-
-[node name="StoneCrossArms" type="MeshInstance3D" parent="Burials/Grave_14"]
-transform = Transform3D(0.85, 0, 0, 0, 0.21, 0, 0, 0, 0.24, 0, 1.18, -0.83)
-material_override = SubResource("granite")
-mesh = SubResource("unit_box")
-
-[node name="Grave_15" type="Node3D" parent="Burials"]
-transform = Transform3D(0.995953, 0, 0.0898786, 0, 1, 0, -0.0898786, 0, 0.995953, 3.7, 0, -2.5)
-
-[node name="EarthMound" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(1.12, 0, 0, 0, 0.11, 0, 0, 0, 1.85, 0, 0.08, 0)
-material_override = SubResource("grave_soil")
-mesh = SubResource("unit_box")
-
-[node name="GraveEdging_-1" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, -0.59, 0.12, 0)
-material_override = SubResource("old_stone")
-mesh = SubResource("unit_box")
-
-[node name="GraveEdging_1" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(0.13, 0, 0, 0, 0.18, 0, 0, 0, 1.98, 0.59, 0.12, 0)
-material_override = SubResource("old_stone")
-mesh = SubResource("unit_box")
-
-[node name="Footstone" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(1.29, 0, 0, 0, 0.28, 0, 0, 0, 0.19, 0, 0.17, 0.99)
-material_override = SubResource("pale_stone")
-mesh = SubResource("unit_box")
-
-[node name="HeadstoneBase" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(1.15, 0, 0, 0, 0.26, 0, 0, 0, 0.58, 0, 0.2, -0.82)
-material_override = SubResource("pale_stone")
-mesh = SubResource("unit_box")
-
-[node name="Headstone" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(0.919264, -0.0447881, 0, 0.0367902, 1.1191, 0, 0, 0, 0.25, 0, 0.92, -0.83)
-material_override = SubResource("pale_stone")
-mesh = SubResource("unit_box")
-
-[node name="RoundedCrown" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(0.92, 0, 0, 0, 0.36, 0, 0, 0, 0.25, 0, 1.46, -0.83)
-material_override = SubResource("pale_stone")
-mesh = SubResource("unit_sphere")
-
-[node name="RecessedInscription" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(0.598, 0, 0, 0, 0.4, 0, 0, 0, 0.012, 0, 0.72, -0.689)
-material_override = SubResource("path_dark")
-mesh = SubResource("unit_box")
-
-[node name="WeatheredCrack" type="MeshInstance3D" parent="Burials/Grave_15"]
-transform = Transform3D(0.0164356, -0.154949, 0, 0.00733969, 0.346974, 0, 0, 0, 0.016, 0.2576, 0.9, -0.681)
-material_override = SubResource("dark")
-mesh = SubResource("unit_box")
 
 [node name="Grave_16" type="Node3D" parent="Burials"]
 transform = Transform3D(0.995953, 0, -0.0898786, 0, 1, 0, 0.0898786, 0, 0.995953, 3.7, 0, -10)

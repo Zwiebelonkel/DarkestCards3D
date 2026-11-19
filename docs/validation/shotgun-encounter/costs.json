@@ -1,0 +1,23 @@
+{
+  "held": {
+    "draw_calls": 46,
+    "objects": 63,
+    "primitives": 35727,
+    "render_frame_ms_average": 16.6993,
+    "render_frame_ms_p95": 17.915
+  },
+  "owned-rack": {
+    "draw_calls": 66,
+    "objects": 87,
+    "primitives": 36567,
+    "render_frame_ms_average": 16.6936,
+    "render_frame_ms_p95": 17.351
+  },
+  "unowned-visor": {
+    "draw_calls": 62,
+    "objects": 82,
+    "primitives": 36299,
+    "render_frame_ms_average": 16.6619666666667,
+    "render_frame_ms_p95": 17.456
+  }
+}

@@ -1,5 +1,6 @@
 extends Node3D
 class_name LevelProgress
+signal shotgun_requested
 const UI_AUDIO := preload("res://scripts/ui/InterfaceSounds.gd")
 
 ## A camera-mounted, physical progress visor. Instantiate LevelProgress.tscn
@@ -28,6 +29,8 @@ const COIN_BUTTON_LOCKED_COLOR := Color(0.19, 0.19, 0.19)
 @onready var cat_clicker_sprite: Sprite3D = $Hinge/CoinButton/CatClick
 @onready var coin_click_sound: AudioStreamPlayer = $CoinClickSound
 @onready var frame: MeshInstance3D = $Hinge/Frame
+@onready var shotgun_rack: Node3D = $Hinge/ShotgunRack
+@onready var shotgun_socket: Node3D = $Hinge/ShotgunRack/Socket
 
 var _camera: Camera3D
 var _enabled := true
@@ -40,6 +43,7 @@ var _coin_press_tween: Tween
 var _coin_button_material: StandardMaterial3D
 var _coin_button_rest_z := 0.0
 var coins_per_click := 0.0
+var shotgun: Node3D
 
 
 func _ready() -> void:
@@ -92,6 +96,12 @@ func _process(_delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if not _can_click():
 		return
+	if event is InputEventMouseButton and shotgun_rack.visible:
+		if _pointer_hits_shotgun(event.position) or _pointer_hits_mesh(event.position, $Hinge/ShotgunRack/Back):
+			get_viewport().set_input_as_handled()
+			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and _pointer_hits_shotgun(event.position):
+				shotgun_requested.emit()
+			return
 	if event is InputEventKey:
 		if event.keycode != KEY_SPACE and event.physical_keycode != KEY_SPACE:
 			return
@@ -156,6 +166,15 @@ func _can_click() -> bool:
 	return _can_display() and is_visible_in_tree() and _expanded and absf(hinge.rotation_degrees.x) < 5.0
 
 
+func _pointer_hits_shotgun(pointer: Vector2) -> bool:
+	if not is_instance_valid(shotgun) or shotgun.get_parent() != shotgun_socket:
+		return false
+	for mesh: Node in shotgun.get_node("Model").find_children("*", "MeshInstance3D", true, false):
+		if _pointer_hits_mesh(pointer, mesh as MeshInstance3D):
+			return true
+	return false
+
+
 func _pointer_hits_mesh(pointer: Vector2, mesh: MeshInstance3D) -> bool:
 	if not mesh.is_visible_in_tree() or not get_viewport().get_visible_rect().has_point(pointer):
 		return false
@@ -213,7 +232,7 @@ func set_pointer_position(pointer: Vector2) -> void:
 		set_expanded(false)
 	elif _expanded:
 		# A wider exit zone lets the pointer move down over the revealed visor.
-		if pointer.y > maxf(72.0, viewport_size.y * release_height_fraction):
+		if pointer.y > maxf(72.0, viewport_size.y * (maxf(release_height_fraction, 0.36) if shotgun_rack.visible else release_height_fraction)):
 			set_expanded(false)
 	elif pointer.y <= activation_edge_pixels:
 		set_expanded(true)

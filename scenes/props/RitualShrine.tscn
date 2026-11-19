@@ -1,0 +1,316 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/rooms/RitualShrine.gd" id="1_6px35"]
+[ext_resource type="Shader" path="res://assets/shader/basement_surface.gdshader" id="2_5eghx"]
+[ext_resource type="FontFile" path="res://fonts/VCR_OSD_MONO_1.001.ttf" id="3_0wx5q"]
+[ext_resource type="PackedScene" path="res://assets/environments/props/shotgun/shotgun.tscn" id="4_msb4n"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3jek0"]
+render_priority = 0
+shader = ExtResource("2_5eghx")
+shader_parameter/base_color = Color(0.055, 0.065, 0.055, 1)
+shader_parameter/mortar_color = Color(0.065, 0.075, 0.06, 1)
+shader_parameter/masonry = false
+shader_parameter/roughness_amount = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_71l28"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x1103"]
+render_priority = 0
+shader = ExtResource("2_5eghx")
+shader_parameter/base_color = Color(0.28, 0.3, 0.27, 1)
+shader_parameter/mortar_color = Color(0.065, 0.075, 0.06, 1)
+shader_parameter/masonry = false
+shader_parameter/roughness_amount = 0.92
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8k73p"]
+albedo_color = Color(0.48, 0.32, 0.1, 1)
+metallic = 0.72
+roughness = 0.65
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1egnh"]
+size = Vector3(1.12, 0.24, 1.56)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n4q5a"]
+size = Vector3(1.12, 0.24, 1.56)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vuyxn"]
+size = Vector3(1.12, 0.24, 1.56)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ct4vu"]
+albedo_color = Color(0.75, 0.48, 0.13, 1)
+emission_enabled = true
+emission = Color(0.9, 0.35, 0.045, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1p77j"]
+size = Vector3(5.15, 1.8, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ab4nb"]
+size = Vector3(4, 1.35, 0.9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_op1q3"]
+size = Vector3(3.5289, 0.439019, 0.814956)
+
+[node name="RitualShrine" type="Node3D"]
+script = ExtResource("1_6px35")
+
+[node name="BuriedFoot" type="MeshInstance3D" parent="."]
+transform = Transform3D(5.1, 0, 0, 0, 0.18, 0, 0, 0, 3, 0, 0.07, 0)
+material_override = SubResource("ShaderMaterial_3jek0")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="LowerStep" type="MeshInstance3D" parent="."]
+transform = Transform3D(4.9, 0, 0, 0, 0.22, 0, 0, 0, 2.8, 0, 0.23, 0)
+material_override = SubResource("ShaderMaterial_x1103")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="AltarBody" type="MeshInstance3D" parent="."]
+transform = Transform3D(4.45, 0, 0, 0, 0.82, 0, 0, 0, 2.3, 0, 0.68, -0.15)
+material_override = SubResource("ShaderMaterial_x1103")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="ShadowBand" type="MeshInstance3D" parent="."]
+transform = Transform3D(4.65, 0, 0, 0, 0.12, 0, 0, 0, 2.5, 0, 1.025, -0.15)
+material_override = SubResource("ShaderMaterial_3jek0")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="AltarTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(4.95, 0, 0, 0, 0.18, 0, 0, 0, 2.9, 0, 1.15, -0.15)
+material_override = SubResource("ShaderMaterial_x1103")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="FrontInlay" type="MeshInstance3D" parent="."]
+transform = Transform3D(3.8, 0, 0, 0, 0.065, 0, 0, 0, 0.04, 0, 0.73, 1.015)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="RitualRune" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0848528, -0.176777, 0, 0.0848528, 0.176777, 0, 0, 0, 0.045, -1.7, 0.73, 1.045)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0848528, -0.176777, 0, 0.0848528, 0.176777, 0, 0, 0, 0.045, -0.85, 0.73, 1.045)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0848528, -0.176777, 0, 0.0848528, 0.176777, 0, 0, 0, 0.045, 0, 0.73, 1.045)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0848528, -0.176777, 0, 0.0848528, 0.176777, 0, 0, 0, 0.045, 0.85, 0.73, 1.045)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0848528, -0.176777, 0, 0.0848528, 0.176777, 0, 0, 0, 0.045, 1.7, 0.73, 1.045)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="Sockets" type="Node3D" parent="."]
+
+[node name="Socket0" type="Node3D" parent="Sockets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.35, 0, 0.05)
+
+[node name="Recess" type="MeshInstance3D" parent="Sockets/Socket0"]
+transform = Transform3D(1.05, 0, 0, 0, 0.025, 0, 0, 0, 1.5, 0, 1.252, 0)
+material_override = SubResource("ShaderMaterial_3jek0")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="RimSide" type="MeshInstance3D" parent="Sockets/Socket0"]
+transform = Transform3D(0.065, 0, 0, 0, 0.06, 0, 0, 0, 1.57, -0.55, 1.275, 0)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="RimEnd" type="MeshInstance3D" parent="Sockets/Socket0"]
+transform = Transform3D(1.16, 0, 0, 0, 0.06, 0, 0, 0, 0.065, 0, 1.275, -0.78)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@6" type="MeshInstance3D" parent="Sockets/Socket0"]
+transform = Transform3D(0.065, 0, 0, 0, 0.06, 0, 0, 0, 1.57, 0.55, 1.275, 0)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@7" type="MeshInstance3D" parent="Sockets/Socket0"]
+transform = Transform3D(1.16, 0, 0, 0, 0.06, 0, 0, 0, 0.065, 0, 1.275, 0.78)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="CardAnchor" type="Marker3D" parent="Sockets/Socket0"]
+transform = Transform3D(0.88, 0, 0, 0, -3.8466e-08, 0.88, 0, -0.88, -3.8466e-08, 0, 1.31, 0)
+
+[node name="PickArea" type="Area3D" parent="Sockets/Socket0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.32, 0)
+collision_layer = 67108864
+collision_mask = 0
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="@CollisionShape3D@8" type="CollisionShape3D" parent="Sockets/Socket0/PickArea"]
+shape = SubResource("BoxShape3D_1egnh")
+
+[node name="Socket1" type="Node3D" parent="Sockets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.05)
+
+[node name="Recess" type="MeshInstance3D" parent="Sockets/Socket1"]
+transform = Transform3D(1.05, 0, 0, 0, 0.025, 0, 0, 0, 1.5, 0, 1.252, 0)
+material_override = SubResource("ShaderMaterial_3jek0")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="RimSide" type="MeshInstance3D" parent="Sockets/Socket1"]
+transform = Transform3D(0.065, 0, 0, 0, 0.06, 0, 0, 0, 1.57, -0.55, 1.275, 0)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="RimEnd" type="MeshInstance3D" parent="Sockets/Socket1"]
+transform = Transform3D(1.16, 0, 0, 0, 0.06, 0, 0, 0, 0.065, 0, 1.275, -0.78)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@9" type="MeshInstance3D" parent="Sockets/Socket1"]
+transform = Transform3D(0.065, 0, 0, 0, 0.06, 0, 0, 0, 1.57, 0.55, 1.275, 0)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@10" type="MeshInstance3D" parent="Sockets/Socket1"]
+transform = Transform3D(1.16, 0, 0, 0, 0.06, 0, 0, 0, 0.065, 0, 1.275, 0.78)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="CardAnchor" type="Marker3D" parent="Sockets/Socket1"]
+transform = Transform3D(0.88, 0, 0, 0, -3.8466e-08, 0.88, 0, -0.88, -3.8466e-08, 0, 1.31, 0)
+
+[node name="PickArea" type="Area3D" parent="Sockets/Socket1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.32, 0)
+collision_layer = 67108864
+collision_mask = 0
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="@CollisionShape3D@11" type="CollisionShape3D" parent="Sockets/Socket1/PickArea"]
+shape = SubResource("BoxShape3D_n4q5a")
+
+[node name="Socket2" type="Node3D" parent="Sockets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.35, 0, 0.05)
+
+[node name="Recess" type="MeshInstance3D" parent="Sockets/Socket2"]
+transform = Transform3D(1.05, 0, 0, 0, 0.025, 0, 0, 0, 1.5, 0, 1.252, 0)
+material_override = SubResource("ShaderMaterial_3jek0")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="RimSide" type="MeshInstance3D" parent="Sockets/Socket2"]
+transform = Transform3D(0.065, 0, 0, 0, 0.06, 0, 0, 0, 1.57, -0.55, 1.275, 0)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="RimEnd" type="MeshInstance3D" parent="Sockets/Socket2"]
+transform = Transform3D(1.16, 0, 0, 0, 0.06, 0, 0, 0, 0.065, 0, 1.275, -0.78)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@12" type="MeshInstance3D" parent="Sockets/Socket2"]
+transform = Transform3D(0.065, 0, 0, 0, 0.06, 0, 0, 0, 1.57, 0.55, 1.275, 0)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@13" type="MeshInstance3D" parent="Sockets/Socket2"]
+transform = Transform3D(1.16, 0, 0, 0, 0.06, 0, 0, 0, 0.065, 0, 1.275, 0.78)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="CardAnchor" type="Marker3D" parent="Sockets/Socket2"]
+transform = Transform3D(0.88, 0, 0, 0, -3.8466e-08, 0.88, 0, -0.88, -3.8466e-08, 0, 1.31, 0)
+
+[node name="PickArea" type="Area3D" parent="Sockets/Socket2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.32, 0)
+collision_layer = 67108864
+collision_mask = 0
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="@CollisionShape3D@14" type="CollisionShape3D" parent="Sockets/Socket2/PickArea"]
+shape = SubResource("BoxShape3D_vuyxn")
+
+[node name="RearPillar" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.36, 0, 0, 0, 0.6, 0, 0, 0, 0.42, -2.12, 1.53, -1.24)
+material_override = SubResource("ShaderMaterial_x1103")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="EmberCup" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.31, 0, 0, 0, 0.13, 0, 0, 0, 0.32, -2.12, 1.88, -1.24)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="Embers" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.23, 0, 0, 0, 0.035, 0, 0, 0, 0.24, -2.12, 1.955, -1.24)
+material_override = SubResource("StandardMaterial3D_ct4vu")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@15" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.36, 0, 0, 0, 0.6, 0, 0, 0, 0.42, 2.12, 1.53, -1.24)
+material_override = SubResource("ShaderMaterial_x1103")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@16" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.31, 0, 0, 0, 0.13, 0, 0, 0, 0.32, 2.12, 1.88, -1.24)
+material_override = SubResource("StandardMaterial3D_8k73p")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="@MeshInstance3D@17" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.23, 0, 0, 0, 0.035, 0, 0, 0, 0.24, 2.12, 1.955, -1.24)
+material_override = SubResource("StandardMaterial3D_ct4vu")
+mesh = SubResource("BoxMesh_71l28")
+
+[node name="FocusArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 67108864
+collision_mask = 0
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="@CollisionShape3D@18" type="CollisionShape3D" parent="FocusArea"]
+shape = SubResource("BoxShape3D_1p77j")
+
+[node name="HandHoverShape" type="CollisionShape3D" parent="FocusArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.9)
+shape = SubResource("BoxShape3D_ab4nb")
+disabled = true
+
+[node name="FocusCamera" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.805651, 0.59239, 0, -0.59239, 0.805651, 0, 3.5, 3.7)
+
+[node name="AvailableCards" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1.9)
+
+[node name="Status" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.325)
+pixel_size = 0.0038
+modulate = Color(0.95, 0.78, 0.4, 1)
+font = ExtResource("3_0wx5q")
+font_size = 30
+
+[node name="Shotgun" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.245, -1.08)
+visible = false
+
+[node name="Model" type="Node3D" parent="Shotgun" instance=ExtResource("4_msb4n")]
+transform = Transform3D(-1.18021e-07, 0, 2.7, 2.7, -1.18021e-07, 1.18021e-07, 1.18021e-07, 2.7, 5.15885e-15, -0.264916, 0.0409557, -0.317573)
+
+[node name="ShotgunPickArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.36451, -1.08)
+collision_layer = 67108864
+collision_mask = 0
+input_ray_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="@CollisionShape3D@19" type="CollisionShape3D" parent="ShotgunPickArea"]
+shape = SubResource("BoxShape3D_op1q3")

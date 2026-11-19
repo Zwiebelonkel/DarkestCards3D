@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://3t51ncgkq1fv"]
+
+[ext_resource type="Script" uid="uid://b347jejokt0mb" path="res://tools/vault/build_ritual_shrine.gd" id="1"]
+
+[node name="BuildRitualShrine" type="Node"]
+script = ExtResource("1")

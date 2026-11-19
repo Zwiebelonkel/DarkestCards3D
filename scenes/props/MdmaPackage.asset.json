@@ -1,0 +1,109 @@
+{
+  "schema_version": 2,
+  "profile": "prop",
+  "asset_name": "Story 25 MDMA package",
+  "scene": "res://scenes/props/MdmaPackage.tscn",
+  "units": "meters at import scale; pickup instances normalize to 0.22",
+  "forward": "-Z",
+  "origin": "center",
+  "footprint_m": [
+    2.3,
+    3.164
+  ],
+  "height_m": 0.502,
+  "interaction_sides": [
+    "front",
+    "left",
+    "right"
+  ],
+  "style_references": [
+    {
+      "path": "res://scenes/props/WeedPickup.tscn",
+      "reason": "Preserve the shared fall, tabletop scale, picking box and yellow outline."
+    },
+    {
+      "path": "res://scenes/props/CocainePackage.tscn",
+      "reason": "Use the established wrapper for an unchanged supplied model."
+    },
+    {
+      "path": "res://scenes/table/GameTable.tscn",
+      "reason": "Retain the existing placement and clearance beside the gritty tabletop props."
+    }
+  ],
+  "collision": {
+    "required": false,
+    "strategy": "shared pickup owns one primitive nonblocking picking box"
+  },
+  "budgets": {
+    "nodes": 4,
+    "mesh_instances": 1,
+    "triangles": 2600,
+    "surfaces": 1,
+    "unique_materials": 1,
+    "collision_shapes": 0,
+    "lights": 0,
+    "particles": 0,
+    "nonuniform_scales": 1
+  },
+  "review": {
+    "required_views": [
+      "front",
+      "back",
+      "left",
+      "right",
+      "landed",
+      "hover",
+      "active"
+    ]
+  },
+  "evidence": {
+    "structural": [
+      "docs/validation/mdma-reward/model-audit.json"
+    ],
+    "runtime": [
+      "tests/mdma_reward_test.tscn"
+    ],
+    "performance": [
+      "docs/validation/mdma-reward/review_report.json"
+    ],
+    "visual": [
+      "docs/validation/mdma-reward/"
+    ]
+  },
+  "notes": [
+    "Imported geometry and textures are reused unchanged; wrapper is centered like the cocaine package.",
+    "Pickup-local base is 0.000020m above its origin at scale 0.22; the existing root placement provides tabletop clearance.",
+    "Only one package model is visible. Building joints, traversal, terrain and navigation are not applicable to this nonblocking tabletop pickup.",
+    "Off-happy-path evidence includes failed-save rollback, training/pause rejection and scene exit during the effect."
+  ],
+  "measured": {
+    "bounds": {
+      "position": [
+        -1.15711855888367,
+        -0.250815749168396,
+        -1.55308556556702
+      ],
+      "size": [
+        2.29927206039429,
+        0.501631498336792,
+        3.16359734535217
+      ]
+    },
+    "collision_shapes": 0,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 1,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 4,
+    "nonuniform_scales": 1,
+    "particles": 0,
+    "surfaces": 1,
+    "triangles": 2512,
+    "unique_materials": 1
+  }
+}

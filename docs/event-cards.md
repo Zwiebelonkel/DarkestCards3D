@@ -46,12 +46,19 @@ kann der Spieler nach einem optionalen Event über „Zug beenden“ passen.
 | Switch | 6 | Tauscht je eine zufällige Karte der beiden Kampf-Ziehstapel. Beide Stapel müssen noch Karten enthalten. |
 | Block | 5 | Blockiert eine gewählte gegnerische Tischkarte bis zum Ende ihrer nächsten zwei eigenen Züge. Sie kann nicht angreifen oder kontern, bleibt aber angreifbar. Passive Effekte bleiben aktiv. |
 | Steel | 1 | Mischt eine gewählte gegnerische Tischkarte zufällig in den eigenen Kampf-Ziehstapel. Der Gegner zieht sofort Ersatz, sofern sein Stapel noch Karten enthält. |
-| Piss (legendär) | 1 | Ein gelber Strahl trifft den Tisch. Der Gegner sieht bis zum Ende seiner nächsten zwei eigenen Züge die Werte und Effekte aller Tischkarten als `?`, einschließlich eigener und nachgezogener Karten. |
+| Piss (legendär) | 1 | Ein gelber Strahl trifft den Tisch. Bis zum Ende der nächsten zwei eigenen Züge des Gegners verdecken gelbe Pfützen Angriff und Lebenspunkte aller Tischkarten, einschließlich eigener und nachgezogener Karten. Effektinfos bleiben verborgen. |
 | Heal (selten) | 3 | Heilt eine gewählte verletzte eigene Tischkarte vollständig bis zu ihren aktuellen maximalen Lebenspunkten, einschließlich Verstärkungen. Bei vollem Leben bleibt das Event auf der Hand. Andere Kampfzustände bleiben erhalten. |
 | Rearrange (ungewöhnlich) | 3 | Tauscht die Plätze zweier nacheinander gewählter eigener Tischkarten. Werte, Effekte und Zustände bleiben erhalten. |
 | Stärke ×1,2 | 7 | Multipliziert Angriff, maximale und aktuelle Lebenspunkte einer eigenen Tischkarte mit 1,2. |
 | Stärke ×1,5 | 3 | Multipliziert diese Werte mit 1,5. |
 | Stärke ×2 | 2 | Verdoppelt diese Werte. |
+
+Switch zeigt den Tausch direkt an beiden Kampf-Ziehstapeln: Je eine verdeckte
+Karte hebt ab, fliegt auf einer eigenen kurzen Bogenbahn zum anderen Stapel
+und landet dort. Die Animation dauert 0,6 Sekunden und läuft innerhalb der
+bestehenden Ausspielanimation, auch für Gegner und Zuschauer. Die zufällig
+getauschten Karten bleiben verdeckt; wiederholte Online-Snapshots starten
+den Flug nicht erneut. Beide Stapel behalten ihre Kartenanzahl.
 
 Verstärkungen werden auf ganze Werte aufgerundet und gelten für die laufende
 Karteninstanz im Match. Steel bewahrt Schaden, Verstärkungen, Gift, Block und

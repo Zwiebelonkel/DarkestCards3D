@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dpbgatemq2x3w"]
+
+[ext_resource type="PackedScene" path="res://assets/environments/props/shotgun/source/PSX_DoubleBarrelShotgun.glb" id="1_u600n"]
+[ext_resource type="Texture2D" path="res://assets/environments/props/shotgun/source/PSX_DoubleBarrelShotgun_T_DoubleBarrelShotgun.png" id="3_6rvo1"]
+
+[sub_resource type="StandardMaterial3D" id="ShaderMaterial_b302b"]
+albedo_texture = ExtResource("3_6rvo1")
+texture_filter = 0
+roughness = 0.78
+
+[node name="Shotgun" type="Node3D"]
+
+[node name="PSX_DoubleBarrelShotgun" parent="." instance=ExtResource("1_u600n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0290946, 0, 0.0159714)
+
+[node name="SM_DoubleBarrelShotgun" parent="PSX_DoubleBarrelShotgun" index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_b302b")
+
+[editable path="PSX_DoubleBarrelShotgun"]

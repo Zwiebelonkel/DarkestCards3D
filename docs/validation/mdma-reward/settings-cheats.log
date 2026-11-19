@@ -1,0 +1,79 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS: Paused settings contain a collapsed Cheats section
+PASS: Real mouse click opens the cheat actions
+PASS: Brain Timer button resets the timer and Satan encounter while paused
+PASS: reset reports success without leaving the paused settings
+PASS: the cheat reset persists across reload despite a completed backup
+PASS: Cheats expose all eight drop rarities including Secret
+PASS: Drop rarities start enabled
+PASS: A real click disables Common while paused
+PASS: The rarity selection survives reload and reopening settings
+PASS: A second click re-enables Common
+PASS: Clicking the last enabled rarity keeps a valid selection
+PASS: Rejecting an empty selection explains why the last checkbox stays checked
+PASS: Changing language updates rarity labels while preserving the selection
+PASS: Level +1 advances exactly once while retaining earned XP
+PASS: Level cheat applies the existing level bonus without losing fractional coins
+PASS: +50 Soul Coins adds exactly fifty to the current balance
+PASS: Level, XP and cheated coins persist together
+PASS: Repeated level-up uses the next growing XP threshold
+PASS: Unlock cheat grants all five tiers and disables its completed action
+PASS: Already-open starting slots update while the game is paused
+PASS: Unlocking grants special cards without editing the combat deck or assigning cards
+PASS: starting_hand_1 is granted exactly once
+PASS: starting_hand_2 is granted exactly once
+PASS: starting_hand_3 is granted exactly once
+PASS: starting_hand_4 is granted exactly once
+PASS: starting_hand_5 is granted exactly once
+PASS: Repeated unlock/reload preserves the same unique tier 1
+PASS: Repeated unlock/reload preserves the same unique tier 2
+PASS: Repeated unlock/reload preserves the same unique tier 3
+PASS: Repeated unlock/reload preserves the same unique tier 4
+PASS: Repeated unlock/reload preserves the same unique tier 5
+PASS: Returning to the game keeps the five upgrade cards out of the normal collection
+PASS: Partial progression can still use the unlock action
+PASS: Partial unlock retains owned card identities
+PASS: Coin cheat keeps an ongoing slot payout reserved
+PASS: Slot payout and cheated coins are both credited exactly once
+PASS: Story cheat completes exactly one level: 1
+PASS: Story cheat completes exactly one level: 2
+PASS: Story cheat completes exactly one level: 3
+PASS: Story cheat completes exactly one level: 4
+PASS: Story cheat completes exactly one level: 5
+PASS: Story cheat completes exactly one level: 6
+PASS: Story cheat completes exactly one level: 7
+PASS: Story cheat unlocks weed at story seven
+PASS: Story cheat completes exactly one level: 8
+PASS: Story cheat completes exactly one level: 9
+PASS: Story cheat completes exactly one level: 10
+PASS: Story cheat completes exactly one level: 11
+PASS: Story cheat completes exactly one level: 12
+PASS: Story cheat completes exactly one level: 13
+PASS: Story cheat completes exactly one level: 14
+PASS: Story cheat completes exactly one level: 15
+PASS: Story cheat completes exactly one level: 16
+PASS: Story cheat completes exactly one level: 17
+PASS: Story cheat completes exactly one level: 18
+PASS: Story cheat completes exactly one level: 19
+PASS: Story cheat completes exactly one level: 20
+PASS: Story twenty unlocks cocaine and updates the package cheat
+PASS: Cheated story progress survives reload
+PASS: Character cheat frees angel
+PASS: Character cheat retains introduction for angel
+PASS: Character cheat frees dealer
+PASS: Character cheat retains introduction for dealer
+PASS: Character cheat frees jester
+PASS: Character cheat retains introduction for jester
+PASS: Character cheat frees prisoner
+PASS: Character cheat retains introduction for prisoner
+PASS: Character cheat opens character areas
+PASS: Character cheat preserves story level
+PASS: Character cheat can be repeated
+PASS: Repeated cheat preserves completed dialogue after reload
+PASS: Unseen dialogue survives reload
+SETTINGS_CHEATS_TESTS: PASS (72 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

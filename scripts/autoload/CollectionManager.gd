@@ -15,6 +15,9 @@ const PUMP_REWARD_CARD_ID := "toilet_paper"
 const PRISONER_REWARD_CARD_ID := "holy_water"
 const BOILER_REWARD_CARD_ID := "jester_eye"
 const JESTER_STORY_REWARD_CARD_ID := "crucifix"
+const GRAVE_REWARD_CARD_ID := "silver_bullet"
+const GRAVE_SOLUTION: Array[String] = ["pablo", "trinity", "stuart", "hannah"]
+const RITUAL_CARD_IDS: Array[String] = ["holy_water", "crucifix", "silver_bullet"]
 const BOILER_SOLUTION: Array[float] = [3.4, 5.1, 5.8, 1.8]
 const PUMP_SOLUTION: Array[bool] = [true, false, false, true, false]
 const PROP_SECRET_CARD_IDS: Array[String] = [USB_SECRET_CARD_ID, CIGARETTES_SECRET_CARD_ID, MOEWENMILCH_SECRET_CARD_ID]
@@ -156,6 +159,14 @@ func exchange_prisoner_toilet_paper() -> Dictionary:
 	return _exchange_story_item("prisoner", PUMP_REWARD_CARD_ID, PRISONER_REWARD_CARD_ID)
 
 
+func claim_grave_puzzle_reward(sequence: Array[String]) -> Dictionary:
+	if not GameCurrency.mdma_consumed or GameCurrency.is_training_session() or sequence != GRAVE_SOLUTION:
+		return {}
+	if has_discovered_card(GRAVE_REWARD_CARD_ID) or not can_obtain_card(GRAVE_REWARD_CARD_ID):
+		return {}
+	return add_card_instance(CardData.create_instance(GRAVE_REWARD_CARD_ID))
+
+
 func exchange_jester_eye() -> Dictionary:
 	return _exchange_story_item("jester", BOILER_REWARD_CARD_ID, JESTER_STORY_REWARD_CARD_ID)
 
@@ -201,6 +212,59 @@ func claim_holy_water_return_dialogue() -> bool:
 
 func claim_crucifix_return_dialogue() -> bool:
 	return _claim_story_item_return_dialogue(JESTER_STORY_REWARD_CARD_ID, "crucifix_return_dialogue_seen")
+
+
+func claim_silver_bullet_return_dialogue() -> bool:
+	return _claim_story_item_return_dialogue(GRAVE_REWARD_CARD_ID, "silver_bullet_return_dialogue_seen")
+
+
+func get_vault_ritual_state() -> Dictionary:
+	var slots: Array[String] = ["", "", ""]
+	var metadata: Variant = collection.get("metadata", {})
+	var stored: Dictionary = metadata.get("vault_ritual", {}) if metadata is Dictionary and metadata.get("vault_ritual") is Dictionary else {}
+	var raw: Variant = stored.get("slots", [])
+	if raw is Array:
+		for index in range(mini(raw.size(), slots.size())):
+			var card_id := str(raw[index])
+			if RITUAL_CARD_IDS.has(card_id) and not slots.has(card_id):
+				slots[index] = card_id
+	var completed := not slots.has("")
+	return {"slots": slots, "completed": completed, "shotgun_collected": completed and stored.get("shotgun_collected", false) == true}
+
+
+func place_vault_ritual_card(card_id: String, socket_index: int) -> bool:
+	if GameCurrency.is_training_session() or not RITUAL_CARD_IDS.has(card_id) or socket_index < 0 or socket_index >= 3 or get_amount(card_id) <= 0:
+		return false
+	var state := get_vault_ritual_state()
+	if state.slots.has(card_id) or not str(state.slots[socket_index]).is_empty():
+		return false
+	state.slots[socket_index] = card_id
+	# Story cards remain collectible mementos; the saved sockets reserve their
+	# ritual representation without destroying the player's unique cards.
+	return _save_vault_ritual(state, card_id)
+
+
+func claim_vault_ritual_shotgun() -> bool:
+	var state := get_vault_ritual_state()
+	if GameCurrency.is_training_session() or not state.completed or state.shotgun_collected:
+		return false
+	state.shotgun_collected = true
+	return _save_vault_ritual(state)
+
+
+func _save_vault_ritual(state: Dictionary, changed_id: String = "") -> bool:
+	var snapshot := collection.duplicate(true)
+	if not snapshot.get("metadata") is Dictionary:
+		snapshot["metadata"] = {}
+	snapshot.metadata["vault_ritual"] = {"slots": state.slots.duplicate(), "shotgun_collected": state.shotgun_collected}
+	if not _save_collection_snapshot(snapshot, ".vault-ritual.tmp"):
+		return false
+	collection = snapshot
+	var changed: Array[String] = []
+	if not changed_id.is_empty():
+		changed.append(changed_id)
+	collection_changed.emit(changed)
+	return true
 
 
 func _claim_story_item_return_dialogue(card_id: String, seen_flag: String) -> bool:

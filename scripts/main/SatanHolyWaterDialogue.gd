@@ -40,7 +40,7 @@ func continue_dialog() -> void:
 		super.continue_dialog()
 		return
 	_sentence_index += 1
-	if _sentence_index == 3:
+	if _uses_laughing_text():
 		laughing_changed.emit(true)
 	_message = _get_story_sentences()[_sentence_index]
 	_text_finished = false

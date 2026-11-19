@@ -1,0 +1,17 @@
+{
+  "server":"Coding-Solo/godot-mcp + local asset compatibility 1.0",
+  "engine":"4.4.1.stable.official.49a5bc7b6",
+  "executable":"C:/Users/Luca/Desktop/Godot_v4.4.1-stable_win64.exe",
+  "project":"C:/Users/Luca/Documents/DarkestCards3D",
+  "binding":"Explicit projectPath/project_path for all operations; server default frozenassets not used.",
+  "capabilities":[
+    {"capability":"project_binding","provider":"get_project_info","status":"available"},
+    {"capability":"loaded_scene_inspection","provider":"inspect_scene","status":"available"},
+    {"capability":"owned_bounded_headless_jobs","provider":"run_godot_job","status":"available"},
+    {"capability":"off_desktop_rendering_and_silent_audio","provider":"run_godot_job render","status":"available"},
+    {"capability":"runtime_state_and_yaw_checks","provider":"project-side focused tests","status":"adapted"}
+  ],
+  "scope":"Reuse existing prop and unchanged model/materials; no new geometry, navigation or collision.",
+  "process_protection":"Existing editor and game inspected only. No editor launch or unrelated process stop.",
+  "restart_required":false
+}

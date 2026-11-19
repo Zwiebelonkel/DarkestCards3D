@@ -1,0 +1,4 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://tests/silver_bullet_return_test.gd" id="1"]
+[node name="SilverBulletReturnTest" type="Node"]
+script = ExtResource("1")

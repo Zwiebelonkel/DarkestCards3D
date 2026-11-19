@@ -1,0 +1,65 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 123 Karten
+PASS failed story-25 persistence rolls back progress, package and currency
+PASS failed pickup persistence leaves MDMA available for retry
+PASS training blocks MDMA including the admin path
+PASS older saves past story 25 receive the pending MDMA reward
+PASS profile reset clears all MDMA state
+PASS player level fifty and ordinary wins before story 25 do not unlock MDMA
+PASS an unclaimed cocaine bag remains available at story 24
+PASS the real story-25 result saves MDMA and waits for the idle hub
+PASS MDMA replaces the previous bag and cannot be clicked during its fall
+PASS capture drop
+PASS MDMA lands normally
+PASS the supplied MDMA mesh rests on the tabletop
+PASS capture landed
+PASS MDMA uses the real yellow mouse-hover outline
+PASS capture hover
+PASS right clicks and releases cannot activate MDMA
+PASS pause prevents MDMA pickup
+PASS a real picked click saves consumption and starts the overlay
+PASS MDMA has its own shader and exclusively uses the spoken hint
+PASS subtle crackle begins while the positional hint waits for fade-in
+PASS MDMA adds one owned lo-fi filter after the hearing filter
+PASS capture fade-in
+PASS clue recordings never overlap
+PASS voice source matches its listener-relative direction
+PASS Pablo starts first after the five-second visual fade-in
+PASS full MDMA adds gentle lo-fi and slows/lowers the original music to 85 percent
+PASS capture active
+PASS clue recordings never overlap
+PASS voice source matches its listener-relative direction
+PASS turning the listener preserves the four directions around the player
+PASS pause freezes the visual countdown and current voice recording
+PASS clue recordings never overlap
+PASS voice source matches its listener-relative direction
+PASS clue recordings never overlap
+PASS voice source matches its listener-relative direction
+PASS clue recordings never overlap
+PASS clue recordings never overlap
+PASS voice source matches its listener-relative direction
+PASS clue recordings never overlap
+PASS voice source matches its listener-relative direction
+PASS actual playback finishes Pablo, Trinity, Stuart, Hannah, separator, then repeats
+PASS reload preserves the consumed package and separate use history
+PASS sound and visual strength share the fade-out
+PASS capture fade-out
+PASS expiry stops the visual, every recording, the crackle and future loop callbacks
+PASS expiry removes only the MDMA filter and preserves unrelated effects
+PASS expiry restores the exact music speed and pitch
+PASS capture expired
+PASS losses and draws cannot queue another MDMA package
+PASS later victories drop MDMA again after consumption
+PASS the shared cheat button identifies MDMA from story 25 onward
+PASS repeat pickup starts the audio clue anew
+PASS an admin replacement cancels the active trip and queued voice callbacks
+PASS the admin path drops the selected MDMA model without advancing story progress
+PASS the admin pickup restarts the hint from Pablo after the fade-in
+PASS leaving the scene during MDMA restores the audio bus
+PASS capture front
+PASS capture back
+PASS capture left
+PASS capture right
+MDMA_REWARD_TESTS: PASS (60 checks)

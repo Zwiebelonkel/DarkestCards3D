@@ -1998,6 +1998,7 @@
   "requires": [],
   "upgrade_modifiers": {},
   "image": "res://assets/cards/images/toilet_paper.res",
+  "artwork_scene": "res://scenes/cards/ToiletPaperSecretRoom.tscn",
   "effects": []
 },
 {
@@ -2034,6 +2035,7 @@
   "requires": [],
   "upgrade_modifiers": {},
   "image": "res://assets/cards/images/jester_eye.res",
+  "artwork_scene": "res://scenes/cards/JesterEyeSecretRoom.tscn",
   "effects": []
 },
 {
@@ -2052,6 +2054,24 @@
   "requires": [],
   "upgrade_modifiers": {},
   "image": "res://assets/cards/images/crucifix.res",
+  "effects": []
+},
+{
+  "id": "silver_bullet",
+  "name": "Silver Bullet",
+  "category": "special",
+  "card_group": "story_cards",
+  "random_reward": false,
+  "permanent_upgrade": true,
+  "unique_unlock": true,
+  "attack": 0,
+  "defense": 0,
+  "rarity": "legendary",
+  "description": "A special story card found by remembering the names of the dead.",
+  "flavor_text": "Four names. One silver answer.",
+  "requires": [],
+  "upgrade_modifiers": {},
+  "image": "res://assets/cards/images/silver_bullet.res",
   "effects": []
 }
 ]

@@ -1,0 +1,20 @@
+{
+  "schema_version":2, "profile":"prop", "asset_name":"Event Block pinning knife",
+  "scene":"res://scenes/effects/EventBlockKnife.tscn", "units":"meters", "origin":"blade_tip", "forward":"tip down through card into table local -Z; shaft nearly upright with 8/10 degree lean",
+  "interaction_sides":[],
+  "style_references":[
+    "assets/environments/props/knife/knife.glb: reuse the existing table knife, materials and silhouette",
+    "scenes/table/Card3D.tscn: tip positioned on the printed card face, scale relative to card width",
+    "scenes/effects/PoisonSyringe.tscn: short finite entry and withdrawal, preserving gameplay timing"
+  ],
+  "collision":{"required":false,"strategy":"none; cosmetic pin never absorbs card clicks"}, "routes":[],
+  "budgets":{"nodes":8,"mesh_instances":2,"surfaces":2,"triangles":700,"unique_materials":2,"collision_shapes":0,"lights":0,"particles":0},
+  "review":{"required_views":["front","back","left","right","context_entry","context_pinned","context_release"]},
+  "evidence":{
+    "structural":["docs/validation/block-knife/asset_audit.json","docs/validation/block-knife/scene-inspection.json"],
+    "runtime":["tests/event_block_knife_test.tscn","docs/validation/block-knife/focused-run.json","docs/validation/block-knife/events-run.json","docs/validation/block-knife/network-run.json","docs/validation/block-knife/unit-run.json"],
+    "performance":["docs/validation/block-knife/review_report.json"],
+    "visual":["docs/validation/block-knife/context-pinned.png","docs/validation/block-knife/detail-front.png","docs/validation/block-knife/context-released.png"]
+  },
+  "notes":["Original model is preserved. Tip measured from loaded mesh vertices: (-0.067996,-0.000402,-2.664965). Default model scale 0.302075 = decoration's 0.215 x group scale 1.405; runtime matches the actual decoration world scale.","Tip is at card-local (0.10,0.05,-0.30), deeply below the card and table surface. The blade crosses the printed face within the card footprint. Shaft stands nearly upright, matching the user's reference image.","No navigation or construction interfaces. Validate deep blade contact and overhead readability.","Off-happy-path coverage: duplicate snapshots, block refresh/expiry, reblock during withdrawal, death, fresh setup, hidden stats, stolen-card restoration."]
+}

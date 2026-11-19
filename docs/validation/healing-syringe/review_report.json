@@ -1,0 +1,137 @@
+{
+  "animation_duration_seconds": 1.0,
+  "captured_utc": "2026-11-18T16:18:12",
+  "context": "Real Main and match camera, original room lighting. Occluding character cutouts hidden only for diagnostic detail cameras. Four explicit yaw poses demonstrate unchanged inclination and tip contact; runtime yaw remains sampled once per injection.",
+  "healing_mode": true,
+  "performance": {
+    "with_syringe": {
+      "average_ms": 16.6631,
+      "draw_calls": 698.0,
+      "frames": 30,
+      "p95_ms": 16.674,
+      "render_objects": 1214.0,
+      "video_memory_bytes": 379960842.0
+    },
+    "without_syringe": {
+      "average_ms": 16.6632666666667,
+      "draw_calls": 689.0,
+      "frames": 30,
+      "p95_ms": 16.673,
+      "render_objects": 1205.0,
+      "video_memory_bytes": 379960842.0
+    }
+  },
+  "sampled_injection_yaw": 3.60995650291443,
+  "scene_modified": 1794959915,
+  "script_modified": 1795018619,
+  "shots": [
+    {
+      "mean_luminance_sample": 0.296876163302569,
+      "name": "context-entry",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/context-entry.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.296310418148973,
+      "name": "context-pierce",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/context-pierce.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.296682095920471,
+      "name": "context-press",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/context-press.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.297229731074612,
+      "name": "context-exit",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/context-exit.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.213752599578382,
+      "name": "detail-front",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/detail-front.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.287477192131792,
+      "name": "detail-back",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/detail-back.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.253627714180325,
+      "name": "detail-left",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/detail-left.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.254100159871897,
+      "name": "detail-right",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/detail-right.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.297879529088875,
+      "name": "yaw-0",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/yaw-0.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.298074678234051,
+      "name": "yaw-90",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/yaw-90.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.299713149788368,
+      "name": "yaw-180",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/yaw-180.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.299980043202294,
+      "name": "yaw-270",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/healing-syringe/yaw-270.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 extends Node3D
 class_name AccessKeyTray
 const UI_AUDIO := preload("res://scripts/ui/InterfaceSounds.gd")
+const EYE_PREVIEW := preload("res://scripts/ui/JesterEyePreview.gd")
 
 ## A physical key tray mounted on the lower edge of the exploration camera.
 signal key_requested(card_id: String)
@@ -74,6 +75,7 @@ func _process(delta: float) -> void:
 	if _refresh_pending:
 		refresh_keys()
 	if not _can_display():
+		_suspend_model_previews()
 		_stow_immediately()
 		return
 	var pointer := get_viewport().get_mouse_position()
@@ -84,9 +86,20 @@ func _process(delta: float) -> void:
 		_animation_time += delta
 		for card_id: String in _key_art:
 			var art: Sprite3D = _key_art[card_id]
+			if card_id in ["jester_eye", "toilet_paper"]:
+				art.follow_pointer(pointer, _camera, delta)
+				continue
 			var data := CardDatabase.get_card(card_id)
 			var frame_count := clampi(int(data.get("frame_count", 1)), 1, art.hframes * art.vframes)
 			art.frame = int(_animation_time * maxf(float(data.get("frame_fps", 0.0)), 0.0)) % frame_count
+	else:
+		_suspend_model_previews()
+
+
+func _suspend_model_previews() -> void:
+	for card_id: String in ["jester_eye", "toilet_paper"]:
+		if _key_art.has(card_id):
+			_key_art[card_id].suspend()
 
 
 func _input(event: InputEvent) -> void:
@@ -198,7 +211,17 @@ func refresh_keys() -> void:
 		keys_root.add_child(tile)
 		_key_tiles[card_id] = tile
 		var image_path := str(data.get("image", ""))
-		if not image_path.is_empty() and ResourceLoader.exists(image_path):
+		if card_id in ["jester_eye", "toilet_paper"]:
+			var eye_art := EYE_PREVIEW.new()
+			if card_id == "toilet_paper":
+				eye_art.model_scene = preload("res://assets/environments/props/toiletpaper/toiletpaper.glb")
+				eye_art.normalize_model = true
+			eye_art.name = "Art"
+			eye_art.position = Vector3(0, 0.10, 0.034)
+			eye_art.pixel_size = minf(0.86, mesh.size.x - 0.12) / 256.0
+			tile.add_child(eye_art)
+			_key_art[card_id] = eye_art
+		elif not image_path.is_empty() and ResourceLoader.exists(image_path):
 			var art := Sprite3D.new()
 			art.name = "Art"
 			art.texture = load(image_path) as Texture2D

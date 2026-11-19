@@ -1,0 +1,5 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+asset audit: {"failures":[],"manifest":"res://scenes/props/WeedPickup.asset.json","metrics":{"bounds":{"position":[-0.254566103219986,0.0000204518437385559,-0.3416787981987],"size":[0.509132206439972,0.110359095036983,0.695991396903992]},"collision_shapes":1,"collision_triangles":0,"concave_collision_shapes":0,"lights":0,"mesh_instances":3,"multimesh_buffer_floats":0,"multimesh_elements":0,"multimesh_instances":0,"multimesh_invalid_buffers":0,"multimesh_missing_custom_aabb":0,"nodes":22,"nonuniform_scales":3,"particles":0,"surfaces":3,"triangles":7168,"unique_materials":3},"passed":true,"target":"res://scenes/props/WeedPickup.tscn"}
+asset_contract_test PASSED

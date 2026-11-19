@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/props/StoryShotgun.asset.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -0.0151688028126955,
+        0.0000349581241607666,
+        -0.522049844264984
+      ],
+      "size": [
+        0.0885255932807922,
+        0.235169038176537,
+        1.28284740447998
+      ]
+    },
+    "collision_shapes": 0,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 1,
+    "mesh_instances": 2,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 8,
+    "nonuniform_scales": 0,
+    "particles": 0,
+    "surfaces": 2,
+    "triangles": 300,
+    "unique_materials": 2
+  },
+  "passed": true,
+  "target": "res://scenes/props/StoryShotgun.tscn"
+}

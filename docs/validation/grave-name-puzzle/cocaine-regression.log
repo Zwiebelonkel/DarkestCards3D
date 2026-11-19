@@ -1,0 +1,47 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 123 Karten
+PASS a failed story-twenty save rolls back both the victory and cocaine eligibility
+PASS a failed cocaine consumption save preserves both exact prior histories
+PASS older saves that already completed story twenty receive an unclaimed cocaine reward
+PASS training cannot activate cocaine even through the admin path
+PASS player level fifty and an ordinary victory cannot unlock cocaine
+PASS story nineteen still selects the weed reward
+PASS configure retains the existing hospital Hint2 placement and size with no copy next to Hint1
+PASS there is no cocaine package or hint before story twenty
+PASS a saved story-twenty victory queues cocaine until the match exits
+PASS the supplied cocaine model falls instead of the weed model
+PASS a falling cocaine package cannot be clicked
+PASS the cocaine bag lands and settles
+PASS the cocaine mesh rests on the real tabletop without penetration
+PASS the cocaine bag receives the same yellow hover outline
+PASS right clicks and releases cannot consume cocaine
+PASS a real picked click saves consumption and removes the package
+PASS only Hint2 is shown during cocaine
+PASS cocaine uses its own sharp cyan/magenta filter
+PASS the shared sixty-second lifetime retains five-second fades
+PASS music tempo and pitch gradually increase during fade-in
+PASS the original synchronized arrangement plays 35 percent faster and higher at full effect
+PASS the cocaine sound stays clear and preserves every existing audio bus effect
+PASS Hint2 animates its four authored frames with an emissive map
+PASS activating cocaine changes Hint2 visibility without moving or resizing the hospital hint
+PASS repeated clicks never restart an active cocaine effect
+PASS Pause freezes the cocaine countdown
+PASS the final five seconds smoothly return music speed, filter and Hint2 to normal
+PASS expiry hides the cocaine effect and restores the exact authored music pitch
+PASS expiry leaves the original hospital Hint2 pose and size intact
+PASS expiry cannot accidentally reveal Hint1 or change audio effects
+PASS both reward histories survive a save reload independently
+PASS re-entering after cocaine consumption never falls back to an unclaimed weed reward
+PASS scene re-entry restores normal music and does not resume the trip
+PASS the shared admin button identifies cocaine after story twenty
+PASS the admin drop uses cocaine at this story milestone even after prior consumption
+PASS the repeated admin cocaine pickup uses the real effect and Hint2
+PASS leaving during a cocaine trip does not leak its speed into a new scene
+PASS an unconsumed story-seven reward still uses weed before story twenty
+PASS winning story twenty replaces an unclaimed weed bag instead of leaving two packages
+PASS the replacement cocaine package also settles normally
+COCAINE_REWARD_TESTS: PASS (40 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

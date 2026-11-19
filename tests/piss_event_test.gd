@@ -61,7 +61,8 @@ func _all_hidden(hidden: bool) -> bool:
 	for card: Card3D in table._player_slots + table._enemy_slots:
 		if not is_instance_valid(card) or card.stats_hidden != hidden:
 			return false
-		if hidden and (card.attack_label.text != "?" or card.defense_label.text != "?"
+		if hidden and (not card.attack_label.text.is_empty() or not card.defense_label.text.is_empty()
+			or not is_instance_valid(card._stat_puddles) or not card._stat_puddles.visible
 			or not card.get_available_effects().is_empty() or card.effect_icon_1.visible
 			or card._combat_indicators.visible):
 			return false
@@ -186,7 +187,7 @@ func _run() -> void:
 	card.apply_event_block(2)
 	card.apply_poison(1, 2)
 	card.apply_network_state(card.get_network_state())
-	check(card.attack_value == 9 and card.current_hp == 127 and card.attack_label.text == "?" and card.defense_label.text == "?" and not card._event_block_badge.visible, "damage, healing, curse, strength, block and snapshots update real stats without revealing them")
+	check(card.attack_value == 9 and card.current_hp == 127 and card.attack_label.text.is_empty() and card.defense_label.text.is_empty() and card._stat_puddles.visible and not card._event_block_badge.visible, "damage, healing, curse, strength, block and snapshots update real stats beneath the yellow puddles")
 	check(not state_before.has("stats_hidden") and not card.export_event_deck_card().has("stats_hidden"), "viewer concealment never becomes a card's transferable combat state")
 	table._spawn_damage_number(card, 10)
 	table._spawn_healing_number(card, 10)
@@ -195,14 +196,14 @@ func _run() -> void:
 	for locale: String in Localization.SUPPORTED_LOCALES:
 		Localization.set_locale(locale)
 		var translated := EventDeck.get_display_description(definitions[0])
-		check(card.attack_label.text == "?" and card.description_label.text == "?" and not translated.is_empty()
+		check(card.attack_label.text.is_empty() and card._stat_puddles.visible and card.description_label.text == "?" and not translated.is_empty()
 			and (locale == "de" or translated != definitions[0]["description"]), "language changes preserve concealment and translate Piss: " + locale)
 	Localization.set_locale(old_locale)
 	var old := table._enemy_slots[4]
 	table._enemy_slots[4] = null
 	old.queue_free()
 	var replacement := _spawn("enemy", 4)
-	check(replacement.stats_hidden and replacement.attack_label.text == "?", "newly drawn cards inherit the viewer's active blindness")
+	check(replacement.stats_hidden and replacement.attack_label.text.is_empty() and replacement._stat_puddles.visible, "newly drawn cards inherit the viewer's yellow puddles")
 	await _finish_turn("player")
 	check(table._piss_hidden_turns["player"] == 2 and _all_hidden(true), "blindness starts with two complete affected-player turns")
 	for own: Card3D in table._player_slots:
@@ -217,7 +218,7 @@ func _run() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	check(table._piss_hidden_turns["player"] == 0 and _all_hidden(false), "all values return after the second affected turn")
-	check(card.attack_label.text == str(card.attack_value) and card.defense_label.text == str(card.current_hp) and card.effect_icon_1.visible, "restoration reveals the latest real values and available effects")
+	check(card.attack_label.text == str(card.attack_value) and card.defense_label.text == str(card.current_hp) and not card._stat_puddles.visible and card.effect_icon_1.visible, "restoration removes puddles and reveals the latest real values and available effects")
 	await _capture("restored")
 	table._piss_hidden_turns["player"] = 1
 	table._refresh_piss_visibility()
@@ -231,6 +232,10 @@ func _run() -> void:
 	check(_all_hidden(false), "spectators retain the normal table view")
 	table._online_is_spectator = false
 	table._refresh_piss_visibility()
+	card.begin_death_dissolve()
+	check(not card._stat_puddles.visible, "confirmed card death removes the yellow stat puddles before its dissolve")
+	card._update_hp_label()
+	check(not card._stat_puddles.visible, "a late HP update cannot restore puddles on a dissolving card")
 	table._clear_match()
 	check(table._piss_hidden_turns["player"] == 0 and table._piss_hidden_turns["enemy"] == 0 and not stream.active and not stream.particles.visible and not stream.piss_sfx.playing, "match cleanup clears duration, particles and audio immediately")
 	check(not main._satan_stream.active, "the separate hub stream remains idle throughout the event")

@@ -1,0 +1,266 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 123 Karten
+CARD_TEXT_WIDTHS: 660 names across five languages, 96 fitted, max 0.6980
+CARD_LOCALIZATION_TESTS: FAIL (129 / 4697 checks)
+
+ERROR: authored name and description covered: dman
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: authored name and description covered: piss_event
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: authored name and description covered: heal_event
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: authored name and description covered: rearrange_event
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use en
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use de
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use es
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use fr
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+ERROR: effect title and description use pl
+   at: push_error (core/variant/variant_utility.cpp:1098)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

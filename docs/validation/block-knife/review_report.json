@@ -1,0 +1,110 @@
+{
+  "captured_utc": "2026-11-18T16:09:47",
+  "context": "Real Main scene, standard match camera and room lighting. Lamp flicker fixed at authored base energy and startup blur finished. No extra lights. Occluding character cutouts hidden only for the four detail cameras, restored for all match-camera captures.",
+  "interfaces": {
+    "card_picking": "no collision or picking Areas in the cosmetic knife",
+    "tip_contact": "measured source blade tip penetrates through card into table at local (0.10,0.05,-0.30); shaft crosses the card face inside its footprint"
+  },
+  "performance": {
+    "with_knife": {
+      "average_ms": 16.6628333333333,
+      "draw_calls": 692.0,
+      "frames": 30,
+      "p95_ms": 16.833,
+      "render_objects": 1211.0,
+      "video_memory_bytes": 379429262.0
+    },
+    "without_knife": {
+      "average_ms": 16.6608,
+      "draw_calls": 688.0,
+      "frames": 30,
+      "p95_ms": 16.713,
+      "render_objects": 1204.0,
+      "video_memory_bytes": 379490622.0
+    }
+  },
+  "scene_modified": 1795017869,
+  "shots": [
+    {
+      "mean_luminance_sample": 0.293365611642734,
+      "name": "context-entry",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/context-entry.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.294128890403272,
+      "name": "context-pinned",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/context-pinned.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.293906960356189,
+      "name": "context-one-turn-left",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/context-one-turn-left.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.201402311422931,
+      "name": "detail-front",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/detail-front.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.234789982783732,
+      "name": "detail-back",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/detail-back.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.221542868376451,
+      "name": "detail-left",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/detail-left.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.223920301291738,
+      "name": "detail-right",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/detail-right.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.295477174353039,
+      "name": "context-release",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/context-release.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.295990940731917,
+      "name": "context-released",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/block-knife/context-released.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    }
+  ]
+}

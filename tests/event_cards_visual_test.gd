@@ -74,7 +74,7 @@ func _run() -> void:
 	check(table._event_deck.size() == EventDeck.DECK_SIZE - 3, "the hidden logical event deck retains all undealt events")
 	check(table.get_node_or_null("EventDeck") == null, "the table has no visible event-pile marker")
 	check(table.find_child("EventDeckCount", true, false) == null, "the table has no rendered event-deck counter")
-	check(table._enemy_slots[2]._event_block_badge.is_visible_in_tree(), "blocked table card shows its remaining-turn badge")
+	check(table._enemy_slots[2]._event_block_badge.is_visible_in_tree(), "blocked table card shows its pinning knife")
 	await _screenshot("event-cards-peek")
 	await _capture_block_detail(table, "event-block-1280")
 	_check_original_camera(table, "1280x720")
@@ -224,13 +224,14 @@ func _check_target_access(table: GameTable, hand_ui: Variant) -> void:
 
 func _capture_block_detail(table: GameTable, filename: String) -> void:
 	var badge := table._enemy_slots[2]._event_block_badge
-	var upper := table.table_camera.unproject_position(badge.to_global(Vector3(0, 0.14, 0)))
-	var lower := table.table_camera.unproject_position(badge.to_global(Vector3(0, -0.14, 0)))
-	check(upper.distance_to(lower) >= 22.0, "block status has enough screen space for two readable text lines")
+	var model := badge.get_node("PinMotion/Orientation/Model") as Node3D
+	var upper := table.table_camera.unproject_position(model.to_global(badge.SOURCE_TIP + Vector3(0, 0, 5.3)))
+	var lower := table.table_camera.unproject_position(model.to_global(badge.SOURCE_TIP))
+	check(upper.distance_to(lower) >= 22.0, "the embedded knife has a readable silhouette from the match camera")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
-		var center := table.table_camera.unproject_position(badge.global_position)
-		var crop := Rect2i(Vector2i(center) - Vector2i(75, 45), Vector2i(150, 90))
+		var crop := Rect2i(Vector2i(upper.min(lower)) - Vector2i(24, 24), Vector2i((upper - lower).abs()) + Vector2i(48, 48))
+		crop = crop.intersection(Rect2i(Vector2i.ZERO, root.size))
 		root.get_texture().get_image().get_region(crop).save_png("res://" + filename + ".png")
 
 

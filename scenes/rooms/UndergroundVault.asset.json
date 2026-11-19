@@ -1,0 +1,36 @@
+{
+  "schema_version": 2,
+  "profile": "enterable_building",
+  "asset_name": "Graveyard underground vaulted hall",
+  "scene": "res://scenes/rooms/UndergroundVault.tscn",
+  "units": "meters",
+  "forward": "-Z",
+  "origin": "floor_center",
+  "footprint_m": [32.0, 63.0],
+  "height_m": 14.06,
+  "interaction_sides": ["south entrance", "interior return stair"],
+  "controller": {"type": "existing shared click/travel camera", "resting_eye_height_m": 2.05, "travel_collision_probe_radius_m": 0.18},
+  "style_references": [
+    {"path": "res://scenes/rooms/Graveyard.tscn", "reason": "Preserve authored graves, rough desaturated stone, dark ground and warm lamps."},
+    {"path": "res://assets/shader/basement_surface.gdshader", "reason": "Reuse the project world-space grain and masonry family."},
+    {"path": "res://scenes/rooms/Basement.tscn", "reason": "Continue the underground stone/industrial atmosphere and camera-based room navigation."},
+    {"path": "res://scripts/main/Main.gd", "reason": "Use the existing camera rig, footsteps, modal/pause gates and cardinal turning."}
+  ],
+  "collision": {"required": true, "strategy": "primitive floor and walls split around the stair opening; no collider across the entrance"},
+  "budgets": {"nodes": 220, "mesh_instances": 100, "multimesh_instances": 12, "multimesh_elements": 160, "multimesh_invalid_buffers": 0, "multimesh_missing_custom_aabb": 0, "collision_shapes": 20, "surfaces": 115, "triangles": 50000, "unique_materials": 12, "lights": 6, "particles": 0, "concave_collision_shapes": 0, "collision_triangles": 0},
+  "construction_junctions": [
+    {"name": "barrel roof to end walls and side-aisle ceilings", "overlap_m": 0.08},
+    {"name": "column capitals to arch spring", "overlap_m": 0.08},
+    {"name": "south portal to descending stair", "clear_width_m": 4.62, "clear_height_m": 4.3},
+    {"name": "foundation to perimeter walls", "overlap_m": 0.1}
+  ],
+  "routes": ["graveyard camera to revealed stair to vault camera", "vault camera through south portal and up stairs to original graveyard view", "four cardinal interior views"],
+  "review": {"required_views": ["front", "back", "left", "right", "roof", "entrance exterior", "entrance interior", "nave", "side aisle", "roof junction", "graveyard closed", "graveyard sliding", "graveyard open"], "status": "visually reviewed", "evidence": "res://docs/validation/underground-vault/README.md", "route_samples": 108, "route_obstructions": 0},
+  "measured": {"nodes": 114, "mesh_instances": 60, "multimesh_instances": 6, "multimesh_elements": 100, "multimesh_buffer_floats": 1200, "multimesh_invalid_buffers": 0, "multimesh_missing_custom_aabb": 0, "triangles": 4864, "surfaces": 66, "unique_materials": 9, "lights": 6, "collision_shapes": 13, "concave_collision_shapes": 0, "particles": 0},
+  "notes": [
+    "The separately authored RitualShrine scene accepts three manual story-card placements and awards the collectable shotgun; no new NPC or combat system is added.",
+    "Grave unlock derives from permanent Silver Bullet acquisition; existing solved saves open immediately.",
+    "The actual player is the existing stationary camera with click-to-travel; no free-walking controller or NPC navigation exists for this room.",
+    "Off-happy-path checks: locked/pause/animation clicks, repeated opening, reload of a solved profile, and reverse travel."
+  ]
+}

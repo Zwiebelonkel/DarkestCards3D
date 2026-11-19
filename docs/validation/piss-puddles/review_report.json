@@ -1,0 +1,80 @@
+{
+  "captured_utc": "2026-11-18T18:32:22",
+  "context": "Real Main, ordinary match camera and lighting. Lamp flicker fixed to authored energy and startup blur finished. The production viewer-concealment path covers both rows; HP changes under the puddles remain concealed.",
+  "performance": {
+    "normal_labels": {
+      "average_ms": 16.6532666666667,
+      "draw_calls": 688.0,
+      "frames": 30,
+      "p95_ms": 16.697,
+      "render_objects": 1204.0,
+      "video_memory_bytes": 379560030.0
+    },
+    "yellow_puddles": {
+      "average_ms": 16.6611,
+      "draw_calls": 666.0,
+      "frames": 30,
+      "p95_ms": 16.732,
+      "render_objects": 1184.0,
+      "video_memory_bytes": 379438550.0
+    }
+  },
+  "script_modified": 1795026701,
+  "shader_modified": 1795026575,
+  "shots": [
+    {
+      "mean_luminance_sample": 0.295108089072133,
+      "name": "normal-values",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/piss-puddles/normal-values.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.306370143802059,
+      "name": "covered-values",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/piss-puddles/covered-values.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.444516382718237,
+      "name": "covered-detail",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/piss-puddles/covered-detail.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.444518083441356,
+      "name": "covered-after-hp-change",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/piss-puddles/covered-after-hp-change.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.431554569187588,
+      "name": "restored-detail",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/piss-puddles/restored-detail.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    {
+      "mean_luminance_sample": 0.296010097602285,
+      "name": "restored-values",
+      "path": "C:/Users/Luca/Documents/DarkestCards3D/docs/validation/piss-puddles/restored-values.png",
+      "resolution": [
+        1280,
+        720
+      ]
+    }
+  ]
+}

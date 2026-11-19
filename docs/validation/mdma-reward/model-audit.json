@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/props/MdmaPackage.asset.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -1.15711855888367,
+        -0.250815749168396,
+        -1.55308556556702
+      ],
+      "size": [
+        2.29927206039429,
+        0.501631498336792,
+        3.16359734535217
+      ]
+    },
+    "collision_shapes": 0,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 1,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 4,
+    "nonuniform_scales": 1,
+    "particles": 0,
+    "surfaces": 1,
+    "triangles": 2512,
+    "unique_materials": 1
+  },
+  "passed": true,
+  "target": "res://scenes/props/MdmaPackage.tscn"
+}

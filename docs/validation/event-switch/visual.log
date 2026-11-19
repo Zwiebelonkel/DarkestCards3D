@@ -1,0 +1,19 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+Vulkan 1.4.359 - Forward+ - Using Device #0: AMD - AMD Radeon RX 7600
+
+CardDatabase geladen: 122 Karten
+PASS Switch plays in the real match scene
+PASS Flying Switch cards stay face-down and cannot intercept table clicks
+PASS Flying Switch cards stay face-down and cannot intercept table clicks
+PASS The two passing cards have distinct visible lanes
+PASS The flying card stays in view of the original match camera
+PASS The flying card stays in view of the original match camera
+PASS Flying Switch cards stay face-down and cannot intercept table clicks
+PASS Flying Switch cards stay face-down and cannot intercept table clicks
+PASS Each card finishes on the opposite pile at its original scale
+PASS Landing cleans up the effect and preserves both eight-card piles
+PASS Leaving mid-flight removes both temporary cards and stops their tween
+EVENT_SWITCH_VISUAL_TESTS: PASS
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

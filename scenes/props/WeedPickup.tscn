@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/environments/props/weed/weed.glb" id="1_model"]
 [ext_resource type="Script" path="res://scripts/props/WeedPickup.gd" id="2_script"]
 [ext_resource type="Shader" path="res://assets/shader/lsd.gdshader" id="3_shader"]
 [ext_resource type="PackedScene" path="res://scenes/props/CocainePackage.tscn" id="4_cocaine"]
+[ext_resource type="PackedScene" path="res://scenes/props/MdmaPackage.tscn" id="5_mdma"]
+[ext_resource type="Script" path="res://scripts/props/MdmaEffectAudio.gd" id="6_audio"]
 
 [sub_resource type="BoxShape3D" id="BoxShape_pick"]
 size = Vector3(0.51, 0.13, 0.7)
@@ -23,6 +25,14 @@ scale = Vector3(0.22, 0.22, 0.22)
 visible = false
 position = Vector3(0, 0.0552, 0)
 scale = Vector3(0.22, 0.22, 0.22)
+
+[node name="MdmaModel" parent="." instance=ExtResource("5_mdma")]
+visible = false
+position = Vector3(0, 0.0552, 0)
+scale = Vector3(0.22, 0.22, 0.22)
+
+[node name="MdmaAudio" type="Node3D" parent="."]
+script = ExtResource("6_audio")
 
 [node name="PickArea" type="Area3D" parent="."]
 collision_layer = 0

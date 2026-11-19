@@ -1,15 +1,21 @@
 {
-  "schema_version": 2, "profile": "prop", "asset_name": "Poison injection syringe",
-  "scene": "res://scenes/effects/PoisonSyringe.tscn", "units": "meters", "forward": "needle points down; 40 degree presentation tilt",
+  "schema_version": 2, "profile": "prop", "asset_name": "Poison and healing injection syringe",
+  "scene": "res://scenes/effects/PoisonSyringe.tscn", "units": "meters", "forward": "needle points down; fixed 40 degree tilt, private random Y yaw per injection",
   "origin": "needle_tip", "footprint_m": [0.7982, 0.4383], "height_m": 0.8961, "interaction_sides": ["card_surface"],
   "style_references": [
     "assets/effects/syringe/adrenalin.glb: reuse barrel, separate kolben, texture and lit materials",
     "scenes/table/Card3D.tscn: scale to card size and follow its current table position",
-    "scenes/Poison.tscn: retain the established positional poison sound and separate periodic damage effect"
+    "scenes/Poison.tscn: retain the established positional injection sound and separate periodic damage effect",
+    "scenes/table/GameTable.gd: use the same actual-healing presentation for regeneration, neighbor healing and the Heal event"
   ],
   "collision": {"required": false, "strategy": "none; cosmetic injection"}, "routes": [],
   "budgets": {"nodes": 8, "mesh_instances": 2, "surfaces": 3, "triangles": 250, "unique_materials": 3, "lights": 0, "particles": 0, "collision_shapes": 0},
   "review": {"required_views": ["front", "back", "left", "right", "context_entry", "context_press", "context_exit"]},
-  "evidence": {"structural": [], "runtime": [], "performance": [], "visual": []},
-  "notes": ["Imported needle is +Z. Model is rotated so the tip is at the effect origin, then leaned for readability from the top-down match camera.", "Plunger translates +Z in imported-root space, into the barrel. Source model/materials are untouched.", "0.30s entry, 0.40s press, 0.30s upward exit. No turn barrier. Confirmed target death hides the syringe immediately. No injection on a poison tick or blocked hit."]
+  "evidence": {
+    "structural": ["docs/validation/healing-syringe/asset_audit.json"],
+    "runtime": ["docs/validation/healing-syringe/healing-run.json", "docs/validation/healing-syringe/poison-run.json", "docs/validation/healing-syringe/combat-run.json", "docs/validation/healing-syringe/events-run.json"],
+    "performance": ["docs/validation/healing-syringe/review_report.json"],
+    "visual": ["docs/validation/healing-syringe/context-press.png", "docs/validation/healing-syringe/yaw-0.png", "docs/validation/healing-syringe/yaw-90.png", "docs/validation/healing-syringe/yaw-180.png", "docs/validation/healing-syringe/yaw-270.png"]
+  },
+  "notes": ["Imported needle is +Z. Model is rotated so the tip is at the effect origin, then leaned for readability from the top-down match camera.", "Plunger translates +Z in imported-root space, into the barrel. Source model/materials are untouched.", "0.30s entry, 0.40s press, 0.30s upward exit. No turn barrier. Confirmed target death hides the syringe immediately. No injection on a poison tick or blocked hit.", "Every positive actual healing event presents the same injection. Zero healing and snapshots do not inject. Yaw is sampled once per injection from a private local RNG; pitch and tip alignment stay fixed."]
 }

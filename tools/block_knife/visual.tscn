@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpvnwdqjjfx4w"]
+
+[ext_resource type="Script" uid="uid://b735ahxedwixa" path="res://tools/block_knife/visual.gd" id="1"]
+
+[node name="BlockKnifeReview" type="Node"]
+script = ExtResource("1")

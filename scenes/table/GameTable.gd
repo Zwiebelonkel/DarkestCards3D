@@ -28,6 +28,10 @@ const MAX_DAMAGE_NUMBERS := 64
 const SATAN_LAUGH_TEXTURE := preload("res://assets/characters/satan/satanLaught.png")
 const SATAN_HOVER_TEXTURE := preload("res://assets/characters/satan/satanHover.png")
 const SATAN_DEATH_TEXTURE := preload("res://assets/characters/satan/satanDeath.png")
+const SATAN_PANIC_TEXTURE := preload("res://assets/characters/satan/satanPanic.png")
+const SATAN_KILL_TEXTURE := preload("res://assets/characters/satan/satanKill.png")
+const SATAN_PANIC_FPS := 8.0
+const SATAN_KILL_FPS := 10.0
 const SATAN_VOICE_CHAT_SCRIPT := preload("res://scripts/SatanVoiceChat.gd")
 const SATAN_LAUGH_AUDIO_SCRIPT := preload("res://scripts/SatanLaughAudio.gd")
 const THROW_MOTION := preload("res://scripts/table/TableThrowMotion.gd")
@@ -50,6 +54,7 @@ const ONLINE_EXIT_CLIENT_WATCHDOG_MSEC := 20000
 
 # Vertikaler Versatz zwischen zwei gestapelten Ruecken-Karten.
 const STACK_LAYER_OFFSET: Vector3 = Vector3(0, 0.012, 0)
+const SWITCH_EXCHANGE_DURATION := 0.60
 
 @export var card_scene: PackedScene
 
@@ -236,6 +241,8 @@ var _event_presented_sequence := 0
 var _event_reveal_deadline_msec := 0
 var _piss_hidden_turns := {"player": 0, "enemy": 0}
 var _event_piss_stream: Node3D
+var _event_switch_tween: Tween
+var _event_switch_cards: Array[Card3D] = []
 
 var _player_slot_markers: Array[Marker3D] = []
 var _enemy_slot_markers: Array[Marker3D] = []
@@ -285,6 +292,7 @@ var _satan_stream_laughing := false
 var _satan_stream_laugh_pitch := 0.0
 var _satan_laugh_audio: AudioStreamPlayer3D = null
 var _satan_is_dying := false
+var _satan_story_reaction := 0
 var _satan_voice_chat: Node = null
 var _hearing_recovery_active := false
 var _hearing_master_bus_index := -1
@@ -363,6 +371,7 @@ var _journal_input_blocked := false
 var _match_generation := 0
 var _random_damage_coins: Array[Node3D] = []
 var _poison_syringes: Array[Node3D] = []
+# This legacy array also owns healing injections for shared death/exit cleanup.
 var _cleave_bricks: Array[RigidBody3D] = []
 var _cleave_brick_surface: StaticBody3D
 var _card_death_sequence := 0
@@ -452,6 +461,7 @@ func _on_locale_changed() -> void:
 
 func _process(_delta: float) -> void:
 	_refresh_event_hand()
+	_refresh_swarm_multipliers()
 	_update_satan_pointer_hover()
 	_sync_satan_voice_state()
 	_spectator_leave_button.visible = _online_mode and _online_is_spectator
@@ -811,7 +821,9 @@ func _rebuild_stack_visual(side: String) -> void:
 		visuals.append(deco)
 	for i: int in range(visuals.size()):
 		visuals[i].global_position = deck_marker.global_position + STACK_LAYER_OFFSET * i
-		visuals[i].visible = true
+		# One physical back is in flight from each pile during Switch. Keep
+		# snapshots from restoring a duplicate top card while it travels.
+		visuals[i].visible = _event_switch_cards.is_empty() or i < visuals.size() - 1
 
 
 # Vor dem Entnehmen aufrufen, damit die Flugbahn an der obersten Karte
@@ -893,6 +905,7 @@ func _setup_event_presentation() -> void:
 
 
 func _clear_event_match() -> void:
+	_clear_switch_exchange()
 	_clear_rearrange_target()
 	_piss_hidden_turns = {"player": 0, "enemy": 0}
 	_refresh_piss_visibility()
@@ -1245,8 +1258,67 @@ func _present_played_event() -> void:
 	var local_side := _canonical_side_to_local(_last_event_side) if _online_mode else _last_event_side
 	if str(_last_played_event.get("id", "")) == "piss_event":
 		_play_piss_stream(local_side)
+	if str(_last_played_event.get("id", "")) == "switch":
+		_play_switch_exchange()
 	if _event_hand_ui != null and _event_hand_ui.has_method("play_event"):
 		_event_hand_ui.play_event(_last_played_event, local_side == "enemy")
+
+
+func _play_switch_exchange() -> void:
+	_clear_switch_exchange()
+	if _player_deck.is_empty() or _enemy_deck.is_empty():
+		return
+	var near := _get_stack_top_position("player")
+	var far := _get_stack_top_position("enemy")
+	# Only backs travel: the authority already exchanged the random complete
+	# instances. No private card identities or draw order enter this effect.
+	_event_switch_cards.append(_spawn_stack_decoration_card(near))
+	_event_switch_cards.append(_spawn_stack_decoration_card(far))
+	_rebuild_stack_visual("player")
+	_rebuild_stack_visual("enemy")
+	_event_switch_tween = create_tween()
+	_event_switch_tween.tween_method(_update_switch_exchange.bind(near, far), 0.0, 1.0, SWITCH_EXCHANGE_DURATION)
+	_event_switch_tween.tween_callback(_finish_switch_exchange)
+
+
+func _update_switch_exchange(progress: float, near: Vector3, far: Vector3) -> void:
+	if _event_switch_cards.size() != 2:
+		return
+	var arc := sin(progress * PI)
+	var travel := smoothstep(0.0, 1.0, progress)
+	var lateral := (far - near).cross(Vector3.UP).normalized()
+	for index in range(2):
+		var card := _event_switch_cards[index]
+		if not is_instance_valid(card):
+			continue
+		var start := near if index == 0 else far
+		var finish := far if index == 0 else near
+		# Separate lanes make both directions readable without intersecting.
+		# Both arcs bend inward: the authored piles sit at the screen's edge.
+		var lane := -1.70 if index == 0 else -0.65
+		card.global_position = start.lerp(finish, travel) + (Vector3.UP * 0.32 + lateral * lane) * arc
+		var tilt := -1.0 if index == 0 else 1.0
+		card.rotation_degrees = Vector3(90.0 + 8.0 * arc, 180.0 + tilt * 16.0 * arc, 0.0)
+
+
+func _finish_switch_exchange() -> void:
+	_clear_switch_exchange()
+	_rebuild_stack_visual("player")
+	_rebuild_stack_visual("enemy")
+
+
+func _clear_switch_exchange() -> void:
+	if _event_switch_tween != null and _event_switch_tween.is_valid():
+		_event_switch_tween.kill()
+	_event_switch_tween = null
+	for card in _event_switch_cards:
+		if is_instance_valid(card):
+			card.hide()
+			card.queue_free()
+	_event_switch_cards.clear()
+	for card in _player_stack_visuals + _enemy_stack_visuals:
+		if is_instance_valid(card):
+			card.show()
 
 
 func _refresh_piss_visibility() -> void:
@@ -2089,6 +2161,17 @@ func _count_identical_on_board(card_id: String) -> int:
 		if card != null and is_instance_valid(card) and not card.is_dead() and str(card.card_data.get("id", card.card_data.get("card_id", ""))) == card_id:
 			count += 1
 	return max(count, 1)
+
+
+func _refresh_swarm_multipliers() -> void:
+	# Derive presentation from the same living-copy count as attack damage.
+	# This also covers refills, hatching/growth and mirrored online snapshots;
+	# Card3D only rebuilds its suffix when the factor or base attack changes.
+	for card: Card3D in _player_slots + _enemy_slots:
+		if not is_instance_valid(card) or card.is_dead():
+			continue
+		if CardData.has_effect(card.card_data, "swarm_power"):
+			card.set_swarm_multiplier(_count_identical_on_board(str(card.card_data.get("id", card.card_data.get("card_id", "")))))
 
 
 func _apply_guarded_damage(target: Card3D, damage: int, source: Card3D, eligible_guards: Variant = null) -> Dictionary:
@@ -4362,6 +4445,7 @@ func _retire_online_battle_presentation() -> void:
 	# those cards while the separate exit handshake is still exchanging RPCs.
 	_trace_exit_stage("retire_battle_presentation")
 	_match_generation += 1
+	_clear_switch_exchange()
 	_clear_random_damage_coins()
 	_clear_poison_syringes()
 	_clear_cleave_bricks()
@@ -5208,6 +5292,7 @@ func _present_healing(card: Card3D, amount: int, replicate_online: bool = true) 
 	if not is_instance_valid(card) or amount <= 0:
 		return
 	_spawn_healing_number(card, amount)
+	_present_card_injection(card)
 	if replicate_online and _online_mode and _online_is_host:
 		# Keep replication independent of this peer's local number preference.
 		_broadcast_online_blood(card, "heal", 1.0, false, 0, null, amount)
@@ -5235,6 +5320,10 @@ func _spawn_card_particle_burst(scene: PackedScene, card: Card3D) -> void:
 	)
 
 func _present_poison_application(card: Card3D) -> void:
+	_present_card_injection(card)
+
+
+func _present_card_injection(card: Card3D) -> void:
 	if not is_instance_valid(card) or card.is_dead():
 		return
 	_poison_syringes = _poison_syringes.filter(func(item) -> bool: return is_instance_valid(item))
@@ -5795,6 +5884,7 @@ func _return_satan_from_below() -> void:
 
 
 func _set_satan_dying(is_dying: bool) -> void:
+	_satan_story_reaction = 0
 	_satan_is_dying = is_dying
 	_satan_hovered = false
 	if is_dying:
@@ -5825,7 +5915,7 @@ func set_satan_stream_laughing(enabled: bool) -> void:
 func _set_satan_laughing(is_laughing: bool) -> void:
 	if dealer_satan == null or not is_instance_valid(dealer_satan):
 		return
-	if _satan_is_dying:
+	if _satan_is_dying or _satan_story_reaction > 0:
 		return
 
 	_satan_is_laughing = is_laughing
@@ -5901,7 +5991,7 @@ func _set_satan_hovered(is_hovered: bool) -> void:
 	if _satan_hovered == is_hovered:
 		return
 	_satan_hovered = is_hovered
-	if _satan_is_laughing or _satan_is_dying or _satan_stream_laughing:
+	if _satan_is_laughing or _satan_is_dying or _satan_stream_laughing or _satan_story_reaction > 0:
 		return
 
 	_play_satan_sheet(
@@ -5912,12 +6002,26 @@ func _set_satan_hovered(is_hovered: bool) -> void:
 	)
 
 
+func play_satan_story_reaction(shot_number: int) -> void:
+	_satan_story_reaction = clampi(shot_number, 1, 2)
+	_satan_is_laughing = false
+	_satan_hovered = false
+	var sheet := SATAN_PANIC_TEXTURE if shot_number == 1 else SATAN_KILL_TEXTURE
+	# Both supplied sheets use the same square cells as Satan's other poses.
+	var frames := maxi(1, sheet.get_width() / sheet.get_height())
+	dealer_satan.play_sheet(sheet, frames, SATAN_PANIC_FPS if shot_number == 1 else SATAN_KILL_FPS, shot_number == 1)
+	if is_instance_valid(_satan_laugh_audio):
+		_satan_laugh_audio.set_laughing(false)
+
+
 func _play_satan_sheet(
 	target_texture: Texture2D,
 	target_frames: int,
 	target_fps: float,
 	preserve_frame: bool
 ) -> void:
+	if _satan_story_reaction > 0:
+		return
 	_sync_online_character()
 	if target_texture == null:
 		return

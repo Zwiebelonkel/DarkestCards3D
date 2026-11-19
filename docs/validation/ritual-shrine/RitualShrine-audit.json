@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/props/RitualShrine.asset.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -2.54999995231628,
+        -0.0200000032782555,
+        -1.60000002384186
+      ],
+      "size": [
+        5.09999990463257,
+        1.9925000667572,
+        3.09999990463257
+      ]
+    },
+    "collision_shapes": 6,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 0,
+    "mesh_instances": 33,
+    "multimesh_buffer_floats": 0,
+    "multimesh_elements": 0,
+    "multimesh_instances": 0,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 58,
+    "nonuniform_scales": 32,
+    "particles": 0,
+    "surfaces": 33,
+    "triangles": 604,
+    "unique_materials": 5
+  },
+  "passed": true,
+  "target": "res://scenes/props/RitualShrine.tscn"
+}

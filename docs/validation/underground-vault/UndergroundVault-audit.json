@@ -1,0 +1,36 @@
+{
+  "failures": [],
+  "manifest": "res://scenes/rooms/UndergroundVault.asset.json",
+  "metrics": {
+    "bounds": {
+      "position": [
+        -16,
+        -0.5,
+        -31.5
+      ],
+      "size": [
+        32,
+        14.0599994659424,
+        63
+      ]
+    },
+    "collision_shapes": 7,
+    "collision_triangles": 0,
+    "concave_collision_shapes": 0,
+    "lights": 6,
+    "mesh_instances": 27,
+    "multimesh_buffer_floats": 1200,
+    "multimesh_elements": 100,
+    "multimesh_instances": 6,
+    "multimesh_invalid_buffers": 0,
+    "multimesh_missing_custom_aabb": 0,
+    "nodes": 56,
+    "nonuniform_scales": 15,
+    "particles": 0,
+    "surfaces": 33,
+    "triangles": 4260,
+    "unique_materials": 4
+  },
+  "passed": true,
+  "target": "res://scenes/rooms/UndergroundVault.tscn"
+}

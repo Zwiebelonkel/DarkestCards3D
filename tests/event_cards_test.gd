@@ -194,7 +194,7 @@ func _check_heal(table: GameTable) -> void:
 	table._piss_hidden_turns["player"] = 2
 	table._refresh_piss_visibility()
 	event = _give(table, "player", "heal_event")
-	_expect(table._try_play_event("player", event["uid"], 0) and card.current_hp == 20 and card.defense_label.text == "?", "Heal restores real health while Piss still conceals the values")
+	_expect(table._try_play_event("player", event["uid"], 0) and card.current_hp == 20 and card.defense_label.text.is_empty() and card._stat_puddles.visible, "Heal restores real health while Piss puddles still conceal the values")
 	_expect(table._damage_numbers.is_empty(), "Heal does not expose a floating value during Piss")
 	_reset(table)
 	card = _spawn(table, "player", 0, _data())
@@ -272,7 +272,18 @@ func _check_switch_hand_click(table: GameTable) -> void:
 	_click_event_hand_card(table, event["uid"])
 	_expect(table._player_deck[0] == enemy_draw and table._enemy_deck[0] == own_draw, "One click on the actual Switch hand card immediately exchanges the draw cards")
 	_expect(table._selected_event_uid.is_empty() and table._player_event_hand.is_empty(), "A successful Switch never waits for a table target and leaves the hand immediately")
-	await get_tree().create_timer(0.9).timeout
+	_expect(table._event_switch_cards.size() == 2 and not table._can_local_event_or_attack(), "A real Switch click launches two face-down cards while attacks wait for the reveal")
+	var flying := table._event_switch_cards.duplicate()
+	var near := table._get_stack_top_position("player")
+	var far := table._get_stack_top_position("enemy")
+	await get_tree().create_timer(0.3).timeout
+	_expect(flying[0].global_position.distance_to(near) > 0.5 and flying[1].global_position.distance_to(far) > 0.5, "Both Switch cards visibly travel away from their source piles")
+	_expect(flying[0].global_position.distance_to(flying[1].global_position) > 0.8, "Switch uses separate flight lanes so both exchanged cards stay visible")
+	table._rebuild_stack_visual("player")
+	table._rebuild_stack_visual("enemy")
+	_expect(not table._player_stack_visuals[0].visible and not table._enemy_stack_visuals[0].visible, "Rebuilding piles during Switch keeps their in-flight top cards hidden")
+	await get_tree().create_timer(0.6).timeout
+	_expect(table._event_switch_cards.is_empty() and table._player_stack_visuals[0].visible and table._enemy_stack_visuals[0].visible, "The fast exchange restores both complete piles and removes flying cards")
 	_expect(table._current_turn == "player" and table._can_local_event_or_attack(), "After the Switch animation, the same player can still attack")
 	_reset(table)
 	_spawn(table, "player", 0, _data())

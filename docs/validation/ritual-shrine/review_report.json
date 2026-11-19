@@ -1,0 +1,180 @@
+{
+  "after": {
+    "draw_calls": 64,
+    "mean_frame_ms": 16.6655666666667,
+    "p95_frame_ms": 16.729
+  },
+  "audio_driver": "Dummy",
+  "before": {
+    "draw_calls": 65,
+    "mean_frame_ms": 16.6659333333333,
+    "p95_frame_ms": 16.905
+  },
+  "captures": [
+    "res://test-user/ritual/approach.png",
+    "res://test-user/ritual/three-empty-sockets.png",
+    "res://test-user/ritual/first-card-seated.png",
+    "res://test-user/ritual/two-cards-seated.png",
+    "res://test-user/ritual/shotgun-falling.png",
+    "res://test-user/ritual/shotgun-landed.png",
+    "res://test-user/ritual/shotgun-hover.png",
+    "res://test-user/ritual/shotgun-collected.png",
+    "res://test-user/ritual/asset-front.png",
+    "res://test-user/ritual/asset-back.png",
+    "res://test-user/ritual/asset-left.png",
+    "res://test-user/ritual/asset-right.png",
+    "res://test-user/ritual/asset-three-quarter.png",
+    "res://test-user/ritual/socket-closeup.png",
+    "res://test-user/ritual/support-closeup.png",
+    "res://test-user/ritual/shotgun-closeup.png"
+  ],
+  "checks": 60,
+  "diagnostics": {
+    "approach": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.59239, 0.805651, 0.0), Z: (0.805651, 0.59239, -0.0), O: (-49.12125, -15.07492, 42.69153)]",
+      "utc": "2026-11-18T22:57:56",
+      "mean_luminance": 0.1885810986928076,
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    "asset-back": {
+      "camera": "[X: (-1.0, 0.0, 0.0), Y: (0.0, 0.970143, 0.242536), Z: (-0.0, 0.242536, -0.970143), O: (0.0, 3.0, -8.0)]",
+      "utc": "2026-11-18T22:58:19",
+      "mean_luminance": 0.038994061889530966,
+      "resolution": [
+        1000,
+        750
+      ]
+    },
+    "asset-front": {
+      "camera": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.970143, -0.242536), Z: (0.0, 0.242536, 0.970143), O: (0.0, 3.0, 8.0)]",
+      "utc": "2026-11-18T22:58:19",
+      "mean_luminance": 0.046191035090158566,
+      "resolution": [
+        1000,
+        750
+      ]
+    },
+    "asset-left": {
+      "camera": "[X: (-0.0, 0.0, 1.0), Y: (0.242536, 0.970143, 0.0), Z: (-0.970143, 0.242536, -0.0), O: (-8.0, 3.0, 0.0)]",
+      "utc": "2026-11-18T22:58:20",
+      "mean_luminance": 0.03974961320698441,
+      "resolution": [
+        1000,
+        750
+      ]
+    },
+    "asset-right": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.242536, 0.970143, 0.0), Z: (0.970143, 0.242536, -0.0), O: (8.0, 3.0, 0.0)]",
+      "utc": "2026-11-18T22:58:20",
+      "mean_luminance": 0.040842907072994115,
+      "resolution": [
+        1000,
+        750
+      ]
+    },
+    "asset-three-quarter": {
+      "camera": "[X: (0.768221, 0.0, -0.640184), Y: (-0.2618, 0.912559, -0.31416), Z: (0.584206, 0.408944, 0.701047), O: (5.0, 4.5, 6.0)]",
+      "utc": "2026-11-18T22:58:20",
+      "mean_luminance": 0.047753007131930265,
+      "resolution": [
+        1000,
+        750
+      ]
+    },
+    "first-card-seated": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.59239, 0.805651, 0.0), Z: (0.805651, 0.59239, -0.0), O: (-49.12125, -15.07492, 42.69153)]",
+      "utc": "2026-11-18T22:58:01",
+      "mean_luminance": 0.1926790834422627,
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    "shotgun-closeup": {
+      "camera": "[X: (0.874157, 0.0, -0.485643), Y: (-0.184587, 0.92495, -0.332257), Z: (0.449195, 0.380089, 0.808552), O: (2.6, 3.6, 3.6)]",
+      "utc": "2026-11-18T22:58:20",
+      "mean_luminance": 0.09106002768010311,
+      "resolution": [
+        1000,
+        750
+      ]
+    },
+    "shotgun-collected": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.59239, 0.805651, 0.0), Z: (0.805651, 0.59239, -0.0), O: (-49.12125, -15.07492, 42.69153)]",
+      "utc": "2026-11-18T22:58:12",
+      "mean_luminance": 0.1963680169934593,
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    "shotgun-falling": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.59239, 0.805651, 0.0), Z: (0.805651, 0.59239, -0.0), O: (-49.12125, -15.07492, 42.69153)]",
+      "utc": "2026-11-18T22:58:03",
+      "mean_luminance": 0.1954290409586011,
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    "shotgun-hover": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.59239, 0.805651, 0.0), Z: (0.805651, 0.59239, -0.0), O: (-49.12125, -15.07492, 42.69153)]",
+      "utc": "2026-11-18T22:58:10",
+      "mean_luminance": 0.1971662457516292,
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    "shotgun-landed": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.59239, 0.805651, 0.0), Z: (0.805651, 0.59239, -0.0), O: (-49.12125, -15.07492, 42.69153)]",
+      "utc": "2026-11-18T22:58:04",
+      "mean_luminance": 0.19595502352940705,
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    "socket-closeup": {
+      "camera": "[X: (0.811534, 0.0, -0.584305), Y: (-0.262624, 0.893298, -0.364756), Z: (0.521958, 0.449464, 0.724942), O: (1.8, 2.8, 2.5)]",
+      "utc": "2026-11-18T22:58:20",
+      "mean_luminance": 0.11864786432776507,
+      "resolution": [
+        1000,
+        750
+      ]
+    },
+    "support-closeup": {
+      "camera": "[X: (0.707107, 0.0, 0.707107), Y: (0.090906, 0.991702, -0.090906), Z: (-0.701239, 0.12856, 0.701239), O: (-3.0, 1.25, 3.0)]",
+      "utc": "2026-11-18T22:58:20",
+      "mean_luminance": 0.10006303726218879,
+      "resolution": [
+        1000,
+        750
+      ]
+    },
+    "three-empty-sockets": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.59239, 0.805651, 0.0), Z: (0.805651, 0.59239, -0.0), O: (-49.12125, -15.07492, 42.69153)]",
+      "utc": "2026-11-18T22:57:57",
+      "mean_luminance": 0.18866071808278553,
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    "two-cards-seated": {
+      "camera": "[X: (-0.0, 0.0, -1.0), Y: (-0.59239, 0.805651, 0.0), Z: (0.805651, 0.59239, -0.0), O: (-49.12125, -15.07492, 42.69153)]",
+      "utc": "2026-11-18T22:58:02",
+      "mean_luminance": 0.1942153967320224,
+      "resolution": [
+        1280,
+        720
+      ]
+    }
+  },
+  "failures": 0,
+  "scene_modified_unix": 1795042665
+}

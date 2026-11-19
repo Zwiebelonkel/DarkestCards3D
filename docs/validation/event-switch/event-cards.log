@@ -1,0 +1,139 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+CardDatabase geladen: 122 Karten
+PASS The third shared pile contains 31 shuffled events
+PASS Building the shared pile alone does not deal the separate opening hands
+PASS Ordinary combat-card draws never grant event cards
+PASS Both players draw into separate hands from the same pile
+PASS An event draw never fills a combat slot
+PASS The shared pile cannot award one physical event to both players
+PASS Switch rejects attempts to supply a combat-card target
+PASS Switch can be played without a table target
+PASS Switch preserves both draw-pile sizes
+PASS Switch exchanges exactly one complete card instance in each direction
+PASS Playing an event discards it and leaves the attack available
+PASS Switch rejects an empty opponent draw pile
+PASS An impossible event stays in hand and does not spend the turn's event
+PASS One click on the actual Switch hand card immediately exchanges the draw cards
+PASS A successful Switch never waits for a table target and leaves the hand immediately
+PASS A real Switch click launches two face-down cards while attacks wait for the reveal
+PASS Both Switch cards visibly travel away from their source piles
+PASS Switch uses separate flight lanes so both exchanged cards stay visible
+PASS Rebuilding piles during Switch keeps their in-flight top cards hidden
+PASS The fast exchange restores both complete piles and removes flying cards
+PASS After the Switch animation, the same player can still attack
+PASS An impossible Switch click never enters table-target selection
+PASS An impossible Switch click preserves its card and the turn's event allowance
+PASS An impossible Switch explains the problem while leaving normal attacks available
+PASS Clicking targeted Block still waits for the chosen enemy card
+PASS Interleaved identical events share five visual stacks without changing the eight physical cards
+PASS The Switch stack contains all three copies and exposes one actual UID
+PASS All three strength multipliers remain separate stacks in first-occurrence order
+PASS Selecting a non-front copy keeps its exact UID and highlights the shared stack
+PASS Clicking the selected stack cancels targeting without spending either copy
+PASS Matching names and IDs do not stack events whose effect data differs
+PASS Clicking a three-card stack plays and discards exactly one physical event
+PASS The remaining Switch copies stay stacked with an updated count and playable UID
+PASS The third physical copy remains available in the authoritative hand
+PASS A stack cannot bypass the one-event-per-turn rule
+PASS A targeted event can play the exact selected copy from a stack
+PASS Playing one targeted copy leaves the other as a single card
+PASS Strength rejects an empty table slot
+PASS Unknown event identities cannot be played
+PASS strength_120 strengthens a selected allied card
+PASS Strength scales current attack, max HP and damaged current HP, rounding up
+PASS Strength leaves the opposing card unchanged
+PASS Only one event can be played before a turn's attack
+PASS A rejected second event remains in hand
+PASS Strength survives card state serialization
+PASS Strength rejects an empty table slot
+PASS Unknown event identities cannot be played
+PASS strength_150 strengthens a selected allied card
+PASS Strength scales current attack, max HP and damaged current HP, rounding up
+PASS Strength leaves the opposing card unchanged
+PASS Only one event can be played before a turn's attack
+PASS A rejected second event remains in hand
+PASS Strength survives card state serialization
+PASS Strength rejects an empty table slot
+PASS Unknown event identities cannot be played
+PASS strength_200 strengthens a selected allied card
+PASS Strength scales current attack, max HP and damaged current HP, rounding up
+PASS Strength leaves the opposing card unchanged
+PASS Only one event can be played before a turn's attack
+PASS A rejected second event remains in hand
+PASS Strength survives card state serialization
+PASS Heal rejects a full-health card without wasting the event
+PASS An unnecessary Heal preserves the hand and event allowance
+PASS Heal requires a living explicit target
+PASS Clicking Heal waits for the chosen allied card
+PASS Heal cannot target an opposing card
+PASS Heal restores the buffed maximum HP and preserves modified attack
+PASS Heal leaves poison, block and consumed protection unchanged
+PASS Heal consumes one event while leaving the attack available
+PASS A second Heal cannot bypass the one-event rule
+PASS Attacking is available after Heal's reveal
+PASS The AI uses Heal on a wounded ally and skips full-health cards
+PASS Heal restores real health while Piss still conceals the values
+PASS Heal does not expose a floating value during Piss
+PASS Heal cannot resurrect a dead card
+PASS Rearrange rejects missing, identical and empty targets
+PASS Rearrange cannot select an enemy card
+PASS The first allied click highlights a card without moving or consuming it
+PASS Clicking the same card twice keeps the selection and event
+PASS Cancelling restores the first card without spending Rearrange
+PASS Two allied clicks swap exactly those nodes and leave the enemy row intact
+PASS Rearrange preserves damage, poison, block and consumed protection
+PASS Rearrange consumes one event and preserves the attack turn
+PASS Both cards finish their movement at the new table markers
+PASS Later selection cleanup cannot return a moved card to its old position
+PASS Clicking a moved card selects the card at its new slot
+PASS Death and replacement callbacks follow the new slot
+PASS A moved card's death draws its replacement into the new slot
+PASS The AI can swap two of its living cards
+PASS Block requires an explicit enemy target
+PASS Block marks the selected enemy card
+PASS Block starts at two turns on its target only
+PASS A blocked attacker cannot resolve a duel
+PASS A blocked defender takes damage without counterattacking
+PASS The attack ends the player's turn without consuming an opposing blocked turn
+PASS The first completed enemy turn leaves one blocked turn
+PASS The other player's turns do not age the block
+PASS Remaining block duration survives card state serialization
+PASS The second completed enemy turn releases the blocked card
+PASS Steel accepts the chosen opponent card even while it is blocked
+PASS Steel moves one card to the player's draw pile and consumes one enemy replacement
+PASS The opponent's empty slot receives the replacement card
+PASS The stolen physical card returns through the new owner's combat draw pile
+PASS Stealing preserves modified attack and existing damage
+PASS Stealing preserves consumed one-shot effects and poison
+PASS Stealing preserves remaining block duration
+PASS Steel still works when the opponent cannot draw a replacement
+PASS An exhausted enemy draw pile leaves the stolen slot empty
+PASS Only the dying card's Draw On Death grants its owner an event
+PASS Draw On Death never grants an extra combat card
+PASS The attack immediately ends its turn
+PASS Only the dying card's Draw On Death grants its owner an event
+PASS Draw On Death never grants an extra combat card
+PASS The attack immediately ends its turn
+PASS The opposing deceased fighter earns its own event hand
+PASS Mutual deaths grant each eligible fighter its own death event
+PASS A mutual kill removes exactly two cards from the shared pile
+PASS A simultaneous Lava multi-kill grants exactly one event per deceased effect carrier
+PASS Multi-kill rewards are distinct events in the deceased fighters' hand
+PASS The AI plays a useful event from its own hand
+PASS The AI strengthens its fighter before using the stronger attack
+PASS The AI attack hands over the turn and renews the event allowance
+PASS A fighter with an available attacker cannot skip its attack
+PASS A fully blocked player can pass and consume its first blocked turn
+PASS A fully blocked AI also passes instead of deadlocking the match
+PASS Passing two blocked turns restores both fighters' attack choices
+PASS Passing blocked turns causes no attacks or damage
+PASS An online client cannot mutate authoritative event state directly
+PASS A spectator cannot play an event
+PASS Rejected network actions leave the hand and target untouched
+PASS Leaving a match clears both shared event piles
+PASS Leaving a match clears both event hands
+EVENT_CARD_TESTS: PASS (132 checks)
+
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2378)

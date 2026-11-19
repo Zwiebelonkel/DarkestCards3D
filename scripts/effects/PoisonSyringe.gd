@@ -1,6 +1,6 @@
 extends Node3D
 
-## A cosmetic injection. Combat and poison state never wait for this animation.
+## A cosmetic poison/healing injection. Combat never waits for this animation.
 const ENTRY_DURATION := 0.30
 const PRESS_DURATION := 0.40
 const EXIT_DURATION := 0.30
@@ -20,15 +20,22 @@ var _plunger_start := Vector3.ZERO
 var _elapsed := 0.0
 var _started := false
 var _sound_started := false
+var injection_yaw := 0.0
+var _random := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
+	_random.randomize()
 	_plunger_start = plunger.position
 	sound.finished.connect(_on_sound_finished)
 	set_process(false)
 
 
 func play_on(card: Card3D) -> void:
+	# Rotate the complete tilted assembly around the planted needle tip.
+	# Pitch, puncture position and plunger travel remain exactly the same.
+	injection_yaw = _random.randf_range(0.0, TAU)
+	rotation.y = injection_yaw
 	_target = weakref(card)
 	card.tree_exiting.connect(cancel)
 	_started = true

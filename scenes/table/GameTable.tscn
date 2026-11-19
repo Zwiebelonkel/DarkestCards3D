@@ -244,18 +244,6 @@ transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, -0.0445504, -0.09297
 transform = Transform3D(0.99996, 0, 0, 0, 0.99996, 0, 0, 0, 0.99996, 0.0264247, -0.4646, -0.00323573)
 size = Vector3(5.87708, 1.0708, 3.67908)
 
-[node name="blood" type="Sprite3D" parent="."]
-transform = Transform3D(2.39, 0, 0, 0, 2.34364, 0.468475, 0, -0.468475, 2.34364, -0.0137849, 1.24565, -5.41997)
-visible = false
-material_override = ExtResource("36_eye_glow")
-pixel_size = 0.024
-billboard = 1
-texture_filter = 0
-texture = ExtResource("23_3leqy")
-script = ExtResource("10_6cwm4")
-fps = 15.0
-TOTAL_FRAMES = 1
-
 [node name="dealer" parent="." instance=ExtResource("5_l1fpw")]
 transform = Transform3D(2.39, 0, 0, 0, 2.34364, 0.468475, 0, -0.468475, 2.34364, -0.0137849, -2.67248, -3.12406)
 script = ExtResource("8_vtfa6")
@@ -380,5 +368,14 @@ throw_sound = ExtResource("35_crate_throw")
 transform = Transform3D(-0.0850397, 0, -0.129589, 0, 0.155, 0, 0.129589, 0, -0.0850397, 2.82124, 0.575164, -2.9184)
 script = ExtResource("31_local_prop")
 throw_sound = ExtResource("35_crate_throw")
+
+[node name="blood" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.690983, -7.01052)
+visible = false
+pixel_size = 0.0835
+shaded = true
+double_sided = false
+texture_filter = 0
+texture = ExtResource("23_3leqy")
 
 [editable path="dealer"]

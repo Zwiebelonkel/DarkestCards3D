@@ -5,6 +5,7 @@ A saved victory in **story level 20** replaces the weed pickup with the supplied
 The package waits for the idle hub after the match, then falls onto the same
 table spot, settles, gains a yellow hover outline, and disappears when clicked.
 An unclaimed weed bag is replaced, so two packages never coexist.
+After story level 25, [MDMA](mdma-reward.md) becomes the selected package instead.
 
 The effect lasts **60 seconds**, including **5 seconds of smooth fade-in and
 5 seconds of fade-out**. `cocaine.gdshader` uses faster ripples, pulsing zoom,

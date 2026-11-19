@@ -1,0 +1,18 @@
+{
+  "schema_version": 2, "profile": "prop", "asset_name": "Three-card ritual shrine and shotgun reward",
+  "scene": "res://scenes/props/RitualShrine.tscn", "units": "meters", "forward": "+Z interaction side", "origin": "floor_center",
+  "footprint_m": [5.1, 3.1], "height_m": 1.993,
+  "interaction_sides": ["front altar hover", "three top sockets", "front story-card hand", "shotgun on rear ledge"],
+  "style_references": [
+    {"path": "res://scenes/rooms/UndergroundVault.tscn", "reason": "Same pale/dark stone, brass warmth and heavy stepped silhouettes."},
+    {"path": "res://assets/shader/basement_surface.gdshader", "reason": "Shared world-space stone grain."},
+    {"path": "res://scenes/table/Card3D.tscn", "reason": "Use the real project story-card visuals and localized text."},
+    {"path": "res://assets/environments/props/shotgun/shotgun.tscn", "reason": "Reuse the supplied textured low-poly shotgun."}
+  ],
+  "collision": {"required": true, "strategy": "primitive picking boxes only; no walking body across the camera route"},
+  "budgets": {"nodes": 120, "mesh_instances": 55, "multimesh_instances": 0, "triangles": 8000, "surfaces": 60, "unique_materials": 8, "lights": 0, "particles": 0, "collision_shapes": 6, "concave_collision_shapes": 0, "collision_triangles": 0},
+  "construction_junctions": ["top slab overlaps solid altar body", "socket borders surround recessed card beds", "seated cards clear the slab", "shotgun lies on rear ledge behind seated cards"],
+  "review": {"required_views": ["approach", "focused empty sockets", "one and two cards", "three cards", "shotgun falling", "shotgun hover", "collected", "four prop elevations", "socket and support closeups"], "status": "visually reviewed", "evidence": "res://docs/validation/ritual-shrine/README.md", "integration_checks": 60},
+  "measured": {"nodes": 58, "mesh_instances": 33, "surfaces": 33, "triangles": 604, "unique_materials": 5, "collision_shapes": 6, "concave_collision_shapes": 0, "lights": 0, "particles": 0},
+  "notes": ["Shrine center is at vault local (0,0,13), directly ahead of the camera anchor at (0,0,18).", "Only owned holy_water, crucifix and silver_bullet can be manually placed, once each, in any free socket.", "Placement preserves collection mementos; socket positions and collected shotgun ownership save atomically.", "Reject invalid/occupied drops; pause cancels a held card; incomplete and collected states survive reload."]
+}

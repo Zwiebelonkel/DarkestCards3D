@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "output_overflow": false,
+  "completion_marker_found": true,
+  "engine_errors": [],
+  "elapsed_ms": 1065,
+  "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\n{\"nodes\":[{\"path\":\".\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"path\":\"InjectionPivot\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (0.718472, -0.644218, 0.262263), Y: (0.60516, 0.764842, 0.220901), Z: (-0.342898, 0.0, 0.939373), O: (0.0, 0.0, 0.0)]\",\"type\":\"Node3D\"},{\"path\":\"InjectionPivot/Model\",\"scale\":\"(0.13, 0.13, 0.13)\",\"transform\":\"[X: (0.13, 0.0, 0.0), Y: (0.0, 0.0, 0.13), Z: (0.0, -0.13, 0.0), O: (0.0, 0.53817, 0.0)]\",\"type\":\"Node3D\"},{\"aabb\":\"[P: (-1.229102, -1.090752, -1.824541), S: (2.473106, 2.935675, 3.649082)]\",\"materials\":[\"res://assets/effects/syringe/adrenalin.glb::StandardMaterial3D_xtkug\",\"res://assets/effects/syringe/adrenalin.glb::StandardMaterial3D_y18ab\"],\"mesh_present\":true,\"path\":\"InjectionPivot/Model/spritze\",\"scale\":\"(0.44683, 2.243866, 0.44683)\",\"surfaces\":2,\"transform\":\"[X: (0.44683, 0.0, 0.0), Y: (0.0, 0.0, 2.243866), Z: (0.0, -0.44683, 0.0), O: (0.0, 0.0, 0.0)]\",\"triangles\":132,\"type\":\"MeshInstance3D\"},{\"aabb\":\"[P: (-1.109351, -1.775181, -1.280968), S: (2.218702, 0.775181, 2.561936)]\",\"materials\":[\"res://assets/effects/syringe/adrenalin.glb::StandardMaterial3D_j3ql5\"],\"mesh_present\":true,\"path\":\"InjectionPivot/Model/kolben\",\"scale\":\"(0.44683, 2.243866, 0.44683)\",\"surfaces\":1,\"transform\":\"[X: (0.44683, 0.0, 0.0), Y: (0.0, 0.0, 2.243866), Z: (0.0, -0.44683, 0.0), O: (-0.003988, 0.0, 0.0)]\",\"triangles\":40,\"type\":\"MeshInstance3D\"},{\"path\":\"Sound\",\"scale\":\"(1.0, 1.0, 1.0)\",\"transform\":\"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]\",\"type\":\"AudioStreamPlayer3D\"}],\"scene\":\"res://scenes/effects/PoisonSyringe.tscn\",\"warnings\":[]}\r\nASSET_INSPECTION_COMPLETE\r\nCardDatabase geladen: 122 Karten\r\n",
+  "stderr": "",
+  "pid": 25264
+}

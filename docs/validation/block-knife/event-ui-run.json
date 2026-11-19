@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "output_overflow": false,
+  "completion_marker_found": true,
+  "engine_errors": [],
+  "elapsed_ms": 12036,
+  "stdout": "Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org\r\n\r\nCardDatabase geladen: 122 Karten\r\nPASS actual match presents the three private event cards\r\nPASS empty hand surface leaves the table clickable\r\nPASS the hidden logical event deck retains all undealt events\r\nPASS the table has no visible event-pile marker\r\nPASS the table has no rendered event-deck counter\r\nPASS blocked table card shows its pinning knife\r\nPASS the embedded knife has a readable silhouette from the match camera\r\nPASS 1280x720 preserves the original match-marker camera transform\r\nPASS hovering the bottom edge raises the intended event\r\nPASS the hovered card exposes its full rules\r\nPASS selecting an event leaves all ten board target centers clickable\r\nPASS the actual match swaps the two chosen allied cards\r\nPASS a spectator sees the public event reveal while the private hand stays hidden\r\nPASS the public reveal creates a visible card for a spectator\r\nPASS match reset clears pending public reveals\r\nPASS the embedded knife has a readable silhouette from the match camera\r\nPASS 800x600 preserves the original match-marker camera transform\r\nPASS selecting an event leaves all ten board target centers clickable\r\nPASS narrow hand keeps every shown card horizontally on screen\r\nPASS narrow hand keeps every shown card horizontally on screen\r\nPASS narrow hand keeps every shown card horizontally on screen\r\nPASS nine interleaved physical events appear as six distinct stacks with correct counts\r\nPASS the hand status counts physical cards instead of visual stacks\r\nPASS hovering an exposed stack edge raises its event card\r\nPASS resizing keeps the selected stack visible using stack-based pagination\r\nPASS narrow paging stops at the last stack page\r\nPASS paging back restores the complete three-copy stack as one slot\r\nPASS clearing a match removes every stack and its count\r\nEVENT_CARDS_VISUAL_TESTS: PASS\r\n",
+  "stderr": "WARNING: ObjectDB instances leaked at exit (run with --verbose for details).\r\n   at: cleanup (core/object/object.cpp:2378)\r\n",
+  "pid": 23928
+}
